@@ -1,0 +1,25 @@
+<spark-tests>
+ <test model = "models/StemCells/StemCellModel.xml">
+  <run seed = "1" length = "300" observer = "Observer1" save-all = "false"/>
+  <run seed = "0" length = "300" observer = "Observer2" save-all = "false"/>
+  <run seed = "0" length = "300" observer = "Observer2"/>
+ </test>
+
+ <test model = "models/RSV/RSVModel.xml">
+  <run seed = "100" length = "100" observer = "Observer1" save-all = "false"/>
+  <run seed = "100" length = "100" observer = "Observer2" save-all = "false"/>
+  <run seed = "30" length = "100" observer = "Observer1"/>
+ </test>
+
+ <test model = "models/Worms/Model.xml">
+  <run seed = "300" length = "500" observer = "Observer1" save-all = "false"/>
+  <run seed = "300" length = "500" observer = "Observer2" save-all = "false"/>
+  <run seed = "300000" length = "500" observer = "Observer1"/>
+ </test>
+
+ <test model = "models/GameOfLife/GameOfLifeModel.xml">
+  <run mode = "parallel" seed = "1111" length = "100" observer = "Observer1" save-all = "false"/>
+  <run mode = "parallel" seed = "1111" length = "100" observer = "Observer2" save-all = "false"/>
+  <run mode = "parallel" seed = "33340" length = "100" observer = "Observer1"/>
+ </test>
+</spark-tests>

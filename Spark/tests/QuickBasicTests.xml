@@ -1,0 +1,31 @@
+<spark-tests>
+ <test model = "models/Basic/CreateDieA.xml">
+  <run seed = "10" length = "100" observer = "Observer1" save-all = "false"/>
+  <run seed = "10" length = "100" observer = "Observer2" save-all = "false"/>
+  <run seed = "3" length = "100" observer = "Observer2"/>
+ </test>
+
+ <test model = "models/Basic/CreateDieB.xml">
+  <run seed = "10" length = "100" observer = "Observer1" save-all = "false"/>
+  <run seed = "10" length = "100" observer = "Observer2" save-all = "false"/>
+  <run seed = "3" length = "100" observer = "Observer2"/>
+ </test>
+
+
+ <test model = "models/Basic/EvaporationAndDiffusion.xml">
+  <run seed = "1000" length = "100" observer = "Observer2" save-all = "false"/>
+  <run seed = "300" length = "100" observer = "Observer1"/>
+ </test>
+
+ <test model = "models/Basic/MultipleSpaces.xml">
+  <run seed = "10" length = "20" observer = "Observer1" save-all = "false"/>
+  <run seed = "10" length = "20" observer = "Observer2" save-all = "false"/>
+  <run seed = "3" length = "20" observer = "Observer1"/>
+ </test>
+
+ <test model = "models/Basic/ToyInfectionModel.xml">
+  <run seed = "10" length = "200" observer = "Observer1" save-all = "false"/>
+  <run seed = "10" length = "200" observer = "Observer2" save-all = "false"/>
+  <run seed = "3" length = "200" observer = "Observer1"/>
+ </test>
+</spark-tests>

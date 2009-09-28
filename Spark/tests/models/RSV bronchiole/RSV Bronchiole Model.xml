@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><model>
+<about path="readme.txt"/>
+<classpath path="."/>
+<setup>RSV_bronchiole.RSVModel</setup>
+<mainframe height="630" width="530" x="0" y="0"><spacestyle name="space" selected="true" swapXY="false"/><agentstyle alpha-function-value="0.0" border="true" name="Virus" position="0" texture-env="0" transparent="false" visible="true"/><agentstyle alpha-function-value="0.0" border="true" name="Neutrophil" position="1" texture-env="0" transparent="false" visible="true"/><agentstyle alpha-function-value="0.0" border="true" name="Macrophage" position="2" texture-env="0" transparent="false" visible="true"/><agentstyle alpha-function-value="0.0" border="false" name="DeadInf" position="3" texture-env="0" transparent="false" visible="true"/><agentstyle alpha-function-value="0.0" border="false" name="Syncytia" position="4" texture-env="0" transparent="false" visible="true"/><agentstyle alpha-function-value="0.0" border="false" name="Dead" position="5" texture-env="0" transparent="false" visible="true"/><agentstyle alpha-function-value="0.0" border="false" name="Epithelial" position="6" texture-env="0" transparent="false" visible="true"/><agentstyle alpha-function-value="0.0" border="true" name="CellAgent" position="7" texture-env="0" transparent="false" visible="false"/><agentstyle alpha-function-value="0.0" border="true" name="PhysAgent" position="8" texture-env="0" transparent="false" visible="true"/><agentstyle alpha-function-value="0.0" border="true" name="FixedPhysAgent" position="9" texture-env="0" transparent="false" visible="true"/><agentstyle alpha-function-value="0.0" border="false" name="Cleared" position="10" texture-env="0" transparent="false" visible="true"/></mainframe>
+<parameterframe height="420" width="600" x="530" y="0">
+<parameter default="30.0" get="get_initVirus" max="100.0" min="0.0" name="init-virus" set="set_initVirus" step="0.0" type="Double" variable="init-virus" widget="Slider"/>
+<parameter default="5.0" get="get_virusProliferationRate" max="10.0" min="1.0" name="virus-proliferation-rate" set="set_virusProliferationRate" step="1.0" type="Double" variable="virus-proliferation-rate" widget="Slider"/>
+<parameter default="30.0" get="get_virusLifespanMax" max="100.0" min="20.0" name="virus-lifespan-max" set="set_virusLifespanMax" step="0.0" type="Double" variable="virus-lifespan-max" widget="Slider"/>
+<parameter default="0.1" get="get_macrophageActivationThresh" max="1.0" min="0.0" name="macrophage-activation-thresh" set="set_macrophageActivationThresh" step="0.01" type="Double" variable="macrophage-activation-thresh" widget="Slider"/>
+<parameter default="0.8" get="get_inflammActivationProb" max="1.0" min="0.0" name="inflamm-activation-prob" set="set_inflammActivationProb" step="0.05" type="Double" variable="inflamm-activation-prob" widget="Slider"/>
+<parameter default="0.5" get="get_inflammThreshold" max="10.0" min="0.0" name="inflamm-threshold" set="set_inflammThreshold" step="0.5" type="Double" variable="inflamm-threshold" widget="Slider"/>
+<parameter default="0.1" get="get_il10HealingProb" max="1.0" min="0.0" name="il10-healing-prob" set="set_il10HealingProb" step="0.05" type="Double" variable="il10-healing-prob" widget="Slider"/>
+<parameter default="1.0" get="get_il10HealingThreshold" max="5.0" min="0.0" name="il10-healing-threshold" set="set_il10HealingThreshold" step="0.5" type="Double" variable="il10-healing-threshold" widget="Slider"/>
+<parameter default="0.1" get="get_tnfSens" max="1.0" min="0.0" name="tnf-sens" set="set_tnfSens" step="0.05" type="Double" variable="tnf-sens" widget="Slider"/>
+<parameter default="5.0" get="get_tnfThreshold" max="15.0" min="0.0" name="tnf-threshold" set="set_tnfThreshold" step="0.5" type="Double" variable="tnf-threshold" widget="Slider"/>
+<parameter default="1.0" get="get_macrophageTnfProduction" max="5.0" min="0.0" name="macrophage-tnf-production" set="set_macrophageTnfProduction" step="1.0" type="Double" variable="macrophage-tnf-production" widget="Slider"/>
+<parameter default="1.0" get="get_macrophageIl10Production" max="5.0" min="0.0" name="macrophage-il10-production" set="set_macrophageIl10Production" step="1.0" type="Double" variable="macrophage-il10-production" widget="Slider"/>
+<parameter default="40.0" get="get_segments" max="40.0" min="1.0" name="Segments" set="set_segments" step="1.0" type="Double" variable="segments" widget="Slider"/>
+<parameter default="30.0" get="get_centralForce" max="100.0" min="0.0" name="central-force" set="set_centralForce" step="1.0" type="Double" variable="central-force" widget="Slider"/>
+<parameter default="0.3" get="get_accumDamageCoefficient" max="1.0" min="0.0" name="accum-damage-coefficient" set="set_accumDamageCoefficient" step="0.01" type="Double" variable="accum-damage-coefficient" widget="Slider"/>
+<parameter default="0.6" get="get_velocityCoefficient" max="1.0" min="0.1" name="Velocity Decay" set="set_velocityCoefficient" step="0.1" type="Double" variable="velocity-coefficient" widget="Slider"/>
+<parameter default="0.0" get="get_separationCoefficient" max="10.0" min="0.0" name="Separation Coefficient" set="set_separationCoefficient" step="0.1" type="Double" variable="separation-coefficient" widget="Slider"/>
+<parameter default="50.0" get="get_collisionCoefficient" max="100.0" min="0.0" name="Collision Coefficient" set="set_collisionCoefficient" step="1.0" type="Double" variable="collision-coefficient" widget="Slider"/>
+<parameter default="0.06" get="get_dt" max="0.2" min="0.01" name="dt" set="set_dt" step="0.01" type="Double" variable="dt" widget="Slider"/>
+<parameter default="20.0" get="get_springCoefficient" max="50.0" min="1.0" name="spring-coefficient" set="set_springCoefficient" step="1.0" type="Double" variable="spring-coefficient" widget="Slider"/>
+</parameterframe>
+<dataset height="310" name="Dataset" width="310" x="1130" y="0">
+<item get="get_virusNumber" name="Virus"/>
+<item get="get_macrophageNumber" name="Macrophage"/>
+<item get="get_neutrophilNumber" name="Neutrophil"/>
+<item get="get_deadanddebrisNumber" name="DeadDebris"/>
+<item get="get_epithelialNumber" name="Epithelial"/>
+<item get="get_clearedNumber" name="Cleared"/>
+<item get="get_totalHealth" name="Total"/>
+<item get="get_totalGmcsf" name="GM-CSF"/>
+<item get="get_totalIl8" name="IL-8"/>
+<item get="get_totalTnf" name="TNF"/>
+<item get="get_totalIl10" name="IL-10"/>
+<item get="get_totalHmgb1" name="HMGB1"/>
+</dataset>
+<renderframe height="265" name="View" width="265" x="0" y="630"><spacestyle name="Another Space" selected="true" swapXY="false"/><datalayerstyle name="hmgb1" selected="true"/><agentstyle alpha-function-value="0.0" border="true" name="Neutrophil" position="0" texture-env="0" transparent="false" visible="true"/><agentstyle alpha-function-value="0.0" border="true" name="Macrophage" position="1" texture-env="0" transparent="false" visible="true"/><agentstyle alpha-function-value="0.0" border="true" name="Virus" position="2" texture-env="0" transparent="false" visible="true"/><agentstyle alpha-function-value="0.0" border="true" name="Epithelial" position="3" texture-env="0" transparent="false" visible="true"/><agentstyle alpha-function-value="0.0" border="true" name="CellAgent" position="4" texture-env="0" transparent="false" visible="true"/><agentstyle alpha-function-value="0.0" border="true" name="PhysAgent" position="5" texture-env="0" transparent="false" visible="true"/><agentstyle alpha-function-value="0.0" border="true" name="FixedPhysAgent" position="6" texture-env="0" transparent="false" visible="true"/><agentstyle alpha-function-value="0.0" border="true" name="Syncytia" position="7" texture-env="0" transparent="false" visible="true"/><agentstyle alpha-function-value="0.0" border="true" name="Dead" position="8" texture-env="0" transparent="false" visible="true"/><agentstyle alpha-function-value="0.0" border="true" name="DeadInf" position="9" texture-env="0" transparent="false" visible="true"/><agentstyle alpha-function-value="0.0" border="true" name="Cleared" position="10" texture-env="0" transparent="false" visible="true"/></renderframe>
+<variables>
+<variable get="get_initMac" name="init-mac" set="set_initMac" type="Double"/>
+<variable get="get_initVirus" name="init-virus" set="set_initVirus" type="Double"/>
+<variable get="get_virusProliferationRate" name="virus-proliferation-rate" set="set_virusProliferationRate" type="Double"/>
+<variable get="get_virusLifespanMax" name="virus-lifespan-max" set="set_virusLifespanMax" type="Double"/>
+<variable get="get_macrophageActivationThresh" name="macrophage-activation-thresh" set="set_macrophageActivationThresh" type="Double"/>
+<variable get="get_inflammActivationProb" name="inflamm-activation-prob" set="set_inflammActivationProb" type="Double"/>
+<variable get="get_inflammThreshold" name="inflamm-threshold" set="set_inflammThreshold" type="Double"/>
+<variable get="get_il10HealingProb" name="il10-healing-prob" set="set_il10HealingProb" type="Double"/>
+<variable get="get_il10HealingThreshold" name="il10-healing-threshold" set="set_il10HealingThreshold" type="Double"/>
+<variable get="get_tnfSens" name="tnf-sens" set="set_tnfSens" type="Double"/>
+<variable get="get_tnfThreshold" name="tnf-threshold" set="set_tnfThreshold" type="Double"/>
+<variable get="get_macrophageTnfProduction" name="macrophage-tnf-production" set="set_macrophageTnfProduction" type="Double"/>
+<variable get="get_macrophageIl10Production" name="macrophage-il10-production" set="set_macrophageIl10Production" type="Double"/>
+<variable get="get_virusNumber" name="virus-number" set="set_virusNumber" type="Double"/>
+<variable get="get_macrophageNumber" name="macrophage-number" set="set_macrophageNumber" type="Double"/>
+<variable get="get_neutrophilNumber" name="neutrophil-number" set="set_neutrophilNumber" type="Double"/>
+<variable get="get_deadanddebrisNumber" name="deadanddebris-number" set="set_deadanddebrisNumber" type="Double"/>
+<variable get="get_epithelialNumber" name="epithelial-number" set="set_epithelialNumber" type="Double"/>
+<variable get="get_clearedNumber" name="cleared-number" set="set_clearedNumber" type="Double"/>
+<variable get="get_totalHealth" name="total-health" set="set_totalHealth" type="Double"/>
+<variable get="get_totalGmcsf" name="total-gmcsf" set="set_totalGmcsf" type="Double"/>
+<variable get="get_totalIl8" name="total-il8" set="set_totalIl8" type="Double"/>
+<variable get="get_totalTnf" name="total-tnf" set="set_totalTnf" type="Double"/>
+<variable get="get_totalIl10" name="total-il10" set="set_totalIl10" type="Double"/>
+<variable get="get_totalHmgb1" name="total-hmgb1" set="set_totalHmgb1" type="Double"/>
+<variable get="get_lumenArea" name="lumen-area" set="set_lumenArea" type="Double"/>
+<variable get="get_segments" name="segments" set="set_segments" type="Double"/>
+<variable get="get_centralForce" name="central-force" set="set_centralForce" type="Double"/>
+<variable get="get_accumDamageCoefficient" name="accum-damage-coefficient" set="set_accumDamageCoefficient" type="Double"/>
+<variable get="get_velocityCoefficient" name="velocity-coefficient" set="set_velocityCoefficient" type="Double"/>
+<variable get="get_separationCoefficient" name="separation-coefficient" set="set_separationCoefficient" type="Double"/>
+<variable get="get_collisionCoefficient" name="collision-coefficient" set="set_collisionCoefficient" type="Double"/>
+<variable get="get_dt" name="dt" set="set_dt" type="Double"/>
+<variable get="get_springCoefficient" name="spring-coefficient" set="set_springCoefficient" type="Double"/>
+</variables>
+<renderframe height="265" name="View" width="265" x="265" y="630"><spacestyle name="space" selected="true" swapXY="false"/><datalayerstyle name="tnf" selected="true"/><agentstyle alpha-function-value="0.0" border="true" name="Neutrophil" position="0" texture-env="0" transparent="false" visible="false"/><agentstyle alpha-function-value="0.0" border="true" name="Macrophage" position="1" texture-env="0" transparent="false" visible="true"/><agentstyle alpha-function-value="0.0" border="true" name="Virus" position="2" texture-env="0" transparent="false" visible="false"/><agentstyle alpha-function-value="0.0" border="true" name="Epithelial" position="3" texture-env="0" transparent="false" visible="false"/><agentstyle alpha-function-value="0.0" border="true" name="CellAgent" position="4" texture-env="0" transparent="false" visible="false"/><agentstyle alpha-function-value="0.0" border="true" name="FixedPhysAgent" position="5" texture-env="0" transparent="false" visible="false"/><agentstyle alpha-function-value="0.0" border="true" name="PhysAgent" position="6" texture-env="0" transparent="false" visible="false"/><agentstyle alpha-function-value="0.0" border="true" name="Syncytia" position="7" texture-env="0" transparent="false" visible="true"/><agentstyle alpha-function-value="0.0" border="false" name="Dead" position="8" texture-env="0" transparent="false" visible="true"/><agentstyle alpha-function-value="0.0" border="true" name="DeadInf" position="9" texture-env="0" transparent="false" visible="true"/><agentstyle alpha-function-value="0.0" border="true" name="Cleared" position="10" texture-env="0" transparent="false" visible="false"/></renderframe>
+<space-agents>
+<agent name="DeadInf">RSV_bronchiole.DeadInf</agent>
+<agent name="Macrophage">RSV_bronchiole.Macrophage</agent>
+<agent name="Virus">RSV_bronchiole.Virus</agent>
+<agent name="Dead">RSV_bronchiole.Dead</agent>
+<agent name="CellAgent">RSV_bronchiole.CellAgent</agent>
+<agent name="PhysAgent">RSV_bronchiole.PhysAgent</agent>
+<agent name="Neutrophil">RSV_bronchiole.Neutrophil</agent>
+<agent name="Syncytia">RSV_bronchiole.Syncytia</agent>
+<agent name="Epithelial">RSV_bronchiole.Epithelial</agent>
+<agent name="Cleared">RSV_bronchiole.Cleared</agent>
+<agent name="FixedPhysAgent">RSV_bronchiole.FixedPhysAgent</agent>
+</space-agents>
+<data-layers>
+<datalayer color1="1.0;1.0;1.0" color2="1.0;0.8;0.0" name="gmcsf" val1="1.117328705934561E-26" val2="7.008348159938989E-26"/>
+<datalayer color1="1.0;1.0;1.0" color2="1.0;1.0;0.0" name="il8" val1="1.1431063821332878E-24" val2="7.183699803777026E-24"/>
+<datalayer color1="1.0;1.0;1.0" color2="1.0;0.0;0.2" name="tnf" val1="3.841443010633435E-21" val2="4.2898672568651074E-20"/>
+<datalayer color1="1.0;1.0;1.0" color2="0.0;0.0;1.0" name="il10" val1="6.329831069502221E-21" val2="9.578068895599983E-20"/>
+<datalayer color1="1.0;1.0;1.0" color2="1.0;0.0;0.8" name="hmgb1" val1="2.7555947478105176E-5" val2="0.14725914482176888"/>
+</data-layers>
+<charts>
+<chart height="121" interval="0" method="get_virusNumber" name="Virus" width="182" x="530" y="420"/>
+<chart height="121" interval="0" method="get_macrophageNumber" name="Macrophage" width="182" x="712" y="420"/>
+<chart height="121" interval="0" method="get_neutrophilNumber" name="Neutrophil" width="182" x="894" y="420"/>
+<chart height="121" interval="0" method="get_deadanddebrisNumber" name="Dead &amp; Debris" width="182" x="1076" y="420"/>
+<chart height="121" interval="0" method="get_epithelialNumber" name="Epithelial" width="182" x="1258" y="420"/>
+<chart height="121" interval="0" method="get_clearedNumber" name="Cleared" width="182" x="530" y="541"/>
+<chart height="121" interval="0" method="get_totalHealth" name="Total" width="182" x="712" y="541"/>
+<chart height="121" interval="0" method="get_totalGmcsf" name="GM-CSF" width="182" x="894" y="541"/>
+<chart height="121" interval="0" method="get_totalIl8" name="IL-8" width="182" x="1076" y="541"/>
+<chart height="121" interval="0" method="get_totalTnf" name="TNF" width="182" x="1258" y="541"/>
+<chart height="121" interval="0" method="get_totalIl10" name="IL-10" width="182" x="530" y="662"/>
+<chart height="121" interval="0" method="get_totalHmgb1" name="HMGB1" width="182" x="712" y="662"/>
+<chart height="121" interval="0" method="get_lumenArea" name="Lumen Area" width="182" x="894" y="662"/>
+</charts>
+<variable-sets/></model>

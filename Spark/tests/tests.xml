@@ -1,0 +1,79 @@
+<spark-tests>
+ <test model = "models/RSV bronchiole/RSV Bronchiole Model.xml">
+  <run seed = "3003" length = "1000" observer = "Observer1" save-all = "false"/>
+  <run seed = "3003" length = "1000" observer = "Observer2" save-all = "false"/>
+  <run seed = "30002300" length = "1000" observer = "Observer1"/>
+ </test>
+
+ <test model = "models/Basic/CreateDieA.xml">
+  <run seed = "10" length = "1000" observer = "Observer1" save-all = "false"/>
+  <run seed = "10" length = "1000" observer = "Observer2" save-all = "false"/>
+  <run seed = "3" length = "1000" observer = "Observer2"/>
+ </test>
+
+ <test model = "models/Basic/CreateDieB.xml">
+  <run seed = "10" length = "1000" observer = "Observer1" save-all = "false"/>
+  <run seed = "10" length = "1000" observer = "Observer2" save-all = "false"/>
+  <run seed = "3" length = "1000" observer = "Observer2"/>
+ </test>
+
+
+ <test model = "models/Basic/MovingAgentsA.xml">
+  <run seed = "10" length = "100" observer = "Observer1" save-all = "false"/>
+  <run seed = "10" length = "100" observer = "Observer2" save-all = "false"/>
+ </test>
+
+ <test model = "models/Basic/MovingAgentsB.xml">
+  <run seed = "10" length = "1000" observer = "Observer1" save-all = "false"/>
+  <run seed = "10" length = "1000" observer = "Observer2" save-all = "false"/>
+ </test>
+
+ <test model = "models/Basic/MovingAgentsC.xml">
+  <run seed = "10" length = "1000" observer = "Observer1" save-all = "false"/>
+  <run seed = "10" length = "1000" observer = "Observer2" save-all = "false"/>
+ </test>
+
+
+ <test model = "models/Basic/EvaporationAndDiffusion.xml">
+  <run seed = "1000" length = "1000" observer = "Observer2" save-all = "false"/>
+  <run seed = "300" length = "1000" observer = "Observer1"/>
+ </test>
+
+ <test model = "models/Basic/MultipleSpaces.xml">
+  <run seed = "10" length = "100" observer = "Observer1" save-all = "false"/>
+  <run seed = "10" length = "100" observer = "Observer2" save-all = "false"/>
+  <run seed = "3" length = "100" observer = "Observer1"/>
+ </test>
+
+ <test model = "models/Basic/ToyInfectionModel.xml">
+  <run seed = "10" length = "1000" observer = "Observer1" save-all = "false"/>
+  <run seed = "10" length = "1000" observer = "Observer2" save-all = "false"/>
+  <run seed = "3" length = "1000" observer = "Observer1"/>
+ </test>
+
+
+ <test model = "models/StemCells/StemCellModel.xml">
+  <run seed = "1" length = "3000" observer = "Observer1" save-all = "false"/>
+  <run seed = "0" length = "3000" observer = "Observer2" save-all = "false"/>
+  <run seed = "0" length = "3000" observer = "Observer2"/>
+ </test>
+
+ <test model = "models/RSV/RSVModel.xml">
+  <run seed = "100" length = "1000" observer = "Observer1" save-all = "false"/>
+  <run seed = "100" length = "1000" observer = "Observer2" save-all = "false"/>
+  <run seed = "30" length = "1000" observer = "Observer1"/>
+ </test>
+
+ <test model = "models/Worms/Model.xml">
+  <run seed = "300" length = "5000" observer = "Observer1" save-all = "false"/>
+  <run seed = "300" length = "5000" observer = "Observer2" save-all = "false"/>
+  <run seed = "300000" length = "5000" observer = "Observer1"/>
+ </test>
+
+ <test model = "models/GameOfLife/GameOfLifeModel.xml">
+  <run mode = "parallel" seed = "1111" length = "1000" observer = "Observer1" save-all = "false"/>
+  <run mode = "parallel" seed = "1111" length = "1000" observer = "Observer2" save-all = "false"/>
+  <run mode = "parallel" seed = "33340" length = "1000" observer = "Observer1"/>
+ </test>
+
+</spark-tests>

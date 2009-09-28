@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><model>
+<about path="readme.txt"/>
+<classpath path="."/>
+<setup>GameOfLife.GameOfLifeModel</setup>
+<mainframe height="630" width="530" x="0" y="0"><spacestyle name="space" selected="true"/><agentstyle border="true" name="Cell" position="0" transparent="false" visible="true"/><agentstyle border="true" name="DeadCell" position="1" transparent="false" visible="true"/></mainframe>
+<variables>
+<variable get="get_density" name="density" set="set_density" type="Double"/>
+</variables>
+<parameterframe height="84" width="600" x="530" y="0">
+<parameter default="0.3" get="get_density" max="1.0" min="0.0" name="density" set="set_density" step="0.01" type="Double" variable="density" widget="Slider"/>
+</parameterframe>
+<space-agents>
+<agent name="Cell">GameOfLife.Cell</agent>
+<agent name="DeadCell">GameOfLife.DeadCell</agent>
+</space-agents>
+<data-layers/>
+<charts/>
+</model>

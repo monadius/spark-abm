@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><model>
+<about path="readme.txt"/>
+<classpath path="."/>
+<setup>StemCellWithPhysAgents.StemCellModel</setup>
+<mainframe height="630" width="530" x="0" y="0"><spacestyle name="space" selected="true" swapXY="false"/><agentstyle alpha-function-value="0.0" border="true" name="OxygenSource" position="0" texture-env="0" transparent="false" visible="true"/><agentstyle alpha-function-value="0.0" border="true" name="PhysAgent" position="1" texture-env="0" transparent="false" visible="true"/></mainframe>
+<parameterframe height="489" width="600" x="530" y="0">
+<parameter default="0.6" get="get_velocityCoefficient" max="1.0" min="0.1" name="Velocity Decay" set="set_velocityCoefficient" step="0.1" type="Double" variable="velocity-coefficient" widget="Slider"/>
+<parameter default="3.0" get="get_separationCoefficient" max="10.0" min="0.0" name="Separation Coefficient" set="set_separationCoefficient" step="0.1" type="Double" variable="separation-coefficient" widget="Slider"/>
+<parameter default="0.0" get="get_adhesionCoefficient" max="10.0" min="0.0" name="Adhesion Coefficient" set="set_adhesionCoefficient" step="0.1" type="Double" variable="adhesion-coefficient" widget="Slider"/>
+<parameter default="50.0" get="get_collisionCoefficient" max="100.0" min="0.0" name="Collision Coefficient" set="set_collisionCoefficient" step="1.0" type="Double" variable="collision-coefficient" widget="Slider"/>
+<parameter default="1.0" get="get_centralForce" max="10.0" min="-10.0" name="central-force" set="set_centralForce" step="0.1" type="Double" variable="central-force" widget="Slider"/>
+<parameter default="50.0" get="get_maxForce" max="100.0" min="0.0" name="max-force" set="set_maxForce" step="0.1" type="Double" variable="max-force" widget="Slider"/>
+<parameter default="1.0" get="get_randomCoefficient" max="10.0" min="0.0" name="random-coefficient" set="set_randomCoefficient" step="0.1" type="Double" variable="random-coefficient" widget="Slider"/>
+<parameter default="0.0" get="get_initialLife" max="1000.0" min="0.0" name="initial-life" set="set_initialLife" step="1.0" type="Double" variable="initial-life" widget="Slider"/>
+<parameter default="0.0010" get="get_proliferationProbability" max="0.01" min="0.0" name="proliferation-probability" set="set_proliferationProbability" step="1.0E-4" type="Double" variable="proliferation-probability" widget="Slider"/>
+<parameter default="0.06" get="get_dt" max="0.2" min="0.01" name="dt" set="set_dt" step="0.01" type="Double" variable="dt" widget="Slider"/>
+<parameter default="20.0" get="get_initialAgentNumber" max="100.0" min="10.0" name="initial-agent-number" set="set_initialAgentNumber" step="1.0" type="Double" variable="initial-agent-number" widget="Slider"/>
+<parameter default="0.5" get="get_oxygenProduction" max="1.0" min="0.0" name="oxygen-production" set="set_oxygenProduction" step="0.1" type="Double" variable="oxygen-production" widget="Slider"/>
+<parameter default="0.02" get="get_oxygenConsumption" max="1.0" min="0.0" name="oxygen-consumption" set="set_oxygenConsumption" step="0.01" type="Double" variable="oxygen-consumption" widget="Slider"/>
+<parameter default="0.5" get="get_oxygenThreshold" max="1.0" min="0.0" name="oxygen-threshold" set="set_oxygenThreshold" step="0.01" type="Double" variable="oxygen-threshold" widget="Slider"/>
+<parameter default="6.0E-4" get="get_transformationProbability" max="0.01" min="0.0" name="transformation-probability" set="set_transformationProbability" step="1.0E-4" type="Double" variable="transformation-probability" widget="Slider"/>
+<parameter default="400.0" get="get_timeUntilRemoved" max="10000.0" min="0.0" name="time-until-removed" set="set_timeUntilRemoved" step="1.0" type="Double" variable="time-until-removed" widget="Slider"/>
+<parameter default="30.0" get="get_initialRadius" max="40.0" min="1.0" name="initial-radius" set="set_initialRadius" step="1.0" type="Double" variable="initial-radius" widget="Slider"/>
+</parameterframe>
+<variables>
+<variable get="get_velocityCoefficient" name="velocity-coefficient" set="set_velocityCoefficient" type="Double"/>
+<variable get="get_separationCoefficient" name="separation-coefficient" set="set_separationCoefficient" type="Double"/>
+<variable get="get_adhesionCoefficient" name="adhesion-coefficient" set="set_adhesionCoefficient" type="Double"/>
+<variable get="get_collisionCoefficient" name="collision-coefficient" set="set_collisionCoefficient" type="Double"/>
+<variable get="get_centralForce" name="central-force" set="set_centralForce" type="Double"/>
+<variable get="get_maxForce" name="max-force" set="set_maxForce" type="Double"/>
+<variable get="get_randomCoefficient" name="random-coefficient" set="set_randomCoefficient" type="Double"/>
+<variable get="get_initialLife" name="initial-life" set="set_initialLife" type="Double"/>
+<variable get="get_proliferationProbability" name="proliferation-probability" set="set_proliferationProbability" type="Double"/>
+<variable get="get_dt" name="dt" set="set_dt" type="Double"/>
+<variable get="get_initialAgentNumber" name="initial-agent-number" set="set_initialAgentNumber" type="Double"/>
+<variable get="get_oxygenProduction" name="oxygen-production" set="set_oxygenProduction" type="Double"/>
+<variable get="get_oxygenConsumption" name="oxygen-consumption" set="set_oxygenConsumption" type="Double"/>
+<variable get="get_oxygenThreshold" name="oxygen-threshold" set="set_oxygenThreshold" type="Double"/>
+<variable get="get_transformationProbability" name="transformation-probability" set="set_transformationProbability" type="Double"/>
+<variable get="get_timeUntilRemoved" name="time-until-removed" set="set_timeUntilRemoved" type="Double"/>
+<variable get="get_initialRadius" name="initial-radius" set="set_initialRadius" type="Double"/>
+<variable get="get_numberOfAliveCells" name="number-of-alive-cells" set="set_numberOfAliveCells" type="Double"/>
+<variable get="get_numberOfCells" name="number-of-cells" set="set_numberOfCells" type="Double"/>
+<variable get="get_numberOfDeadCells" name="number-of-dead-cells" set="set_numberOfDeadCells" type="Double"/>
+<variable get="get_numberOfYellowCells" name="number-of-yellow-cells" set="set_numberOfYellowCells" type="Double"/>
+<variable get="get_numberOfRedCells" name="number-of-red-cells" set="set_numberOfRedCells" type="Double"/>
+<variable get="get_numberOfGreenCells" name="number-of-green-cells" set="set_numberOfGreenCells" type="Double"/>
+<variable get="get_numberOfBlueCells" name="number-of-blue-cells" set="set_numberOfBlueCells" type="Double"/>
+<variable get="get_totalOxygen" name="total-oxygen" set="set_totalOxygen" type="Double"/>
+</variables>
+<variable-sets><variable-set name="1"><variable name="velocity-coefficient" value="0.6"/><variable name="separation-coefficient" value="3.0"/><variable name="adhesion-coefficient" value="0.0"/><variable name="collision-coefficient" value="50.0"/><variable name="central-force" value="3.5"/><variable name="max-force" value="50.0"/><variable name="random-coefficient" value="1.0"/><variable name="initial-life" value="0.0"/><variable name="proliferation-probability" value="0.0010"/><variable name="dt" value="0.060000000000000005"/><variable name="initial-agent-number" value="88.0"/><variable name="oxygen-production" value="0.5"/><variable name="oxygen-consumption" value="0.02"/><variable name="oxygen-threshold" value="0.5"/><variable name="transformation-probability" value="6.000000000000001E-4"/><variable name="time-until-removed" value="234.0"/><variable name="initial-radius" value="30.0"/></variable-set><variable-set name="error"><variable name="velocity-coefficient" value="0.6"/><variable name="separation-coefficient" value="3.0"/><variable name="adhesion-coefficient" value="0.0"/><variable name="collision-coefficient" value="50.0"/><variable name="central-force" value="3.0"/><variable name="max-force" value="50.0"/><variable name="random-coefficient" value="1.0"/><variable name="initial-life" value="0.0"/><variable name="proliferation-probability" value="0.0010"/><variable name="dt" value="0.060000000000000005"/><variable name="initial-agent-number" value="100.0"/><variable name="oxygen-production" value="0.5"/><variable name="oxygen-consumption" value="0.01"/><variable name="oxygen-threshold" value="0.5"/><variable name="transformation-probability" value="6.000000000000001E-4"/><variable name="time-until-removed" value="50.0"/><variable name="initial-radius" value="30.0"/></variable-set><variable-set name="11"><variable name="velocity-coefficient" value="0.6"/><variable name="separation-coefficient" value="0.0"/><variable name="adhesion-coefficient" value="3.9000000000000004"/><variable name="collision-coefficient" value="80.0"/><variable name="central-force" value="-0.09999999999999964"/><variable name="max-force" value="50.0"/><variable name="random-coefficient" value="1.0"/><variable name="initial-life" value="0.0"/><variable name="proliferation-probability" value="0.0010"/><variable name="dt" value="0.060000000000000005"/><variable name="initial-agent-number" value="20.0"/><variable name="oxygen-production" value="0.5"/><variable name="oxygen-consumption" value="0.02"/><variable name="oxygen-threshold" value="0.5"/><variable name="transformation-probability" value="6.000000000000001E-4"/><variable name="time-until-removed" value="400.0"/><variable name="initial-radius" value="5.0"/></variable-set></variable-sets>
+<dataset height="310" width="310" x="1130" y="0">
+<item get="get_numberOfAliveCells" name="number-of-alive-cells"/>
+<item get="get_numberOfCells" name="number-of-cells"/>
+<item get="get_numberOfDeadCells" name="number-of-dead-cells"/>
+<item get="get_numberOfYellowCells" name="number-of-yellow-cells"/>
+<item get="get_numberOfRedCells" name="number-of-red-cells"/>
+<item get="get_numberOfGreenCells" name="number-of-green-cells"/>
+<item get="get_numberOfBlueCells" name="number-of-blue-cells"/>
+<item get="get_totalOxygen" name="total-oxygen"/>
+</dataset>
+<renderframe height="265" name="Oxygen" width="265" x="0" y="605"><spacestyle name="space" selected="true" swapXY="false"/><datalayerstyle name="oxygen" selected="true"/><agentstyle alpha-function-value="0.0" border="true" name="OxygenSource" position="0" texture-env="0" transparent="false" visible="true"/><agentstyle alpha-function-value="0.0" border="true" name="PhysAgent" position="1" texture-env="0" transparent="false" visible="false"/></renderframe>
+<space-agents>
+<agent name="OxygenSource">StemCellWithPhysAgents.OxygenSource</agent>
+<agent name="PhysAgent">StemCellWithPhysAgents.PhysAgent</agent>
+</space-agents>
+<data-layers>
+<datalayer color1="0.0;0.0;0.0" color2="0.0;0.0;1.0" name="oxygen" val1="0.0" val2="2.0"/>
+</data-layers>
+<charts>
+<chart height="151" interval="0" method="get_numberOfAliveCells" name="number-of-alive-cells" width="227" x="529" y="719"/>
+<chart height="151" interval="0" method="get_numberOfCells" name="number-of-cells" width="227" x="762" y="719"/>
+<chart height="151" interval="0" method="get_numberOfDeadCells" name="number-of-dead-cells" width="227" x="993" y="711"/>
+<chart height="151" interval="0" method="get_numberOfYellowCells" name="number-of-yellow-cells" width="227" x="1211" y="420"/>
+<chart height="151" interval="0" method="get_numberOfRedCells" name="number-of-red-cells" width="227" x="530" y="571"/>
+<chart height="151" interval="0" method="get_numberOfGreenCells" name="number-of-green-cells" width="227" x="757" y="571"/>
+<chart height="151" interval="0" method="get_numberOfBlueCells" name="number-of-blue-cells" width="227" x="984" y="571"/>
+<chart height="151" interval="0" method="get_totalOxygen" name="total-oxygen" width="227" x="1211" y="571"/>
+</charts>
+</model>

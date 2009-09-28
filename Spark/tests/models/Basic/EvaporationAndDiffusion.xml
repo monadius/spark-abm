@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><model>
+        <classpath path="/bin/"/>
+        <setup>org.spark.test.basictests.EvaporationAndDiffusion</setup>
+        <mainframe height="786" width="796" x="356" y="-5"><spacestyle name="space" selected="true"/><datalayerstyle name="data" selected="true"/><agentstyle border="true" name="Agent" position="0" transparent="false" visible="true"/></mainframe>
+
+
+        <agent name="Agent">org.spark.test.basictests.EvaporationAndDiffusion$Agent</agent>
+
+        <datalayer color1="0.0;1.0;0.0" color2="0.0;0.0;0.0" name="data" val1="0.5" val2="0.0"/>
+
+<variables/></model>

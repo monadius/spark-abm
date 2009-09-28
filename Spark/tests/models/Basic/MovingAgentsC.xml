@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><model>
+        <classpath path="/bin/"/>
+
+        <setup>org.spark.test.basictests.MovingAgentsC</setup>
+
+        <mainframe height="660" width="595" x="68" y="2">
+        </mainframe>
+
+        <agent>org.spark.test.basictests.MovingAgentsC$Agent</agent>
+</model>
