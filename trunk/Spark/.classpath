@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="org/spark/data/ClusterGrid.java|org/spark/gui/render/JOGLRender3d.java|org/spark/test/MultipleSpaces.java|org/spark/utils/Pair.java|org/spark/startup/ABMModel2.java" kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry excluding="org/spark/data/ClusterGrid.java|org/spark/gui/render/JOGLRender3d.java|org/spark/test/MultipleSpaces.java|org/spark/utils/Pair.java|org/spark/startup/ABMModel2.java|org/spark/test/other/SerializationTest2.java" kind="src" path="src"/>
 	<classpathentry kind="lib" path="lib/colt.jar"/>
+	<classpathentry kind="lib" path="lib/extra166y.jar"/>
 	<classpathentry kind="lib" path="lib/gluegen-rt.jar"/>
 	<classpathentry kind="lib" path="lib/jcommon.jar"/>
 	<classpathentry kind="lib" path="lib/jfreechart.jar"/>
 	<classpathentry kind="lib" path="lib/jogl.jar"/>
+	<classpathentry kind="lib" path="lib/jsr166y.jar"/>
 	<classpathentry kind="lib" path="lib/log4j.jar"/>
 	<classpathentry kind="lib" path="lib/log5j-1.2.jar"/>
 	<classpathentry kind="lib" path="lib/p2pmpi.jar"/>
 	<classpathentry kind="lib" path="lib/pj20081126.jar"/>
-	<classpathentry kind="lib" path="lib/jsr166y.jar"/>
-	<classpathentry kind="lib" path="lib/extra166y.jar" sourcepath="C:/Help/Alexey/My New Projects/Java Libraries/ParallelArrays"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
