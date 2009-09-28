@@ -1,8 +1,4 @@
-/*
- Copyright 2008 by Alexey Solovyev and University of Pittsburgh
- Licensed under the Academic Free License version 3.0
- See the file "LICENSE" for more information
- */
+
 
 package org.spark.data;
 
