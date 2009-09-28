@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." default="src-dist" name="Compiler">
+	<description>
+		This Ant dist.xml file is used to create the distributions of 
+		the SPARK framework
+	</description>
+
+	<!-- Location of the source code folder -->
+	<property location="src" name="src" />
+	<!-- Output folder -->
+	<property location="release" name="output" />
+	<!-- Release folder -->
+	<property location="release/dist" name="release" />
+
+	<!-- Version number -->
+	<property name="version" value="0.1a" />
+
+	<!-- Source distribution name -->
+	<property name="src-name" value="spark-src-${version}" />
+	<!-- Windows distribution name -->
+	<property name="win-name" value="spark-${version}-windows-i586" />
+	<!-- Linux distribution name -->
+	<property name="linux-name" value="spark-${version}-linux-i586" />
+	<!-- MacOS distribution name -->
+	<property name="macos-name" value="spark-${version}-macosx-universal" />
+
+
+	<!-- Source code, text files, and scripts -->
+	<fileset dir="${basedir}" id="basic-files">
+		<include name="src/**/**" />
+		<include name="LICENSE" />
+		<include name="README" />
+		<include name="Licenses/**/**" />
+		<include name="build.xml" />
+		<include name="spark.log4j.properties" />
+	</fileset>
+
+	<!-- Libraries -->
+	<fileset dir="${basedir}" id="libs">
+		<include name="lib/*.jar" />
+		<exclude name="lib/p2pmpi*" />
+		<exclude name="lib/pj*" />
+	</fileset>
+
+	<!-- Documents -->
+	<zipfileset dir="${basedir}/docs/output" id="docs" prefix="docs">
+		<!--include name="**/**" /-->
+		<include name="Installation*"/>
+	</zipfileset>
+
+
+	<!-- Target: init -->
+	<target name="init" description="Creates output folders">
+		<mkdir dir="${release}" />
+	</target>
+
+
+	<!-- Target: src-dist -->
+	<target name="src-dist" depends="init" description="Creates source distribution">
+		<zip destfile="${release}/${src-name}.zip">
+			<fileset refid="basic-files" />
+			<fileset dir="${basedir}">
+				<include name="lib"/>
+			</fileset>
+		</zip>
+	</target>
+
+	<!-- Target: win-dist -->
+	<target name="win-dist" depends="init" description="Creates Windows distribution">
+		<zip destfile="${release}/${win-name}.zip">
+			<fileset refid="basic-files" />
+			<fileset refid="libs" />
+			<zipfileset refid="docs" />
+			<zipfileset dir="${output}" prefix="bin">
+				<include name="*.jar" />
+				<include name="*.dll" />
+				<include name="*.bat" />
+			</zipfileset>
+		</zip>
+	</target>
+
+	
+	<!-- Target: linux-dist -->
+	<target name="linux-dist" depends="init" description="Creates Linux distribution">
+		<zip destfile="${release}/${linux-name}.zip">
+			<fileset refid="basic-files" />
+			<zipfileset refid="docs" />
+			<fileset refid="libs" />
+			<zipfileset dir="${output}" prefix="bin">
+				<include name="*.jar" />
+				<include name="*.so" />
+				<!--<include name="*.sh" />-->
+			</zipfileset>
+		</zip>
+	</target>
+
+
+
+	<!-- Target: macos-dist -->
+	<target name="macos-dist" depends="init" description="Creates MacOS distributive">
+		<zip destfile="${release}/${macos-name}.zip">
+			<fileset refid="basic-files" />
+			<zipfileset refid="docs" />
+			<fileset refid="libs" />
+			<zipfileset dir="${output}" prefix="bin">
+				<include name="*.jar" />
+				<include name="*.jnilib" />
+				<!--<include name="*.command" />-->
+			</zipfileset>
+		</zip>
+	</target>
+
+	
+	<!-- Target: clean -->
+	<target name="clean" description="Removes all output files">
+		<delete dir="${release}" />
+	</target>
+</project>

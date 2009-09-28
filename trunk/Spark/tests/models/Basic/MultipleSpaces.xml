@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<model>
+  <classpath path="/bin/" />
+  <setup>org.spark.test.basictests.MultipleSpaces</setup>
+  <mainframe height="682" width="593" x="1" y="3">
+    <spacestyle name="space" selected="true" swapXY="false" />
+    <datalayerstyle name="tissue-life" selected="true" />
+    <agentstyle alpha-function-value="0.0" border="true"
+    name="AnotherAgent" position="0" texture-env="0"
+    transparent="false" visible="true" />
+    <agentstyle alpha-function-value="0.0" border="true"
+    name="InfectAgent" position="1" texture-env="0"
+    transparent="false" visible="true" />
+    <agentstyle alpha-function-value="0.0" border="true"
+    name="InflamCell" position="2" texture-env="0"
+    transparent="false" visible="true" />
+  </mainframe>
+  <agents>
+    <agent name="InflamCell" priority = "1">
+    org.spark.test.basictests.MultipleSpaces$InflamCell</agent>
+    <agent name="InfectAgent" priority = "2">
+    org.spark.test.basictests.MultipleSpaces$InfectAgent</agent>
+    <agent name="AnotherAgent" priority = "3">
+    org.spark.test.basictests.MultipleSpaces$AnotherAgent</agent>
+  </agents>
+  <datalayer color1="0.0;1.0;0.0" color2="1.0;0.0;0.0"
+  name="tissue-life" val1="100.0" val2="0.0" />
+  <datalayer color1="0.6;1.0;1.0" color2="1.0;0.0;0.0" name="toxin"
+  val1="0.0" val2="7.0" />
+  <datalayer color1="1.0;1.0;1.0" color2="0.0;0.0;1.0"
+  name="cidal-compound" val1="0.0" val2="7.0" />
+  <datalayer color1="1.0;1.0;1.0" color2="0.0;0.0;1.0"
+  name="new-layer" val1="0.0" val2="0.0" />
+  <renderframe height="500" name="View" width="496" x="588" y="1">
+    <spacestyle name="space2" selected="true" swapXY="false" />
+    <datalayerstyle name="new-layer" selected="true" />
+    <agentstyle alpha-function-value="0.0" border="true"
+    name="InflamCell" position="0" texture-env="0"
+    transparent="false" visible="true" />
+    <agentstyle alpha-function-value="0.0" border="true"
+    name="InfectAgent" position="1" texture-env="0"
+    transparent="false" visible="true" />
+    <agentstyle alpha-function-value="0.0" border="true"
+    name="AnotherAgent" position="2" texture-env="0"
+    transparent="false" visible="true" />
+  </renderframe>
+  <variables />
+</model>
