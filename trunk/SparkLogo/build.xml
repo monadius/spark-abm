@@ -1,0 +1,65 @@
+<project name="Compiler" default="jflex" basedir=".">
+	<property name="jflex" location="jflex" />
+	<property name="src" location="src" />
+	<property name="lib" location="lib" />
+	<property name="bin" location="tools" />
+	<property name = "class" location = "bin" />
+	<property name = "dist" location = "release" />
+	<property environment="env" />
+
+	<!-- Here compile time tools -->
+	<path id="binaries">
+		<pathelement location="${bin}" />
+		<fileset dir="${bin}">
+			<include name="**/*.jar" />
+			<include name="**/*.zip" />
+		</fileset>
+		<pathelement path="${java.class.path}" />
+	</path>
+
+	<!-- Here, the runtime libraries are stored -->
+	<path id="libraries">
+		<pathelement location="${lib}" />
+		<fileset dir="${lib}">
+			<include name="**/*.jar" />
+			<include name="**/*.zip" />
+		</fileset>
+		<pathelement path="${java.class.path}" />
+	</path>
+
+	<!-- Use JFlex -->
+	<taskdef name="jflex" classname="JFlex.anttask.JFlexTask" classpath="${bin}/JFlex.jar" />
+
+	<target name="init">
+		<mkdir dir="${dist}"/>
+	</target>
+
+
+	<target name="jflex" depends="init">
+		<jflex file="${jflex}/SparkLogo.flex" destdir="${src}" />
+	</target>
+
+
+	<target depends="init" name="jar">
+		<jar basedir="${class}" jarfile="${dist}/SPARK Manager.jar">
+			<include name="**/*.class" />
+			<manifest>
+				<attribute name="Main-Class" value="gui.MainGUI"/>
+				<attribute name="Class-Path" value="lib/javac.jar"/>
+			</manifest>
+		</jar>
+<!--
+		<copy todir="${dist}/lib">
+			<fileset dir="${lib}"/>
+		</copy>
+-->
+	</target>
+
+
+	<target name="clean">
+<!--
+		<delete dir="${classes}" />
+		<delete dir="${dist}" />
+-->
+	</target>
+</project>

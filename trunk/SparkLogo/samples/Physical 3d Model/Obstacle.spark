@@ -1,0 +1,12 @@
+agent Obstacle : PhysAgent
+
+
+to create
+	color = red
+	radius = 1
+end
+
+
+
+to make-step [ dt : number ]
+end

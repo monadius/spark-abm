@@ -1,0 +1,88 @@
+agent Particle : SpaceAgent
+
+
+var prev-position : vector
+var velocity : vector
+
+var mass
+var size
+
+var energy
+var time-of-birth
+var life-time
+var last-update-time
+
+var start-color : vector
+var end-color : vector
+var start-alpha : number
+var end-alpha : number
+
+
+to init [         start-radius
+                        min-size
+                        max-size
+                        start-color
+                        end-color
+                        start-alpha
+                        end-alpha
+                        dispersion
+                        speed
+                        life-time
+                        cur-time ]
+
+                color = start-color
+                self.life-time = life-time
+                self.mass = 1
+                self.energy = 1
+                self.start-color = start-color
+                self.end-color = end-color
+                self.start-alpha = start-alpha
+                self.end-alpha = end-alpha
+
+                prev-position = random-vector-of-length start-radius
+                move prev-position
+
+                self.size = random-in-interval min-size max-size
+                radius = size
+
+                self.time-of-birth = cur-time + life-time * (1 + random 1) * 0.2
+                self.last-update-time = cur-time
+
+                self.velocity = prev-position * (dispersion * speed)
+end
+
+
+to set-particle-color [ cur-time ]
+        var t = (cur-time - time-of-birth) / life-time
+        color = interpolate start-color end-color t
+        alpha = interpolate start-alpha end-alpha t
+end
+
+
+to is-alive [ cur-time ] : boolean
+        return         time-of-birth + life-time >= cur-time and
+                        energy > 0 and
+                        size > 0
+end
+
+
+
+to step [tick]
+        var cur-time = tick / 10
+
+        if not is-alive cur-time
+        [
+                die
+                exit
+        ]
+
+        var delta = last-update-time - cur-time
+
+        prev-position = position
+        move velocity * delta * 3
+
+        velocity *= 0.95
+        last-update-time = cur-time
+
+        set-particle-color cur-time
+end

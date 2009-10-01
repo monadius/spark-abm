@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<annotations>
+	<annotation name = "chart">
+		<argument name = "interval" type = "double"/>
+		<argument name = "name" type = "string"/>
+		
+		<translation>
+			chart name = @name interval = @interval method = @@getMethod
+		</translation>
+	</annotation>	
+	
+	
+	<annotation name = "parameter">
+		<argument name = "name" type = "string"/>
+		<argument name = "min" type = "double"/>
+		<argument name = "max" type = "double"/>
+		<argument name = "step" type = "double"/>
+		
+		<translation>
+			parameter name = @name min = @min max = @max step = @step widget = "Slider"
+		</translation>
+	</annotation>
+</annotations>
+	

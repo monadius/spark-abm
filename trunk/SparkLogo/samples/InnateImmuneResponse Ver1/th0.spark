@@ -1,0 +1,48 @@
+agent TH0 : turtle
+
+
+to th0-function
+	if il-12.value + il-4.value > 0
+	[
+		pro-th1 = (il-12.value + inf-g.value) * 100
+		pro-th2 = (il-10.value + il-4.value) * 100
+		
+		rth1 = random pro-th1
+		rth2 = random pro-th2
+		
+		if rth1 > rth2
+			[ activation += 1 ]
+		if rth1 < rth2
+			[ activation -= 1 ]
+	]
+	
+	wiggle
+	
+	th0-age -= 1
+	if th0-age < 0
+		[ die
+		 ;??? 
+		 exit ]
+		
+	if activation >= 10
+	[
+		ask hatch-one TH1
+		[
+			color = blue
+			th1-age = myself.th0-age
+		]
+		
+		die
+	]
+	
+	if activation <= -10
+	[
+		ask hatch-one TH2
+		[
+			color = cyan
+			th2-age = myself.th0-age
+		]
+		
+		die
+	]
+end

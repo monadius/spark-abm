@@ -1,0 +1,25 @@
+agent SimpleAgent : SpaceAgent
+
+
+var v
+
+
+to create
+	color = green
+	radius = 0.5
+end
+
+
+to step
+	v += random-vector3 -0.1 0.1
+	v = truncate v -0.5 0.5
+	
+	move v
+	
+	var holes = agents-here Hole
+	
+	if count holes > 0
+	[
+		(get holes 0).teleport self
+	]
+end

@@ -1,0 +1,12 @@
+agent Cell : SpaceAgent
+
+
+to create
+	super 0.5 square
+	color = yellow
+end
+
+
+
+
+

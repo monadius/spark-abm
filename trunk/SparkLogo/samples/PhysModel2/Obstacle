@@ -1,0 +1,7 @@
+agent Obstacle : SpaceAgent
+
+
+to create
+	color = red
+	radius = 0.5
+end

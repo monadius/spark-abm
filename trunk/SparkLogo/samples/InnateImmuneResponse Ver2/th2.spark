@@ -1,0 +1,21 @@
+agent TH2 : turtle
+
+
+to step
+	th2-function
+end
+
+
+to th2-function
+	if il-10.value > 0
+	[
+		il-4.add-value-here il-10.value
+		il-10.add-value-here il-10.value
+	] 
+	
+	wiggle
+	
+	th2-age -= 1
+	if th2-age < 0
+		[ die ]
+end

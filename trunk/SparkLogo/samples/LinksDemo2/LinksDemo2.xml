@@ -1,0 +1,13 @@
+<spark-project>
+	<name>LinksDemo2</name>
+	<project-directory>C:\Help\Alexey\My New Projects\Eclipse Projects\SparkLogo\samples\LinksDemo2</project-directory>
+	<output-directory>output</output-directory>
+
+	<files>
+		<file>PhysAgent.spark</file>
+		<file>StrongLink.spark</file>
+		<file>TestModel.spark</file>
+		<file>WeakLink.spark</file>
+		<file>TestAgent.spark</file>
+	</files>
+</spark-project>
