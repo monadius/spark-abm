@@ -1,0 +1,14 @@
+agent TH2-germ : turtle
+
+
+to th2-germ-function
+	if random 100 < 1
+	[
+		ask hatch-one TH2
+		[
+			color = cyan
+			th1-age = 100
+			activation = 0
+		]
+	]
+end

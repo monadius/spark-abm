@@ -1,0 +1,20 @@
+agent an : neu
+
+
+to an-function
+	ifelse position.length > magnitude
+	[
+		wiggle 1
+		sniff platelet 0
+	]
+	[
+		wiggle 1
+	]
+	
+	TNF.add-value-here ( TNF-affector * 0.3 / (0.1 + TGF.value * 100 + IL-10.value / 100)) *  (1 + TNF.value / 1  + IL1-beta.value / 10)
+	IL1-beta.add-value-here ( 0.2 / ( 1 + TGF.value * 2 + IL-10.value / 100)) * ( 1 + TNF.value + IL1-beta.value)
+	
+	age -= 1
+	if age < 0
+		[ die ]
+end

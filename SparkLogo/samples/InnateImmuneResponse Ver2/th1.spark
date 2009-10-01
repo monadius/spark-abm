@@ -1,0 +1,23 @@
+agent TH1 : turtle
+
+
+to step
+	th1-function
+end
+
+
+to th1-function
+	if il-12.value > 0
+	[
+		; inf-g.value is added
+		inf-g.add-value-here inf-g.value + il-12.value + tnf.value + il-1.value
+	]
+	
+	wiggle
+	
+	th1-age -= 1
+	if th1-age < 0
+		[ die ]
+end
+
+

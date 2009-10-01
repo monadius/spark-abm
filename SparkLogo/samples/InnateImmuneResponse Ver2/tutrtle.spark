@@ -1,0 +1,49 @@
+agent turtle : SpaceAgent
+
+
+var wbc-roll
+var wbc-stick
+var wbc-migrate
+var pmn-age
+var pmn-pcd
+var mono-age
+var tnfr
+var il-1r
+var th0-age
+var th1-age
+var th2-age
+var activation
+var pro-th1
+var pro-th2
+var rth1
+var rth2
+
+
+var heading
+
+to create
+	heading = random 360
+	radius = 0.2
+end
+
+
+to rt [number]
+	heading -= number
+end
+
+
+to lt [number]
+	heading += number
+end
+
+
+to jump [number]
+	move vector-in-direction number heading
+end
+
+
+to wiggle
+	lt random 45
+	rt random 45
+	jump 1
+end

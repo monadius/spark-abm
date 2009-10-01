@@ -1,0 +1,47 @@
+agent af : fibroblast
+
+
+var af-step
+
+
+to af-function
+	af-step += 1
+	
+	ifelse position.length > magnitude
+	[
+		wiggle 1
+		sniff TGF 0
+	]
+	[
+		wiggle 1
+	]
+	
+	if af-step == 50 and total-dam > 0
+	[
+		ask hatch af 2
+		[
+			color = yellow
+			af-step = 0
+			age = myself.age
+		]
+		
+		die
+		exit
+	]
+	
+	ifelse dam-number.value > 2 * total-TGF / (1 + total-TNF)
+	[
+		collagen-number.add-value-here 2 * total-TGF / (1 + total-TNF)
+		collagen-number2.add-value-here 2 * total-TGF / (1 + total-TNF)
+	]
+	[
+		collagen-number.add-value-here dam-number.value
+		collagen-number2.add-value-here dam-number.value
+	]
+	
+	TGF.add-value-here 0.1 / (1 + TNF.value / 5) * add-TGF
+	
+	age -= 1
+	if age < 0
+		[ die ]
+end

@@ -1,0 +1,36 @@
+agent neu : CellAgent
+
+
+to neu-function
+	wiggle 1
+	sniff platelet 0
+	sniff TNF 0
+	
+	var activated = false
+	
+	if position.length < magnitude * 1.7 * p2
+	[
+		activated = true
+	]
+	
+	if TNF.value > 0.1
+	[
+		activated = true
+	]
+	
+	if activated
+	[
+		ask hatch-one an
+		[
+			age = myself.age
+			color = red
+		]
+		
+		die
+		exit
+	]
+	
+	age -= 1
+	if age < 0
+		[ die ]
+end

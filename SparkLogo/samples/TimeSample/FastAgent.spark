@@ -1,0 +1,13 @@
+@step(priority = 1, time = "1/3")
+agent FastAgent : SpaceAgent
+
+to create
+	color = green
+	radius = 0.5
+	move-to [0, -1, 0]
+end
+
+
+to step
+	move [1, 0, 0]
+end

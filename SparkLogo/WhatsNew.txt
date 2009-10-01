@@ -1,0 +1,21 @@
+SPARK
+
+2009-06-18
+--- Parameters with a predefined list of values (JComboBox)
+--- Links
+
+2009-06-17
+
+
+
+
+
+SPARK-PL
+
+2009-06-18
+--- Parameters with a predefined list of values
+	(values = "1, 2, 3, 0.4", etc.)
+--- Links ('Link' and 'AbstractLink' types, 
+	agent.all-links, agent.links-of-type, link.connect methods)
+
+2009-06-17

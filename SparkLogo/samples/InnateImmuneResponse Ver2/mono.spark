@@ -1,0 +1,88 @@
+agent mono : turtle
+
+
+to step
+	mono-function
+end
+
+
+to mono-function
+	ifelse stnfr.value <= 100
+		[ tnfr = min 100 (tnf.value + stnfr.value) ]
+		[ tnfr = min 100 (tnf.value - stnfr.value) ]
+		
+	il-1r = min 100 (il-1.value - il-1ra.value - sil-1r.value)
+	il-1ra.add-value-here (il-1.value / 2)
+	stnfr.add-value-here tnfr / 2
+	sil-1r.add-value-here il-1r / 2
+	
+	activation = endotoxin.value + paf.value + inf-g.value - il-10.value
+	
+	if activation > 0
+	[
+		gcsf.add-value-here endotoxin.value + paf.value + tnf.value + inf-g.value
+		il-8.add-value-here tnf.value + il-1.value
+		il-12.add-value-here tnf.value + il-1.value
+		il-10.add-value-here tnf.value + il-1.value
+		il-1.add-value-here endotoxin.value + paf.value + il-1r + tnf.value
+		tnf.add-value-here endotoxin.value + paf.value + tnfr + inf-g.value
+		
+		if wbc-stick == 1 and ec-stick.value >= 100
+			[ wbc-migrate = 1 ]
+			
+		if wbc-roll == 1
+			[ wbc-stick = 1 ]
+		
+		wbc-roll = 1
+	]
+	
+	if activation < 0
+	[
+		il-10.add-value-here tnf.value + il-1.value
+	]
+	
+	if wbc-migrate == 1
+		[ heal ]
+		
+	ifelse wbc-roll == 1
+		[ mono-sniff
+		  jump 1 ]
+		[ repeat 2 
+			[ mono-sniff 
+			  jump 1 ]
+		]
+		
+	mono-age -= 1
+	if mono-age < 0
+		[ die ]
+		
+	if activation > 20
+		[ activation = 20 ] 
+end
+
+
+to heal
+	oxy.value = 100
+	ec-roll.value = 0
+	ec-stick.value = 0
+	ec-migrate.value = 0
+	infection.value = 0
+end
+
+
+to mono-sniff
+	var mono-ahead = 0
+	var mono-right = 0
+	var mono-left = 0
+
+	var p = position	
+	mono-ahead = paf.value-at (p + vector-in-direction 1 heading)
+	mono-right = paf.value-at (p + vector-in-direction 1 (heading - 45))
+	mono-left = paf.value-at (p + vector-in-direction 1 (heading + 45))
+	
+	ifelse mono-right >= mono-ahead and mono-right >= mono-left
+		[ rt 45 ]
+		[ if mono-left >= mono-ahead
+			[ lt 45 ]
+		]
+end

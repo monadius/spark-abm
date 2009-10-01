@@ -1,0 +1,22 @@
+@tick(time = "6")
+model TimeModel
+
+space GridSpace -1 30 -3 3 true false
+
+
+to setup
+        create-one SlowAgent
+        create-one FastAgent
+
+
+    for x = space-xmin + 1 : space-xmax - 1
+    [
+         for y = space-ymin + 1 : space-ymax - 1
+         [
+               ask create-one Cell
+               [
+                                move-to create-vector x y 0
+               ]
+         ]
+    ]
+end

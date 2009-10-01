@@ -1,0 +1,37 @@
+agent Spring : Link
+
+
+; Rigidity coefficient
+var k : double
+; Initial length
+var l : double
+
+
+to create
+	color = red
+	width = 0.2
+end
+
+
+to init [a : PhysAgent b : PhysAgent k : number]
+	connect a b
+	self.k = k
+	
+	l = distance.length
+end
+
+
+to apply-forces
+	var d = distance end1 end2
+	var dist = d.length
+	
+	d.normalize
+	d *= (dist - l) * k
+	ask (end1 as PhysAgent) [ apply-force d ]
+	ask (end2 as PhysAgent) [ apply-force -d ]  
+end
+
+
+to step
+	apply-forces
+end 
