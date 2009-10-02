@@ -1,3 +1,4 @@
+@observer(mode = "concurrent")
 model GameOfLifeModel
 
 
@@ -20,6 +21,4 @@ to setup
 			cell.move-to create-vector i j 0
 		]
 	]
-	
-	set-parallel-execution-mode
 end

@@ -480,7 +480,6 @@ public class Type {
 		java.println("import org.spark.space.*;");
 		java.println("import org.spark.utils.*;");
 		java.println("import org.spark.math.*;");
-		java.println("import org.spark.startup.ABMModel;");
 		java.emptyLine();
 
 		// TODO: write those imports which are required

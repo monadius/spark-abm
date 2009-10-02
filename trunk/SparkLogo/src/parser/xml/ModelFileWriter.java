@@ -12,6 +12,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import main.annotation.InterfaceAnnotation;
+import main.annotation.ObserverAnnotation;
 import main.type.AgentType;
 
 import org.w3c.dom.Document;
@@ -141,7 +142,7 @@ public class ModelFileWriter {
 	 * @param classPath
 	 * @param setupClass
 	 */
-	public void addSetupInformation(String path, String setupClass) {
+	public void addSetupInformation(String path, String setupClass, ObserverAnnotation observer) {
 		Node setup, classPath;
 
 		// First, remove old nodes if they exist
@@ -154,7 +155,11 @@ public class ModelFileWriter {
 		}
 
 		// Create new nodes
-		setup = doc.createElement("setup");
+		if (observer != null)
+			setup = observer.toNode(doc);
+		else
+			setup = doc.createElement("setup");
+		
 		classPath = doc.createElement("classpath");
 
 		// Fill in nodes' attributes

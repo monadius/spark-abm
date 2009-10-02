@@ -90,6 +90,9 @@ public abstract class InterfaceAnnotation {
 		if (name.equals("tick"))
 			return new TickAnnotation();
 		
+		if (name.equals("observer"))
+			return new ObserverAnnotation();
+		
 		throw new Exception("Annotation " + name + " is not defined");
 	}
 	

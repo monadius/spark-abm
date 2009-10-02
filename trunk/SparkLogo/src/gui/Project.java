@@ -361,6 +361,8 @@ public class Project {
 		// Create a compiler parameters string
 		// compilerArgs.add("-verbose");
 
+		compilerArgs.add("-Xlint:deprecation");
+		
 		compilerArgs.add("-target");
 		compilerArgs.add("1.5");
 
