@@ -1604,7 +1604,7 @@
         	</translation>
         </command>
         
-
+<!-- 
         <command name = "set-parallel-execution-mode">
                 <translation>
                         Observer.getInstance().setExecutionMode(ExecutionMode.PARALLEL_MODE)
@@ -1617,7 +1617,7 @@
                         Observer.getInstance().setExecutionMode(ExecutionMode.SERIAL_MODE)
                 </translation>
         </command>
-
+-->
 
 		<command name = "set-seed">
 			<argument name = "seed" type = "double"/>

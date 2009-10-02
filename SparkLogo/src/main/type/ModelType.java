@@ -14,6 +14,7 @@ import main.SparkModel;
 import main.Variable;
 import main.annotation.InterfaceAnnotation;
 import main.annotation.ModelAnnotation;
+import main.annotation.ObserverAnnotation;
 import main.annotation.TickAnnotation;
 
 public class ModelType extends Type {
@@ -341,18 +342,23 @@ outer:
 		
 		// Length of a tick
 		String tickTime = null;
+		ObserverAnnotation observer = null;
 		
 		// TODO: more general approach is required
-		if (annotations.size() > 0) {
-			ModelAnnotation ann = annotations.get(0);
+		for (ModelAnnotation ann : annotations) {
 			if (ann instanceof TickAnnotation) {
 				tickTime = ((TickAnnotation) ann).getTime();
+				continue;
+			}
+			
+			if (ann instanceof ObserverAnnotation) {
+				observer = (ObserverAnnotation) ann;
 			}
 		}
 		
 		ModelFileWriter modelWriter = new ModelFileWriter(file, tickTime);
 		
-		modelWriter.addSetupInformation(".", packageName + "." + id.toJavaName());
+		modelWriter.addSetupInformation(".", packageName + "." + id.toJavaName(), observer);
 		// TODO: how to accept other files?
 		modelWriter.addAboutInformation("readme.txt");
 		modelWriter.addAgents(packageName, agents);

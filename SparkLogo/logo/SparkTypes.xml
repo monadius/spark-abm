@@ -252,8 +252,8 @@
 
 
 		<!-- $ means translator-only name, user cannot use this type explicitly -->
-		<type name = "$model" interface = "true">
-			<javaname>ABMModel</javaname>
+		<type name = "$model">
+			<javaname>SparkModel</javaname>
 			
 			<method name = "$StandardSpace">
 				<argument name = "xMin" type = "double"/>
