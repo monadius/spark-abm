@@ -5,9 +5,9 @@ import org.spark.core.*;
 import org.spark.data.*;
 import org.spark.space.*;
 import org.spark.utils.*;
-import org.spark.startup.ABMModel;
+import org.spark.math.*;
 
-public class RSVModel implements ABMModel
+public class RSVModel extends SparkModel
 {
 	public static double initMac = 0;
 	public static double initVirus = 0;

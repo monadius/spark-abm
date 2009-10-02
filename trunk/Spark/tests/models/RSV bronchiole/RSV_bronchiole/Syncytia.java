@@ -5,7 +5,7 @@ import org.spark.core.*;
 import org.spark.data.*;
 import org.spark.space.*;
 import org.spark.utils.*;
-import org.spark.startup.ABMModel;
+import org.spark.math.*;
 
 public class Syncytia extends SpaceAgent
 {
@@ -32,7 +32,7 @@ public class Syncytia extends SpaceAgent
 		this.die();
 	}
 	
-	public void step(long tick)
+	public void step(SimulationTime tick)
 	{
 		this.age -= 1.0;
 		RSVModel.hmgb1.addValue(this, 0.05);

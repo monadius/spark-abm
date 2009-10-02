@@ -5,7 +5,7 @@ import org.spark.core.*;
 import org.spark.data.*;
 import org.spark.space.*;
 import org.spark.utils.*;
-import org.spark.startup.ABMModel;
+import org.spark.math.*;
 
 public class Macrophage extends CellAgent
 {
@@ -33,7 +33,7 @@ public class Macrophage extends CellAgent
 		this.die();
 	}
 	
-	public void step(long tick)
+	public void step(SimulationTime time)
 	{
 		double il10Val = 0;
 		double hmgb1Val = 0;

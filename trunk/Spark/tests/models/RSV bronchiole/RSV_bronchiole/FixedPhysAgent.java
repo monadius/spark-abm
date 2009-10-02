@@ -5,7 +5,7 @@ import org.spark.core.*;
 import org.spark.data.*;
 import org.spark.space.*;
 import org.spark.utils.*;
-import org.spark.startup.ABMModel;
+import org.spark.math.*;
 
 public class FixedPhysAgent extends PhysAgent
 {

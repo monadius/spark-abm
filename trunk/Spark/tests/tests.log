@@ -2781,3 +2781,28 @@ DATA: OK
 RUN: Observer = Observer1; length = 100; seed = 33340; mode = parallel; all data = true
 END: time = 531
 DATA: OK
+
+MODEL: RSV Bronchiole Model.xml; MainClass = RSV_bronchiole.RSVModel
+RUN: Observer = Observer1; length = 1000; seed = 3003; mode = serial; all data = false
+
+MODEL: RSV Bronchiole Model.xml; MainClass = RSV_bronchiole.RSVModel
+RUN: Observer = Observer1; length = 1000; seed = 3003; mode = serial; all data = false
+END: time = 4766
+DATA: FAIL
+RUN: Observer = Observer2; length = 1000; seed = 3003; mode = serial; all data = false
+END: time = 4922
+DATA: FAIL
+RUN: Observer = Observer1; length = 1000; seed = 30002300; mode = serial; all data = true
+END: time = 4609
+DATA: FAIL
+
+MODEL: RSV Bronchiole Model.xml; MainClass = RSV_bronchiole.RSVModel
+RUN: Observer = Observer1; length = 1000; seed = 3003; mode = serial; all data = false
+END: time = 4781
+DATA: OK
+RUN: Observer = Observer2; length = 1000; seed = 3003; mode = serial; all data = false
+END: time = 4953
+DATA: OK
+RUN: Observer = Observer1; length = 1000; seed = 30002300; mode = serial; all data = true
+END: time = 4704
+DATA: OK
