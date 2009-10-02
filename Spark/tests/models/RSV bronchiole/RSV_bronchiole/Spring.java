@@ -5,7 +5,7 @@ import org.spark.core.*;
 import org.spark.data.*;
 import org.spark.space.*;
 import org.spark.utils.*;
-import org.spark.startup.ABMModel;
+import org.spark.math.*;
 
 public class Spring extends Agent
 {
@@ -53,7 +53,7 @@ public class Spring extends Agent
 		this.end2.applyForce((new Vector(d)).negate());
 	}
 	
-	public void step(long tick)
+	public void step(SimulationTime time)
 	{
 		this.applyForces();
 	}

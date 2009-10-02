@@ -5,7 +5,7 @@ import org.spark.core.*;
 import org.spark.data.*;
 import org.spark.space.*;
 import org.spark.utils.*;
-import org.spark.startup.ABMModel;
+import org.spark.math.*;
 
 public class Epithelial extends SpaceAgent
 {
@@ -75,7 +75,7 @@ public class Epithelial extends SpaceAgent
 		}
 	}
 	
-	public void step(long tick)
+	public void step(SimulationTime tick)
 	{
 		if (this.infected)
 		{
