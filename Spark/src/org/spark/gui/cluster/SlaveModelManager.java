@@ -7,6 +7,7 @@ import org.spark.cluster.ClusterCommand;
 import org.spark.cluster.ClusterManager;
 import org.spark.core.Agent;
 import org.spark.core.Observer;
+import org.spark.core.SparkModel;
 import org.spark.data.GridCommunicator;
 import org.spark.gui.IUpdatableFrame;
 import org.spark.gui.UpdatableFrame;
@@ -14,7 +15,6 @@ import org.spark.gui.render.AgentStyle;
 import org.spark.gui.render.DataLayerStyle;
 import org.spark.gui.render.Render;
 import org.spark.space.GlobalSpace;
-import org.spark.startup.ABMModel;
 import org.spark.utils.Vector;
 
 import org.w3c.dom.Document;
@@ -44,7 +44,7 @@ public class SlaveModelManager {
 	private ArrayList<UpdatableFrame> frames = new ArrayList<UpdatableFrame>();
 
 	private Document xmlDoc = null;
-	private ABMModel model = null;
+	private SparkModel model = null;
 	
 
 	
@@ -181,7 +181,7 @@ public class SlaveModelManager {
 			
 			// Create model instance (not required, actually)
 			String setupName = xmlDoc.getElementsByTagName("setup").item(0).getTextContent();
-			model = (ABMModel) Class.forName(setupName).newInstance();
+			model = (SparkModel) Class.forName(setupName).newInstance();
 //			setup = (ABMModel) classLoader.loadClass(setupName).newInstance();
 
 			// Then, get all model related data
@@ -452,7 +452,7 @@ public class SlaveModelManager {
 				}
 			
 				// TODO: issues with this thread
-				Observer.getInstance().clear();
+				Observer.getInstance().reset();
 				
 				for (IUpdatableFrame frame : frames) {
 					frame.reset();

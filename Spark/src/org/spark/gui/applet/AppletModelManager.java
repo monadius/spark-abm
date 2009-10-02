@@ -5,12 +5,12 @@ import java.util.Collections;
 import java.util.HashMap;
 
 import org.spark.core.Agent;
-import org.spark.core.ExecutionMode;
 import org.spark.core.Observer;
+import org.spark.core.ObserverFactory;
+import org.spark.core.SparkModel;
 import org.spark.gui.render.AgentStyle;
 import org.spark.gui.render.DataLayerStyle;
 import org.spark.gui.render.Render;
-import org.spark.startup.ABMModel;
 import org.spark.utils.Vector;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
@@ -25,11 +25,11 @@ public class AppletModelManager {
 		return instance;
 	}
 	
-	public static ABMModel getModelClass() {
+	public static SparkModel getModelClass() {
 		return instance.model;
 	}
 	
-	public static ABMModel getModel() {
+	public static SparkModel getModel() {
 		return instance.model;
 	}
 	
@@ -43,7 +43,7 @@ public class AppletModelManager {
 	private Document xmlDoc = null;
 	
 	
-	private org.spark.startup.ABMModel model;
+	private SparkModel model;
 	private Class<? extends Agent>[] agentTypes;
 	private HashMap<Class<? extends Agent>, String> agentNames = new HashMap<Class<? extends Agent>, String>();
 	private HashMap<String, DataLayerStyle> dataLayerStyles = new HashMap<String, DataLayerStyle>();
@@ -191,7 +191,7 @@ public class AppletModelManager {
 						"The setup class must be uniquely specified");
 
 			String setupName = nodes.item(0).getTextContent();
-			model = (ABMModel) Class.forName(setupName).newInstance();
+			model = (SparkModel) Class.forName(setupName).newInstance();
 
 			/* Load agents */
 
@@ -251,6 +251,7 @@ public class AppletModelManager {
 			nodes = xmlDoc.getElementsByTagName("mainframe");
 			mainPanel.setupRender(nodes.item(0));
 			
+			ObserverFactory.create(model, "org.spark.core.Observer1", 0);
 			setupModel();
 
 		} catch (Exception e) {
@@ -332,15 +333,8 @@ public class AppletModelManager {
 		stopModel();
 		
 		// Setup is processed in serial mode always
-		if (Observer.getInstance().isSerial()) {
-			model.setup();
-		}
-		else {
-			int mode = Observer.getInstance().getExecutionMode();
-			Observer.getInstance().setExecutionMode(ExecutionMode.SERIAL_MODE);
-			model.setup();
-			Observer.getInstance().setExecutionMode(mode);
-		}
+		Observer.getInstance().beginSetup();
+		model.setup();
 		Observer.getInstance().finalizeSetup();
 
 		paused = true;
@@ -381,7 +375,7 @@ public class AppletModelManager {
 			}
 		}
 		
-		Observer.getInstance().clear();
+//		Observer.getInstance().clear();
 	}
 
 	
@@ -506,20 +500,13 @@ public class AppletModelManager {
 				}
 			
 				// TODO: issues with this thread
-				Observer.getInstance().clear();
+				Observer.getInstance().reset();
 				if (model == null)
 					return;
 					
 				// Setup is processed in serial mode always
-				if (Observer.getInstance().isSerial()) {
-					model.setup();
-				}
-				else {
-					int mode = Observer.getInstance().getExecutionMode();
-					Observer.getInstance().setExecutionMode(ExecutionMode.SERIAL_MODE);
-					model.setup();
-					Observer.getInstance().setExecutionMode(mode);
-				}
+				Observer.getInstance().beginSetup();
+				model.setup();
 				Observer.getInstance().finalizeSetup();
 				
 				for (IUpdatablePanel panel : panels) {

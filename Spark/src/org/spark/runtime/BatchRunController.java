@@ -5,11 +5,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 
-import org.spark.core.ExecutionMode;
 import org.spark.core.Observer;
+import org.spark.core.SparkModel;
 import org.spark.gui.DatasetFrame;
 import org.spark.gui.GUIModelManager;
-import org.spark.startup.ABMModel;
 
 public class BatchRunController {
 	/* The number of repetitions of each simulation */
@@ -290,7 +289,7 @@ public class BatchRunController {
 		
 		// Reset observer
 		Observer.getInstance().reset();
-		ABMModel model = GUIModelManager.getInstance().getModel(); 
+		SparkModel model = GUIModelManager.getInstance().getModel(); 
 		if (model == null) {
 			stop();
 			return 0;
@@ -301,15 +300,8 @@ public class BatchRunController {
 		ModelVariable.synchronizeVariables();
 		
 		// Setup is processed in serial mode always
-		if (Observer.getInstance().isSerial()) {
-			model.setup();
-		}
-		else {
-			int mode = Observer.getInstance().getExecutionMode();
-			Observer.getInstance().setExecutionMode(ExecutionMode.SERIAL_MODE);
-			model.setup();
-			Observer.getInstance().setExecutionMode(mode);
-		}
+		Observer.getInstance().beginSetup();
+		model.setup();
 		Observer.getInstance().finalizeSetup();		
 
 		return numberOfTicks;

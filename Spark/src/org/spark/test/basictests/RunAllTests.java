@@ -9,7 +9,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.spark.core.*;
-import org.spark.startup.ABMModel;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -17,7 +16,7 @@ import org.w3c.dom.NodeList;
 
 public class RunAllTests {
 
-	public static ABMModel setup;
+	public static SparkModel setup;
 	private static URLClassLoader classLoader;
 	private static File xmlDocFile;
 
@@ -46,7 +45,7 @@ public class RunAllTests {
 	}
 
 	public static void main(String[] args) throws Exception {
-		Observer.init("org.spark.core.Observer1");
+		ObserverFactory.create(null, "org.spark.core.Observer1", 0);
 //		org.spark.core.Observer.init("org.spark.core.ObserverParallel");
 //		Observer.getInstance().setExecutionMode(false);
 
@@ -72,7 +71,7 @@ public class RunAllTests {
 			throw new Exception("The setup class must be uniquely specified");
 
 		String setupName = nodes.item(0).getTextContent();
-		setup = (ABMModel) classLoader.loadClass(setupName).newInstance();
+		setup = (SparkModel) classLoader.loadClass(setupName).newInstance();
 		
 		for (int k = 10; k <= 10; k++) {
 			Observer.getInstance().reset();

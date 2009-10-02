@@ -6,9 +6,8 @@ import org.spark.data.*;
 import org.spark.space.*;
 import org.spark.utils.*;
 import org.spark.math.*;
-import org.spark.startup.ABMModel;
 
-public class Model implements ABMModel
+public class Model extends SparkModel
 {
 	public static double wormSpeed = 0;
 	public static double wanderSpeed = 0;

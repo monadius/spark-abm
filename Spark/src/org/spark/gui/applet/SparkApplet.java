@@ -131,8 +131,7 @@ public class SparkApplet extends JApplet {
 			instance = this;
 			initPanels();
 			AppletModelManager.init();
-			org.spark.core.Observer.init("org.spark.core.Observer1");
-
+			
 		}
 		catch(Exception e) {
 			e.printStackTrace();

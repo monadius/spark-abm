@@ -6,7 +6,6 @@ import org.spark.data.*;
 import org.spark.space.*;
 import org.spark.utils.*;
 import org.spark.math.*;
-import org.spark.startup.ABMModel;
 
 public class DeadCell extends Agent
 {

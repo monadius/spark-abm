@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.spark.core.ExecutionMode;
+import org.spark.core.Observer;
 import org.spark.data.DataLayer;
 import org.spark.data.Grid;
 import org.spark.data.ParallelGrid;
@@ -30,8 +31,11 @@ public abstract class Space implements Serializable {
 	/* Serial version UID */
 	private static final long serialVersionUID = 7300324697412064632L;
 
+	/* Reference to the observer */
+	private Observer observer;
+	
 	private transient ArrayList<SpaceNode> nodeQueue;
-	private int executionMode;
+	private final int executionMode;
 	
 	
 	/* Determines the maximum size of all nodes in the space */
@@ -49,6 +53,10 @@ public abstract class Space implements Serializable {
 	 * Default constructor
 	 */
 	protected Space() {
+		observer = Observer.getInstance();
+		
+		executionMode = observer.getExecutionMode();
+		
 		nodeQueue = new ArrayList<SpaceNode>(1000);
 		dataLayers = new HashMap<String, DataLayer>();
 		dataLayersList = new ArrayList<DataLayer>();
@@ -104,14 +112,10 @@ public abstract class Space implements Serializable {
 	}
 	
 	
-	// TODO: should not be public
-	// Remove when factories for spaces are created
-	public void setExecutionMode(int mode) {
-		if (ExecutionMode.isMode(mode))
-			this.executionMode = mode;
-	}
-	
-	
+
+	/**
+	 * Processes all nodes (in concurrent execution mode)
+	 */
 	public final void processNodes() {
 		for (SpaceNode node : nodeQueue) {
 			if ((node.state & SpaceNode.NODE_IS_REMOVING) != 0) {
@@ -164,18 +168,35 @@ public abstract class Space implements Serializable {
 		node.agent = agent;
 		node.next = node.prev = node;
 		
-		if (executionMode == ExecutionMode.SERIAL_MODE) {
+		
+		// observer.isSerial() is always true during the setup process
+		if (observer.isSerial()) {
 			addNode0(node);
 			return node;
 		}
 		
-		if (node.state == 0) {
-			synchronized(this) {
+		
+		switch (executionMode) {
+		case ExecutionMode.CONCURRENT_MODE:
+			if (node.state == 0) {
 				nodeQueue.add(node);
 			}
+			node.state |= SpaceNode.NODE_IS_CREATING;
+			break;
+			
+		case ExecutionMode.PARALLEL_MODE:
+			synchronized (nodeQueue) {
+				if (node.state == 0) {
+					nodeQueue.add(node);
+				}
+				node.state |= SpaceNode.NODE_IS_CREATING;
+			}
+			break;
+			
+		default:
+			throw new Error("Unexpected execution mode");
+		
 		}
-		// FIXME: synchronize
-		node.state |= SpaceNode.NODE_IS_CREATING;
 
 		return node;
 	}
@@ -207,17 +228,31 @@ public abstract class Space implements Serializable {
 		node.agent = agent;
 		node.next = node.prev = node;
 		
-		if (executionMode == ExecutionMode.SERIAL_MODE) {
+		if (observer.isSerial()) {
 			addNode0(node);
 			return node;
 		}
 		
-		if (node.state == 0) {
-			synchronized(this) {
+		switch (executionMode) {
+		case ExecutionMode.CONCURRENT_MODE:
+			if (node.state == 0) {
 				nodeQueue.add(node);
 			}
+			node.state |= SpaceNode.NODE_IS_CREATING;
+			break;
+			
+		case ExecutionMode.PARALLEL_MODE:
+			synchronized (nodeQueue) {
+				if (node.state == 0) {
+					nodeQueue.add(node);
+				}
+				node.state |= SpaceNode.NODE_IS_CREATING;
+			}
+			break;
+			
+		default:
+			throw new Error("Unexpected execution mode");
 		}
-		node.state |= SpaceNode.NODE_IS_CREATING;
 		
 		return node;
 	}
@@ -242,17 +277,31 @@ public abstract class Space implements Serializable {
 		
 		node.nodeIsRemoved = true;
 		
-		if (executionMode == ExecutionMode.SERIAL_MODE) {
+		if (observer.isSerial()) {
 			removeNode0(node);
 			return;
 		}
-		
-		if (node.state == 0) {
-			synchronized(this) {
+
+		switch (executionMode) {
+		case ExecutionMode.CONCURRENT_MODE:
+			if (node.state == 0) {
 				nodeQueue.add(node);
 			}
+			node.state |= SpaceNode.NODE_IS_REMOVING;
+			break;
+			
+		case ExecutionMode.PARALLEL_MODE:
+			synchronized (nodeQueue) {
+				if (node.state == 0) {
+					nodeQueue.add(node);
+				}
+				node.state |= SpaceNode.NODE_IS_REMOVING;
+			}
+			break;
+			
+		default:
+			throw new Error("Unexpected execution mode");
 		}
-		node.state |= SpaceNode.NODE_IS_REMOVING;
 	}
 	
 	protected abstract void removeNode0(SpaceNode node);
@@ -262,19 +311,34 @@ public abstract class Space implements Serializable {
 	 * @param node
 	 */
 	protected final void changeNodePosition(SpaceNode node) {
-		if (executionMode == ExecutionMode.SERIAL_MODE) {
+		if (observer.isSerial()) {
 			changeNodePosition0(node);
 			node.newPosition.set(node.position);
 			return;
 		}
 		
-		if (node.state == 0) {
-			synchronized(this) {
+		switch (executionMode) {
+		case ExecutionMode.CONCURRENT_MODE:
+			if (node.state == 0) {
 				nodeQueue.add(node);
 			}
+			node.state |= SpaceNode.NODE_IS_MOVING;
+			break;
+			
+		case ExecutionMode.PARALLEL_MODE:
+			synchronized (nodeQueue) {
+				if (node.state == 0) {
+					nodeQueue.add(node);
+				}
+				node.state |= SpaceNode.NODE_IS_MOVING;
+			}
+			break;
+			
+		default:
+			throw new Error("Unexpected execution mode");
+		
 		}
-		node.state |= SpaceNode.NODE_IS_MOVING;
-//		changeNodePosition0(node);
+		
 	}
 	
 	protected abstract void changeNodePosition0(SpaceNode node);

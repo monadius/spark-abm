@@ -2,11 +2,11 @@ package org.spark.test.basictests;
 
 import org.spark.core.Observer;
 import org.spark.core.SimulationTime;
+import org.spark.core.SparkModel;
 import org.spark.data.Grid;
 import org.spark.space.Space;
 import org.spark.space.SpaceAgent;
 import org.spark.space.StandardSpace;
-import org.spark.startup.ABMModel;
 import org.spark.utils.RandomHelper;
 
 /**
@@ -14,7 +14,7 @@ import org.spark.utils.RandomHelper;
  * @author Monad
  *
  */
-public class EvaporationAndDiffusion implements ABMModel {
+public class EvaporationAndDiffusion extends SparkModel {
 	public static Grid data;
 	
 

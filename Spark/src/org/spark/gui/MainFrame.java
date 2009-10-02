@@ -26,7 +26,7 @@ import javax.swing.filechooser.FileFilter;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.spark.core.Observer;
+import org.spark.core.ObserverFactory;
 import org.spark.gui.dialogs.AboutDialog;
 import org.spark.gui.dialogs.BatchRunDialog;
 import org.spark.gui.dialogs.DataLayerProperties;
@@ -799,13 +799,13 @@ public class MainFrame extends JFrame implements IUpdatableFrame,
 							"Select observer", "Select observer", 
 							JOptionPane.DEFAULT_OPTION, 
 							null,
-							Observer.getObserversList(), Observer.getObserversList()[0]);
+							ObserverFactory.getObserversList(), ObserverFactory.getObserversList()[0]);
 					
 					if (selection != null) {
 						GUIModelManager instance = GUIModelManager.getInstance();
+
 						instance.stopModel();
-						
-						Observer.changeObserver(selection);
+						instance.CreateObserver(selection, "serial");
 						instance.setupModel();
 					}
 		

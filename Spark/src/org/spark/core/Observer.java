@@ -6,7 +6,6 @@
 
 package org.spark.core;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -20,12 +19,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.PriorityQueue;
 
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.PropertyConfigurator;
 import org.spark.data.DataLayer;
 import org.spark.math.RationalNumber;
 import org.spark.space.Space;
-import org.spark.startup.ABMModel;
 import org.spark.utils.RandomHelper;
 
 import com.spinn3r.log5j.Logger;
@@ -39,47 +35,39 @@ import com.spinn3r.log5j.Logger;
  * @see org.spark.core.Observer2
  */
 public final class Observer {
+	// Log
+	private static final Logger logger = Logger.getLogger();
+
+	/**
+	 * Priority constants
+	 */
 	public static final int HIGH_PRIORITY = 0;
 	public static final int LOW_PRIORITY = 1000;
 	
-	// Singleton instance
-	private static volatile Observer instance;
+	// Instance
+	// TODO: should be removed later
+	static volatile Observer instance;
+	
+	
 	// Implementation of main methods
-	private static volatile ObserverImpl impl;
-	// Log
-	private static final Logger logger = Logger.getLogger();
+//	private static volatile ObserverImpl impl;
+	private ObserverImpl impl;
 	// Mode execution flag
 //	private static volatile boolean serialMode;
 	// TODO: make it final and add constructor
 	// Observers should be created for each loaded model
 	private int executionMode;
+
+	/* True when inside setup method */
+	private boolean setupFlag;
 	
 	
 	/**
-	 * Returns the current execution mode
+	 * Returns true if setup method is executed
 	 * @return
 	 */
-	public int getExecutionMode() {
-		return executionMode;
-	}
-	
-	
-	/**
-	 * Sets the current execution mode
-	 * @param mode
-	 * @return
-	 */
-	// TODO: remove this function when executionMode is final
-	public void setExecutionMode(int mode) {
-		if (this.executionMode != mode && ExecutionMode.isMode(mode)) {
-			this.executionMode = mode;
-			
-			for (Space space : spacesList) {
-				space.setExecutionMode(mode);
-			}
-			
-			logger.debug("Execution mode: " + ExecutionMode.toString(mode));
-		}
+	public boolean getSetupFlag() {
+		return setupFlag;
 	}
 	
 	
@@ -87,7 +75,7 @@ public final class Observer {
 	 * Description of time properties of an agent type
 	 * @author Monad
 	 */
-	private static class AgentType implements Comparable<AgentType> {
+	static class AgentType implements Comparable<AgentType> {
 		/* Type */
 		public Class<? extends Agent> type;
 		/* Time step */
@@ -195,6 +183,15 @@ public final class Observer {
 	public RationalNumber getSimulationTime() {
 		return time.getTime();
 	}
+
+	
+	/**
+	 * Returns the current execution mode
+	 * @return
+	 */
+	public int getExecutionMode() {
+		return executionMode;
+	}
 	
 	
 	/**
@@ -219,79 +216,18 @@ public final class Observer {
 	 * @return
 	 */
 	public boolean isSerial() {
-		return executionMode == ExecutionMode.SERIAL_MODE;
+		return setupFlag || (executionMode == ExecutionMode.SERIAL_MODE);
 	}
 
 	
-	/**
-	 * Initializing method. Can be used only during startup
-	 */
-	@SuppressWarnings("unchecked")
-	public static void init(String observerImplName) throws Exception {
-		// Only one instance of Observer could exist
-		if (instance != null)
-			throw new Exception("Observer is already initialized");
-
-		// The first thing to do is to set up the logger
-		try {
-			if (new File("spark.log4j.properties").exists()) {
-				PropertyConfigurator.configure("spark.log4j.properties");
-			} else {
-				BasicConfigurator.configure();
-				logger
-						.error("File spark.log4j.properties is not found: using default output streams for log information");
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			BasicConfigurator.configure();
-		}
-
-		// Create observer itself and implementation of its methods
-		instance = new Observer();
-
-		Class<ObserverImpl> cl = (Class<ObserverImpl>) Class
-				.forName(observerImplName);
-		if (cl == null)
-			throw new Exception("Observer implementation class "
-					+ observerImplName + " is not found");
-
-		impl = cl.newInstance();
-	}
 
 	/**
-	 * Returns the list of names of all available observers
-	 * 
-	 * @return
+	 * Internal constructor
 	 */
-	public static String[] getObserversList() {
-		return new String[] { "org.spark.core.Observer1",
-				"org.spark.core.Observer2", "org.spark.core.ObserverParallel" };
-	}
-
-	/**
-	 * Sets the new observer
-	 * Should be called only when the simulation is stopped
-	 * @param name
-	 * @throws Exception
-	 */
-	@SuppressWarnings("unchecked")
-	public static void changeObserver(String name) throws Exception {
-		instance.reset();
-		instance.setExecutionMode(ExecutionMode.SERIAL_MODE);
+	Observer(ObserverImpl implementation, int executionMode) {
+		this.impl = implementation;
+		impl.setObserver(this);
 		
-		Class<ObserverImpl> cl = (Class<ObserverImpl>) Class.forName(name);
-		if (cl == null)
-			throw new Exception("Observer implementation class " + name
-					+ " is not found");
-
-		impl = cl.newInstance();
-	}
-	
-
-	/**
-	 * Private constructor
-	 */
-	private Observer() {
 		newAgents = new HashMap<Class<? extends Agent>, ArrayList<Agent>>();
 		removedQueue = new ArrayList<Agent>(100);
 		
@@ -303,8 +239,17 @@ public final class Observer {
 		spacesList = new ArrayList<Space>();
 		spacesMap = new HashMap<String, Space>();
 
-		// setExecutionMode(false);
-		setExecutionMode(ExecutionMode.SERIAL_MODE);
+		if (ExecutionMode.isMode(executionMode)) {
+			this.executionMode = executionMode;
+		}
+		else
+		{
+			this.executionMode = ExecutionMode.SERIAL_MODE;
+		}
+		
+		RandomHelper.reset();
+		
+		logger.debug("Observer is created. Execution mode: " + ExecutionMode.toString(executionMode));
 	}
 
 	/**
@@ -353,7 +298,7 @@ public final class Observer {
 	/**
 	 * Clears the context by removing all agents, data layers, etc.
 	 */
-	public void clear() {
+/*	public void clear() {
 		newAgents.clear();
 
 		defaultSpace = null;
@@ -370,7 +315,7 @@ public final class Observer {
 		logger.debug("Resetting random generator");
 		RandomHelper.reset();
 	}
-	
+*/	
 	
 	/**
 	 * Resets the Observer
@@ -383,6 +328,7 @@ public final class Observer {
 		spacesList.clear();
 		spacesMap.clear();
 		
+		actionQueue.clear();
 		time.reset();
 		
 		impl.clear();
@@ -419,7 +365,7 @@ public final class Observer {
 	 * @param time
 	 * @param priority
 	 */
-	public synchronized void setAgentType(Class<? extends Agent> type, RationalNumber timeStep, int priority) {
+	synchronized void setAgentType(Class<? extends Agent> type, RationalNumber timeStep, int priority) {
 		AgentType t = agentTypes.get(type);
 		
 		if (priority < HIGH_PRIORITY)
@@ -448,7 +394,7 @@ public final class Observer {
 	 * with default parameters
 	 * @param type
 	 */
-	public synchronized void setAgentType(Class<? extends Agent> type) {
+	synchronized void setAgentType(Class<? extends Agent> type) {
 		AgentType t = agentTypes.get(type);
 		
 		if (t == null) {
@@ -483,8 +429,6 @@ public final class Observer {
 
 		spacesList.add(space);
 		spacesMap.put(name, space);
-
-		space.setExecutionMode(executionMode);
 
 		if (defaultSpace == null)
 			defaultSpace = space;
@@ -582,6 +526,11 @@ public final class Observer {
 	protected void addAgent(Agent agent) {
 		Class<? extends Agent> cl = agent.getClass();
 
+		if (setupFlag) {
+			impl.addAgent(agent, cl);
+			return;
+		}
+		
 		switch (executionMode) {
 		// Serial Mode
 		case ExecutionMode.SERIAL_MODE:
@@ -634,6 +583,23 @@ public final class Observer {
 	 * @param agent
 	 */
 	protected void removeAgent(Agent agent) {
+		if (setupFlag) {
+			Class<? extends Agent> cl = agent.getClass();
+
+			agent.dead = true;
+
+			// TODO: removeAgent(agent, cl)
+			if (impl.removeAgent(agent))
+				return;
+
+			ArrayList<Agent> list = newAgents.get(cl);
+			if (list != null) {
+				list.remove(agent);
+			}
+
+			return;
+		}
+		
 		switch (executionMode) {
 		case ExecutionMode.SERIAL_MODE:
 			Class<? extends Agent> cl = agent.getClass();
@@ -840,12 +806,22 @@ public final class Observer {
 		// Ignore static agents
 		// Make steps and collect statistics for each agent type separately
 	}
+	
+	
+	/**
+	 * Call before model setup method
+	 */
+	public void beginSetup() {
+		time.reset();
+		setupFlag = true;
+	}
 
 	/**
 	 * Call after model setup method
 	 */
 	public void finalizeSetup() {
-		// TODO: execution mode works here
+		// TODO: next line are not required
+		// because setup always works in the serial mode
 		processRemovedAgents();
 		processNewAgents();
 
@@ -855,6 +831,8 @@ public final class Observer {
 		
 		time.reset();
 		initializeActionQueue();
+
+		setupFlag = false;
 	}
 
 	/**
@@ -949,7 +927,8 @@ public final class Observer {
 	 * @param out
 	 */
 	// FIXME: serialize time and actionQueue with agentTypes
-	public synchronized void serializeState(ABMModel model, OutputStream out)
+	// FIXME: save observer itself (executionMode, etc.) and its implementation (type)
+	public synchronized void serializeState(SparkModel model, OutputStream out)
 			throws Exception {
 		// TODO: save simulation time
 		if (newAgents.size() != 0 || removedQueue.size() != 0)
@@ -1011,11 +990,13 @@ public final class Observer {
 	 * @param model
 	 * @param in
 	 */
-	public synchronized void loadState(ABMModel model, InputStream in,
+	// TODO: make static + load observer itself and its implementation
+	public static synchronized void loadState(SparkModel model, InputStream in,
 			ClassLoader cl) throws Exception {
 		// TODO: load simulation time
 		// TODO: save/load states on a specific thread only
-
+		throw new Error("Not implemented");
+/*
 		if (newAgents.size() != 0 || removedQueue.size() != 0)
 			throw new Exception(
 					"Could not load model state during agent's processing");
@@ -1040,7 +1021,7 @@ public final class Observer {
 		}
 
 		// serialMode
-		setExecutionMode(ois.readInt());
+//		setExecutionMode(ois.readInt());
 
 		// spacesList
 		// spacesMap
@@ -1061,7 +1042,7 @@ public final class Observer {
 
 		// Agents
 		ois.setUserClass(true);
-		impl.loadAgents(ois);
+		impl.loadAgents(ois);*/
 	}
 
 	public static class MyObjectInputStream extends ObjectInputStream {

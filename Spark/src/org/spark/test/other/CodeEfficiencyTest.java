@@ -2,7 +2,6 @@ package org.spark.test.other;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLongArray;
 
 import org.spark.utils.ListOfArrays;
@@ -179,7 +178,7 @@ class CodeEfficiencyTest {
 	 * addAgent: 250
 	 * addAgent2: 312 (220 with preallocation)
 	 */
-	private void test3() {
+	protected void test3() {
 		final int n = 1000000;
 
 		final long start = System.currentTimeMillis();
@@ -217,7 +216,7 @@ class CodeEfficiencyTest {
 	 * 
 	 * Preallocated array: 47
 	 */
-	private void test4() {
+	protected void test4() {
 		int n = 10000000;
 		
 //		ArrayList<Integer> arrayList = new ArrayList<Integer>(100);
@@ -273,14 +272,14 @@ class CodeEfficiencyTest {
 	public void test6() {
 //		AtomicInteger integer = new AtomicInteger(0);
 		int integer = 0;
-		int a;
+//		int a = 1;
 
 		final long start = System.currentTimeMillis();
 		
 		for (int i = 0; i < 1000000000; i++) {
 //			a = integer.addAndGet(4);
 			integer += 4;
-			a = integer;
+//			a = integer;
 		}
 		
 		final long end = System.currentTimeMillis();

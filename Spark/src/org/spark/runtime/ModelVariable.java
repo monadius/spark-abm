@@ -3,7 +3,7 @@ package org.spark.runtime;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 
-import org.spark.startup.ABMModel;
+import org.spark.core.SparkModel;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
@@ -133,7 +133,7 @@ public class ModelVariable extends AbstractChangeEvent {
 //			var.setMethod = ModelManager.getInstance().getModel().getClass().getMethod(sset);
 //			var.getMethod = GUIModelManager.getModelClass().getMethod(sget);
 //			var.setMethod = GUIModelManager.getModelClass().getMethod(sset, var.type);
-			ABMModel model = AbstractModelManager.getInstance().getModel();
+			SparkModel model = AbstractModelManager.getInstance().getModel();
 			var.getMethod = model.getClass().getMethod(sget);
 			var.setMethod = model.getClass().getMethod(sset, var.type);
 		}

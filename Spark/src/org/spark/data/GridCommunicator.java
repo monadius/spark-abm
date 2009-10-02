@@ -80,7 +80,7 @@ public class GridCommunicator implements Serializable {
 		
 		public Grid createGrid() {
 			// FIXME: guard condition should be removed later
-			BoundedSpace space = (BoundedSpace) Observer.getSpace();
+			BoundedSpace space = (BoundedSpace) Observer.getDefaultSpace();
 			if (xSize != (int)space.getXSize() ||
 				ySize != (int)space.getYSize())
 					throw new Error("Dimension problem");
@@ -148,7 +148,7 @@ public class GridCommunicator implements Serializable {
 			Grid grid = (Grid) observer.getDataLayer(names[i]);
 			
 			// FIXME: guard condition
-			BoundedSpace space = (BoundedSpace) Observer.getSpace();
+			BoundedSpace space = (BoundedSpace) Observer.getDefaultSpace();
 			if (grid.xSize != (int) space.getXSize() ||
 				grid.ySize != (int) space.getYSize())
 					throw new Error("Dimension problem");

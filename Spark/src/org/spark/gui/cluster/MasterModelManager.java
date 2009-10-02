@@ -12,8 +12,8 @@ import javax.swing.*;
 import org.spark.cluster.ClusterCommand;
 import org.spark.cluster.ClusterManager;
 import org.spark.core.Agent;
-import org.spark.core.ExecutionMode;
 import org.spark.core.Observer;
+import org.spark.core.SparkModel;
 import org.spark.gui.FrameLocationManager;
 import org.spark.gui.GUIModelManager;
 import org.spark.gui.RenderFrame;
@@ -21,7 +21,6 @@ import org.spark.gui.UpdatableFrame;
 import org.spark.gui.render.AgentStyle;
 import org.spark.gui.render.DataLayerStyle;
 import org.spark.gui.render.Render;
-import org.spark.startup.ABMModel;
 import org.spark.utils.Vector;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
@@ -232,10 +231,10 @@ public class MasterModelManager extends GUIModelManager {
 
 			String setupName = nodes.item(0).getTextContent();
 			if (classLoader != null) {
-				model = (ABMModel) classLoader.loadClass(setupName).newInstance();
+				model = (SparkModel) classLoader.loadClass(setupName).newInstance();
 			}
 			else {
-				model = (ABMModel) Class.forName(setupName).newInstance();
+				model = (SparkModel) Class.forName(setupName).newInstance();
 			}
 
 			/* Load agents */
@@ -477,20 +476,13 @@ public class MasterModelManager extends GUIModelManager {
 				}
 			
 				// TODO: issues with this thread
-				Observer.getInstance().clear();
+				Observer.getInstance().reset();
 				if (model == null)
 					return;
 					
 				// Setup is processed in serial mode always
-				if (Observer.getInstance().isSerial()) {
-					model.setup();
-				}
-				else {
-					int mode = Observer.getInstance().getExecutionMode();
-					Observer.getInstance().setExecutionMode(ExecutionMode.SERIAL_MODE);
-					model.setup();
-					Observer.getInstance().setExecutionMode(mode);
-				}
+				Observer.getInstance().beginSetup();
+				model.setup();
 				Observer.getInstance().finalizeSetup();
 
 				mainFrame.reset();

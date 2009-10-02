@@ -36,18 +36,20 @@ class ObserverParallel extends ObserverImpl {
 	 * The default constructor
 	 */
 	ObserverParallel() {
-		// TODO: replace with a constructor with the argument
-		super(Observer.getInstance());
-		
 		logger.info("Creating ObserverParallel");
 		agents = ParallelArray.createEmpty(AMOUNT_Agents, Agent.class, ParallelArray.defaultExecutor());
 //		newAgents = ParallelArray.createEmpty(AMOUNT_Agents, Agent.class, ParallelArray.defaultExecutor());
 		
 		//agents2 = new HashMap<Class<? extends Agent>, ArrayList<Agent>>();
 //		statistics = new HashMap<Class<? extends Agent>, Long>();
-		// Should be false
-		Observer.getInstance().setExecutionMode(ExecutionMode.PARALLEL_MODE);
 	}
+	
+	
+	@Override
+	public int filterExecutionMode(int mode) {
+		return ExecutionMode.PARALLEL_MODE;
+	}
+	
 	
 	/**
 	 * Removes all agents, data layers and the space from the context

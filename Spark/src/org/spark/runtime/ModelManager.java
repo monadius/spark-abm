@@ -3,7 +3,7 @@ package org.spark.runtime;
 import java.io.File;
 import java.util.ArrayList;
 
-import org.spark.startup.ABMModel;
+import org.spark.core.SparkModel;
 import org.w3c.dom.Document;
 
 /**
@@ -16,7 +16,7 @@ public abstract class ModelManager {
 	private static ModelManager instance;
 
 	/* Current model */
-	private ABMModel model;
+	private SparkModel model;
 
 	/* Update listeners */
 	protected ArrayList<IUpdateListener> listeners = new ArrayList<IUpdateListener>();
@@ -52,7 +52,7 @@ public abstract class ModelManager {
 	 * 
 	 * @return null if no model is loaded
 	 */
-	public ABMModel getModel() {
+	public SparkModel getModel() {
 		return model;
 	}
 

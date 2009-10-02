@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><model>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><model tick="1">
 <about path="readme.txt"/>
 <classpath path="."/>
 <setup>StemCellWithPhysAgents.StemCellModel</setup>
-<mainframe height="630" width="530" x="0" y="0"><spacestyle name="space" selected="true" swapXY="false"/><agentstyle alpha-function-value="0.0" border="true" name="OxygenSource" position="0" texture-env="0" transparent="false" visible="true"/><agentstyle alpha-function-value="0.0" border="true" name="PhysAgent" position="1" texture-env="0" transparent="false" visible="true"/></mainframe>
+<mainframe height="630" width="530" x="0" y="0"><spacestyle name="space" selected="true" swapXY="false"/><agentstyle alpha-function-value="0.0" border="true" name="OxygenSource" position="0" texture-env="0" transparent="false" visible="true"/><agentstyle alpha-function-value="0.0" border="true" name="PhysAgent" position="1" texture-env="0" transparent="false" visible="true"/><agentstyle alpha-function-value="0.0" border="true" name="Agent2" position="2" texture-env="0" transparent="false" visible="true"/><agentstyle alpha-function-value="0.0" border="true" name="Agent1" position="3" texture-env="0" transparent="false" visible="true"/><agentstyle alpha-function-value="0.0" border="true" name="DeadCell" position="4" texture-env="0" transparent="false" visible="true"/><agentstyle alpha-function-value="0.0" border="true" name="Agent4" position="5" texture-env="0" transparent="false" visible="true"/><agentstyle alpha-function-value="0.0" border="true" name="Agent3" position="6" texture-env="0" transparent="false" visible="true"/><agentstyle alpha-function-value="0.0" border="true" name="CellAgent" position="7" texture-env="0" transparent="false" visible="true"/></mainframe>
 <parameterframe height="489" width="600" x="530" y="0">
 <parameter default="0.6" get="get_velocityCoefficient" max="1.0" min="0.1" name="Velocity Decay" set="set_velocityCoefficient" step="0.1" type="Double" variable="velocity-coefficient" widget="Slider"/>
 <parameter default="3.0" get="get_separationCoefficient" max="10.0" min="0.0" name="Separation Coefficient" set="set_separationCoefficient" step="0.1" type="Double" variable="separation-coefficient" widget="Slider"/>
@@ -60,11 +60,17 @@
 <item get="get_numberOfBlueCells" name="number-of-blue-cells"/>
 <item get="get_totalOxygen" name="total-oxygen"/>
 </dataset>
-<renderframe height="265" name="Oxygen" width="265" x="0" y="605"><spacestyle name="space" selected="true" swapXY="false"/><datalayerstyle name="oxygen" selected="true"/><agentstyle alpha-function-value="0.0" border="true" name="OxygenSource" position="0" texture-env="0" transparent="false" visible="true"/><agentstyle alpha-function-value="0.0" border="true" name="PhysAgent" position="1" texture-env="0" transparent="false" visible="false"/></renderframe>
-<space-agents>
+<renderframe height="265" name="Oxygen" width="265" x="0" y="605"><spacestyle name="space" selected="true" swapXY="false"/><datalayerstyle name="oxygen" selected="true"/><agentstyle alpha-function-value="0.0" border="true" name="OxygenSource" position="0" texture-env="0" transparent="false" visible="true"/><agentstyle alpha-function-value="0.0" border="true" name="PhysAgent" position="1" texture-env="0" transparent="false" visible="false"/><agentstyle alpha-function-value="0.0" border="true" name="Agent2" position="2" texture-env="0" transparent="false" visible="true"/><agentstyle alpha-function-value="0.0" border="true" name="Agent1" position="3" texture-env="0" transparent="false" visible="true"/><agentstyle alpha-function-value="0.0" border="true" name="DeadCell" position="4" texture-env="0" transparent="false" visible="true"/><agentstyle alpha-function-value="0.0" border="true" name="Agent4" position="5" texture-env="0" transparent="false" visible="true"/><agentstyle alpha-function-value="0.0" border="true" name="Agent3" position="6" texture-env="0" transparent="false" visible="true"/><agentstyle alpha-function-value="0.0" border="true" name="CellAgent" position="7" texture-env="0" transparent="false" visible="true"/></renderframe>
+<agents>
+<agent name="Agent2">StemCellWithPhysAgents.Agent2</agent>
+<agent name="Agent1">StemCellWithPhysAgents.Agent1</agent>
+<agent name="DeadCell">StemCellWithPhysAgents.DeadCell</agent>
+<agent name="Agent4">StemCellWithPhysAgents.Agent4</agent>
+<agent name="Agent3">StemCellWithPhysAgents.Agent3</agent>
+<agent name="CellAgent">StemCellWithPhysAgents.CellAgent</agent>
 <agent name="OxygenSource">StemCellWithPhysAgents.OxygenSource</agent>
 <agent name="PhysAgent">StemCellWithPhysAgents.PhysAgent</agent>
-</space-agents>
+</agents>
 <data-layers>
 <datalayer color1="0.0;0.0;0.0" color2="0.0;0.0;1.0" name="oxygen" val1="0.0" val2="2.0"/>
 </data-layers>

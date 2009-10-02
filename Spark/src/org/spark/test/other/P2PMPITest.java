@@ -7,7 +7,7 @@ import javax.swing.JFrame;
 import org.spark.cluster.ClusterManager;
 import org.spark.cluster.Comm;
 import org.spark.cluster.ObjectBuf;
-import org.spark.core.Observer;
+import org.spark.core.ObserverFactory;
 
 @SuppressWarnings("serial")
 public class P2PMPITest extends JFrame {
@@ -142,7 +142,7 @@ public class P2PMPITest extends JFrame {
 	
 	
 	public static void main(String[] args) throws Exception {
-		Observer.init("org.spark.core.Observer1");
+		ObserverFactory.create(null, "org.spark.core.Observer1", 0);
 		ClusterManager.init(args);
 
 		P2PMPITest test = new P2PMPITest();

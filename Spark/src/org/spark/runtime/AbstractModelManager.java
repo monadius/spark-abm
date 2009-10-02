@@ -1,6 +1,7 @@
 package org.spark.runtime;
 
-import org.spark.startup.ABMModel;
+import org.spark.core.SparkModel;
+
 
 public abstract class AbstractModelManager {
 	private static AbstractModelManager instance;
@@ -19,5 +20,5 @@ public abstract class AbstractModelManager {
 	}
 	
 	
-	public abstract ABMModel getModel(); 
+	public abstract SparkModel getModel(); 
 }
