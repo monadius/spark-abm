@@ -6,13 +6,13 @@ import java.util.ArrayList;
 
 import org.spark.core.Observer;
 import org.spark.core.SimulationTime;
+import org.spark.core.SparkModel;
 import org.spark.data.Grid;
 import org.spark.space.GridSpace;
 import org.spark.space.PhysicalNode;
 import org.spark.space.PhysicalSpace2d;
 import org.spark.space.Space;
 import org.spark.space.SpaceAgent;
-import org.spark.startup.ABMModel;
 import org.spark.utils.RandomHelper;
 import org.spark.utils.Vector;
 
@@ -21,7 +21,7 @@ import org.spark.utils.Vector;
  * @author Monad
  *
  */
-public class MultipleSpaces implements ABMModel {
+public class MultipleSpaces extends SparkModel {
 	public static Grid cidalCompound;
 	public static Grid toxin;
 	public static Grid tissueLife;

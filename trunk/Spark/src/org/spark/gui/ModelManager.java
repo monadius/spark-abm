@@ -20,6 +20,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.spark.core.Agent;
 import org.spark.core.Observer;
+import org.spark.core.SparkModel;
 import org.spark.gui.render.AgentStyle;
 import org.spark.gui.render.DataLayerStyle;
 import org.spark.gui.render.Render;
@@ -28,7 +29,6 @@ import org.spark.runtime.ModelMethod;
 import org.spark.runtime.ModelVariable;
 import org.spark.runtime.ParameterFactory;
 import org.spark.runtime.VariableSetFactory;
-import org.spark.startup.ABMModel;
 import org.spark.utils.Vector;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
@@ -366,12 +366,12 @@ public class ModelManager extends GUIModelManager {
 			int priority = Integer.parseInt(sPriority);  
 			
 			// Add agent's definition to the Observer
-			Observer.getInstance().setAgentType(agentTypes[i], time, priority);
+			model.AddAgentType(agentTypes[i], time, priority);
 		}
 		
 	}
 	
-
+	
 	/**
 	 * Loads a model
 	 */
@@ -413,11 +413,19 @@ public class ModelManager extends GUIModelManager {
 
 			String setupName = nodes.get(0).getTextContent().trim();
 			if (classLoader != null) {
-				model = (ABMModel) classLoader.loadClass(setupName)
+				model = (SparkModel) classLoader.loadClass(setupName)
 						.newInstance();
 			} else {
-				model = (ABMModel) Class.forName(setupName).newInstance();
+				model = (SparkModel) Class.forName(setupName).newInstance();
 			}
+			
+			tmp = nodes.get(0);
+			attributes = tmp.getAttributes();
+			
+			String observerName = ((tmp = attributes.getNamedItem("observer")) != null) ?
+					tmp.getNodeValue() : "Observer1";
+			String executionModeName = ((tmp = attributes.getNamedItem("mode")) != null) ?
+					tmp.getNodeValue() : "serial";
 			
 			/* Load model description */
 
@@ -538,6 +546,9 @@ public class ModelManager extends GUIModelManager {
 			// Think about arguments
 			// org.spark.core.ClusterManager.init(args);
 
+			// Create the model observer
+			CreateObserver(observerName, executionModeName);
+			
 			mainFrame.setupRender(mainFrameNode);
 			setupModel();
 			mainFrame.initDialogs();
@@ -566,7 +577,7 @@ public class ModelManager extends GUIModelManager {
 
 		try {
 			stopModel();
-			Observer.getInstance().clear();
+//			Observer.getInstance().clear();
 			saveGUIChanges();
 		} catch (Exception e) {
 			e.printStackTrace();

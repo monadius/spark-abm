@@ -6,9 +6,8 @@ import org.spark.data.*;
 import org.spark.space.*;
 import org.spark.utils.*;
 import org.spark.math.*;
-import org.spark.startup.ABMModel;
 
-public class StemCellModel implements ABMModel
+public class StemCellModel extends SparkModel
 {
 	public static double velocityCoefficient = 0;
 	public static double separationCoefficient = 0;

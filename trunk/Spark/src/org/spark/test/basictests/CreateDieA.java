@@ -2,9 +2,9 @@ package org.spark.test.basictests;
 
 import org.spark.core.Observer;
 import org.spark.core.SimulationTime;
+import org.spark.core.SparkModel;
 import org.spark.space.SpaceAgent;
 import org.spark.space.StandardSpace;
-import org.spark.startup.ABMModel;
 import org.spark.utils.RandomHelper;
 
 /**
@@ -12,7 +12,7 @@ import org.spark.utils.RandomHelper;
  * @author Monad
  *
  */
-public class CreateDieA implements ABMModel {
+public class CreateDieA extends SparkModel {
 
 	public boolean begin(long tick) {
 		return false;

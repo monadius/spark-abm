@@ -41,9 +41,6 @@ class Observer2 extends ObserverImpl {
 	 * The default constructor
 	 */
 	Observer2() {
-		// TODO: replace with a constructor with the argument
-		super(Observer.getInstance());
-		
 		logger.info("Creating Observer2");
 		agentsMap = new HashMap<Class<? extends Agent>, DummyAgent>();
 		agentsList = new ArrayList<DummyAgent>();

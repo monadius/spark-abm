@@ -1,10 +1,10 @@
 package org.spark.runtime;
 
-import org.spark.startup.ABMModel;
+import org.spark.core.SparkModel;
 
 public class StandardSimulationEngine extends AbstractSimulationEngine {
 
-	public StandardSimulationEngine(ABMModel model) {
+	public StandardSimulationEngine(SparkModel model) {
 		super(model);
 		// TODO Auto-generated constructor stub
 	}

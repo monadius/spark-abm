@@ -208,7 +208,7 @@ public class GlobalSpace implements Serializable {
 	 */
 	public boolean moveNode(SpaceNode node) {
 		// FIXME: other types of spaces
-		ClusterNetLogoSpace space = (ClusterNetLogoSpace) Observer.getSpace();
+		ClusterNetLogoSpace space = (ClusterNetLogoSpace) Observer.getDefaultSpace();
 		
 		int xBorder = space.getXBorder();
 		int yBorder = space.getYBorder();
@@ -471,7 +471,7 @@ public class GlobalSpace implements Serializable {
 	 */
 	public void synchronizeBorders() {
 		// FIXME: other types of spaces
-		ClusterNetLogoSpace space = (ClusterNetLogoSpace) Observer.getSpace();
+		ClusterNetLogoSpace space = (ClusterNetLogoSpace) Observer.getDefaultSpace();
 		
 		// First, remove all agents at the border
 		space.removeAgentsAtTheBorder();

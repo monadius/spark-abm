@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.PropertyConfigurator;
 import org.spark.core.ExecutionMode;
 import org.spark.utils.FileUtils;
 import org.w3c.dom.Document;
@@ -310,6 +312,18 @@ public class TestEngine {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		// The first thing to do is to set up the logger
+		try {
+			if (new File("spark.log4j.properties").exists()) {
+				PropertyConfigurator.configure("spark.log4j.properties");
+			} else {
+				BasicConfigurator.configure();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			BasicConfigurator.configure();
+		}
+		
 		try {
 			// Create the logging stream
 			File logFile = new File("tests.log");

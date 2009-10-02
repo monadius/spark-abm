@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="org/spark/data/ClusterGrid.java|org/spark/gui/render/JOGLRender3d.java|org/spark/test/MultipleSpaces.java|org/spark/utils/Pair.java|org/spark/startup/ABMModel2.java|org/spark/test/other/SerializationTest2.java" kind="src" path="src"/>
+	<classpathentry excluding="org/spark/data/ClusterGrid.java|org/spark/gui/render/JOGLRender3d.java|org/spark/test/MultipleSpaces.java|org/spark/utils/Pair.java|org/spark/startup/ABMModel2.java|org/spark/test/other/SerializationTest2.java|org/spark/startup/ABMModel.java|org/spark/test/basictests/RunAllTests.java|org/spark/startup/ClusterStartup.java|org/spark/startup/StartupTest.java|org/spark/startup/PerformanceTests.java|org/spark/startup/ClusterStartupGUI.java|org/spark/startup/Parameter.java|org/spark/startup/ScheduledMethod.java|org/spark/startup/old/" kind="src" path="src"/>
 	<classpathentry kind="lib" path="lib/colt.jar"/>
 	<classpathentry kind="lib" path="lib/extra166y.jar"/>
 	<classpathentry kind="lib" path="lib/gluegen-rt.jar"/>

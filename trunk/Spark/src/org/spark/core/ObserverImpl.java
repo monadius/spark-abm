@@ -17,8 +17,30 @@ abstract class ObserverImpl {
 	 * Default constructor
 	 * @param observer
 	 */
-	ObserverImpl(Observer observer) {
+	ObserverImpl() {
+	}
+	
+	
+	/**
+	 * Sets the observer for this implementation
+	 * @param observer
+	 */
+	void setObserver(Observer observer) {
 		this.observer = observer;
+	}
+	
+	
+	/**
+	 * Verifies that the given execution mode is supported by the implementation
+	 * Returns a supported mode if the given mode is not appropriate
+	 * @param executionMode
+	 * @return
+	 */
+	public int filterExecutionMode(int executionMode) {
+		if (ExecutionMode.isMode(executionMode))
+			return executionMode;
+		else
+			return ExecutionMode.SERIAL_MODE;
 	}
 	
 	/**

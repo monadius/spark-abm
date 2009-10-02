@@ -13,7 +13,7 @@ import org.spark.data.GridCommunicator;
 import org.spark.space.BoundedSpace;
 import org.spark.space.GlobalSpace;
 import org.spark.space.SpaceAgent;
-import org.spark.startup.ABMModel;
+import org.spark.core.SparkModel;
 import org.w3c.dom.Document;
 
 import com.spinn3r.log5j.Logger;
@@ -236,7 +236,7 @@ public class ClusterManager {
 	 * Works only on slaves
 	 * @throws IOException 
 	 */
-	public void waitInitCommands(ABMModel model) throws Exception {
+	public void waitInitCommands(SparkModel model) throws Exception {
 		if (!isSlave) {
 //			throw new Exception("Master cannot wait for initialization commands");
 			return;
@@ -299,14 +299,14 @@ public class ClusterManager {
 	 * Should be called after model.setup()
 	 */
 	@SuppressWarnings("unchecked")
-	public void sendInitCommands(ABMModel model) throws Exception {
+	public void sendInitCommands(SparkModel model) throws Exception {
 		if (isSlave)
 			throw new Error("Only master can send initialization commands");
 
 		/* Space */
 		
 		Observer observer = Observer.getInstance();
-		globalSpace = new GlobalSpace(comm.size() - 1, (BoundedSpace) Observer.getSpace());
+		globalSpace = new GlobalSpace(comm.size() - 1, (BoundedSpace) Observer.getDefaultSpace());
 
 		logger.info("Sending global space...");
 		
@@ -411,7 +411,7 @@ public class ClusterManager {
 			 * @param field
 			 * @param model
 			 */
-			public void saveValue(Field field, ABMModel model) throws Exception {
+			public void saveValue(Field field, SparkModel model) throws Exception {
 				name = field.getName();
 				
 				Object val = field.get(model);
@@ -433,7 +433,7 @@ public class ClusterManager {
 			 * @param model
 			 * @throws Exception
 			 */
-			public void loadValue(ABMModel model) throws Exception {
+			public void loadValue(SparkModel model) throws Exception {
 				Field field = model.getClass().getField(name);
 
 				switch (type) {
@@ -456,7 +456,7 @@ public class ClusterManager {
 		private ModelField[] staticFields;
 		
 		
-		public ModelReplicator(ABMModel model) throws Exception {
+		public ModelReplicator(SparkModel model) throws Exception {
 			Field[] fields = model.getClass().getFields();
 			ArrayList<Field> staticFields = new ArrayList<Field>();
 			
@@ -483,7 +483,7 @@ public class ClusterManager {
 		 * @param model
 		 * @throws Exception
 		 */
-		public void loadStaticFields(ABMModel model) throws Exception {
+		public void loadStaticFields(SparkModel model) throws Exception {
 			for (int i = 0; i < staticFields.length; i++) {
 				staticFields[i].loadValue(model);
 			}

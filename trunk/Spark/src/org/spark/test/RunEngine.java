@@ -15,12 +15,13 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.spark.core.Agent;
 import org.spark.core.ExecutionMode;
 import org.spark.core.Observer;
+import org.spark.core.ObserverFactory;
+import org.spark.core.SparkModel;
 import org.spark.math.RationalNumber;
 import org.spark.runtime.AbstractModelManager;
 import org.spark.runtime.ModelVariable;
 import org.spark.runtime.ParameterFactory;
 import org.spark.runtime.VariableSetFactory;
-import org.spark.startup.ABMModel;
 import org.spark.utils.RandomHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
@@ -35,7 +36,7 @@ class RunEngine extends AbstractModelManager {
 	private File xmlDocFile;
 	
 	/* Model itself */
-	private ABMModel model;
+	private SparkModel model;
 	
 	/* The length of one tick */
 	private RationalNumber tickTime;
@@ -59,19 +60,8 @@ class RunEngine extends AbstractModelManager {
 	}
 
 	@Override
-	public ABMModel getModel() {
+	public SparkModel getModel() {
 		return model;
-	}
-
-	/**
-	 * Static initialization of the main observer
-	 */
-	static {
-		try {
-			Observer.init("org.spark.core.Observer1");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 
 	/**
@@ -179,7 +169,7 @@ class RunEngine extends AbstractModelManager {
 			int priority = Integer.parseInt(sPriority);  
 			
 			// Add agent's definition to the Observer
-			Observer.getInstance().setAgentType(agentTypes[i], time, priority);
+			model.AddAgentType(agentTypes[i], time, priority);
 		}
 		
 	}
@@ -195,7 +185,7 @@ class RunEngine extends AbstractModelManager {
 		model = null;
 		data = null;
 		agentTypes = null;
-		Observer.getInstance().clear();
+		
 		ModelVariable.clearVariables();
 
 		// Open xml file
@@ -233,9 +223,9 @@ class RunEngine extends AbstractModelManager {
 
 		String setupName = nodes.get(0).getTextContent().trim();
 		if (classLoader != null) {
-			model = (ABMModel) classLoader.loadClass(setupName).newInstance();
+			model = (SparkModel) classLoader.loadClass(setupName).newInstance();
 		} else {
-			model = (ABMModel) Class.forName(setupName).newInstance();
+			model = (SparkModel) Class.forName(setupName).newInstance();
 		}
 		
 		/* Load agents */
@@ -313,7 +303,7 @@ class RunEngine extends AbstractModelManager {
 		// Set random generator's seed
 		RandomHelper.setSeed((int) seed);
 		// Set observer
-		Observer.changeObserver("org.spark.core." + observerName);
+		ObserverFactory.create(model, "org.spark.core." + observerName, mode);
 
 		/* Setup the model */
 		// FIXME: not the best solution
@@ -325,9 +315,8 @@ class RunEngine extends AbstractModelManager {
 		ModelVariable.synchronizeVariables();
 
 		// Setup is processed in serial mode always
-		Observer.getInstance().setExecutionMode(ExecutionMode.SERIAL_MODE);
+		Observer.getInstance().beginSetup();
 		model.setup();
-		Observer.getInstance().setExecutionMode(mode);
 		Observer.getInstance().finalizeSetup();
 
 		// Synchronize variables right after setup method

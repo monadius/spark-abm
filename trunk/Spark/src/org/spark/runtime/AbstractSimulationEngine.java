@@ -1,9 +1,7 @@
 package org.spark.runtime;
 
-import org.spark.core.ExecutionMode;
 import org.spark.core.Observer;
-import org.spark.gui.UpdatableFrame;
-import org.spark.startup.ABMModel;
+import org.spark.core.SparkModel;
 
 
 /**
@@ -27,10 +25,10 @@ public abstract class AbstractSimulationEngine {
 	public volatile boolean synchFlag = true;
 
 	
-	protected ABMModel model;
+	protected SparkModel model;
 	
 	
-	public AbstractSimulationEngine(ABMModel model) {
+	public AbstractSimulationEngine(SparkModel model) {
 		this.model = model;
 	}
 	
@@ -40,15 +38,8 @@ public abstract class AbstractSimulationEngine {
 		stopModel();
 
 		// Setup is processed in serial mode always
-		if (Observer.getInstance().isSerial()) {
-			model.setup();
-		}
-		else {
-			int mode = Observer.getInstance().getExecutionMode();
-			Observer.getInstance().setExecutionMode(ExecutionMode.SERIAL_MODE);
-			model.setup();
-			Observer.getInstance().setExecutionMode(mode);
-		}
+		Observer.getInstance().beginSetup();
+		model.setup();
 		Observer.getInstance().finalizeSetup();
 
 		paused = true;
@@ -89,7 +80,8 @@ public abstract class AbstractSimulationEngine {
 			}
 		}
 		
-		Observer.getInstance().reset();
+		model.getObserver().reset();
+//		Observer.getInstance().reset();
 	}
 
 	

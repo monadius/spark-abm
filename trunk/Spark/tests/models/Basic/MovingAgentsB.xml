@@ -3,7 +3,7 @@
 
         <setup>org.spark.test.basictests.MovingAgentsB</setup>
 
-        <mainframe height="682" width="593" x="68" y="2"><spacestyle name="space" selected="true" swapXY="false"/></mainframe>
+        <mainframe height="640" width="571" x="68" y="2"><spacestyle name="space" selected="true" swapXY="false"/></mainframe>
 
         <agent>org.spark.test.basictests.MovingAgentsB$Agent</agent>
 <variables/></model>

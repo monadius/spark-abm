@@ -2,16 +2,16 @@ package org.spark.test.basictests;
 
 import org.spark.core.Observer;
 import org.spark.core.SimulationTime;
+import org.spark.core.SparkModel;
 import org.spark.space.SpaceAgent;
 import org.spark.space.StandardSpace;
-import org.spark.startup.ABMModel;
 
 /**
  * Test 2-A: agents which can die and proliferate
  * @author Monad
  *
  */
-public class CreateDieB implements ABMModel {
+public class CreateDieB extends SparkModel {
 
 	public boolean begin(long tick) {
 		return false;

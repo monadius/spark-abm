@@ -6,9 +6,8 @@ import org.spark.data.*;
 import org.spark.space.*;
 import org.spark.utils.*;
 import org.spark.math.*;
-import org.spark.startup.ABMModel;
 
-public class GameOfLifeModel implements ABMModel
+public class GameOfLifeModel extends SparkModel
 {
 	public static double density = 0;
 	
@@ -48,7 +47,6 @@ public class GameOfLifeModel implements ABMModel
 				cell.jump((new Vector(i, j, 0.0)));
 			}
 		}
-		Observer.getInstance().setExecutionMode(ExecutionMode.PARALLEL_MODE);
 	}
 	
 	public boolean end(long tick)

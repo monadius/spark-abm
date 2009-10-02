@@ -10,13 +10,14 @@ import javax.swing.JFrame;
 
 import org.spark.core.ExecutionMode;
 import org.spark.core.Observer;
+import org.spark.core.ObserverFactory;
+import org.spark.core.SparkModel;
 import org.spark.gui.render.DataLayerStyle;
 import org.spark.gui.render.Render;
 import org.spark.runtime.AbstractModelManager;
 import org.spark.runtime.BatchRunController;
 import org.spark.runtime.ModelMethod;
 import org.spark.runtime.ModelVariable;
-import org.spark.startup.ABMModel;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -29,7 +30,8 @@ public abstract class GUIModelManager extends AbstractModelManager {
 
 	protected IUpdatableFrame mainFrame;
 	protected ArrayList<UpdatableFrame> frames = new ArrayList<UpdatableFrame>();
-	protected ABMModel model;
+//	protected ABMModel model;
+	protected SparkModel model;
 	
 	protected File aboutFile;
 
@@ -53,6 +55,24 @@ public abstract class GUIModelManager extends AbstractModelManager {
 		return null;
 	}
 */	
+	
+	/**
+	 * Creates the observer for the currently loaded model
+	 * @param name
+	 * @param mode
+	 */
+	public void CreateObserver(String name, String mode) throws Exception {
+		if (model == null)
+			return;
+		
+		if (!name.startsWith("org.spark.core."))
+			name = "org.spark.core." + name;
+		
+		int executionMode = ExecutionMode.parse(mode);
+		
+		ObserverFactory.create(model, name, executionMode);
+	}
+	
 	
 	public ArrayList<Render> getAllRenders() {
 		Render render = null;
@@ -120,7 +140,7 @@ public abstract class GUIModelManager extends AbstractModelManager {
 		instance = this;
 	}
 	
-	public static Class<? extends ABMModel> getModelClass() {
+	public static Class<? extends SparkModel> getModelClass() {
 		if (instance != null && instance.model != null)
 			return instance.model.getClass();
 	
@@ -129,7 +149,7 @@ public abstract class GUIModelManager extends AbstractModelManager {
 	
 	
 	@Override
-	public ABMModel getModel() {
+	public SparkModel getModel() {
 		return model;
 	}
 	
@@ -303,15 +323,8 @@ public abstract class GUIModelManager extends AbstractModelManager {
 		ModelVariable.synchronizeVariables();
 		
 		// Setup is processed in serial mode always
-		if (Observer.getInstance().isSerial()) {
-			model.setup();
-		}
-		else {
-			int mode = Observer.getInstance().getExecutionMode();
-			Observer.getInstance().setExecutionMode(ExecutionMode.SERIAL_MODE);
-			model.setup();
-			Observer.getInstance().setExecutionMode(mode);
-		}
+		Observer.getInstance().beginSetup();
+		model.setup();
 		Observer.getInstance().finalizeSetup();
 		
 		// Synchronize variables right after setup method
@@ -459,7 +472,7 @@ public abstract class GUIModelManager extends AbstractModelManager {
 			in = new FileInputStream(stateFile);
 			ObjectInputStream ois = new ObjectInputStream(in);
 			initTick = ois.readLong();
-			Observer.getInstance().loadState(model, in, classLoader);
+			Observer.loadState(model, in, classLoader);
 		}
 		catch (Exception e) {
 			e.printStackTrace();
