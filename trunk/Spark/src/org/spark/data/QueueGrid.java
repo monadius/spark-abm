@@ -1,5 +1,6 @@
 package org.spark.data;
 
+import org.spark.core.Observer;
 import org.spark.space.Space;
 
 public class QueueGrid extends Grid {
@@ -8,7 +9,7 @@ public class QueueGrid extends Grid {
 	private int currentLine = 0;
 	
 	public QueueGrid(int xSize, int ySize) {
-		super(ySize, xSize);
+		super(Observer.getDefaultSpace(), ySize, xSize);
 	}
 	
 	public QueueGrid(Space space, int xSize, int ySize) {
@@ -27,5 +28,7 @@ public class QueueGrid extends Grid {
 			}
 		}
 	}
+	
+	
 
 }

@@ -8,11 +8,11 @@ package org.spark.data;
 
 import org.spark.core.Observer;
 import org.spark.gui.render.DataLayerWithColors;
+import org.spark.math.Function;
+import org.spark.math.Matrix;
 import org.spark.space.BoundedSpace3d;
 import org.spark.space.Space;
 import org.spark.space.SpaceAgent;
-import org.spark.utils.Function;
-import org.spark.utils.Matrix;
 import org.spark.utils.Vector;
 
 /*
@@ -20,6 +20,10 @@ import org.spark.utils.Vector;
  * Values are stored inside cells of a grid of the given dimension 
  */
 public class Grid3d implements AdvancedDataLayer, DataLayerWithColors {
+	/**
+	 * Serial version UID
+	 */
+	private static final long serialVersionUID = -6864232284995812231L;
 	// Reference to the space object
 	protected BoundedSpace3d space;
 	// Dimension of the grid
@@ -614,7 +618,7 @@ public class Grid3d implements AdvancedDataLayer, DataLayerWithColors {
 	public void convolution(Matrix m) {
 		if (true)
 			throw new Error("Not implemented for 3d grid");
-		int rows = m.getRowsNumber();
+/*		int rows = m.getRowsNumber();
 		int cols = m.getColsNumber();
 		if ((rows & 1) == 0 || (cols & 1) == 0)
 			throw new Error("The matrix should be of odd order");
@@ -656,7 +660,7 @@ public class Grid3d implements AdvancedDataLayer, DataLayerWithColors {
 
 		double[][][] temp = data;
 		data = dataCopy;
-		dataCopy = temp;
+		dataCopy = temp;*/
 	}
 
 	Matrix diffusion = new Matrix(3, 3);
@@ -843,5 +847,20 @@ public class Grid3d implements AdvancedDataLayer, DataLayerWithColors {
 	
 	public Space getSpace() {
 		return space;
+	}
+	
+	
+	
+	/**
+	 * Does nothing
+	 */
+	public void beginStep() {
+	}
+	
+
+	/**
+	 * Does nothing
+	 */
+	public void endStep() {
 	}
 }

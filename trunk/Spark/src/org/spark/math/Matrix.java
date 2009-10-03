@@ -4,7 +4,7 @@
   See the file "LICENSE" for more information
 */
 
-package org.spark.utils;
+package org.spark.math;
 
 import java.io.Serializable;
 

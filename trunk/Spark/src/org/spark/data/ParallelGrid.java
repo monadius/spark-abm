@@ -9,10 +9,10 @@ import java.util.LinkedList;
 import java.util.List;
 import org.spark.core.Observer;
 import org.spark.gui.render.DataLayerWithColors;
+import org.spark.math.Function;
 import org.spark.space.BoundedSpace;
 import org.spark.space.Space;
 import org.spark.space.SpaceAgent;
-import org.spark.utils.Function;
 import org.spark.utils.Parallel2dDoubleArray;
 import org.spark.utils.Vector;
 
@@ -826,5 +826,20 @@ public class ParallelGrid implements AdvancedDataLayer, DataLayerWithColors {
 	// FIXME: remove
 	public void setSpace(Space space) {
 		this.space = space;
+	}
+	
+	
+	
+	/**
+	 * Does nothing
+	 */
+	public void beginStep() {
+	}
+	
+
+	/**
+	 * Does nothing
+	 */
+	public void endStep() {
 	}
 }

@@ -8,6 +8,7 @@ import org.spark.core.Observer;
 import org.spark.core.SimulationTime;
 import org.spark.core.SparkModel;
 import org.spark.data.Grid;
+import org.spark.data.GridFactory;
 import org.spark.space.GridSpace;
 import org.spark.space.Space;
 import org.spark.space.SpaceAgent;
@@ -74,9 +75,9 @@ public class ToyInfectionModel extends SparkModel {
 		Observer observer = Observer.getInstance();
 		Space space = observer.addSpace("space", new GridSpace(-xSize, xSize, -ySize, ySize, true, true));
 		
-		tissueLife = space.addDataLayer("tissue-life", new Grid(2 * xSize, 2 * ySize));
-		toxin = space.addDataLayer("toxin", new Grid(2 * xSize, 2 * ySize));
-		cidalCompound = space.addDataLayer("cidal-compound", new Grid(2 * xSize, 2 * ySize));
+		tissueLife = space.addDataLayer("tissue-life", GridFactory.createGrid(2 * xSize, 2 * ySize));
+		toxin = space.addDataLayer("toxin", GridFactory.createGrid(2 * xSize, 2 * ySize));
+		cidalCompound = space.addDataLayer("cidal-compound", GridFactory.createGrid(2 * xSize, 2 * ySize));
 				
 		tissueLife.setValue(100);
 		totalTissueDamage = 0;

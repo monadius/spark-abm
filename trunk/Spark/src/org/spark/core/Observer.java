@@ -247,7 +247,7 @@ public final class Observer {
 			this.executionMode = ExecutionMode.SERIAL_MODE;
 		}
 		
-		RandomHelper.reset();
+		RandomHelper.reset(executionMode == ExecutionMode.PARALLEL_MODE);
 		
 		logger.debug("Observer is created. Execution mode: " + ExecutionMode.toString(executionMode));
 	}
@@ -333,7 +333,7 @@ public final class Observer {
 		
 		impl.clear();
 		
-		RandomHelper.reset();
+		RandomHelper.reset(executionMode == ExecutionMode.PARALLEL_MODE);
 	}
 
 	/**
@@ -790,15 +790,27 @@ public final class Observer {
 			// Sort types according to their priorities
 			Arrays.sort(types);
 			
+			// Begin step for all data layers
+			for (Space space : spacesList) {
+				space.dataLayersBeginStep();
+			}
+			
+			// Process all agents
 			for (int i = 0; i < types.length; i++) {
 				impl.processAgents(types[i].type, time);
 			}
 			
+			// Post process for agents
 			processRemovedAgents();
 			processNewAgents();
 
 			for (Space space : spacesList) {
 				space.processNodes();
+			}
+			
+			// End step for all data layers
+			for (Space space : spacesList) {
+				space.dataLayersEndStep();
 			}
 		}
 		

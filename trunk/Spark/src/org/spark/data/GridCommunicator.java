@@ -86,7 +86,7 @@ public class GridCommunicator implements Serializable {
 					throw new Error("Dimension problem");
 
 			// Create new grid of the specified size
-			Grid grid = new Grid(xSize, ySize);
+			Grid grid = new Grid(Observer.getDefaultSpace(), xSize, ySize);
 			grid.setBorders(xBorder, yBorder);
 			
 			double[][] data0 = grid.getData();

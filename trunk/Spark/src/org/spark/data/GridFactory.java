@@ -2,7 +2,7 @@ package org.spark.data;
 
 import org.spark.core.ExecutionMode;
 import org.spark.core.Observer;
-import org.spark.space.BoundedSpace;
+import org.spark.space.Space;
 
 /**
  * Creates instances of Grid and derived class
@@ -18,14 +18,7 @@ public class GridFactory {
 	 * @return
 	 */
 	public static Grid createGrid(int xSize, int ySize) {
-		int mode = Observer.getInstance().getExecutionMode();
-		
-		switch (mode) {
-		case ExecutionMode.SERIAL_MODE:
-			return new Grid(xSize, ySize);
-		}
-		
-		throw new Error("Grid cannot be created in the current execution mode: " + ExecutionMode.toString(mode));
+		return createGrid(Observer.getDefaultSpace(), xSize, ySize);
 	}
 
 
@@ -35,12 +28,15 @@ public class GridFactory {
 	 * @param ySize
 	 * @return
 	 */
-	public static Grid createGrid(BoundedSpace space, int xSize, int ySize) {
+	public static Grid createGrid(Space space, int xSize, int ySize) {
 		int mode = Observer.getInstance().getExecutionMode();
 		
 		switch (mode) {
 		case ExecutionMode.SERIAL_MODE:
 			return new Grid(space, xSize, ySize);
+			
+		case ExecutionMode.CONCURRENT_MODE:
+			return new Grid_concurrent(space, xSize, ySize);
 		}
 		
 		throw new Error("Grid cannot be created in the current execution mode: " + ExecutionMode.toString(mode));

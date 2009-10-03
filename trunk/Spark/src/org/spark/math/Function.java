@@ -4,7 +4,9 @@
   See the file "LICENSE" for more information
 */
 
-package org.spark.utils;
+package org.spark.math;
+
+import org.spark.utils.Vector;
 
 /**
  * A basic interface for a vector function 
