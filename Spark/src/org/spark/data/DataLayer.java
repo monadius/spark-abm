@@ -8,9 +8,9 @@ package org.spark.data;
 
 import java.io.Serializable;
 
+import org.spark.math.Function;
 import org.spark.space.Space;
 import org.spark.space.SpaceAgent;
-import org.spark.utils.Function;
 import org.spark.utils.Vector;
 
 /**
@@ -102,6 +102,19 @@ public interface DataLayer extends Serializable {
 	 * It is used internally for processing the data layer
 	 */
 	public void process(long tick);
+	
+	
+	/**
+	 * Called internally before processing agents
+	 * Used for the implementation of the concurrent execution mode
+	 */
+	public void beginStep();
+	
+	/**
+	 * Called internally after processing agents
+	 * Used for the implementation of the concurrent execution mode
+	 */
+	public void endStep();
 	
 	
 	/**

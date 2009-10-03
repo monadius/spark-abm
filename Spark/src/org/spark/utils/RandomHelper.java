@@ -55,12 +55,17 @@ public class RandomHelper {
     /**
      * Resets the random generator
      */
-    public static void reset() {
+    public static void reset(boolean synchronizedFlag) {
     	if (timeSeed) {
     		rngSeed = System.currentTimeMillis();
     	}
 
-    	generator = new cern.jet.random.engine.MersenneTwister((int) rngSeed);
+    	if (synchronizedFlag) {
+    		generator = new SynchronizedMersenneTwister((int) rngSeed);
+    	}
+    	else {
+    		generator = new cern.jet.random.engine.MersenneTwister((int) rngSeed);
+    	}
     }
     
     

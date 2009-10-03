@@ -489,8 +489,28 @@ public abstract class Space implements Serializable {
 	 * @return
 	 */
 	public abstract Vector getRandomPosition();
+
 	
 	
+	/**
+	 * Calls the beginStep() method for all data layers
+	 */
+	public void dataLayersBeginStep() {
+		for (DataLayer data : dataLayersList) {
+			data.beginStep();
+		}
+	}
+
+	
+	/**
+	 * Calls the endStep() method for all data layers
+	 */
+	public void dataLayersEndStep() {
+		for (DataLayer data : dataLayersList) {
+			data.endStep();
+		}
+	}
+
 	
 	/**
 	 * Serializes the space with data layers

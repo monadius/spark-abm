@@ -4,13 +4,12 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import org.spark.core.Observer;
 import org.spark.gui.render.DataLayerWithColors;
+import org.spark.math.Function;
+import org.spark.math.Matrix;
 import org.spark.space.BoundedSpace;
 import org.spark.space.Space;
 import org.spark.space.SpaceAgent;
-import org.spark.utils.Function;
-import org.spark.utils.Matrix;
 import org.spark.utils.Vector;
 
 /*
@@ -48,17 +47,7 @@ public class Grid implements AdvancedDataLayer, DataLayerWithColors {
 	private double colorScale = 10;
 	
 	
-	/**
-	 * Creates the xSize by ySize grid
-	 * @param xSize
-	 * @param ySize
-	 */
-	public Grid(int xSize, int ySize) {
-		this(Observer.getDefaultSpace(), xSize, ySize);
-	}
-	
-	
-	public Grid(Space space0, int xSize, int ySize) {
+	protected Grid(Space space0, int xSize, int ySize) {
 		assert(xSize > 0 && ySize > 0);
 		assert(space0 != null);
 		
@@ -404,8 +393,8 @@ public class Grid implements AdvancedDataLayer, DataLayerWithColors {
 		int y0 = restrictY(y - 1);
 		int y1 = restrictY(y + 1);
 		
-		double dx = data[x1][y] - data[x0][y];
-		double dy = data[x][y1] - data[x][y0];
+		double dx = readData[x1][y] - readData[x0][y];
+		double dy = readData[x][y1] - readData[x][y0];
 		
 		return new Vector(dx / (2 * xStep), dy / (2 * yStep), 0);
 	}
@@ -696,6 +685,7 @@ public class Grid implements AdvancedDataLayer, DataLayerWithColors {
 		
 		double[][]	temp = data;
 		data = dataCopy;
+		// TODO: is it correct?
 		readData = writeData = data;
 		dataCopy = temp;
 	}
@@ -726,7 +716,7 @@ public class Grid implements AdvancedDataLayer, DataLayerWithColors {
 			
 			// TODO: xMin, step are also important
 			if (filterGrid.xSize == this.xSize && filterGrid.ySize == this.ySize) {
-				double[][] filterData = filterGrid.data;
+				double[][] filterData = filterGrid.readData;
 				
 				for (int i = 0; i < xSize; i++)
 					for (int j = 0; j < ySize; j++) {
@@ -804,5 +794,20 @@ public class Grid implements AdvancedDataLayer, DataLayerWithColors {
 	 */
 	private void writeObject(ObjectOutputStream oos) throws IOException {
 		oos.defaultWriteObject();
+	}
+	
+	
+	
+	/**
+	 * Does nothing
+	 */
+	public void beginStep() {
+	}
+	
+
+	/**
+	 * Does nothing
+	 */
+	public void endStep() {
 	}
 }

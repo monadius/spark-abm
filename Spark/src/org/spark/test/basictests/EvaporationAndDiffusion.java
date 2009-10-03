@@ -4,6 +4,7 @@ import org.spark.core.Observer;
 import org.spark.core.SimulationTime;
 import org.spark.core.SparkModel;
 import org.spark.data.Grid;
+import org.spark.data.GridFactory;
 import org.spark.space.Space;
 import org.spark.space.SpaceAgent;
 import org.spark.space.StandardSpace;
@@ -40,7 +41,7 @@ public class EvaporationAndDiffusion extends SparkModel {
 		Observer observer = Observer.getInstance();
 		Space space = observer.addSpace("space", new StandardSpace(-xSize, xSize, -ySize, ySize, true, true));
 		
-		data = space.addDataLayer("data", new Grid(xSize * 2, ySize * 2));
+		data = space.addDataLayer("data", GridFactory.createGrid(xSize * 2, ySize * 2));
 		
 		int agentsNumber = (k + 1) * 2;
 		for (int i = 0; i < agentsNumber; i++) {
