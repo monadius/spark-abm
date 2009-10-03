@@ -122,6 +122,7 @@ class ModelTest {
 		private final long seed;
 		private final int mode;
 		private final boolean saveAllData;
+		private final boolean timeTestOnly;
 		private final String observerName;
 
 		/**
@@ -165,6 +166,11 @@ class ModelTest {
 			
 			this.mode = mode;
 
+			if (saveData.equals("time"))
+				timeTestOnly = true;
+			else
+				timeTestOnly = false;
+			
 			if (saveData.equals("true"))
 				saveAllData = true;
 			else
@@ -180,6 +186,9 @@ class ModelTest {
 		public void run(RunEngine engine) throws Exception {
 			engine.run(length, seed, observerName, mode, saveAllData);
 
+			if (timeTestOnly)
+				return;
+			
 			String fname = modelFile.getName();
 			fname += "_" + length;
 			fname += "_" + seed;
