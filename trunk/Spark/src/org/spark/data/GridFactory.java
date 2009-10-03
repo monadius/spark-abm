@@ -37,6 +37,9 @@ public class GridFactory {
 			
 		case ExecutionMode.CONCURRENT_MODE:
 			return new Grid_concurrent(space, xSize, ySize);
+			
+		case ExecutionMode.PARALLEL_MODE:
+			return new Grid_parallel(space, xSize, ySize);
 		}
 		
 		throw new Error("Grid cannot be created in the current execution mode: " + ExecutionMode.toString(mode));
