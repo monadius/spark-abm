@@ -1024,7 +1024,7 @@
                 <argument name = "y-size" type = "double"/>
 
                 <translation>
-                        Observer.getDefaultSpace().addDataLayer(@name, new Grid((int)(@x-size), (int)(@y-size)))
+                        Observer.getDefaultSpace().addDataLayer(@name, GridFactory.createGrid((int)(@x-size), (int)(@y-size)))
                 </translation>
         </reporter>
 
@@ -1040,7 +1040,7 @@
                 	<prelude>
                 		Space @tmpSpace = @space; 
                 	</prelude>
-                    @tmpSpace.addDataLayer(@name, new Grid(@tmpSpace, (int)(@x-size), (int)(@y-size)))
+                    @tmpSpace.addDataLayer(@name, GridFactory.createGrid(@tmpSpace, (int)(@x-size), (int)(@y-size)))
                 </translation>
         </reporter>
 
@@ -1056,7 +1056,7 @@
                 	<prelude>
                 		Space @tmpSpace = Observer.getSpace(@space-name) 
                 	</prelude>
-                    @tmpSpace.addDataLayer(@name, new Grid(@tmpSpace, (int)(@x-size), (int)(@y-size)))
+                    @tmpSpace.addDataLayer(@name, GridFactory.createGrid(@tmpSpace, (int)(@x-size), (int)(@y-size)))
                 </translation>
         </reporter>
 
