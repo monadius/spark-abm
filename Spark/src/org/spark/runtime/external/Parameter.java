@@ -1,4 +1,4 @@
-package org.spark.runtime;
+package org.spark.runtime.external;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,6 +13,8 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
+import org.spark.runtime.internal.ModelVariable;
 
 /**
  * Model parameter

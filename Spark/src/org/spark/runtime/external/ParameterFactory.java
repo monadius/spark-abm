@@ -1,8 +1,9 @@
-package org.spark.runtime;
+package org.spark.runtime.external;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.spark.core.SparkModel;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -47,7 +48,7 @@ public class ParameterFactory {
 	 * @param parent
 	 * @throws Exception
 	 */
-	public static void loadParameters(Node parent) {
+	public static void loadParameters(SparkModel model, Node parent) {
 		clear();
 		NodeList list = parent.getChildNodes();
 		
@@ -56,7 +57,7 @@ public class ParameterFactory {
 			
 			try {
 				if (node.getNodeName().equals("parameter"))
-					createParameter(node);
+					createParameter(model, node);
 			}
 			catch (Exception e) {
 				e.printStackTrace();
@@ -80,7 +81,7 @@ public class ParameterFactory {
 	 * @param node
 	 * @return
 	 */
-	public static Parameter createParameter(Node node) throws Exception {
+	public static Parameter createParameter(SparkModel model, Node node) throws Exception {
 		NamedNodeMap attributes = node.getAttributes();
 		Node tmp;
 
@@ -98,7 +99,7 @@ public class ParameterFactory {
 		Parameter par = new Parameter();
 		
 		// Add parameter to the table
-		par.variable = ModelVariable.getVariable(variable);
+		par.variable = model.getVariable(variable);
 		if (par.variable == null)
 			throw new Exception("Variable " + variable + " is not defined");
 		

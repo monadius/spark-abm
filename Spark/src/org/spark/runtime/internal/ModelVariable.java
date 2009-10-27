@@ -1,13 +1,13 @@
-package org.spark.runtime;
+package org.spark.runtime.internal;
 
 import java.lang.reflect.Method;
-import java.util.HashMap;
 
 import org.spark.core.SparkModel;
+import org.spark.runtime.AbstractChangeEvent;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
-import com.spinn3r.log5j.Logger;
+//import com.spinn3r.log5j.Logger;
 
 
 /**
@@ -15,16 +15,16 @@ import com.spinn3r.log5j.Logger;
  * @author Monad
  */
 public class ModelVariable extends AbstractChangeEvent {
-	private static final Logger logger = Logger.getLogger();	
+//	private static final Logger logger = Logger.getLogger();	
 
 	/* Table of all created variables */
-	private final static HashMap<String, ModelVariable> variables;
+//	private final static HashMap<String, ModelVariable> variables;
 	
-	static
+/*	static
 	{
 		variables = new HashMap<String, ModelVariable>();
 	}
-	
+*/	
 	/* Variable's name */
 	private String name;
 	
@@ -73,31 +73,7 @@ public class ModelVariable extends AbstractChangeEvent {
 	}
 	
 	
-	/**
-	 * Returns a variable by its name
-	 * @param name
-	 * @return null if there is no variable with the given name
-	 */
-	public static ModelVariable getVariable(String name) {
-		return variables.get(name);
-	}
-	
-	
-	/**
-	 * Returns all variables
-	 * @return
-	 */
-	public static ModelVariable[] getVariables() {
-		ModelVariable[] vars = new ModelVariable[variables.size()];
-		
-		int i = 0;
-		for (ModelVariable var : variables.values()) {
-			vars[i++] = var;
-		}
-		
-		return vars;
-	}
-	
+
 	
 	/**
 	 * Creates a new model variable from the given xml-node.
@@ -106,7 +82,7 @@ public class ModelVariable extends AbstractChangeEvent {
 	 * @param node
 	 * @return
 	 */
-	public static ModelVariable createVariable(Node node) throws Exception {
+	public static void createVariable(SparkModel model, Node node) throws Exception {
 		NamedNodeMap attributes = node.getAttributes();
 		Node tmp;
 		
@@ -120,10 +96,8 @@ public class ModelVariable extends AbstractChangeEvent {
 		ModelVariable var = new ModelVariable();
 		var.name = name;
 		
-		if (variables.containsValue(name))
+		if (!model.addMovelVariable(var))
 			throw new Exception("A variable " + name + " is already declared");
-		
-		variables.put(name, var);
 		
 		// Load type and set/get methods
 		try {
@@ -133,7 +107,6 @@ public class ModelVariable extends AbstractChangeEvent {
 //			var.setMethod = ModelManager.getInstance().getModel().getClass().getMethod(sset);
 //			var.getMethod = GUIModelManager.getModelClass().getMethod(sget);
 //			var.setMethod = GUIModelManager.getModelClass().getMethod(sset, var.type);
-			SparkModel model = AbstractModelManager.getInstance().getModel();
 			var.getMethod = model.getClass().getMethod(sget);
 			var.setMethod = model.getClass().getMethod(sset, var.type);
 		}
@@ -141,32 +114,9 @@ public class ModelVariable extends AbstractChangeEvent {
 			// TODO: do we need to process any exception here?
 			throw e;
 		}
-
-		return var;
 	}
 	
 
-	/**
-	 * Removes all created variables
-	 */
-	public static void clearVariables() {
-		variables.clear();
-	}
-	
-	
-	public static void synchronizeVariables() {
-		for (ModelVariable var : variables.values()) {
-			try {
-				var.synchronizeValue();
-			}
-			catch (Exception e) {
-				logger.error("Error during variable synchronization: " + var.name);
-				logger.error(e.getMessage());
-			}
-		}
-	}
-	
-	
 	
 	/**
 	 * Returns variable's value
@@ -241,7 +191,7 @@ public class ModelVariable extends AbstractChangeEvent {
 	 * Synchronizes variable's value with the SPARK value.
 	 * Call it synchronously with model run. 
 	 */
-	protected synchronized void synchronizeValue() throws Exception {
+	public synchronized void synchronizeValue() throws Exception {
 		// New value was assigned (from an interface)
 		if (writeFlag && setMethod != null && value != null) {
 			// TODO: should it be model instance instead of null?

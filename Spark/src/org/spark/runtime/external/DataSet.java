@@ -1,6 +1,9 @@
-package org.spark.runtime;
+package org.spark.runtime.external;
 
 import java.util.ArrayList;
+
+import org.spark.core.SparkModel;
+import org.spark.runtime.internal.ModelVariable;
 
 // TODO: create a data set factory
 // with static methods for creating data sets,
@@ -54,8 +57,8 @@ public class DataSet {
 	 * Adds a variable to the data set
 	 * @param name
 	 */
-	public void addVariable(String name) {
-		ModelVariable var = ModelVariable.getVariable(name);
+	public void addVariable(SparkModel model, String name) {
+		ModelVariable var = model.getVariable(name);
 		if (var != null)
 			variables.add(new VariableData(var, 1));
 	}
