@@ -1,7 +1,9 @@
-package org.spark.runtime;
+package org.spark.runtime.external;
 
 import java.util.HashMap;
 
+import org.spark.core.SparkModel;
+import org.spark.runtime.internal.ModelVariable;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -62,7 +64,7 @@ public class VariableSetFactory {
 	 * Loads all variable sets from a given xml-node
 	 * @param parent
 	 */
-	public static void loadVariableSets(Node parent) {
+	public static void loadVariableSets(SparkModel model, Node parent) {
 		clear();
 		NodeList list = parent.getChildNodes();
 		
@@ -71,7 +73,7 @@ public class VariableSetFactory {
 			
 			try {
 				if (node.getNodeName().equals("variable-set"))
-					createVariableSet(node);
+					createVariableSet(model, node);
 			}
 			catch (Exception e) {
 				e.printStackTrace();
@@ -95,7 +97,7 @@ public class VariableSetFactory {
 	 * variable set based on the parameters is created.
 	 * @return
 	 */
-	public static VariableSet createVariableSet(Node node) throws Exception {
+	public static VariableSet createVariableSet(SparkModel model, Node node) throws Exception {
 		if (node == null) {
 			return null;
 		}
@@ -122,7 +124,7 @@ public class VariableSetFactory {
 				name = (tmp = attributes.getNamedItem("name")) != null ? tmp.getNodeValue() : "???";
 				String svalue = (tmp = attributes.getNamedItem("value")) != null ? tmp.getNodeValue() : "0";
 
-				ModelVariable var = ModelVariable.getVariable(name);
+				ModelVariable var = model.getVariable(name);
 				
 				// TODO: do we need to throw an exception?
 				// Or just ignore it

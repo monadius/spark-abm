@@ -1,4 +1,4 @@
-package org.spark.runtime;
+package org.spark.runtime.external;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -296,8 +296,8 @@ public class BatchRunController {
 		}
 
 		// Reset variables
-		ModelMethod.synchronizeMethods();
-		ModelVariable.synchronizeVariables();
+		model.synchronizeMethods();
+		model.synchronizeVariables();
 		
 		// Setup is processed in serial mode always
 		Observer.getInstance().beginSetup();

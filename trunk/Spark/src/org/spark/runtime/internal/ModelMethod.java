@@ -1,8 +1,8 @@
-package org.spark.runtime;
+package org.spark.runtime.internal;
 
 import java.lang.reflect.Method;
-import java.util.HashMap;
 
+import org.spark.core.SparkModel;
 import org.spark.gui.GUIModelManager;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -15,13 +15,6 @@ import com.spinn3r.log5j.Logger;
  */
 public class ModelMethod {
 	private static final Logger logger = Logger.getLogger();
-	
-	/* All methods */
-	private final static HashMap<String, ModelMethod> methods;
-	
-	static {
-		methods = new HashMap<String, ModelMethod>();
-	}
 	
 	/* Method's name */
 	private String name;
@@ -58,17 +51,12 @@ public class ModelMethod {
 	 * @param node
 	 * @return null if method was not created
 	 */
-	public static ModelMethod createMethod(Node node) {
+	public static ModelMethod createMethod(SparkModel model, Node node) {
 		NamedNodeMap attributes = node.getAttributes();
 		Node tmp;
 		
 		String name = (tmp = attributes.getNamedItem("name")) != null ? tmp.getNodeValue() : "???";
 		String smethod = (tmp = attributes.getNamedItem("method")) != null ? tmp.getNodeValue() : "";
-		
-		if (methods.containsKey(name)) {
-			logger.error("Method " + name + " is already defined");
-			return null;
-		}
 		
 		Method method = null;
 		
@@ -76,7 +64,7 @@ public class ModelMethod {
 			// FIXME: Change it to ModelManager later
 			// method = ModelManager.getModel().getClass().getMethod(smethod);
 			// Look at a static method first
-			method = GUIModelManager.getModelClass().getMethod(smethod);
+			method = model.getClass().getMethod(smethod);
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -84,7 +72,10 @@ public class ModelMethod {
 		
 		if (method != null) {
 			ModelMethod mm = new ModelMethod(name, method);
-			methods.put(name, mm);
+			if (!model.addMethod(mm)) {
+				logger.error("Method " + name + " is already defined");
+				return null;
+			}
 			
 			return mm;
 		}
@@ -105,29 +96,15 @@ public class ModelMethod {
 	 * Invokes method
 	 * @throws Exception
 	 */
-	private synchronized void synchronize() throws Exception {
+	public synchronized void synchronize(SparkModel model) throws Exception {
 		for (int i = 0; i < callsCount; i++) {
-			// TODO: change to ModelManager later
-			method.invoke(GUIModelManager.getInstance().getModel());
+			method.invoke(model);
+			// TODO: remove later
 			GUIModelManager.getInstance().requestUpdate();
 		}
 		
 		callsCount = 0;
 	}
 	
-	
-	/**
-	 * Synchronizes method calls
-	 */
-	public static void synchronizeMethods() {
-		for (ModelMethod method : methods.values()) {
-			try {
-				method.synchronize();
-			}
-			catch (Exception e) {
-				logger.error("Error during external method invokation: " + method.name);
-				logger.error(e.getMessage());
-			}
-		}
-	}
+
 }

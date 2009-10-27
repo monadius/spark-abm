@@ -1,6 +1,7 @@
-package org.spark.runtime;
+package org.spark.runtime.external;
 
 import java.util.ArrayList;
+
 
 /**
  * Class for batch running and parameter sweep
