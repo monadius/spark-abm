@@ -14,7 +14,7 @@ public class ParameterSweep {
 	 * @author Monad
 	 */
 	private class ParameterOptions {
-		public Parameter parameter;
+		public Parameter_Old parameter;
 		
 		public double startValue;
 //		public double endValue;
@@ -53,7 +53,7 @@ public class ParameterSweep {
 	 * @param end
 	 * @param step
 	 */
-	public void addParameter(Parameter par, double start, double end, double step) {
+	public void addParameter(Parameter_Old par, double start, double end, double step) {
 		ParameterOptions p = new ParameterOptions();
 		p.parameter = par;
 		p.startValue = start;

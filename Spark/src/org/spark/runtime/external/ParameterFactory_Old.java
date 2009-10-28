@@ -17,16 +17,16 @@ import com.spinn3r.log5j.Logger;
  *
  */
 // TODO: make all functionality non-static
-public class ParameterFactory {
+public class ParameterFactory_Old {
 	private static final Logger logger = Logger.getLogger();
 	
 	/* All model parameters */
-	protected final static HashMap<String, Parameter> parameters = 
-		new HashMap<String, Parameter>();
+	protected final static HashMap<String, Parameter_Old> parameters = 
+		new HashMap<String, Parameter_Old>();
 	
 	/* A list of all parameters for preserving their order */
-	protected final static ArrayList<Parameter> parametersList =
-		new ArrayList<Parameter>();
+	protected final static ArrayList<Parameter_Old> parametersList =
+		new ArrayList<Parameter_Old>();
 	
 
 	
@@ -34,8 +34,8 @@ public class ParameterFactory {
 	 * Returns all loaded parameters
 	 * @return
 	 */
-	public static Parameter[] getParameters() {
-		Parameter[] pars = new Parameter[parametersList.size()];
+	public static Parameter_Old[] getParameters() {
+		Parameter_Old[] pars = new Parameter_Old[parametersList.size()];
 		return parametersList.toArray(pars);
 	}
 	
@@ -81,7 +81,7 @@ public class ParameterFactory {
 	 * @param node
 	 * @return
 	 */
-	public static Parameter createParameter(SparkModel model, Node node) throws Exception {
+	public static Parameter_Old createParameter(SparkModel model, Node node) throws Exception {
 		NamedNodeMap attributes = node.getAttributes();
 		Node tmp;
 
@@ -96,7 +96,7 @@ public class ParameterFactory {
 		String defaultValue = (tmp = attributes.getNamedItem("default")) != null ? tmp.getNodeValue() : null;
 
 		// Create a parameter
-		Parameter par = new Parameter();
+		Parameter_Old par = new Parameter_Old();
 		
 		// Add parameter to the table
 		par.variable = model.getVariable(variable);

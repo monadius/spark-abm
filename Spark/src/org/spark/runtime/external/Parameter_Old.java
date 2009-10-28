@@ -21,7 +21,7 @@ import org.spark.runtime.internal.ModelVariable;
  * @author Monad
  */
 @SuppressWarnings("serial")
-public class Parameter extends SpinnerNumberModel implements ChangeListener, ActionListener {
+public class Parameter_Old extends SpinnerNumberModel implements ChangeListener, ActionListener {
 	/* Associated variable */
 	protected ModelVariable variable;
 	
@@ -68,7 +68,7 @@ public class Parameter extends SpinnerNumberModel implements ChangeListener, Act
 	/**
 	 * Internal constructor
 	 */
-	Parameter() {
+	Parameter_Old() {
 	}
 	
 	

@@ -72,7 +72,7 @@ public class VariableSet {
 	 * it contain only parameters
 	 */
 	public void synchronizeWithParameters() {
-		Parameter[] pars = ParameterFactory.getParameters();
+		Parameter_Old[] pars = ParameterFactory_Old.getParameters();
 		
 		// Create a temporary table
 		HashMap<String, VariableValue> table = new HashMap<String, VariableValue>();
@@ -84,7 +84,7 @@ public class VariableSet {
 		vars.clear();
 		
 		for (int i = 0; i < pars.length; i++) {
-			Parameter p = pars[i];
+			Parameter_Old p = pars[i];
 			
 			String varName = p.variable.getName();
 			
