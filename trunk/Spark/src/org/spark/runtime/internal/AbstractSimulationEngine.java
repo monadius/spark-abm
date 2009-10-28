@@ -2,14 +2,9 @@ package org.spark.runtime.internal;
 
 import java.util.ArrayList;
 
-import org.spark.core.Observer;
-import org.spark.core.SimulationTime;
 import org.spark.core.SparkModel;
-import org.spark.math.RationalNumber;
-import org.spark.runtime.data.BadDataSourceException;
 import org.spark.runtime.data.DataCollector;
 import org.spark.runtime.data.DataProcessor;
-import org.spark.runtime.data.DataRow;
 
 
 /**
@@ -17,79 +12,70 @@ import org.spark.runtime.data.DataRow;
  * @author Monad
  */
 public abstract class AbstractSimulationEngine {
+	/* Model for which a simulation is running */
 	protected SparkModel model;
 	
+	/* Number of ticks for a simulation */
+	protected long simulationTime = Long.MAX_VALUE;
 	
-	protected ArrayList<DataCollector> dataCollectors;
-	protected ArrayList<DataProcessor> dataProcessors;
+	/* All data collectors */
+	protected final ArrayList<DataCollector> dataCollectors;
+	/* All data processors */
+	protected final ArrayList<DataProcessor> dataProcessors;
 	
 	
+	/**
+	 * Default constructor
+	 * @param model
+	 */
 	public AbstractSimulationEngine(SparkModel model) {
 		this.model = model;
+		
+		dataCollectors = new ArrayList<DataCollector>();
+		dataProcessors = new ArrayList<DataProcessor>();
 	}
 	
-
-	public void run() throws Exception {
-		if (model == null)
-			throw new Exception("Model is not loaded");
+	
+	/**
+	 * Sets the length of a simulation
+	 * @param time
+	 */
+	public void setSimulationTime(long time) {
+		if (time < 0)
+			time = 0;
 		
-		long tick = Observer.getInstance().getSimulationTick();
-		
-		long length = 1;
-		RationalNumber tickTime = new RationalNumber(1);
-
-		try {
-			/* Main process */
-			while (tick < length) {
-		
-				// Get commands
-				// Process commands
-				
-				if (model.begin(tick)) {
-					break;
-				}
-				Observer.getInstance().processAllAgents(tickTime);
-				Observer.getInstance().processAllDataLayers(tick);
-
-				if (model.end(tick)) {
-					break;
-				}
-				
-				// model.synchronizeMethods();
-				model.synchronizeVariables();
-				
-				// Begin data collection
-				SimulationTime time = Observer.getInstance().getSimulationTime();
-				DataRow row = new DataRow(time);
-				
-				for (DataCollector collector : dataCollectors) {
-					try {
-						collector.collect(model, row, time);
-					}
-					catch (BadDataSourceException e) {
-						// TODO: remove 'collector' from the list
-						// logger.debug(e);
-					}
-				}
-				
-				for (DataProcessor processor : dataProcessors) {
-					try {
-						processor.processDataRow(row);
-					}
-					catch (Exception e) {
-						// TODO: process this exception
-					}
-				}
-				
-				// Process data: save, send, etc.
-
-				Observer.getInstance().advanceSimulationTick();
-				tick = Observer.getInstance().getSimulationTick();
-			}
-
-		} catch (Exception e) {
-			throw e;
-		}
+		this.simulationTime = time;
 	}
-
+	
+	
+	/**
+	 * Adds the data collector dc
+	 * @param dc
+	 */
+	public void addDataCollector(DataCollector dc) {
+		dataCollectors.add(dc);
+	}
+	
+	
+	/**
+	 * Adds the data processor dp
+	 * @param dp
+	 */
+	public void addDataProcessor(DataProcessor dp) {
+		dataProcessors.add(dp);
+	}
+	
+	
+	
+	/**
+	 * Sets up the model
+	 */
+	public abstract void setup(String observerName, int executionMode)
+		throws Exception;
+	
+	/**
+	 * Main simulation method
+	 * @throws Exception
+	 */
+	public abstract void run() throws Exception;
 }
