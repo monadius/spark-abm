@@ -176,11 +176,21 @@ public final class Observer {
 	// for some internal statistics
 	private long statTime;
 
+	
 	/**
 	 * Returns the current simulation time
 	 * @return
 	 */
-	public RationalNumber getSimulationTime() {
+	public SimulationTime getSimulationTime() {
+		return new SimulationTime(time);
+	}
+	
+	
+	/**
+	 * Returns the current time value
+	 * @return
+	 */
+	public RationalNumber getTime() {
 		return time.getTime();
 	}
 

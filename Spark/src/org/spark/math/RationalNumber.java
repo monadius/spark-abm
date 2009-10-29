@@ -1,11 +1,13 @@
 package org.spark.math;
 
+import java.io.Serializable;
+
 /**
  * Represents a rational number
  * @author Monad
  *
  */
-public class RationalNumber extends Number implements Comparable<RationalNumber> {
+public class RationalNumber extends Number implements Comparable<RationalNumber>, Serializable {
 	/* Serial version UID */
 	private static final long serialVersionUID = -7438309292079517592L;
 	

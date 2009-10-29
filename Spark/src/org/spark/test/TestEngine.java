@@ -111,6 +111,24 @@ class ModelTest {
 			}
 		}
 	}
+	
+	
+	public void run2(RunEngine2 engine) {
+		try {
+			engine.loadModel(modelFile);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return;
+		}
+
+		for (TestCase testCase : testCases) {
+			try {
+				testCase.run2(engine);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
 
 	/**
 	 * Represents a test case for the model test
@@ -215,6 +233,14 @@ class ModelTest {
 				engine.saveData(fname);
 			}
 		}
+		
+		
+		public void run2(RunEngine2 engine) throws Exception {
+			engine.run(length, seed, observerName, mode, saveAllData);
+
+			if (timeTestOnly)
+				return;
+		}
 	}
 }
 
@@ -225,7 +251,8 @@ class ModelTest {
  */
 public class TestEngine {
 	private static PrintStream out = null;
-	private static RunEngine runEngine;
+//	private static RunEngine runEngine;
+	private static RunEngine2 runEngine2;
 	private static ArrayList<ModelTest> tests;
 
 	
@@ -267,11 +294,15 @@ public class TestEngine {
 	 * Runs all loaded tests
 	 */
 	public static void runAllTests() {
-		if (tests == null || runEngine == null)
+/*		if (tests == null || runEngine == null)
 			return;
 
 		for (ModelTest test : tests) {
 			test.run(runEngine);
+		}*/
+		
+		for (ModelTest test : tests) {
+			test.run2(runEngine2);
 		}
 	}
 
@@ -339,7 +370,8 @@ public class TestEngine {
 			out = new PrintStream(new MyStream(logFile));
 
 			// Create the run engine
-			runEngine = new RunEngine(out);
+//			runEngine = new RunEngine(out);
+			runEngine2 = new RunEngine2(System.out);
 
 			// Select an xml file with tests
 			File file = selectXmlFile();

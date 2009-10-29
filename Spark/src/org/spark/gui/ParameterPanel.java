@@ -10,10 +10,10 @@ import java.util.HashMap;
 
 import javax.swing.*;
 
-import org.spark.runtime.Parameter;
-import org.spark.runtime.ParameterFactory;
-import org.spark.runtime.VariableSet;
-import org.spark.runtime.VariableSetFactory;
+import org.spark.runtime.external.Parameter_Old;
+import org.spark.runtime.external.ParameterFactory_Old;
+import org.spark.runtime.external.VariableSet;
+import org.spark.runtime.external.VariableSetFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -24,7 +24,7 @@ public class ParameterPanel extends UpdatableFrame implements ActionListener {
 	
 	private final JPanel parameterPanel;
 	private final JPanel setPanel;
-	private final HashMap<String, Parameter> parameters = new HashMap<String, Parameter>();
+	private final HashMap<String, Parameter_Old> parameters = new HashMap<String, Parameter_Old>();
 
 	private VariableSet selectedSet = null;
 	// TODO: depends on a selected set
@@ -141,7 +141,7 @@ public class ParameterPanel extends UpdatableFrame implements ActionListener {
 	
 	
 	private void loadParameters() {
-		Parameter[] pars = ParameterFactory.getParameters();
+		Parameter_Old[] pars = ParameterFactory_Old.getParameters();
 		
 		for (int i = 0; i < pars.length; i++)
 			addParameter(pars[i]);
@@ -154,7 +154,7 @@ public class ParameterPanel extends UpdatableFrame implements ActionListener {
 	
 	
 
-	private void addParameter(Parameter p) {
+	private void addParameter(Parameter_Old p) {
 //		Parameter p = Parameter.createParameter(node);
 		
 		JLabel lname = new JLabel(p.getName());
@@ -180,7 +180,7 @@ public class ParameterPanel extends UpdatableFrame implements ActionListener {
 		out.println("\"Parameters\"");
 		
 		int n = parameters.values().size();
-		for (Parameter p : parameters.values()) {
+		for (Parameter_Old p : parameters.values()) {
 			out.print(p.getName());
 			n -= 1;
 			if (n > 0)
@@ -189,7 +189,7 @@ public class ParameterPanel extends UpdatableFrame implements ActionListener {
 		
 		out.println();
 		n = parameters.values().size();
-		for (Parameter p : parameters.values()) {
+		for (Parameter_Old p : parameters.values()) {
 			out.print(p.getValue());
 			n -= 1;
 			if (n > 0)

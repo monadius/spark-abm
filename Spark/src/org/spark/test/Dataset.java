@@ -13,7 +13,7 @@ import java.util.HashMap;
 import org.spark.core.Agent;
 import org.spark.core.Observer;
 import org.spark.data.DataLayer;
-import org.spark.runtime.ModelVariable;
+import org.spark.runtime.internal.ModelVariable;
 import org.spark.space.Space;
 
 /**
@@ -246,13 +246,12 @@ class Dataset {
 	/**
 	 * Default constructor
 	 */
-	public Dataset(int simulationLength, Class<Agent>[] agentTypes) {
+	public Dataset(int simulationLength, Class<Agent>[] agentTypes, ModelVariable[] vars) {
 		try {
 			// Add the tick data column 
 			addDataColumn(new TickColumn(simulationLength));
 			
 			// Add variables' data columns
-			ModelVariable[] vars = ModelVariable.getVariables();
 			for (ModelVariable var : vars) {
 				addDataColumn(new VariableColumn(var, simulationLength));
 			}

@@ -25,10 +25,9 @@ import org.spark.gui.render.AgentStyle;
 import org.spark.gui.render.DataLayerStyle;
 import org.spark.gui.render.Render;
 import org.spark.math.RationalNumber;
-import org.spark.runtime.ModelMethod;
-import org.spark.runtime.ModelVariable;
-import org.spark.runtime.ParameterFactory;
-import org.spark.runtime.VariableSetFactory;
+import org.spark.runtime.external.ParameterFactory_Old;
+import org.spark.runtime.external.VariableSetFactory;
+import org.spark.runtime.internal.ModelVariable;
 import org.spark.utils.Vector;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
@@ -455,7 +454,7 @@ public class ModelManager extends GUIModelManager {
 			}
 			
 			for (int i = 0; i < nodes.size(); i++) {
-				ModelVariable.createVariable(nodes.get(i));
+				ModelVariable.createVariable(model, nodes.get(i));
 			}
 
 			/* Load data layers */
@@ -474,11 +473,11 @@ public class ModelManager extends GUIModelManager {
 			}
 
 			/* Load parameters and variable sets */
-			ParameterFactory.clear();
+			ParameterFactory_Old.clear();
 			
 			list = xmlDoc.getElementsByTagName("parameterframe");
 			if (list.getLength() >= 1) {
-				ParameterFactory.loadParameters(list.item(0));
+				ParameterFactory_Old.loadParameters(model, list.item(0));
 			}
 
 			
@@ -486,7 +485,7 @@ public class ModelManager extends GUIModelManager {
 			
 			list = xmlDoc.getElementsByTagName("variable-sets");
 			if (list.getLength() >= 1) {
-				VariableSetFactory.loadVariableSets(list.item(0));
+				VariableSetFactory.loadVariableSets(model, list.item(0));
 			}
 
 			
@@ -508,7 +507,7 @@ public class ModelManager extends GUIModelManager {
 //			nodes = xmlDoc.getElementsByTagName("invokeframe");
 			list = xmlDoc.getElementsByTagName("methods");
 			if (list.getLength() >= 1) {
-				frame = new InvokeFrame(list.item(0), mainFrame);
+				frame = new InvokeFrame(model, list.item(0), mainFrame);
 				frames.add(frame);
 			}
 
@@ -585,7 +584,7 @@ public class ModelManager extends GUIModelManager {
 		
 		tickTime = null;
 
-		ModelVariable.clearVariables();
+		model.clearVariables();
 		dataLayerStyles.clear();
 		dataLayerStyleNodes.clear();
 		agentTypes = null;
@@ -752,11 +751,11 @@ public class ModelManager extends GUIModelManager {
 						serializeState(tick);
 					}
 					
-					ModelMethod.synchronizeMethods();
+					model.synchronizeMethods();
 					// TODO: is it a good idea to put synchronization here?
 					// The problem can be with variables for which
 					// values are computed (the number of agents).
-					ModelVariable.synchronizeVariables();
+					model.synchronizeVariables();
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -764,8 +763,8 @@ public class ModelManager extends GUIModelManager {
 
 			/* Synchronize variables and methods
 			   before each simulation step */
-			ModelMethod.synchronizeMethods();
-			ModelVariable.synchronizeVariables();
+			model.synchronizeMethods();
+			model.synchronizeVariables();
 			
 			// Save state
 			if (saveStateFlag) {

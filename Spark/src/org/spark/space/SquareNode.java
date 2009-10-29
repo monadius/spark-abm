@@ -16,5 +16,11 @@ public class SquareNode extends CircleNode {
 	protected SquareNode(Space space, double radius) {
 		super(space, radius);
 	}
+	
+	@Override
+	public int getShape() {
+		return SpaceAgent.SQUARE;
+	}
+
 
 }
