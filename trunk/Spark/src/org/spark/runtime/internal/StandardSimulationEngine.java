@@ -43,12 +43,80 @@ public class StandardSimulationEngine extends AbstractSimulationEngine {
 		model.synchronizeMethods();
 
 		// Setup is processed in serial mode always
-		Observer.getInstance().beginSetup();
+		model.getObserver().beginSetup();
 		model.setup();
-		Observer.getInstance().finalizeSetup();
+		model.getObserver().finalizeSetup();
 
 		// Synchronize variables right after setup method
 		model.synchronizeVariables();
+	}
+	
+	
+	// TODO: think about 'stateName', or 'stateFile' argument ('stateStream')
+	public void loadState(String stateName, String observerName, int executionMode) {
+		// Remark: it is possible to load a state and run a simulation for
+		// an arbitrary observer, because a state does not depend on an observer
+		// Relevant variable from the observer class are: simulationTime,
+		// actionQueue, agentTypes, etc.
+	}
+	
+	
+	/**
+	 * Main simulation step
+	 * @param tickTime
+	 * @param tick
+	 */
+	private boolean mainStep(RationalNumber tickTime, long tick) {
+		if (model.begin(tick)) {
+			return true;
+		}
+		Observer.getInstance().processAllAgents(tickTime);
+		Observer.getInstance().processAllDataLayers(tick);
+
+		if (model.end(tick)) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	
+	/**
+	 * Processes all data
+	 * @param time
+	 */
+	private void processData() throws Exception {
+		// Synchronize variables and methods
+		model.synchronizeVariables();
+		model.synchronizeMethods();
+
+		// Get simulation time
+		SimulationTime time = model.getObserver().getSimulationTime();
+		
+		// Create a data row
+		DataRow row = new DataRow(time);
+		
+		// Collect all data
+		for (DataCollector collector : dataCollectors) {
+			try {
+				collector.collect(model, row, time);
+			}
+			catch (BadDataSourceException e) {
+				// TODO: remove 'collector' from the list
+				// logger.debug(e);
+			}
+		}
+		
+		// Process collected data
+		for (DataProcessor processor : dataProcessors) {
+			try {
+				processor.processDataRow(row);
+			}
+			catch (Exception e) {
+				// TODO: process this exception
+			}
+		}
+		
 	}
 	
 
@@ -60,60 +128,35 @@ public class StandardSimulationEngine extends AbstractSimulationEngine {
 		if (model == null)
 			throw new Exception("Model is not loaded");
 		
-		long tick = Observer.getInstance().getSimulationTick();
+		long tick = model.getObserver().getSimulationTick();
 		
 		long length = this.simulationTime;
 		RationalNumber tickTime = model.getTickTime();
-
+		
 		try {
+			// Process data before simulation steps
+			processData();
+
 			/* Main process */
 			while (tick < length) {
-		
-				// Get commands
+				// TODO: Get commands
 				// Process commands
 				
-				if (model.begin(tick)) {
+				// Make one simulation step
+				if (mainStep(tickTime, tick))
 					break;
-				}
-				Observer.getInstance().processAllAgents(tickTime);
-				Observer.getInstance().processAllDataLayers(tick);
 
-				if (model.end(tick)) {
-					break;
-				}
-
-				// Synchronize variables and methods
-				model.synchronizeVariables();
-				model.synchronizeMethods();
-				
-				// Begin data collection
-				SimulationTime time = Observer.getInstance().getSimulationTime();
-				DataRow row = new DataRow(time);
-				
-				for (DataCollector collector : dataCollectors) {
-					try {
-						collector.collect(model, row, time);
-					}
-					catch (BadDataSourceException e) {
-						// TODO: remove 'collector' from the list
-						// logger.debug(e);
-					}
-				}
-				
-				// Process collected data
-				for (DataProcessor processor : dataProcessors) {
-					try {
-						processor.processDataRow(row);
-					}
-					catch (Exception e) {
-						// TODO: process this exception
-					}
-				}
-
+				// Process data
+				processData();
 
 				// Advance simulation time
-				Observer.getInstance().advanceSimulationTick();
-				tick = Observer.getInstance().getSimulationTick();
+				model.getObserver().advanceSimulationTick();
+				tick = model.getObserver().getSimulationTick();
+			}
+			
+			// Finalize data processing
+			for (DataProcessor dp : dataProcessors) {
+				dp.finalizeProcessing();
 			}
 
 		} catch (Exception e) {

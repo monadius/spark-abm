@@ -6,7 +6,8 @@ import java.util.HashMap;
 
 import javax.swing.*;
 
-import org.spark.runtime.ModelMethod;
+import org.spark.core.SparkModel;
+import org.spark.runtime.internal.ModelMethod;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -19,7 +20,7 @@ public class InvokeFrame extends UpdatableFrame implements ActionListener {
 	private final HashMap<String, ModelMethod> methods = new HashMap<String, ModelMethod>();
 	
 	
-	public InvokeFrame(Node node, JFrame owner) {
+	public InvokeFrame(SparkModel model, Node node, JFrame owner) {
 		super(node, owner, "Methods");
 		
 		panel = new JPanel();
@@ -30,7 +31,7 @@ public class InvokeFrame extends UpdatableFrame implements ActionListener {
 			Node methodNode = nodes.item(i);
 			
 			if (methodNode.getNodeName().equals("method")) {
-				addMethod(methodNode);
+				addMethod(model, methodNode);
 			}
 		}
 		
@@ -42,8 +43,8 @@ public class InvokeFrame extends UpdatableFrame implements ActionListener {
 
 
 	
-	private void addMethod(Node node) {
-		ModelMethod method = ModelMethod.createMethod(node);
+	private void addMethod(SparkModel model, Node node) {
+		ModelMethod method = ModelMethod.createMethod(model, node);
 		
 		if (method != null) {
 			methods.put(method.getName(), method);

@@ -19,9 +19,9 @@ import org.spark.core.ObserverFactory;
 import org.spark.core.SparkModel;
 import org.spark.math.RationalNumber;
 import org.spark.runtime.AbstractModelManager;
-import org.spark.runtime.ModelVariable;
-import org.spark.runtime.ParameterFactory;
-import org.spark.runtime.VariableSetFactory;
+import org.spark.runtime.external.ParameterFactory_Old;
+import org.spark.runtime.external.VariableSetFactory;
+import org.spark.runtime.internal.ModelVariable;
 import org.spark.utils.RandomHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
@@ -186,8 +186,6 @@ class RunEngine extends AbstractModelManager {
 		data = null;
 		agentTypes = null;
 		
-		ModelVariable.clearVariables();
-
 		// Open xml file
 		DocumentBuilder db = DocumentBuilderFactory.newInstance()
 				.newDocumentBuilder();
@@ -237,22 +235,22 @@ class RunEngine extends AbstractModelManager {
 			nodes = getChildrenByTagName(nodes.get(0), "variable");
 
 		for (int i = 0; i < nodes.size(); i++) {
-			ModelVariable.createVariable(nodes.get(i));
+			ModelVariable.createVariable(model, nodes.get(i));
 		}
 
 		/* Load parameters and variable sets */
-		ParameterFactory.clear();
+		ParameterFactory_Old.clear();
 
 		list = xmlDoc.getElementsByTagName("parameterframe");
 		if (list.getLength() >= 1) {
-			ParameterFactory.loadParameters(list.item(0));
+			ParameterFactory_Old.loadParameters(model, list.item(0));
 		}
 
 		VariableSetFactory.clear();
 
 		list = xmlDoc.getElementsByTagName("variable-sets");
 		if (list.getLength() >= 1) {
-			VariableSetFactory.loadVariableSets(list.item(0));
+			VariableSetFactory.loadVariableSets(model, list.item(0));
 		}
 
 		out.println();
@@ -311,8 +309,8 @@ class RunEngine extends AbstractModelManager {
 //		annulStaticFields();
 		
 		// First, synchronize model parameters
-		ModelVariable.synchronizeVariables();
-		ModelVariable.synchronizeVariables();
+		model.synchronizeVariables();
+		model.synchronizeVariables();
 
 		// Setup is processed in serial mode always
 		Observer.getInstance().beginSetup();
@@ -320,7 +318,7 @@ class RunEngine extends AbstractModelManager {
 		Observer.getInstance().finalizeSetup();
 
 		// Synchronize variables right after setup method
-		ModelVariable.synchronizeVariables();
+		model.synchronizeVariables();
 	}
 	
 
@@ -344,7 +342,7 @@ class RunEngine extends AbstractModelManager {
 		// Initialize the model
 		setupModel(seed, observerName, mode);
 		// Initialize the data set
-		data = new Dataset((int) length, agentTypes);
+		data = new Dataset((int) length, agentTypes, model.getVariables());
 		
 		// Save initial values of all variables
 		data.update(-1);
@@ -377,7 +375,7 @@ class RunEngine extends AbstractModelManager {
 				}
 
 				if (saveAllData) {
-					ModelVariable.synchronizeVariables();
+					model.synchronizeVariables();
 					data.update(tick);
 				}
 
@@ -395,7 +393,7 @@ class RunEngine extends AbstractModelManager {
 			out.println("END: time = " + time);
 			
 			// Save final data values
-			ModelVariable.synchronizeVariables();
+			model.synchronizeVariables();
 			data.update(tick);
 		}
 	}

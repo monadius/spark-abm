@@ -55,6 +55,7 @@ public class CircleNode extends SpaceNode {
 		radius = r;
 	}
 
+	
 	@Override
 	public boolean intersects(SpaceNode node) {
 		if (node.space != space)
@@ -63,10 +64,18 @@ public class CircleNode extends SpaceNode {
 		return node.intersectsWith(this);
 	}
 	
+	
 	@Override
 	public double getRelativeSize() {
 		return radius;
 	}
+	
+	
+	@Override
+	public int getShape() {
+		return SpaceAgent.CIRCLE;
+	}
+	
 
 	@Override
 	protected boolean intersectsWith(CircleNode circle) {

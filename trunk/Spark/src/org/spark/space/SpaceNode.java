@@ -63,6 +63,13 @@ public abstract class SpaceNode implements Serializable {
 		newPosition = new Vector();
 	}
 	
+
+	/**
+	 * Returns node's shape code
+	 * @return
+	 */
+	public abstract int getShape();
+	
 	/**
 	 * Gets the current position
 	 * @return

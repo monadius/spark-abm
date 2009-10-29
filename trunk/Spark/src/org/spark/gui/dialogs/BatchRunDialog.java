@@ -8,16 +8,17 @@ import java.util.ArrayList;
 
 import javax.swing.*;
 
+import org.spark.core.SparkModel;
 import org.spark.gui.GUIModelManager;
 import org.spark.gui.SpringUtilities;
 import org.spark.gui.Utils;
-import org.spark.runtime.BatchRunController;
-import org.spark.runtime.DataAnalyzer;
-import org.spark.runtime.DataSet;
-import org.spark.runtime.ModelVariable;
-import org.spark.runtime.Parameter;
-import org.spark.runtime.ParameterFactory;
-import org.spark.runtime.ParameterSweep;
+import org.spark.runtime.external.BatchRunController;
+import org.spark.runtime.external.DataAnalyzer;
+import org.spark.runtime.external.DataSet;
+import org.spark.runtime.external.Parameter_Old;
+import org.spark.runtime.external.ParameterFactory_Old;
+import org.spark.runtime.external.ParameterSweep;
+import org.spark.runtime.internal.ModelVariable;
 
 /**
  * The dialog for setting up batch run properties 
@@ -54,7 +55,7 @@ public class BatchRunDialog extends JDialog implements ActionListener {
 	 * Auxiliary class
 	 */
 	private class ParameterWithOptions {
-		public Parameter parameter;
+		public Parameter_Old parameter;
 		public JCheckBox use;
 		public JSpinner minValue;
 		public JSpinner maxValue;
@@ -217,7 +218,8 @@ public class BatchRunDialog extends JDialog implements ActionListener {
 	 * Initializes data variables
 	 */
 	private void initVariables() {
-		ModelVariable[] vars = ModelVariable.getVariables();
+		SparkModel model = GUIModelManager.getInstance().getModel();
+		ModelVariable[] vars = model.getVariables();
 		ArrayList<String> names = new ArrayList<String>();
 		
 		for (int i = 0; i < vars.length; i++) {
@@ -245,9 +247,9 @@ public class BatchRunDialog extends JDialog implements ActionListener {
 		int index = 0;
 		
 		// Create controls for parameters
-		Parameter[] parameters = ParameterFactory.getParameters();
+		Parameter_Old[] parameters = ParameterFactory_Old.getParameters();
 		for (int i = 0; i < parameters.length; i++) {
-			Parameter p = parameters[i];
+			Parameter_Old p = parameters[i];
 			// TODO: right now only Double parameters can be used
 			if (p.getValue() instanceof Double &&
 					p.getMin() > -1e100 &&
@@ -334,7 +336,8 @@ public class BatchRunDialog extends JDialog implements ActionListener {
 			DataSet dataSet = new DataSet();
 			String varName = (String) comboVariable.getSelectedItem();
 			if (varName != null) {
-				dataSet.addVariable(varName);
+				SparkModel model = GUIModelManager.getInstance().getModel();
+				dataSet.addVariable(model, varName);
 			}
 			
 			// Create data analyzer

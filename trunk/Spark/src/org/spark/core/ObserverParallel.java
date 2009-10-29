@@ -7,13 +7,13 @@
 package org.spark.core;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 //import jsr166y.forkjoin.*;
 
 import com.spinn3r.log5j.Logger;
 
 import extra166y.ParallelArray;
-import extra166y.Ops.Op;
-import extra166y.Ops.Predicate;
+import extra166y.Ops.Procedure;
 
 /**
  * Implementation of the abstract context.
@@ -22,14 +22,11 @@ import extra166y.Ops.Predicate;
  */
 class ObserverParallel extends ObserverImpl {
 	private static final Logger logger = Logger.getLogger();
+
 	// All agents
-	private ParallelArray<Agent>	agents;
-	// New agent queue
-//	private ParallelArray<Agent>	newAgents;
-	// For statistics
-//	private HashMap<Class<? extends Agent>, Long> statistics;
-	
-	//TODO change
+	private final HashMap<Class<? extends Agent>, ParallelArray<Agent>>	agents;
+
+	//TODO: change
 	private final static int AMOUNT_Agents = 1000;
 	
 	/**
@@ -37,11 +34,8 @@ class ObserverParallel extends ObserverImpl {
 	 */
 	ObserverParallel() {
 		logger.info("Creating ObserverParallel");
-		agents = ParallelArray.createEmpty(AMOUNT_Agents, Agent.class, ParallelArray.defaultExecutor());
-//		newAgents = ParallelArray.createEmpty(AMOUNT_Agents, Agent.class, ParallelArray.defaultExecutor());
-		
-		//agents2 = new HashMap<Class<? extends Agent>, ArrayList<Agent>>();
-//		statistics = new HashMap<Class<? extends Agent>, Long>();
+		agents = new HashMap<Class<? extends Agent>, ParallelArray<Agent>>();
+//		agents = ParallelArray.createEmpty(AMOUNT_Agents, Agent.class, ParallelArray.defaultExecutor());
 	}
 	
 	
@@ -56,10 +50,7 @@ class ObserverParallel extends ObserverImpl {
 	 */
 	@Override
 	public synchronized void clear() {
-		// TODO: find better solution
-		agents = ParallelArray.createEmpty(AMOUNT_Agents, Agent.class, ParallelArray.defaultExecutor());
-//		newAgents = ParallelArray.createEmpty(AMOUNT_Agents, Agent.class, ParallelArray.defaultExecutor());
-		
+		agents.clear();
 	}
 	
 	
@@ -68,8 +59,7 @@ class ObserverParallel extends ObserverImpl {
 	 */
 	@Override
 	public synchronized void clearAgents() {
-		// TODO: find better solution
-		agents = ParallelArray.createEmpty(AMOUNT_Agents, Agent.class, ParallelArray.defaultExecutor());
+		agents.clear();
 	}
 
 	
@@ -80,77 +70,84 @@ class ObserverParallel extends ObserverImpl {
 	 */
 	@Override
 	protected void addAgent(Agent agent, Class<? extends Agent> cl) {
-		synchronized (agents) {
-			agents.asList().add(agent);
+		ParallelArray<Agent> list = agents.get(cl);
+
+		if (list != null) {
+			list.asList().add(agent);
+		} else {
+			list = ParallelArray.createEmpty(AMOUNT_Agents, Agent.class, ParallelArray.defaultExecutor());			
+			list.asList().add(agent);
+
+			agents.put(cl, list);
+			observer.setAgentType(cl);
 		}
 	}
 	
 	
 	@Override
 	protected void addAllAgents(ArrayList<Agent> newAgents, Class<? extends Agent> cl) {
-		// TODO: better implementation later when ArrayList will be
-		// no longer used
-		synchronized (agents) {
-			agents.asList().addAll(newAgents);
+		ParallelArray<Agent> list = agents.get(cl);
+		
+		if (list == null) {
+			list = ParallelArray.createEmpty(AMOUNT_Agents, Agent.class, ParallelArray.defaultExecutor());
+
+			agents.put(cl, list);
+			observer.setAgentType(cl);
 		}
+		
+		list.asList().addAll(newAgents);
 	}
 	
-	
-	/**
-	 * Adds all new agents
-	 */
-//	private void processNewAgents() {
-//		agents.addAll(newAgents);
-//		newAgents.asList().clear();
-//	}
-	
-	
-	
+
 	/**
 	 * Removes the agent from the context
 	 * @param agent
 	 */
 	@Override
 	protected boolean removeAgent(Agent agent) {
-		// TODO: still need to do something, probably
-		// Be sure that only function die() may remove agents
+		Class<? extends Agent> cl = agent.getClass();
+
+		ParallelArray<Agent> list = agents.get(cl);
+		
+		if (list != null) {
+			return list.asList().remove(agent);
+		}
+		
 		return false;
 	}
 	
 	
 	@Override
 	public synchronized int getAgentsNumber(final Class<? extends Agent> type) {
-		int n = agents.withFilter(new Predicate<Agent>()
-				{
-					public boolean op(Agent arg0) {					
-						return (arg0 == null) ? false : arg0.getClass()==type;
-					}			
-		}).size();
+		ParallelArray<Agent> list = agents.get(type);
+		if (list == null)
+			return 0;
 		
-		return n;
+		return list.size();
 	}
 	
 	
 	@Override
 	public synchronized int getAgentsNumberOfKind(final Class<? extends Agent> kind) {
-		int n = agents.withFilter(new Predicate<Agent>()
-				{
-					public boolean op(Agent arg0) {					
-						return (arg0 == null) ? false : kind.isInstance(arg0);
-					}			
-		}).size();
+		int n = 0;
+		for (Class<? extends Agent> type : agents.keySet()) {
+			if (derived(type, kind)) {
+				n += agents.get(type).size();
+			}
+		}
 		
 		return n;
 	}
 
 	/**
+	 * @deprecated
 	 * Processes all agents
 	 * @param tick
 	 */
 	@Override
 	public synchronized void processAllAgents(final long tick) {
 		// TODO: can anything be done with static agents?
-		ParallelArray<Agent> TempAgent = agents.withMapping(
+/*		ParallelArray<Agent> TempAgent = agents.withMapping(
 				new Op<Agent, Agent>() {
 					public Agent op(Agent agent) {
 						if (agent == null || agent.isDead())
@@ -175,14 +172,22 @@ class ObserverParallel extends ObserverImpl {
 		}
 
 		agents = TempAgent;
-	
+*/	
 	}
 	
 	
 	@Override
-	public void processAgents(Class<? extends Agent> type, SimulationTime time) {
-		// TODO: implement
-		throw new RuntimeException("Not implemented");
+	public void processAgents(Class<? extends Agent> type, final SimulationTime time) {
+		ParallelArray<Agent> list = agents.get(type);
+		
+		if (list == null)
+			return;
+		
+		list.apply(new Procedure<Agent>() {
+			public void op(Agent agent) {
+				agent.step(time);
+			}
+		});
 	}
 
 
@@ -196,31 +201,22 @@ class ObserverParallel extends ObserverImpl {
 	}
 	
 	
-	// A trick used to avoid explicit cast operation
-	Agent[] tmp = new Agent[0];
 	@SuppressWarnings("unchecked")
 	@Override
 	public synchronized <T extends Agent> T[] getAgents(final Class<T> type) {
-		return (T[]) agents.withFilter(new Predicate<Agent>()
-				{
-					public boolean op(Agent arg0) {
-						return (arg0 == null) ? false : arg0.getClass()==type;
-					}			
-		}).all().asList().toArray(tmp);
+		ParallelArray<Agent> list = agents.get(type);
+		
+		if (list == null)
+			return null;
+
+		T[] tmp = (T[])new Agent[list.size()];
+		
+		return list.asList().toArray(tmp);
 	}
 	
 	
 	
-	@Override
 	public synchronized Agent[] getAgents() {
-		// FIXME: dead agents are returned as well if they have died
-		// during the current step.
-		// They are marked as dead only after processing all agents
-		// when the removedQueue is processed.
-		// This function is called by the render in synchronized mode
-		// before agents take their steps so freshly dead agents are not
-		// removed yet.
-		agents.removeNulls();
-		return agents.asList().toArray(tmp);
+		throw new Error("Not implemented");
 	}
 }

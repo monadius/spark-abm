@@ -1,5 +1,7 @@
 package org.spark.core;
 
+import java.io.Serializable;
+
 import org.spark.math.RationalNumber;
 
 /**
@@ -7,7 +9,8 @@ import org.spark.math.RationalNumber;
  * @author Monad
  *
  */
-public class SimulationTime implements Comparable<RationalNumber> {
+@SuppressWarnings("serial")
+public class SimulationTime implements Comparable<RationalNumber>, Serializable {
 	/* Counts the number of ticks */
 	private long tick;
 	
@@ -22,6 +25,16 @@ public class SimulationTime implements Comparable<RationalNumber> {
 	SimulationTime(long tick, RationalNumber time) {
 		this.tick = tick;
 		this.time = new RationalNumber(time);
+	}
+	
+	
+	/**
+	 * Copy constructor
+	 * @param time
+	 */
+	SimulationTime(SimulationTime time) {
+		this.tick = time.tick;
+		this.time = new RationalNumber(time.time);
 	}
 	
 	

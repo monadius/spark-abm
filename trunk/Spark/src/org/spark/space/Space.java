@@ -34,6 +34,9 @@ public abstract class Space implements Serializable {
 	/* Reference to the observer */
 	private Observer observer;
 	
+	/* Space index is a substitution for space's name for fast operations */
+	private int spaceIndex;
+	
 	private transient ArrayList<SpaceNode> nodeQueue;
 	private final int executionMode;
 	
@@ -60,6 +63,15 @@ public abstract class Space implements Serializable {
 		nodeQueue = new ArrayList<SpaceNode>(1000);
 		dataLayers = new HashMap<String, DataLayer>();
 		dataLayersList = new ArrayList<DataLayer>();
+	}
+	
+	
+	/**
+	 * Sets space's index
+	 * @param index
+	 */
+	public void setIndex(int index) {
+		this.spaceIndex = index;
 	}
 	
 	

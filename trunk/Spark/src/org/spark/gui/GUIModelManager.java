@@ -15,9 +15,7 @@ import org.spark.core.SparkModel;
 import org.spark.gui.render.DataLayerStyle;
 import org.spark.gui.render.Render;
 import org.spark.runtime.AbstractModelManager;
-import org.spark.runtime.BatchRunController;
-import org.spark.runtime.ModelMethod;
-import org.spark.runtime.ModelVariable;
+import org.spark.runtime.external.BatchRunController;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -314,13 +312,13 @@ public abstract class GUIModelManager extends AbstractModelManager {
 		if (model == null) return;
 		stopModel();
 
-		ModelMethod.synchronizeMethods();
+		model.synchronizeMethods();
 		
 		// Call twice in order to validate changes that
 		// could occur after the first call (some variables
 		// should be adjusted to min/max values)
-		ModelVariable.synchronizeVariables();
-		ModelVariable.synchronizeVariables();
+		model.synchronizeVariables();
+		model.synchronizeVariables();
 		
 		// Setup is processed in serial mode always
 		Observer.getInstance().beginSetup();
@@ -328,7 +326,7 @@ public abstract class GUIModelManager extends AbstractModelManager {
 		Observer.getInstance().finalizeSetup();
 		
 		// Synchronize variables right after setup method
-		ModelVariable.synchronizeVariables();
+		model.synchronizeVariables();
 
 		paused = true;
 		updateRequested = true;
@@ -483,8 +481,8 @@ public abstract class GUIModelManager extends AbstractModelManager {
 		}
 
 		// Start model
-		ModelVariable.synchronizeVariables();
-		ModelVariable.synchronizeVariables();
+		model.synchronizeVariables();
+		model.synchronizeVariables();
 		
 //		paused = true;
 		updateRequested = true;
