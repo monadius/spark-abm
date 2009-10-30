@@ -10,6 +10,7 @@ import org.spark.core.Agent;
 import org.spark.core.SparkModel;
 import org.spark.math.RationalNumber;
 import org.spark.runtime.commands.Command_LoadLocalModel;
+import org.spark.runtime.commands.Command_Start;
 import org.spark.runtime.commands.Command_String;
 import org.spark.runtime.commands.ModelManagerCommand;
 import org.spark.runtime.internal.ModelVariable;
@@ -269,6 +270,11 @@ public class SimpleModelManager extends BasicModelManager {
 			throw new Exception("Model is not loaded");
 		
 		cmd.execute(model, simEngine);
+		
+		/* Start command */
+		if (cmd instanceof Command_Start) {
+			startFlag = true;
+		}
 	}
 	
 	
@@ -304,6 +310,7 @@ public class SimpleModelManager extends BasicModelManager {
 		}
 		catch (Exception e) {
 			logger.error(e);
+			e.printStackTrace();
 		}
 		
 	}

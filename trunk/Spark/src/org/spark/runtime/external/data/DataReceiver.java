@@ -11,9 +11,18 @@ import org.spark.runtime.data.DataRow;
  */
 public abstract class DataReceiver {
 	/* List of all data consumers */
-	protected ArrayList<IDataConsumer> consumers;
+	protected final ArrayList<IDataConsumer> consumers;
 	
 
+	
+	/**
+	 * Default protected constructor
+	 */
+	protected DataReceiver() {
+		consumers = new ArrayList<IDataConsumer>();
+	}
+	
+	
 	/**
 	 * Invoked whenever new data is received
 	 * @param row

@@ -14,7 +14,7 @@ public class DataObject_Spaces extends DataObject {
 	private Vector[] mins;
 	private Vector[] maxs;
 	
-	private transient int counter = 0;
+	private int counter = 0;
 	private transient int number = 0;
 	
 	
@@ -50,6 +50,17 @@ public class DataObject_Spaces extends DataObject {
 		indices[counter] = index;
 		mins[counter] = min;
 		maxs[counter] = max;
+		
+		counter++;
+	}
+	
+	
+	/**
+	 * Returns the total number of spaces
+	 * @return
+	 */
+	public int getTotalNumber() {
+		return counter;
 	}
 	
 	
@@ -70,5 +81,20 @@ public class DataObject_Spaces extends DataObject {
 	
 	public Vector[] getMaxs() {
 		return maxs;
+	}
+	
+	
+	/**
+	 * Returns the index inside this object of the given space
+	 * @param name
+	 * @return
+	 */
+	public int getIndex(String name) {
+		for (int i = 0; i < names.length; i++) {
+			if (names[i].equals(name))
+				return i;
+		}
+		
+		return -1;
 	}
 }

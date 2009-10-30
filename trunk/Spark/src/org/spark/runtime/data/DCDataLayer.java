@@ -57,8 +57,9 @@ public class DCDataLayer extends DataCollector {
 		// directly from data layers, i.e. define a new interface method
 		// getDataCollector()
 		if (data instanceof Grid) {
-			double[][] vals = ((Grid) data).getData();
-			return new DataObject_Grid(spaceIndex, vals);
+			Grid grid = (Grid) data;
+			double[][] vals = grid.getData();
+			return new DataObject_Grid(spaceIndex, vals, grid.getXStep(), grid.getYStep());
 		}
 		else
 		{

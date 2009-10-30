@@ -15,7 +15,7 @@ import org.spark.core.SparkModel;
 import org.spark.gui.render.DataLayerStyle;
 import org.spark.gui.render.Render;
 import org.spark.runtime.AbstractModelManager;
-import org.spark.runtime.external.BatchRunController;
+import org.spark.runtime.BatchRunController;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;

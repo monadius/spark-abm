@@ -106,7 +106,12 @@ public class XmlDocUtils {
 		if (value == null)
 			return defaultValue;
 		
-		return Integer.valueOf(value);
+		try {
+			return Integer.valueOf(value);
+		}
+		catch (NumberFormatException e) {
+			return defaultValue;
+		}
 	}
 
 
@@ -123,7 +128,12 @@ public class XmlDocUtils {
 		if (value == null)
 			return defaultValue;
 		
-		return Float.valueOf(value);
+		try {
+			return Float.valueOf(value);
+		}
+		catch (NumberFormatException e) {
+			return defaultValue;
+		}
 	}
 	
 
@@ -140,7 +150,54 @@ public class XmlDocUtils {
 		if (value == null)
 			return defaultValue;
 		
-		return Double.valueOf(value);
+		try {
+			return Double.valueOf(value);
+		}
+		catch (NumberFormatException e) {
+			return defaultValue;
+		}
+	}
+	
+	
+	/**
+	 * Gets a double value of the given attribute
+	 * @param node
+	 * @param attrName
+	 * @param defaultValue
+	 * @return
+	 */
+	public static Vector getVectorValue(Node node, String attrName, String delim, Vector defaultValue) {
+		String value = getValue(node, attrName, null);
+				
+		if (value == null)
+			return defaultValue;
+		
+		String[] components = value.split(delim);
+		
+		try {
+			switch (components.length) {
+			case 0:
+				return defaultValue;
+
+			case 1:
+				double v = Double.valueOf(components[0]);
+				return new Vector(v);
+
+			case 2:
+				double v1 = Double.valueOf(components[0]);
+				double v2 = Double.valueOf(components[1]);
+				return new Vector(v1, v2, 0);
+				
+			default:
+				double x = Double.valueOf(components[0]);
+				double y = Double.valueOf(components[1]);
+				double z = Double.valueOf(components[2]);
+				return new Vector(x, y, z);
+			}
+		}
+		catch (NumberFormatException e) {
+			return defaultValue;
+		}
 	}
 
 }

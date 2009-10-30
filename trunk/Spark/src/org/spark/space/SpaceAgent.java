@@ -158,6 +158,7 @@ public class SpaceAgent extends Agent {
 	public void moveToSpace(Space space, Vector pos) {
 		// If the agent's node is already removed,
 		// then cannot move it to another space
+		// TODO: correct it for parallel execution mode
 		if (node.nodeIsRemoved)
 			return;
 		

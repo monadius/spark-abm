@@ -7,7 +7,6 @@ import java.io.InputStream;
 import javax.imageio.ImageIO;
 import javax.media.opengl.GL;
 
-import org.spark.runtime.external.Coordinator;
 import org.spark.utils.FileUtils;
 import static org.spark.utils.XmlDocUtils.*;
 
@@ -288,7 +287,7 @@ public class AgentStyle implements Comparable<AgentStyle> {
 	 * @param position
 	 * @return
 	 */
-	public Node createNode(Document doc, int position) {
+	public Node createNode(Document doc, int position, File modelPath) {
 		Node agentNode = doc.createElement("agentstyle");
 
 		addAttr(doc, agentNode, "name", name);
@@ -300,7 +299,7 @@ public class AgentStyle implements Comparable<AgentStyle> {
 		if (this.textureFileName != null) {
 			// Texture
 			addAttr(doc, agentNode, "texture", 
-					FileUtils.getRelativePath(Coordinator.getInstance().getCurrentDir(),
+					FileUtils.getRelativePath(modelPath,
 							new File(this.textureFileName)));
 		}
 		

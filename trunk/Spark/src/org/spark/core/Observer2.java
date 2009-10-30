@@ -106,6 +106,8 @@ class Observer2 extends ObserverImpl {
 		agent.prev.next = agent.next;
 		agent.next.prev = agent.prev;
 		
+		agent.next = null;
+		
 		return true;
 	}
 	
@@ -184,6 +186,10 @@ class Observer2 extends ObserverImpl {
 		Agent[] agents = new Agent[tmp.number];
 		int i = 0;
 		for (Agent next = tmp.next; next != tmp; next = next.next) {
+			if (i >= tmp.number) {
+				throw new Error();
+			}
+
 			agents[i++] = next;
 		}
 		
