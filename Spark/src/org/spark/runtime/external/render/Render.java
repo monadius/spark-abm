@@ -4,7 +4,9 @@ import java.awt.Canvas;
 import java.awt.EventQueue;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 import org.spark.runtime.data.DataRow;
@@ -12,7 +14,9 @@ import org.spark.runtime.external.data.IDataConsumer;
 import org.spark.utils.XmlDocUtils;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 public abstract class Render implements KeyListener, IDataConsumer {
 	/* Types of renderers */
@@ -22,6 +26,8 @@ public abstract class Render implements KeyListener, IDataConsumer {
 	
 	/* Data to be rendered */
 	private DataRow data;
+	
+	private Object dataLock = new Object();
 	
 
 	/* Active (selected) space to be rendered */
@@ -96,8 +102,13 @@ public abstract class Render implements KeyListener, IDataConsumer {
 		
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
-				DataRow tmp = data;
-				displayRequested = false;
+				DataRow tmp;
+				
+				synchronized (dataLock) {
+					tmp = data;
+					displayRequested = false;
+				}
+				
 				display(tmp);
 			}
 		});
@@ -141,9 +152,11 @@ public abstract class Render implements KeyListener, IDataConsumer {
 	/**
 	 * Implementation of IDataConsumer interface
 	 */
-	public synchronized void consume(DataRow row) {
-		this.data = row;
-		update();
+	public void consume(DataRow row) {
+		synchronized (dataLock) {
+			this.data = row;
+			update();
+		}
 	}
 	
 	
@@ -206,8 +219,8 @@ public abstract class Render implements KeyListener, IDataConsumer {
 	 * Sets the active space
 	 * @param name
 	 */
-	public void setSpace(String name, boolean swapXY) {
-		if (name == null) {
+	public void setSpace(SpaceStyle style) {
+		if (style == null) {
 			selectedSpace = null;
 			setDataLayerStyles(globalDataLayerStyles);
 		}
@@ -215,8 +228,7 @@ public abstract class Render implements KeyListener, IDataConsumer {
 //			if (Observer.getSpace(name) != null) {
 				if (selectedSpace != null)
 					reshapeRequested = true;
-				selectedSpace = new SpaceStyle(name);
-				selectedSpace.swapXY = swapXY;
+				selectedSpace = style;
 				setDataLayerStyles(globalDataLayerStyles);
 //			}
 		}
@@ -340,14 +352,114 @@ public abstract class Render implements KeyListener, IDataConsumer {
 
 	
 	
-	/* Methods for saving renderer properties into a model xml file */
+	/* Methods for saving/loading renderer properties into/from a model xml file */
+	
+	/**
+	 * Creates a new render from the given xml document and
+	 * of the specific type
+	 */
+	public static Render createRender(Node node, int renderType, 
+			HashMap<String, DataLayerStyle> dataLayerStyles,
+			HashMap<String, String> agentTypesAndNames,
+			File modelPath) {
+		Render render = null;
+		if (renderType == Render.JOGL_RENDER) {
+			try {
+//				if (Observer.getDefaultSpace() instanceof BoundedSpace3d)
+//					render = new org.spark.gui.render.JOGLRender3d();
+//				else
+//					render = new org.spark.gui.render.JOGLRender();
+			} catch (Exception e) {
+				e.printStackTrace();
+				render = new JavaRender();
+			}
+		} else {
+			render = new JavaRender();
+		}
+
+		ArrayList<AgentStyle> agentStyles = new ArrayList<AgentStyle>();
+		HashMap<String, AgentStyle> agentMap = new HashMap<String, AgentStyle>();
+
+		
+		for (String agentType : agentTypesAndNames.keySet()) {
+			AgentStyle agentStyle = new AgentStyle(agentType);
+			agentStyles.add(agentStyle);
+
+			String name = agentTypesAndNames.get(agentType);
+			if (name != null)
+				agentMap.put(name, agentStyle);
+
+			agentStyle.name = name;
+		}
+
+		String selectedDataLayer = null;
+		SpaceStyle selectedSpace = null;
+
+		if (node != null) {
+			NodeList nodes = node.getChildNodes();
+			NamedNodeMap attributes;
+			Node tmp;
+
+			for (int i = 0; i < nodes.getLength(); i++) {
+				node = nodes.item(i);
+				attributes = node.getAttributes();
+				if (attributes == null)
+					continue;
+
+				String name = (tmp = attributes.getNamedItem("name")) != null ? tmp
+						.getNodeValue()
+						: null;
+
+				if (node.getNodeName().equals("spacestyle")) {
+					SpaceStyle spaceStyle = SpaceStyle.load(node);
+							
+					if (spaceStyle.selected)
+						selectedSpace = spaceStyle;
+					
+				} else if (node.getNodeName().equals("datalayerstyle")) {
+					String selected = (tmp = attributes
+							.getNamedItem("selected")) != null ? tmp
+							.getNodeValue() : "false";
+
+					if (selected.equals("true"))
+						selectedDataLayer = name;
+				} else if (node.getNodeName().equals("agentstyle")
+						&& name != null) {
+					AgentStyle agentStyle = agentMap.get(name);
+
+					if (agentStyle == null)
+						continue;
+
+					agentStyle.load(node, modelPath);
+				}
+			}
+		}
+
+		Collections.sort(agentStyles);
+
+		for (int j = 0; j < agentStyles.size(); j++) {
+			render.addAgentStyle(agentStyles.get(j));
+		}
+
+		render.setGlobalDataLayerStyles(dataLayerStyles);
+
+		if (selectedSpace == null) {
+			// TODO: it is just a way around: find better solution
+			selectedSpace = new SpaceStyle("space", false, true);
+		}
+
+		render.setSpace(selectedSpace);
+		render.setDataLayer(selectedDataLayer);
+
+		return render;
+	}
 	
 	/**
 	 * Writes out style information into an xml file
 	 * @param doc
 	 * @param parent
 	 */
-	public synchronized void writeXML(Document doc, Node parent) {
+	public synchronized void writeXML(Document doc, Node parent, File modelPath) {
 		if (doc == null || parent == null)
 			return;
 
@@ -397,7 +509,7 @@ public abstract class Render implements KeyListener, IDataConsumer {
 			if (name == null)
 				continue;
 			
-			Node agentNode = agentStyle.createNode(doc, i);
+			Node agentNode = agentStyle.createNode(doc, i, modelPath);
 			
 			// Add a new node
 			parent.appendChild(agentNode);

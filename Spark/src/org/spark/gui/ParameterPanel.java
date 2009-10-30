@@ -10,10 +10,10 @@ import java.util.HashMap;
 
 import javax.swing.*;
 
-import org.spark.runtime.external.Parameter_Old;
-import org.spark.runtime.external.ParameterFactory_Old;
-import org.spark.runtime.external.VariableSet;
-import org.spark.runtime.external.VariableSetFactory;
+import org.spark.runtime.ParameterFactory_Old;
+import org.spark.runtime.Parameter_Old;
+import org.spark.runtime.VariableSet;
+import org.spark.runtime.VariableSetFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;

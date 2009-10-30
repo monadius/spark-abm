@@ -10,14 +10,17 @@ public class DataObject_Grid extends DataObject {
 	private int spaceIndex;
 	private double[] data;
 	private int n, m;
+	private double xStep, yStep;
 	
 	
 	/**
 	 * Creates a copy of the given data array
 	 * @param data
 	 */
-	DataObject_Grid(int spaceIndex, double[][] data) {
+	DataObject_Grid(int spaceIndex, double[][] data, double xStep, double yStep) {
 		this.spaceIndex = spaceIndex;
+		this.xStep = xStep;
+		this.yStep = yStep;
 		
 		this.n = data.length;
 		this.m = data[0].length;
@@ -38,6 +41,42 @@ public class DataObject_Grid extends DataObject {
 	 */
 	public double getValue(int x, int y) {
 		return data[x * m + y];
+	}
+	
+	
+	/**
+	 * Returns grid's x-dimension
+	 * @return
+	 */
+	public int getXSize() {
+		return n;
+	}
+	
+	
+	/**
+	 * Returns grid's y-dimension
+	 * @return
+	 */
+	public int getYSize() {
+		return m;
+	}
+	
+	
+	/**
+	 * Returns grid's x step value
+	 * @return
+	 */
+	public double getXStep() {
+		return xStep;
+	}
+	
+	
+	/**
+	 * Returns grid's y step value
+	 * @return
+	 */
+	public double getYStep() {
+		return yStep;
 	}
 	
 	

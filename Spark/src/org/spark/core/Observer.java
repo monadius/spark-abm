@@ -679,6 +679,11 @@ public final class Observer {
 	private synchronized void processRemovedAgents() {
 		for (int i = 0; i < removedQueue.size(); i++) {
 			Agent agent = removedQueue.get(i);
+			// It is possible that an agent is added to the queue twice
+			// Avoid that by checking the dead flag
+			if (agent.dead)
+				continue;
+			
 			agent.dead = true;
 
 			if (impl.removeAgent(agent))

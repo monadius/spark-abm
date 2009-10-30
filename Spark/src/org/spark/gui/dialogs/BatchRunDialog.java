@@ -12,12 +12,12 @@ import org.spark.core.SparkModel;
 import org.spark.gui.GUIModelManager;
 import org.spark.gui.SpringUtilities;
 import org.spark.gui.Utils;
-import org.spark.runtime.external.BatchRunController;
-import org.spark.runtime.external.DataAnalyzer;
-import org.spark.runtime.external.DataSet;
-import org.spark.runtime.external.Parameter_Old;
-import org.spark.runtime.external.ParameterFactory_Old;
-import org.spark.runtime.external.ParameterSweep;
+import org.spark.runtime.BatchRunController;
+import org.spark.runtime.DataAnalyzer;
+import org.spark.runtime.DataSet;
+import org.spark.runtime.ParameterFactory_Old;
+import org.spark.runtime.ParameterSweep;
+import org.spark.runtime.Parameter_Old;
 import org.spark.runtime.internal.ModelVariable;
 
 /**

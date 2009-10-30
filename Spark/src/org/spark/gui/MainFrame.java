@@ -34,7 +34,7 @@ import org.spark.gui.dialogs.RandomSeedDialog;
 import org.spark.gui.dialogs.RenderProperties;
 import org.spark.gui.dialogs.RenderSelectionDialog;
 import org.spark.gui.render.Render;
-import org.spark.runtime.external.BatchRunController;
+import org.spark.runtime.BatchRunController;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
