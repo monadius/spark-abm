@@ -437,6 +437,9 @@ public final class Observer {
 		if (spacesMap.containsKey(name))
 			throw new Error("Space " + name + " is already defined");
 
+		int index = spacesList.size();
+		space.setIndex(index);
+		
 		spacesList.add(space);
 		spacesMap.put(name, space);
 

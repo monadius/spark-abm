@@ -70,8 +70,18 @@ public abstract class Space implements Serializable {
 	 * Sets space's index
 	 * @param index
 	 */
+	// TODO: should not be public
 	public void setIndex(int index) {
 		this.spaceIndex = index;
+	}
+	
+	
+	/**
+	 * Returns space's index
+	 * @return
+	 */
+	public int getIndex() {
+		return spaceIndex;
 	}
 	
 	

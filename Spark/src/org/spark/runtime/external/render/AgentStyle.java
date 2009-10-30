@@ -1,4 +1,4 @@
-package org.spark.gui.render;
+package org.spark.runtime.external.render;
 
 import java.awt.Image;
 import java.io.File;
@@ -7,8 +7,8 @@ import java.io.InputStream;
 import javax.imageio.ImageIO;
 import javax.media.opengl.GL;
 
-import org.spark.core.Agent;
-import org.spark.gui.GUIModelManager;
+import org.spark.runtime.external.Coordinator;
+import org.spark.utils.FileUtils;
 import static org.spark.utils.XmlDocUtils.*;
 
 import org.w3c.dom.Document;
@@ -18,8 +18,10 @@ import com.sun.opengl.util.texture.Texture;
 import com.sun.opengl.util.texture.TextureIO;
 
 public class AgentStyle implements Comparable<AgentStyle> {
-	public Class<? extends Agent> agentType;
-	/* Agent's name */
+	/* Agent's type name */
+	public String typeName;
+	
+	/* Agent's (short) name */
 	public String name;
 	
 	/* Basic options */
@@ -161,9 +163,9 @@ public class AgentStyle implements Comparable<AgentStyle> {
 	// Only used when agent styles are loading
 	public int priority = Integer.MAX_VALUE;
 
-	public AgentStyle(Class<? extends Agent> agentType, String name,
+	public AgentStyle(String agentTypeName, String name,
 			boolean transparent, boolean visible, boolean border) {
-		this.agentType = agentType;
+		this.typeName = agentTypeName;
 		this.name = name;
 		this.transparent = transparent;
 		this.visible = visible;
@@ -180,8 +182,8 @@ public class AgentStyle implements Comparable<AgentStyle> {
 	}
 	
 	
-	public AgentStyle(Class<? extends Agent> agentType) {
-		this(agentType, null, false, true, true);
+	public AgentStyle(String agentTypeName) {
+		this(agentTypeName, null, false, true, true);
 	}
 
 	
@@ -298,7 +300,8 @@ public class AgentStyle implements Comparable<AgentStyle> {
 		if (this.textureFileName != null) {
 			// Texture
 			addAttr(doc, agentNode, "texture", 
-					GUIModelManager.getInstance().getRelativePath(new File(this.textureFileName)));
+					FileUtils.getRelativePath(Coordinator.getInstance().getCurrentDir(),
+							new File(this.textureFileName)));
 		}
 		
 		if (alphaFunc > 0) {

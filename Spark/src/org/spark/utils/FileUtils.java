@@ -39,4 +39,51 @@ public class FileUtils {
 			
 		return files;
 	}
+	
+
+	/**
+	 * Returns a relative path to the given file
+	 * @param file
+	 * @return
+	 */
+	public static String getRelativePath(File basePath, File file) {
+		if (basePath == null)
+			return file.getAbsolutePath();
+		
+		if (basePath.isFile())
+			basePath = basePath.getParentFile();
+		
+		if (!file.isAbsolute())
+			file = new File(basePath, file.getPath());
+		
+		String path = file.getName();
+		
+		for (File f = file.getParentFile(); f != null; f = f.getParentFile()) {
+			if (f.equals(basePath))
+				return path;
+			
+			path = f.getName() + "/" + path;
+		}
+		
+		return file.getAbsolutePath();
+	}
+	
+
+	/**
+	 * Returns file's extension
+	 * @param f
+	 * @return
+	 */
+	public static String getExtension(File f) {
+		String ext = "";
+		String s = f.getName();
+		int i = s.lastIndexOf('.');
+
+		if (i > 0 && i < s.length() - 1) {
+			ext = s.substring(i + 1).toLowerCase();
+		}
+		
+		return ext;
+	}
+
 }
