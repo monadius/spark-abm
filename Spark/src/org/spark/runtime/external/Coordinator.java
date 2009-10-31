@@ -13,6 +13,7 @@ import org.apache.log4j.PropertyConfigurator;
 import org.spark.core.ExecutionMode;
 import org.spark.runtime.commands.*;
 import org.spark.runtime.external.data.LocalDataReceiver;
+import org.spark.runtime.external.gui.MainWindow;
 import org.spark.runtime.external.render.DataLayerStyle;
 import org.spark.runtime.external.render.Render;
 import org.spark.runtime.internal.manager.BasicModelManager;
@@ -44,10 +45,23 @@ public class Coordinator {
 	private BasicModelManager modelManager;
 	private LocalDataReceiver receiver;
 	private File currentDir;
+	private File modelXmlFile;
+	private Document modelXmlDoc;
 	
 	private final HashMap<String, DataLayerStyle> dataLayerStyles;
 	private final HashMap<String, String> agentTypesAndNames;
+	
+	/* Random generator properties (for the next run) */
+	private long randomSeed;
+	private boolean useTimeSeed = true;
+	
+	/* Observer parameters (for the next run) */
+	private String observerName = null;
+	private int executionMode = ExecutionMode.SERIAL_MODE;
 
+	/* Main window */
+	private MainWindow mainWindow;
+	
 	/**
 	 * Private constructor
 	 * 
@@ -61,6 +75,11 @@ public class Coordinator {
 		
 		dataLayerStyles = new HashMap<String, DataLayerStyle>();
 		agentTypesAndNames = new HashMap<String, String>();
+		
+		mainWindow = new MainWindow();
+		mainWindow.setVisible(true);
+		
+		mainWindow.setBounds(10, 10, 600, 700);
 	}
 
 	/**
@@ -86,13 +105,60 @@ public class Coordinator {
 	public static Coordinator getInstance() {
 		return coordinator;
 	}
+	
+	
+	/**
+	 * Initial properties of random generator for the next simulation
+	 * @return
+	 */
+	public long getRandomSeed() {
+		return randomSeed;
+	}
+	
+	
+	public boolean getTimeSeedFlag() {
+		return useTimeSeed;
+	}
+	
+	
+	public void setRandomSeed(long randomSeed, boolean useTimeSeed) {
+		this.randomSeed = randomSeed;
+		this.useTimeSeed = useTimeSeed;
+	}
+	
+	
+	public HashMap<String, DataLayerStyle> getDataLayerStyles() {
+		return dataLayerStyles;
+	}
+	
+	
+	/**
+	 * Sets parameters of the observer (for the next run)
+	 * @param observerName
+	 * @param executionMode
+	 */
+	public void setObserver(String observerName, int executionMode) {
+		this.observerName = observerName;
+		this.executionMode = executionMode;
+	}
+	
+	
+	public String getObserverName() {
+		return observerName;
+	}
+	
+	
+	public int getExecutionMode() {
+		return executionMode;
+	}
+	
 
 	/**
 	 * Returns the current directory (the base directory of a loaded model)
 	 * 
 	 * @return
 	 */
-	public File getCurrentDir() {
+	public synchronized File getCurrentDir() {
 		return currentDir;
 	}
 
@@ -101,7 +167,7 @@ public class Coordinator {
 	 * 
 	 * @param file
 	 */
-	public void loadModel(File modelFile) throws Exception {
+	public synchronized void loadModel(File modelFile) throws Exception {
 		DocumentBuilder db = DocumentBuilderFactory.newInstance()
 				.newDocumentBuilder();
 		Document xmlDoc = db.parse(modelFile);
@@ -154,6 +220,10 @@ public class Coordinator {
 		for (int i = 0; i < list.getLength(); i++) {
 			Node node = list.item(i);
 			loadDataLayer(node);
+			
+			String name = getValue(node, "name", null);
+			// TODO: space name should be also specified somehow
+			modelManager.sendCommand(new Command_AddDCGrid(name, 1));
 		}
 		
 		
@@ -161,15 +231,48 @@ public class Coordinator {
 		list = xmlDoc.getElementsByTagName("mainframe");
 		Node node = list.item(0);
 		
+		mainWindow.setupRender(node);
 		
-		JFrame frame = new TestWindow();
+/*		JFrame frame = new TestWindow();
 		Render render = createRender(node, Render.JAVA_2D_RENDER);
 		
 		frame.getContentPane().add(render.getCanvas(), BorderLayout.CENTER);
 		frame.pack();
 		frame.setBounds(10, 10, 500, 500);
 		frame.setVisible(true);
- 
+*/		
+		
+		this.modelXmlFile = modelFile;
+		this.modelXmlDoc = xmlDoc;
+	}
+	
+	
+	/**
+	 * Starts the loaded model
+	 * @param observerName
+	 * @param executionMode
+	 */
+	public synchronized void startLoadedModel() {
+		if (modelXmlDoc == null)
+			return;
+
+		// TODO: verify that the model is not running now
+		modelManager.sendCommand(new Command_SetSeed(randomSeed, useTimeSeed));
+		modelManager.sendCommand(new Command_Start(Long.MAX_VALUE, 
+				observerName, executionMode));
+	}
+
+	
+	
+	/**
+	 * Unloads the current model
+	 */
+	public synchronized void unloadModel() {
+		modelXmlDoc = null;
+		modelXmlFile = null;
+		
+		// Stop model
+		// Remove all data consumers
 	}
 	
 	
@@ -190,7 +293,15 @@ public class Coordinator {
 	}
 	
 	
-	private Render createRender(Node node, int renderType) {
+	
+	/**
+	 * Creates a renderer of the given type from the given xml-node
+	 * with parameters
+	 * @param node
+	 * @param renderType
+	 * @return
+	 */
+	public Render createRender(Node node, int renderType) {
 		Render render = Render.createRender(node, renderType, 
 				dataLayerStyles, agentTypesAndNames, currentDir);
 		
@@ -200,14 +311,14 @@ public class Coordinator {
 	}
 	
 	
-	
+/*	
 	class TestWindow extends JFrame {
 		public TestWindow() {
 			setTitle("Test");
 			setDefaultCloseOperation(EXIT_ON_CLOSE);
 		}
 	}
-	
+*/	
 	
 	
 	
@@ -237,13 +348,17 @@ public class Coordinator {
 		
 		Coordinator.init(manager, receiver);
 		
-		Coordinator c = Coordinator.getInstance();
-		c.loadModel(new File("c:/help/alexey/my new projects/eclipse projects/spark/tests/models/rsv/RSVModel.xml"));
-		
-		manager.sendCommand(new Command_SetSeed(0, false));
-		manager.sendCommand(new Command_Start(1000, "Observer1", ExecutionMode.SERIAL_MODE));
+//		Coordinator c = Coordinator.getInstance();
+//		c.loadModel(new File("c:/help/alexey/my new projects/eclipse projects/spark/tests/models/rsv/RSVModel.xml"));
+	
+//		c.setRandomSeed(0, false);
+//		c.setObserver("Observer2", ExecutionMode.CONCURRENT_MODE);
+//		c.startLoadedModel();
+//		manager.sendCommand(new Command_SetSeed(0, false));
+//		manager.sendCommand(new Command_Start(1000, "Observer1", ExecutionMode.SERIAL_MODE));
 //		manager.runOnce();
-		Thread.sleep(1);
-		manager.sendCommand(new Command_Start(1000, "Observer2", ExecutionMode.CONCURRENT_MODE));
+//		Thread.sleep(1);
+//		manager.sendCommand(new Command_Start(1000, "Observer2", ExecutionMode.CONCURRENT_MODE));
+//		c.startLoadedModel();
 	}
 }

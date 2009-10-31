@@ -7,6 +7,7 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 
 import org.spark.core.Agent;
+import org.spark.core.ExecutionMode;
 import org.spark.core.SparkModel;
 import org.spark.math.RationalNumber;
 import org.spark.runtime.commands.Command_LoadLocalModel;
@@ -165,6 +166,8 @@ public class SimpleModelManager extends BasicModelManager {
 	 */
 	public void loadLocalModel(Document xmlDoc, File path) throws Exception {
 		model = null;
+		String defaultObserver;
+		int defaultExecutionMode;
 		
 		ArrayList<Node> nodes;
 		Node root = xmlDoc.getFirstChild();
@@ -200,7 +203,11 @@ public class SimpleModelManager extends BasicModelManager {
 			model = (SparkModel) Class.forName(setupName).newInstance();
 		}
 
+		// Set model's tick time
 		model.setTickTime(tickTime);
+		
+		defaultObserver = XmlDocUtils.getValue(nodes.get(0), "observer", "Observer1");
+		defaultExecutionMode = ExecutionMode.parse(XmlDocUtils.getValue(nodes.get(0), "mode", "serial"));
 		
 		/* Load agents */
 		loadAgents(xmlDoc);		
@@ -231,6 +238,7 @@ public class SimpleModelManager extends BasicModelManager {
 */
 		
 		simEngine = new StandardSimulationEngine(model);
+		simEngine.setDefaultObserver(defaultObserver, defaultExecutionMode);
 	}
 	
 

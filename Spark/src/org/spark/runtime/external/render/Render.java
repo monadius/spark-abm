@@ -369,6 +369,7 @@ public abstract class Render implements KeyListener, IDataConsumer {
 //					render = new org.spark.gui.render.JOGLRender3d();
 //				else
 //					render = new org.spark.gui.render.JOGLRender();
+				render = new JavaRender();
 			} catch (Exception e) {
 				e.printStackTrace();
 				render = new JavaRender();

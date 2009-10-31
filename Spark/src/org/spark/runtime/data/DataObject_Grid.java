@@ -28,7 +28,7 @@ public class DataObject_Grid extends DataObject {
 		this.data = new double[n * m];
 		
 		for (int i = 0, pos = 0; i < n; i++, pos += m) {
-			System.arraycopy(data[i], 0, data, pos, m);
+			System.arraycopy(data[i], 0, this.data, pos, m);
 		}
 	}
 	

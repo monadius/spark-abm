@@ -1,5 +1,6 @@
 package org.spark.runtime.internal.engine;
 
+import org.spark.core.ExecutionMode;
 import org.spark.core.Observer;
 import org.spark.core.ObserverFactory;
 import org.spark.core.SimulationTime;
@@ -35,6 +36,15 @@ public class StandardSimulationEngine extends AbstractSimulationEngine {
 	@Override
 	public void setup(String observerName, int executionMode)
 			throws Exception {
+		// Use default parameters if observerName == null
+		if (observerName == null) {
+			observerName = defaultObserverName;
+			executionMode = defaultExecutionMode;
+		}
+		
+		if (!ExecutionMode.isMode(executionMode))
+			executionMode = defaultExecutionMode;
+		
 		// Set observer
 		ObserverFactory.create(model, "org.spark.core." + observerName, executionMode);
 
@@ -85,7 +95,7 @@ public class StandardSimulationEngine extends AbstractSimulationEngine {
 	 * Processes all data
 	 * @param time
 	 */
-	private void processData() throws Exception {
+	private void processData(boolean paused) throws Exception {
 		// Synchronize variables and methods
 		model.synchronizeVariables();
 		model.synchronizeMethods();
@@ -94,7 +104,7 @@ public class StandardSimulationEngine extends AbstractSimulationEngine {
 		SimulationTime time = model.getObserver().getSimulationTime();
 		
 		// Create a data row
-		DataRow row = new DataRow(time);
+		DataRow row = new DataRow(time, paused);
 		
 		// Collect all data
 		for (DataCollector collector : dataCollectors) {
@@ -135,7 +145,7 @@ public class StandardSimulationEngine extends AbstractSimulationEngine {
 		
 		try {
 			// Process data before simulation steps
-			processData();
+			processData(false);
 
 			/* Main process */
 			while (tick < length) {
@@ -147,7 +157,7 @@ public class StandardSimulationEngine extends AbstractSimulationEngine {
 					break;
 
 				// Process data
-				processData();
+				processData(false);
 
 				// Advance simulation time
 				model.getObserver().advanceSimulationTick();
