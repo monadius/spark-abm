@@ -68,4 +68,10 @@ public class DCDataLayer extends DataCollector {
 			throw new BadDataSourceException("Unknown data layer type " + dataLayerName.getClass());
 		}
 	}
+	
+	
+	@Override
+	public void reset() {
+		data = null;
+	}
 }

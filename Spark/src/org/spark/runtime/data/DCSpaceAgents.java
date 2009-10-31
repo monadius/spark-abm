@@ -71,4 +71,11 @@ public class DCSpaceAgents extends DataCollector {
 		
 		return result;
 	}
+	
+	
+	@Override
+	public void reset() {
+		type = null;
+	}
+
 }

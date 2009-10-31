@@ -30,17 +30,19 @@ public class NonBlockingCommandManager extends CommandManager {
 	
 	
 	@Override
-	public boolean receiveCommands(BasicModelManager manager) throws Exception {
+	public boolean receiveCommands(ICommandExecutor executor) throws Exception {
 		if (isEmpty)
 			return false;
 		
 		synchronized (buffer) {
 			while (!buffer.isEmpty()) {
 				ModelManagerCommand cmd = buffer.poll();
-				manager.acceptCommand(cmd);
+				if (executor.execute(cmd))
+					break;
 			}
 			
-			isEmpty = true;
+			if (buffer.isEmpty())
+				isEmpty = true;
 		}
 		
 		return true;

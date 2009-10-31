@@ -10,12 +10,14 @@ import org.spark.runtime.internal.engine.AbstractSimulationEngine;
 @SuppressWarnings("serial")
 public class Command_Start extends ModelManagerCommand {
 	private long simulationTime;
+	private boolean paused;
 	private String observerName;
 	private int executionMode;
 	
 	
-	public Command_Start(long simulationTime, String observerName, int mode) {
+	public Command_Start(long simulationTime, boolean paused, String observerName, int mode) {
 		this.simulationTime = simulationTime;
+		this.paused = paused;
 		this.observerName = observerName;
 		this.executionMode = mode;
 	}
@@ -28,5 +30,10 @@ public class Command_Start extends ModelManagerCommand {
 	public void execute(SparkModel model, AbstractSimulationEngine engine) throws Exception {
 		engine.setSimulationTime(simulationTime);
 		engine.setup(observerName, executionMode);
+	}
+	
+	
+	public boolean getPausedFlag() {
+		return paused;
 	}
 }

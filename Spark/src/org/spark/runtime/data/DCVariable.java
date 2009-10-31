@@ -70,4 +70,12 @@ public class DCVariable extends DataCollector {
 		
 		throw new Exception("Unsupported data type: " + value.getClass());
 	}
+	
+	
+	@Override
+	public void reset() {
+		// TODO: it is not required
+		variable = null;
+	}
+
 }

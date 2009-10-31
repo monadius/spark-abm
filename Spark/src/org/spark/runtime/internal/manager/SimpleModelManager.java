@@ -11,7 +11,9 @@ import org.spark.core.ExecutionMode;
 import org.spark.core.SparkModel;
 import org.spark.math.RationalNumber;
 import org.spark.runtime.commands.Command_LoadLocalModel;
+import org.spark.runtime.commands.Command_PauseResume;
 import org.spark.runtime.commands.Command_Start;
+import org.spark.runtime.commands.Command_Stop;
 import org.spark.runtime.commands.Command_String;
 import org.spark.runtime.commands.ModelManagerCommand;
 import org.spark.runtime.internal.ModelVariable;
@@ -42,6 +44,8 @@ public class SimpleModelManager extends BasicModelManager {
 	
 	/* If true, then the simulation should be started */
 	private boolean startFlag = false;
+	private boolean pausedFlag = false;
+	private boolean runningFlag = false;
 	
 	/* Simulation engine */
 	private AbstractSimulationEngine simEngine;
@@ -237,13 +241,30 @@ public class SimpleModelManager extends BasicModelManager {
 		}
 */
 		
-		simEngine = new StandardSimulationEngine(model);
+		simEngine = new StandardSimulationEngine(model, this);
 		simEngine.setDefaultObserver(defaultObserver, defaultExecutionMode);
 	}
 	
 
 	@Override
 	public void sendCommand(ModelManagerCommand cmd) {
+		if (runningFlag) {
+			if (cmd instanceof Command_PauseResume) {
+				simEngine.sendCommand(cmd);
+				return;
+			}
+			
+			if (cmd instanceof Command_Stop) {
+				simEngine.sendCommand(cmd);
+				return;
+			}
+			
+			if (cmd instanceof Command_Start) {
+				simEngine.sendCommand(new Command_Stop());
+				// Do not return here
+			}
+		}
+		
 		commandManager.sendCommand(cmd);
 	}
 	
@@ -282,6 +303,7 @@ public class SimpleModelManager extends BasicModelManager {
 		/* Start command */
 		if (cmd instanceof Command_Start) {
 			startFlag = true;
+			pausedFlag = ((Command_Start) cmd).getPausedFlag();
 		}
 	}
 	
@@ -309,10 +331,23 @@ public class SimpleModelManager extends BasicModelManager {
 	public void runOnce() {
 		try {
 			// Receive and preprocess commands
-			commandManager.receiveCommands(this);
+			commandManager.receiveCommands(new ICommandExecutor() {
+				public boolean execute(ModelManagerCommand cmd) {
+					try {
+						acceptCommand(cmd);
+					}
+					catch (Exception e) {
+						logger.error(e);
+						e.printStackTrace();
+					}
+					return false;
+				}
+			});
 				
 			if (startFlag) {
-				simEngine.run();
+				runningFlag = true;
+				simEngine.run(pausedFlag);
+				runningFlag = false;
 				startFlag = false;
 			}
 		}

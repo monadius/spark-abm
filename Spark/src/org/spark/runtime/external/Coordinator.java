@@ -168,6 +168,9 @@ public class Coordinator {
 	 * @param file
 	 */
 	public synchronized void loadModel(File modelFile) throws Exception {
+		if (modelXmlFile != null)
+			unloadModel();
+		
 		DocumentBuilder db = DocumentBuilderFactory.newInstance()
 				.newDocumentBuilder();
 		Document xmlDoc = db.parse(modelFile);
@@ -231,6 +234,7 @@ public class Coordinator {
 		list = xmlDoc.getElementsByTagName("mainframe");
 		Node node = list.item(0);
 		
+		receiver.addDataConsumer(mainWindow);
 		mainWindow.setupRender(node);
 		
 /*		JFrame frame = new TestWindow();
@@ -258,8 +262,16 @@ public class Coordinator {
 
 		// TODO: verify that the model is not running now
 		modelManager.sendCommand(new Command_SetSeed(randomSeed, useTimeSeed));
-		modelManager.sendCommand(new Command_Start(Long.MAX_VALUE, 
+		modelManager.sendCommand(new Command_Start(Long.MAX_VALUE, true,
 				observerName, executionMode));
+	}
+	
+	
+	public synchronized void pauseResumeLoadedModel() {
+		if (modelXmlDoc == null)
+			return;
+		
+		modelManager.sendCommand(new Command_PauseResume());
 	}
 
 	
@@ -268,11 +280,13 @@ public class Coordinator {
 	 * Unloads the current model
 	 */
 	public synchronized void unloadModel() {
+		if (modelXmlDoc == null)
+			return;
+		
 		modelXmlDoc = null;
 		modelXmlFile = null;
 		
-		// Stop model
-		// Remove all data consumers
+		receiver.removeAllConsumers();
 	}
 	
 	
@@ -348,9 +362,14 @@ public class Coordinator {
 		
 		Coordinator.init(manager, receiver);
 		
-//		Coordinator c = Coordinator.getInstance();
+/*		Coordinator c = Coordinator.getInstance();
+		c.loadModel(new File("c:/help/alexey/my new projects/eclipse projects/spark/tests/models/rsv/RSVModel.xml"));
+		c.startLoadedModel();
+		Thread.sleep(100);
 //		c.loadModel(new File("c:/help/alexey/my new projects/eclipse projects/spark/tests/models/rsv/RSVModel.xml"));
-	
+		c.loadModel(new File("c:/help/alexey/my new projects/eclipse projects/spark/tests/models/basic/CreateDieA.xml"));
+		c.startLoadedModel();
+*/	
 //		c.setRandomSeed(0, false);
 //		c.setObserver("Observer2", ExecutionMode.CONCURRENT_MODE);
 //		c.startLoadedModel();

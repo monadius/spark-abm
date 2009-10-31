@@ -16,5 +16,5 @@ public abstract class CommandManager {
 	 * @return
 	 * @throws Exception
 	 */
-	public abstract boolean receiveCommands(BasicModelManager manager) throws Exception;
+	public abstract boolean receiveCommands(ICommandExecutor executor) throws Exception;
 }

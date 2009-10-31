@@ -3,6 +3,7 @@ package org.spark.runtime.external.gui;
 import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -24,7 +25,9 @@ import javax.swing.filechooser.FileFilter;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.spark.runtime.data.DataRow;
 import org.spark.runtime.external.Coordinator;
+import org.spark.runtime.external.data.IDataConsumer;
 import org.spark.runtime.external.gui.dialogs.DataLayersDialog;
 import org.spark.runtime.external.gui.dialogs.RandomSeedDialog;
 import org.spark.runtime.external.gui.dialogs.RenderProperties;
@@ -33,7 +36,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-public class MainWindow extends JFrame implements ActionListener, ChangeListener {
+public class MainWindow extends JFrame implements IDataConsumer, 
+	ActionListener, ChangeListener {
 
 	private static final long serialVersionUID = 2800524835363109821L;
 
@@ -705,22 +709,11 @@ public class MainWindow extends JFrame implements ActionListener, ChangeListener
 			}
 
 
-/*			if (src == setupButton) {
-				GUIModelManager.getInstance().setupModel();
+			if (src == setupButton) {
+				Coordinator.getInstance().startLoadedModel();
 			} else if (src == startButton) {
-				boolean result = GUIModelManager.getInstance()
-						.pauseResumeModel();
-				if (result)
-					startButton.setText("Start");
-				else
-					startButton.setText("Pause");
-			} else if (src == synchButton) {
-				synchronized (GUIModelManager.lock) {
-					GUIModelManager.getInstance().synchFlag = synchButton
-							.isSelected();
-					GUIModelManager.lock.notify();
-				}
-			}*/
+				Coordinator.getInstance().pauseResumeLoadedModel();
+			}
 		} catch (Exception ex) {
 			JOptionPane.showMessageDialog(this, ex.toString());
 		}
@@ -729,6 +722,29 @@ public class MainWindow extends JFrame implements ActionListener, ChangeListener
 	public void stateChanged(ChangeEvent e) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	private volatile boolean invoked = false;
+
+	public void consume(DataRow row) {
+		if (invoked)
+			return;
+
+		invoked = true;
+		
+		final long tick = row.getTime().getTick();
+		final boolean paused = row.getState().isPaused();
+		
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				invoked = false;
+				tickLabel.setText(String.valueOf(tick));
+				if (paused)
+					startButton.setText("Start");
+				else
+					startButton.setText("Pause");
+			}
+		});
 	}
 
 

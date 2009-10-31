@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.spark.core.ExecutionMode;
 import org.spark.core.SparkModel;
+import org.spark.runtime.commands.ModelManagerCommand;
 import org.spark.runtime.data.DataCollector;
 import org.spark.runtime.data.DataProcessor;
 
@@ -94,5 +95,12 @@ public abstract class AbstractSimulationEngine {
 	 * Main simulation method
 	 * @throws Exception
 	 */
-	public abstract void run() throws Exception;
+	public abstract void run(boolean pausedFlag) throws Exception;
+	
+
+	/**
+	 * Sends a command to the simulation engine
+	 * @param cmd
+	 */
+	public abstract void sendCommand(ModelManagerCommand cmd);
 }

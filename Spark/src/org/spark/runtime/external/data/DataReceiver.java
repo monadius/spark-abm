@@ -50,4 +50,12 @@ public abstract class DataReceiver {
 	public synchronized void removeDataConsumer(IDataConsumer consumer) {
 		consumers.remove(consumer);
 	}
+	
+	
+	/**
+	 * Removes all data consumers
+	 */
+	public synchronized void removeAllConsumers() {
+		consumers.clear();
+	}
 }

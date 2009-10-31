@@ -70,4 +70,10 @@ public abstract class DataCollector {
 	 * @throws Exception
 	 */
 	public abstract DataObject collect0(SparkModel model) throws Exception;
+	
+	
+	/**
+	 * Resets all cached values inside the data collector
+	 */
+	public abstract void reset();
 }
