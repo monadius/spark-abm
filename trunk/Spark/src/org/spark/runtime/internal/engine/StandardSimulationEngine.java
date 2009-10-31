@@ -6,10 +6,14 @@ import org.spark.core.ObserverFactory;
 import org.spark.core.SimulationTime;
 import org.spark.core.SparkModel;
 import org.spark.math.RationalNumber;
+import org.spark.runtime.commands.*;
 import org.spark.runtime.data.BadDataSourceException;
 import org.spark.runtime.data.DataCollector;
 import org.spark.runtime.data.DataProcessor;
 import org.spark.runtime.data.DataRow;
+import org.spark.runtime.internal.manager.BasicModelManager;
+import org.spark.runtime.internal.manager.ICommandExecutor;
+import org.spark.runtime.internal.manager.NonBlockingCommandManager;
 
 /**
  * A standard simulation engine
@@ -17,12 +21,27 @@ import org.spark.runtime.data.DataRow;
  *
  */
 public class StandardSimulationEngine extends AbstractSimulationEngine {
+	/* Non-blocking command manager */
+	private NonBlockingCommandManager commandManager;
+	
+	private boolean pausedFlag = false;
+	private boolean stopFlag = false;
+	
 	/**
 	 * Default constructor
 	 * @param model
 	 */
-	public StandardSimulationEngine(SparkModel model) {
+	public StandardSimulationEngine(SparkModel model, BasicModelManager manager) {
 		super(model);
+		this.commandManager = new NonBlockingCommandManager();
+	}
+	
+	
+	/**
+	 * Sends a command to the engine
+	 */
+	public void sendCommand(ModelManagerCommand cmd) {
+		commandManager.sendCommand(cmd);
 	}
 
 	
@@ -129,29 +148,84 @@ public class StandardSimulationEngine extends AbstractSimulationEngine {
 		
 	}
 	
+	
+	/**
+	 * Engine's command executor class
+	 * @author Monad
+	 *
+	 */
+	private class CommandExecutor implements ICommandExecutor {
+		public boolean execute(ModelManagerCommand cmd) {
+			if (cmd instanceof Command_PauseResume) {
+				pausedFlag = !pausedFlag;
+				return false;
+			}
+			
+			if (cmd instanceof Command_Stop) {
+				stopFlag = true;
+				return true;
+			}
+
+			// Ignore all other commands
+			
+			return false;
+		}
+	}
+	
+	
+	private CommandExecutor executor = new CommandExecutor();
+	
+
+	/**
+	 * Receives and processes commands
+	 */
+	private void processCommands() throws Exception {
+		commandManager.receiveCommands(executor);
+		
+		// TODO: process exceptions properly
+		
+		if (pausedFlag) {
+			while (pausedFlag) {
+				// Update data after each received command
+				if (commandManager.receiveCommands(executor)) {
+					processData(true);
+				}
+				
+				if (stopFlag)
+					break;
+				
+				Thread.sleep(1);
+			}
+		}
+		
+		
+	}
+	
 
 	/**
 	 * Main model simulation method
 	 */
 	@Override
-	public void run() throws Exception {
+	public void run(boolean pausedFlag) throws Exception {
 		if (model == null)
 			throw new Exception("Model is not loaded");
 		
+		this.pausedFlag = pausedFlag;
 		long tick = model.getObserver().getSimulationTick();
-		
 		long length = this.simulationTime;
 		RationalNumber tickTime = model.getTickTime();
 		
 		try {
 			// Process data before simulation steps
-			processData(false);
+			processData(this.pausedFlag);
 
 			/* Main process */
 			while (tick < length) {
-				// TODO: Get commands
-				// Process commands
-				
+				// Receive and process commands
+				processCommands();
+				if (stopFlag)
+					break;
+
 				// Make one simulation step
 				if (mainStep(tickTime, tick))
 					break;
@@ -165,12 +239,19 @@ public class StandardSimulationEngine extends AbstractSimulationEngine {
 			}
 			
 			// Finalize data processing
+			for (DataCollector dc : dataCollectors) {
+				dc.reset();
+			}
+			
 			for (DataProcessor dp : dataProcessors) {
 				dp.finalizeProcessing();
 			}
 
 		} catch (Exception e) {
 			throw e;
+		}
+		finally {
+			stopFlag = false;
 		}
 	}
 

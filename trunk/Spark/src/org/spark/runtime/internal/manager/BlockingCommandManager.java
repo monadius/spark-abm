@@ -28,7 +28,7 @@ public class BlockingCommandManager extends CommandManager {
 	
 	
 	@Override
-	public boolean receiveCommands(BasicModelManager manager) throws Exception {
+	public boolean receiveCommands(ICommandExecutor executor) throws Exception {
 		synchronized (buffer) {
 			if (buffer.isEmpty())
 			{
@@ -43,7 +43,8 @@ public class BlockingCommandManager extends CommandManager {
 			
 			while (!buffer.isEmpty()) {
 				ModelManagerCommand cmd = buffer.poll();
-				manager.acceptCommand(cmd);
+				if (executor.execute(cmd))
+					break;
 			}
 		}
 		

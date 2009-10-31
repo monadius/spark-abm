@@ -54,7 +54,7 @@ public abstract class Render implements KeyListener, IDataConsumer {
 	protected volatile boolean reshapeRequested;
 	
 	/* Display request flag */
-	private boolean displayRequested;
+	private volatile boolean displayRequested;
 	
 	
 	protected String renderName;

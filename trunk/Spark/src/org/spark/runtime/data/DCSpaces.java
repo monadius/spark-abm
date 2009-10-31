@@ -52,4 +52,10 @@ public class DCSpaces extends DataCollector {
 		return result;
 	}
 	
+	
+	@Override
+	public void reset() {
+	}
+
+	
 }
