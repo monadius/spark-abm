@@ -1,0 +1,351 @@
+package org.spark.runtime.external.render;
+
+import java.awt.BasicStroke;
+import java.awt.Canvas;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Shape;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Rectangle2D;
+
+import org.spark.runtime.data.DataObject_Grid;
+import org.spark.runtime.data.DataObject_SpaceAgents;
+import org.spark.runtime.data.DataObject_Spaces;
+import org.spark.runtime.data.DataRow;
+import org.spark.space.SpaceAgent;
+import org.spark.utils.Vector;
+import org.spark.utils.Vector4d;
+
+import com.spinn3r.log5j.Logger;
+
+/**
+ * Render using Java2d
+ * 
+ * @author Monad
+ * 
+ */
+public class JavaRender extends Render {
+	private static final Logger logger = Logger.getLogger();
+
+	/* Canvas */
+	private JavaRenderCanvas canvas;
+
+	/* Current data */
+	private DataRow data;
+	/* Information about current space bounds */
+	private float xMin, yMin, xMax, yMax;
+	
+
+	/* Graphics transformation */
+	private AffineTransform transform = new AffineTransform();
+
+	/**
+	 * Internal constructor
+	 */
+	JavaRender() {
+		logger.info("Initializing JavaRender");
+		canvas = new JavaRenderCanvas(this);
+	}
+
+	@Override
+	public void display(DataRow data) {
+		this.data = data;
+
+		if (canvas != null)
+			canvas.display();
+	}
+
+	@Override
+	public Canvas getCanvas() {
+		return canvas;
+	}
+
+	@Override
+	public void saveSnapshot(String fname, DataRow data) {
+		throw new Error("Not implemented");
+		// canvas.takeSnapshot(fname);
+	}
+
+	/**
+	 * Reshape method
+	 * 
+	 * @param x
+	 * @param y
+	 * @param width
+	 * @param height
+	 */
+	public void reshape(int x, int y, int width, int height) {
+//		if (xMin == 0 && xMax == 0 && yMin == 0 && yMax == 0) {
+			if (data != null && selectedSpace != null) {
+				DataObject_Spaces spaces = data.getSpaces();
+				if (spaces != null) {
+					int index = spaces.getIndex(selectedSpace.name);
+					if (index != -1) {
+						Vector min = spaces.getMins()[index];
+						Vector max = spaces.getMaxs()[index];
+						
+						xMin = (float) min.x;
+						yMin = (float) min.y;
+						xMax = (float) max.x;
+						yMax = (float) max.y;
+					}
+				}
+			}
+//		}
+
+		if (xMin >= xMax - 1 || yMin >= yMax - 1) {
+			xMin = yMin = -60;
+			xMax = yMax = 60;
+		}
+
+		if (selectedSpace != null && selectedSpace.swapXY) {
+			float t = xMin;
+			xMin = yMin;
+			yMin = t;
+
+			t = xMax;
+			xMax = yMax;
+			yMax = xMax;
+		}
+
+		float a = width / (xMax - xMin);
+		float c = -height / (yMax - yMin);
+		float b = -a * xMin;
+		float d = -c * yMax;
+
+		AffineTransform t2 = new AffineTransform();
+		t2.scale(a, c);
+
+		transform.setToIdentity();
+		transform.translate(b, d);
+		transform.concatenate(t2);
+	}
+
+	/**
+	 * Renders a grid
+	 * 
+	 * @param g
+	 * @param grid
+	 * @param space
+	 */
+	protected void renderDataLayer(Graphics2D g, DataObject_Grid grid,
+			int spaceIndex) {
+		if (grid == null)
+			return;
+		
+		if (grid.getSpaceIndex() != spaceIndex)
+			return;
+
+		int xSize = grid.getXSize();
+		int ySize = grid.getYSize();
+
+		double xStep = grid.getXStep();
+		double yStep = grid.getYStep();
+
+		Vector[][] colors = GridGraphics.getColors(grid, selectedDataLayer.val1,
+				selectedDataLayer.val2, selectedDataLayer.color1,
+				selectedDataLayer.color2);
+
+		Rectangle2D.Double rect = new Rectangle2D.Double(0, 0, xStep, yStep);
+		double x = xMin;
+		double y = yMin;
+		for (int i = 0; i < xSize; i++, x += xStep) {
+			y = yMin;
+			for (int j = 0; j < ySize; j++, y += yStep) {
+				rect.x = x;
+				rect.y = y;
+				g.setColor(colors[i][j].toAWTColor());
+				g.fill(rect);
+			}
+		}
+
+	}
+
+	/**
+	 * Renders all visible space links of the given type (style)
+	 * 
+	 * @param g
+	 * @param linkStyle
+	 */
+/*	protected void renderLinks(Graphics2D g, Space space, AgentStyle linkStyle) {
+		Agent[] links;
+
+		if (!linkStyle.visible)
+			return;
+
+		if (!SpaceLink.class.isAssignableFrom(linkStyle.agentType))
+			return;
+
+		links = Observer.getInstance().getAgents(linkStyle.agentType);
+
+		if (links == null)
+			return;
+
+		int n = links.length;
+
+		for (int i = 0; i < n; i++) {
+			SpaceLink link = (SpaceLink) links[i];
+			SpaceAgent end1 = link.getEnd1();
+			SpaceAgent end2 = link.getEnd2();
+
+			if (end1 == null || end2 == null)
+				continue;
+
+			SpaceNode node1 = end1.getNode();
+			SpaceNode node2 = end2.getNode();
+
+			if (node1 == null || node2 == null)
+				continue;
+
+			if (node1.getSpace() != space || node2.getSpace() != space)
+				continue;
+
+			Vector pos1 = node1.getPosition();
+			Vector pos2 = node2.getPosition();
+
+			Vector4d color = link.getColor();
+
+			if (pos1 == null || pos2 == null || color == null)
+				continue;
+
+			double x1 = pos1.x, y1 = pos1.y;
+			double x2 = pos2.x, y2 = pos2.y;
+
+			float width = (float) link.getWidth();
+			g.setStroke(new BasicStroke(width));
+			g.setColor(color.toAWTColor());
+
+			Shape s = new Line2D.Double(x1, y1, x2, y2);
+			g.draw(s);
+		}
+
+	}
+*/
+
+
+	/**
+	 * Renders agents
+	 * 
+	 * @param g
+	 * @param agents
+	 * @param spaceIndex
+	 * @param agentStyle
+	 */
+	protected void renderAgents(Graphics2D g, DataObject_SpaceAgents agents,
+			int spaceIndex, AgentStyle agentStyle) {
+		if (!agentStyle.visible)
+			return;
+
+		// TODO: render links
+		// if (SpaceLink.class.isAssignableFrom(agentStyle.agentType)) {
+		// renderLinks(g, space, agentStyle);
+		// return;
+		// }
+
+		if (agents == null)
+			return;
+
+		g.setStroke(new BasicStroke(0));
+		int n = agents.getTotalNumber();
+		Vector[] positions = agents.getPositions();
+		double[] radii = agents.getRadii();
+		Vector4d[] colors = agents.getColors();
+		int[] shapes = agents.getShapes();
+		int[] spaceIndices = agents.getSpaceIndices();
+
+		for (int i = 0; i < n; i++) {
+			if (spaceIndices[i] != spaceIndex)
+				continue;
+
+			Vector pos = positions[i];
+			Vector4d color = colors[i];
+
+			if (pos == null || color == null)
+				continue;
+
+			double r = radii[i];
+			double r2 = r * 2.0;
+			double x = pos.x;
+			double y = pos.y;
+
+			g.setColor(color.toAWTColor());
+
+			Shape s = null;
+
+			switch (shapes[i]) {
+			case SpaceAgent.CIRCLE:
+				s = new Ellipse2D.Double(x - r, y - r, r2, r2);
+				break;
+
+			case SpaceAgent.SQUARE:
+				s = new Rectangle2D.Double(x - r, y - r, r2, r2);
+				break;
+
+			case SpaceAgent.TORUS:
+				s = new Ellipse2D.Double(x - r, y - r, r2, r2);
+				break;
+			}
+
+			g.fill(s);
+			if (agentStyle.border) {
+				g.setColor(Color.black);
+				g.draw(s);
+			}
+		}
+	}
+
+	/**
+	 * Displays the data
+	 * 
+	 * @param g
+	 */
+	public void display(Graphics2D g) {
+		if (data == null)
+			return;
+
+
+		if (selectedSpace == null)
+			return;
+
+		DataObject_Spaces spaces = data.getSpaces();
+		if (spaces == null)
+			return;
+
+		// Get the index of the selected space
+		int index = spaces.getIndex(selectedSpace.name);
+		if (index == -1)
+			return;
+		
+		int spaceIndex = spaces.getIndices()[index];
+		
+		// TODO: call it when necessary only
+		reshape(0, 0, canvas.getWidth(), canvas.getHeight());
+
+		// Apply transformations
+		g.transform(transform);
+
+		g.translate(dx, dy);
+		g.scale(zoom, zoom);
+
+		if (selectedSpace.swapXY) {
+			g.rotate(-Math.PI / 2);
+		}
+
+
+		
+		if (selectedDataLayer != null) {
+			DataObject_Grid gridData = data.getGrid(selectedDataLayer.name);
+			renderDataLayer(g, gridData, spaceIndex);
+		}
+
+		for (int k = agentStyles.size() - 1; k >= 0; k--) {
+			AgentStyle agentStyle = agentStyles.get(k);
+			DataObject_SpaceAgents agentsData = data
+					.getSpaceAgents(agentStyle.typeName);
+			renderAgents(g, agentsData, spaceIndex, agentStyle);
+		}
+
+	}
+
+}

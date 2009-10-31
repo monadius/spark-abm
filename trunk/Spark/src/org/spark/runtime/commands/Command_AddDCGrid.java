@@ -11,13 +11,13 @@ import org.spark.runtime.internal.engine.AbstractSimulationEngine;
  */
 @SuppressWarnings("serial")
 public class Command_AddDCGrid extends ModelManagerCommand {
-	private String spaceName;
+//	private String spaceName;
 	private String gridName;
 	private int interval;
 	
 	
-	public Command_AddDCGrid(String spaceName, String gridName, int interval) {
-		this.spaceName = spaceName;
+	public Command_AddDCGrid(String gridName, int interval) {
+//		this.spaceName = spaceName;
 		this.gridName = gridName;
 		this.interval = interval;
 	}
@@ -28,7 +28,7 @@ public class Command_AddDCGrid extends ModelManagerCommand {
 	 * @param engine
 	 */
 	public void execute(SparkModel model, AbstractSimulationEngine engine) {
-		DCDataLayer dc = new DCDataLayer(spaceName, gridName);
+		DCDataLayer dc = new DCDataLayer(gridName);
 		dc.setCollectionInterval(interval);
 		
 		engine.addDataCollector(dc);
