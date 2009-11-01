@@ -4,7 +4,6 @@ import java.io.File;
 
 import org.spark.core.SparkModel;
 import org.spark.runtime.internal.engine.AbstractSimulationEngine;
-import org.w3c.dom.Document;
 
 /**
  * Command for loading a model
@@ -13,16 +12,22 @@ import org.w3c.dom.Document;
  */
 @SuppressWarnings("serial")
 public class Command_LoadLocalModel extends ModelManagerCommand {
-	private Document xmlDoc;
+//	private Document xmlDoc;
+	private File modelPath;
 	private File path;
 	
-	public Command_LoadLocalModel(Document xmlDoc, File path) {
-		this.xmlDoc = xmlDoc;
+	public Command_LoadLocalModel(File modelPath, File path) {
+		this.modelPath = modelPath;
+//		this.xmlDoc = xmlDoc;
 		this.path = path;
 	}
 	
-	public Document getXmlDoc() {
-		return xmlDoc;
+//	public Document getXmlDoc() {
+//		return xmlDoc;
+//	}
+	
+	public File getModelPath() {
+		return modelPath;
 	}
 	
 	public File getPath() {

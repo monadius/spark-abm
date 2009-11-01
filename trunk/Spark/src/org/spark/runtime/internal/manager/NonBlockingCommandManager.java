@@ -47,5 +47,13 @@ public class NonBlockingCommandManager extends CommandManager {
 		
 		return true;
 	}
+	
+	
+	@Override
+	public void clearCommands() {
+		synchronized (buffer) {
+			buffer.clear();
+		}
+	}
 
 }

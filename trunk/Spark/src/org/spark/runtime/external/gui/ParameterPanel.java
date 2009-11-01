@@ -1,4 +1,4 @@
-package org.spark.gui;
+package org.spark.runtime.external.gui;
 
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -10,22 +10,23 @@ import java.util.HashMap;
 
 import javax.swing.*;
 
-import org.spark.runtime.ParameterFactory_Old;
-import org.spark.runtime.Parameter_Old;
-import org.spark.runtime.VariableSet;
-import org.spark.runtime.VariableSetFactory;
+import org.spark.gui.FrameLocationManager;
+import org.spark.runtime.external.Coordinator;
+import org.spark.runtime.external.Parameter;
+import org.spark.runtime.external.VariableSet;
+import org.spark.runtime.external.VariableSetFactory;
 import org.spark.utils.SpringUtilities;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 
-public class ParameterPanel extends UpdatableFrame implements ActionListener {
+public class ParameterPanel extends JDialog implements ActionListener {
 	private static final long serialVersionUID = -1315411629669891403L;
 	
 	private final JPanel parameterPanel;
 	private final JPanel setPanel;
-	private final HashMap<String, Parameter_Old> parameters = new HashMap<String, Parameter_Old>();
+	private final HashMap<String, Parameter> parameters = new HashMap<String, Parameter>();
 
 	private VariableSet selectedSet = null;
 	// TODO: depends on a selected set
@@ -66,7 +67,7 @@ public class ParameterPanel extends UpdatableFrame implements ActionListener {
 	
 
 	public ParameterPanel(Node node, JFrame owner) {
-		super(node, owner, "Model Parameters");
+		super(owner, "Model Parameters");
 		
 		// Create main panel
 		JPanel panel = new JPanel();
@@ -142,7 +143,7 @@ public class ParameterPanel extends UpdatableFrame implements ActionListener {
 	
 	
 	private void loadParameters() {
-		Parameter_Old[] pars = ParameterFactory_Old.getParameters();
+		Parameter[] pars = Coordinator.getInstance().getParameters().getParameters();
 		
 		for (int i = 0; i < pars.length; i++)
 			addParameter(pars[i]);
@@ -155,7 +156,7 @@ public class ParameterPanel extends UpdatableFrame implements ActionListener {
 	
 	
 
-	private void addParameter(Parameter_Old p) {
+	private void addParameter(Parameter p) {
 //		Parameter p = Parameter.createParameter(node);
 		
 		JLabel lname = new JLabel(p.getName());
@@ -168,37 +169,6 @@ public class ParameterPanel extends UpdatableFrame implements ActionListener {
 	}	
 	
 	
-	
-	
-	
-
-	@Override
-	public synchronized void reset() {
-	}
-	
-	
-	public synchronized void saveParameters(PrintStream out) {
-		out.println("\"Parameters\"");
-		
-		int n = parameters.values().size();
-		for (Parameter_Old p : parameters.values()) {
-			out.print(p.getName());
-			n -= 1;
-			if (n > 0)
-				out.print(',');
-		}
-		
-		out.println();
-		n = parameters.values().size();
-		for (Parameter_Old p : parameters.values()) {
-			out.print(p.getValue());
-			n -= 1;
-			if (n > 0)
-				out.print(',');
-		}
-		
-		out.println();
-	}
 	
 	
 	
@@ -230,31 +200,6 @@ public class ParameterPanel extends UpdatableFrame implements ActionListener {
 	}
 	
 	
-	@Override
-	public void writeXML(Document doc) {
-		super.writeXML(doc);
-		
-		if (autoSaveFlag && selectedSet != null)
-			selectedSet.saveVariablesIntoSet();
-		
-		Node root = null;
-		NodeList list = doc.getElementsByTagName("variable-sets");
-	
-		if (list.getLength() > 0) {
-			root = list.item(0);
-		}
-		else {
-			root = doc.createElement("variable-sets");
-			doc.getFirstChild().appendChild(root);
-		}
-		
-		removeChildren(root, "variable-set");
-		removeChildren(root, "#text");
-
-		VariableSetFactory.saveXML(doc, root);
-	}
-
-
 	public void actionPerformed(ActionEvent e) {
 		String cmd = e.getActionCommand().intern();
 		
@@ -334,7 +279,7 @@ public class ParameterPanel extends UpdatableFrame implements ActionListener {
 				ex.printStackTrace();
 			}
 			
-			GUIModelManager.getInstance().requestUpdate();
+//			GUIModelManager.getInstance().requestUpdate();
 			return;
 		}
 		

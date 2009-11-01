@@ -17,4 +17,10 @@ public abstract class CommandManager {
 	 * @throws Exception
 	 */
 	public abstract boolean receiveCommands(ICommandExecutor executor) throws Exception;
+	
+	
+	/**
+	 * Removes all commands from a command queue
+	 */
+	public abstract void clearCommands();
 }

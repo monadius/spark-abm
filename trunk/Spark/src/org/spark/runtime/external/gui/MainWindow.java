@@ -724,27 +724,12 @@ public class MainWindow extends JFrame implements IDataConsumer,
 		
 	}
 	
-	private volatile boolean invoked = false;
-
 	public void consume(DataRow row) {
-		if (invoked)
-			return;
-
-		invoked = true;
-		
 		final long tick = row.getTime().getTick();
 		final boolean paused = row.getState().isPaused();
-		
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				invoked = false;
-				tickLabel.setText(String.valueOf(tick));
-				if (paused)
-					startButton.setText("Start");
-				else
-					startButton.setText("Pause");
-			}
-		});
+
+		tickLabel.setText(String.valueOf(tick));
+		startButton.setText(paused ? "Start" : "Pause");
 	}
 
 
