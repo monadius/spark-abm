@@ -15,12 +15,16 @@ import org.spark.runtime.internal.manager.BasicModelManager;
 import org.spark.runtime.internal.manager.ICommandExecutor;
 import org.spark.runtime.internal.manager.NonBlockingCommandManager;
 
+import com.spinn3r.log5j.Logger;
+
 /**
  * A standard simulation engine
  * @author Monad
  *
  */
 public class StandardSimulationEngine extends AbstractSimulationEngine {
+	private static final Logger logger = Logger.getLogger();
+	
 	/* Non-blocking command manager */
 	private NonBlockingCommandManager commandManager;
 	
@@ -156,9 +160,21 @@ public class StandardSimulationEngine extends AbstractSimulationEngine {
 	 */
 	private class CommandExecutor implements ICommandExecutor {
 		public boolean execute(ModelManagerCommand cmd) {
+			logger.debug("Executing command: " + cmd.getClass().getSimpleName());
+			
 			if (cmd instanceof Command_PauseResume) {
 				pausedFlag = !pausedFlag;
 				return false;
+			}
+			
+			if (cmd instanceof Command_SetVariableValue) {
+				try {
+					cmd.execute(model, StandardSimulationEngine.this);
+				}
+				catch (Exception e) {
+					logger.error(e);
+					e.printStackTrace();
+				}
 			}
 			
 			if (cmd instanceof Command_Stop) {
@@ -207,6 +223,9 @@ public class StandardSimulationEngine extends AbstractSimulationEngine {
 	 */
 	@Override
 	public void run(boolean pausedFlag) throws Exception {
+		// TODO: find a correct solution of the double stop command problem
+		commandManager.clearCommands();
+		
 		if (model == null)
 			throw new Exception("Model is not loaded");
 		

@@ -3,8 +3,6 @@ package org.spark.runtime.external;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.spark.runtime.commands.Command_SetVariableValue;
-import org.spark.runtime.internal.manager.BasicModelManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -18,38 +16,37 @@ import com.spinn3r.log5j.Logger;
  *
  */
 // TODO: make all functionality non-static
-public class ParameterFactory {
+public class ParameterCollection {
 	private static final Logger logger = Logger.getLogger();
 	
 	/* All model parameters */
-	protected final static HashMap<String, Parameter> parameters = 
+	protected final HashMap<String, Parameter> parameters = 
 		new HashMap<String, Parameter>();
 	
 	/* A list of all parameters for preserving their order */
-	protected final static ArrayList<Parameter> parametersList =
+	protected final ArrayList<Parameter> parametersList =
 		new ArrayList<Parameter>();
 	
 
 	
+	// TODO: getParameter(String name)
+	// Problem: id contains variable's name also
+	
 	/**
-	 * Returns all loaded parameters
-	 * @return
+	 * Returns an array containing all parameters in the collection
 	 */
-	public static Parameter[] getParameters() {
+	public Parameter[] getParameters() {
 		Parameter[] pars = new Parameter[parametersList.size()];
 		return parametersList.toArray(pars);
 	}
 	
-
-	// TODO: getParameter(String name)
-	// Problem: id contains variable's name also
 	
 	/**
 	 * Loads all parameters from the given parent xml-node
 	 * @param parent
 	 * @throws Exception
 	 */
-	public static void loadParameters(Node parent) {
+	public void loadParameters(Node parent) {
 		clear();
 		NodeList list = parent.getChildNodes();
 		
@@ -71,7 +68,7 @@ public class ParameterFactory {
 	/**
 	 * Clears the table of loaded parameters
 	 */
-	public static void clear() {
+	public void clear() {
 		parameters.clear();
 		parametersList.clear();
 	}
@@ -82,7 +79,7 @@ public class ParameterFactory {
 	 * @param node
 	 * @return
 	 */
-	public static void createParameter(Node node) throws Exception {
+	public Parameter createParameter(Node node) throws Exception {
 		NamedNodeMap attributes = node.getAttributes();
 		Node tmp;
 
@@ -97,14 +94,14 @@ public class ParameterFactory {
 		String defaultValue = (tmp = attributes.getNamedItem("default")) != null ? tmp.getNodeValue() : null;
 
 		// Create a parameter
-		Parameter par = new Parameter(variable);
+		Parameter par = new Parameter();
 		
-/*		// Add parameter to the table
-		par.variable = model.getVariable(variable);
+		// Add parameter to the table
+		par.variable = Coordinator.getInstance().getVariable(variable);
 		if (par.variable == null)
 			throw new Exception("Variable " + variable + " is not defined");
 		
-*/		
+		
 		String id = variable + ";" + name;
 		if (parameters.containsKey(id))
 			throw new Exception("Parameter " + name + " for variable " + 
@@ -112,7 +109,7 @@ public class ParameterFactory {
 		
 		parameters.put(id, par);
 		parametersList.add(par);
-/*		
+		
 		// Set up the parameter
 		par.variable.addChangeListener(par);
 
@@ -152,12 +149,10 @@ public class ParameterFactory {
 			par.setStepSize(par.step = 1);
 
 		par.adjustFormat();
-*/		
+		
 		// Assign the default value
-		if (defaultValue != null) {
+		if (defaultValue != null)
 			par.setValue(defaultValue);
-//			par.setValue(defaultValue);
-		}
 /*		else {
 			if (par.variable.getType() == Double.class)
 				par.setValue(min);
@@ -166,20 +161,8 @@ public class ParameterFactory {
 		}
 */		
 		// TODO: set initial value to be between 'min' and 'max'
-	}
-	
-	
-	
-	/**
-	 * Updates values of model variables by sending values of parameters
-	 * to the model manager
-	 */
-	public static void sendUpdateCommands(BasicModelManager manager) {
-		for (Parameter par : parametersList) {
-			Command_SetVariableValue cmd = new Command_SetVariableValue(
-					par.getVarName(), par.getValue());
-			manager.sendCommand(cmd);
-		}
+		
+		return par;
 	}
 	
 	

@@ -1,10 +1,10 @@
 package org.spark.runtime.external;
 
-import java.awt.BorderLayout;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 
-import javax.swing.JFrame;
+import javax.swing.JDialog;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -14,6 +14,8 @@ import org.spark.core.ExecutionMode;
 import org.spark.runtime.commands.*;
 import org.spark.runtime.external.data.LocalDataReceiver;
 import org.spark.runtime.external.gui.MainWindow;
+import org.spark.runtime.external.gui.ParameterPanel;
+import org.spark.runtime.external.gui.RenderFrame;
 import org.spark.runtime.external.render.DataLayerStyle;
 import org.spark.runtime.external.render.Render;
 import org.spark.runtime.internal.manager.BasicModelManager;
@@ -42,13 +44,29 @@ public class Coordinator {
 	/* A single instance of the class */
 	private static Coordinator coordinator;
 
+	/* Main model manager */
 	private BasicModelManager modelManager;
+	/* Main data receiver */
 	private LocalDataReceiver receiver;
+	
+	
+	/* Current directory */
 	private File currentDir;
+	
+	
+	/* Loaded model xml file */
 	private File modelXmlFile;
+	/* Loaded model xml document */
 	private Document modelXmlDoc;
 	
+
+	/* Collection of proxy variables */
+	private ProxyVariableCollection variables;
+	/* Collection of parameters in a loaded model */
+	private ParameterCollection parameters;
+	/* Styles of all data layers */
 	private final HashMap<String, DataLayerStyle> dataLayerStyles;
+	/* Type names and names of agents */
 	private final HashMap<String, String> agentTypesAndNames;
 	
 	/* Random generator properties (for the next run) */
@@ -61,6 +79,8 @@ public class Coordinator {
 
 	/* Main window */
 	private MainWindow mainWindow;
+	
+	private final ArrayList<JDialog> frames = new ArrayList<JDialog>();
 	
 	/**
 	 * Private constructor
@@ -152,6 +172,38 @@ public class Coordinator {
 		return executionMode;
 	}
 	
+	
+	/**
+	 * Sends a command for changing value of the given variable
+	 * @param varName
+	 * @param newValue
+	 */
+	public void changeVariable(String varName, Object newValue) {
+		modelManager.sendCommand(new Command_SetVariableValue(varName, newValue));
+	}
+	
+	
+	/**
+	 * Returns a variable by its name
+	 * @param varName
+	 * @return
+	 */
+	public ProxyVariable getVariable(String varName) {
+		if (variables == null)
+			return null;
+		
+		return variables.getVariable(varName);
+	}
+	
+	
+	/**
+	 * Returns a collection of all parameters
+	 * @return
+	 */
+	public ParameterCollection getParameters() {
+		return parameters;
+	}
+	
 
 	/**
 	 * Returns the current directory (the base directory of a loaded model)
@@ -168,6 +220,7 @@ public class Coordinator {
 	 * @param file
 	 */
 	public synchronized void loadModel(File modelFile) throws Exception {
+		try {
 		if (modelXmlFile != null)
 			unloadModel();
 		
@@ -177,21 +230,47 @@ public class Coordinator {
 		currentDir = modelFile.getParentFile();
 
 		modelManager.sendCommand(
-				new Command_LoadLocalModel(xmlDoc, currentDir));
+				new Command_LoadLocalModel(modelFile, currentDir));
 		modelManager.sendCommand(new Command_AddLocalDataSender(receiver));
 		modelManager.sendCommand(new Command_AddDCSpaces(1));
 
 		NodeList list;
 
+		/* Load variables (for parameters) */
+		list = xmlDoc.getElementsByTagName("variables");
+		if (list.getLength() >= 1) {
+			variables = new ProxyVariableCollection(list.item(0));
+			variables.registerVariables(receiver);
+		}
+		
 		/* Load parameters and variable sets */
-		ParameterFactory.clear();
-
+		parameters = new ParameterCollection();
 		list = xmlDoc.getElementsByTagName("parameterframe");
 		if (list.getLength() >= 1) {
-			ParameterFactory.loadParameters(list.item(0));
+			parameters.loadParameters(list.item(0));
 		}
 
-		ParameterFactory.sendUpdateCommands(modelManager);
+		
+		list = xmlDoc.getElementsByTagName("variable-sets");
+		if (list.getLength() >= 1) {
+			VariableSetFactory.loadVariableSets(list.item(0));
+		}
+
+		
+		/* Load parameter panel */
+		list = xmlDoc.getElementsByTagName("parameterframe");
+		if (list.getLength() >= 1) {
+			// TODO: only one parameter frame should be specified
+//			frame = new ParameterFrame(nodes.item(0), mainFrame);
+//			frames.add(frame);
+			
+			JDialog dialog = new ParameterPanel(list.item(0), mainWindow);
+			dialog.setVisible(true);
+			frames.add(dialog);
+		}
+		
+
+//		parameters.sendUpdateCommands(modelManager);
 
 		/* Collect agents */
 		agentTypesAndNames.clear();
@@ -230,6 +309,16 @@ public class Coordinator {
 		}
 		
 		
+		/* Load render frames */
+		list = xmlDoc.getElementsByTagName("renderframe");
+
+		for (int i = 0; i < list.getLength(); i++) {
+			JDialog dialog = new RenderFrame(list.item(i), mainWindow, Render.JAVA_2D_RENDER);
+			dialog.setVisible(true);
+			frames.add(dialog);
+		}		
+		
+		
 		/* Main frame */
 		list = xmlDoc.getElementsByTagName("mainframe");
 		Node node = list.item(0);
@@ -237,17 +326,12 @@ public class Coordinator {
 		receiver.addDataConsumer(mainWindow);
 		mainWindow.setupRender(node);
 		
-/*		JFrame frame = new TestWindow();
-		Render render = createRender(node, Render.JAVA_2D_RENDER);
-		
-		frame.getContentPane().add(render.getCanvas(), BorderLayout.CENTER);
-		frame.pack();
-		frame.setBounds(10, 10, 500, 500);
-		frame.setVisible(true);
-*/		
-		
 		this.modelXmlFile = modelFile;
 		this.modelXmlDoc = xmlDoc;
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	
@@ -283,10 +367,17 @@ public class Coordinator {
 		if (modelXmlDoc == null)
 			return;
 		
+		modelManager.sendCommand(new Command_Stop());
+		
 		modelXmlDoc = null;
 		modelXmlFile = null;
 		
 		receiver.removeAllConsumers();
+		for (JDialog frame : frames) {
+			frame.dispose();
+		}
+		
+		frames.clear();
 	}
 	
 	
@@ -323,17 +414,6 @@ public class Coordinator {
 		
 		return render;
 	}
-	
-	
-/*	
-	class TestWindow extends JFrame {
-		public TestWindow() {
-			setTitle("Test");
-			setDefaultCloseOperation(EXIT_ON_CLOSE);
-		}
-	}
-*/	
-	
 	
 	
 	/**

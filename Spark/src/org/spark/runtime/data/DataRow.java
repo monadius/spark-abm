@@ -95,4 +95,58 @@ public final class DataRow implements Serializable {
 		else
 			return (DataObject_SpaceAgents) obj;
 	}
+	
+	
+	/**
+	 * Returns a double value for the given variable
+	 * @param varName
+	 * @return
+	 */
+	public Double getVarDoubleValue(String varName) {
+		String name = "$variable:" + varName;
+		
+		DataObject obj = data.get(name);
+		if (obj == null)
+			return null;
+		else if (obj instanceof DataObject_Double)
+			return ((DataObject_Double) obj).getValue();
+		else
+			return null;
+	}
+	
+	
+	/**
+	 * Returns an integer value for the given variable
+	 * @param varName
+	 * @return
+	 */
+	public Integer getVarIntegerValue(String varName) {
+		String name = "$variable:" + varName;
+		
+		DataObject obj = data.get(name);
+		if (obj == null)
+			return null;
+		else if (obj instanceof DataObject_Integer)
+			return ((DataObject_Integer) obj).getValue();
+		else
+			return null;
+	}
+
+
+	/**
+	 * Returns a boolean value for the given variable
+	 * @param varName
+	 * @return
+	 */
+	public Boolean getVarBooleanValue(String varName) {
+		String name = "$variable:" + varName;
+		
+		DataObject obj = data.get(name);
+		if (obj == null)
+			return null;
+		else if (obj instanceof DataObject_Bool)
+			return ((DataObject_Bool) obj).getValue();
+		else
+			return null;
+	}
 }

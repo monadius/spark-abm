@@ -50,5 +50,14 @@ public class BlockingCommandManager extends CommandManager {
 		
 		return true;
 	}
+	
+	
+	@Override
+	public void clearCommands() {
+		synchronized (buffer) {
+			buffer.clear();
+			buffer.notifyAll();
+		}
+	}
 
 }

@@ -6,12 +6,15 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 
+import javax.xml.parsers.DocumentBuilderFactory;
+
 import org.spark.core.Agent;
 import org.spark.core.ExecutionMode;
 import org.spark.core.SparkModel;
 import org.spark.math.RationalNumber;
 import org.spark.runtime.commands.Command_LoadLocalModel;
 import org.spark.runtime.commands.Command_PauseResume;
+import org.spark.runtime.commands.Command_SetVariableValue;
 import org.spark.runtime.commands.Command_Start;
 import org.spark.runtime.commands.Command_Stop;
 import org.spark.runtime.commands.Command_String;
@@ -176,6 +179,9 @@ public class SimpleModelManager extends BasicModelManager {
 		ArrayList<Node> nodes;
 		Node root = xmlDoc.getFirstChild();
 		
+		if (root == null)
+			throw new Error();
+		
 		/* Load tick size */
 		NamedNodeMap attributes = root.getAttributes();
 		Node tmp = attributes.getNamedItem("tick");
@@ -248,6 +254,9 @@ public class SimpleModelManager extends BasicModelManager {
 
 	@Override
 	public void sendCommand(ModelManagerCommand cmd) {
+//		logger.info("sendCommand(): " + cmd.getClass().getSimpleName());
+//		logger.info("running flag: " + runningFlag);
+		
 		if (runningFlag) {
 			if (cmd instanceof Command_PauseResume) {
 				simEngine.sendCommand(cmd);
@@ -257,6 +266,15 @@ public class SimpleModelManager extends BasicModelManager {
 			if (cmd instanceof Command_Stop) {
 				simEngine.sendCommand(cmd);
 				return;
+			}
+			
+			if (cmd instanceof Command_SetVariableValue) {
+				simEngine.sendCommand(cmd);
+				return;
+			}
+			
+			if (cmd instanceof Command_LoadLocalModel) {
+				simEngine.sendCommand(new Command_Stop());
 			}
 			
 			if (cmd instanceof Command_Start) {
@@ -289,7 +307,8 @@ public class SimpleModelManager extends BasicModelManager {
 		/* Command LoadLocalModel */
 		if (cmd instanceof Command_LoadLocalModel) {
 			Command_LoadLocalModel command = (Command_LoadLocalModel) cmd;
-			loadLocalModel(command.getXmlDoc(), command.getPath());
+			Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(command.getModelPath());
+			loadLocalModel(doc, command.getPath());
 			
 			return;
 		}
@@ -304,6 +323,7 @@ public class SimpleModelManager extends BasicModelManager {
 		if (cmd instanceof Command_Start) {
 			startFlag = true;
 			pausedFlag = ((Command_Start) cmd).getPausedFlag();
+			return;
 		}
 	}
 	
@@ -334,6 +354,7 @@ public class SimpleModelManager extends BasicModelManager {
 			commandManager.receiveCommands(new ICommandExecutor() {
 				public boolean execute(ModelManagerCommand cmd) {
 					try {
+						logger.info("Executing command: " + cmd.getClass().getSimpleName());
 						acceptCommand(cmd);
 					}
 					catch (Exception e) {
