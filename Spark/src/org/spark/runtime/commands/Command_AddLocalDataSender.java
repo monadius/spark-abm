@@ -12,7 +12,8 @@ import org.spark.runtime.internal.engine.AbstractSimulationEngine;
  */
 @SuppressWarnings("serial")
 public class Command_AddLocalDataSender extends LocalCommand {
-	private LocalDataReceiver receiver;
+	// Data receiver is never serialized
+	private transient LocalDataReceiver receiver;
 	
 	public Command_AddLocalDataSender(LocalDataReceiver receiver) {
 		this.receiver = receiver;
