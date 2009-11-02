@@ -69,6 +69,10 @@ public class DCSpaceAgents extends DataCollector {
 			result.AddAgent(pos, r, color, shape, spaceIndex);
 		}
 		
+//		ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(typeName + ".dat"));
+//		oos.writeObject(result);
+//		oos.close();
+		
 		return result;
 	}
 	
