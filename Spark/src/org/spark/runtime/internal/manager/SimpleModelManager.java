@@ -12,8 +12,10 @@ import org.spark.core.Agent;
 import org.spark.core.ExecutionMode;
 import org.spark.core.SparkModel;
 import org.spark.math.RationalNumber;
+import org.spark.runtime.commands.Command_AddDataCollector;
 import org.spark.runtime.commands.Command_LoadLocalModel;
 import org.spark.runtime.commands.Command_PauseResume;
+import org.spark.runtime.commands.Command_RemoveDataCollector;
 import org.spark.runtime.commands.Command_SetVariableValue;
 import org.spark.runtime.commands.Command_Start;
 import org.spark.runtime.commands.Command_Stop;
@@ -269,6 +271,16 @@ public class SimpleModelManager extends BasicModelManager {
 			}
 			
 			if (cmd instanceof Command_SetVariableValue) {
+				simEngine.sendCommand(cmd);
+				return;
+			}
+			
+			if (cmd instanceof Command_AddDataCollector) {
+				simEngine.sendCommand(cmd);
+				return;
+			}
+			
+			if (cmd instanceof Command_RemoveDataCollector) {
 				simEngine.sendCommand(cmd);
 				return;
 			}

@@ -143,7 +143,10 @@ public class DataCollectorDescription implements Serializable {
 	
 	@Override
 	public int hashCode() {
-		int code = (type * 31) ^ dataName.hashCode();
+		int code = type * 31;
+		
+		if (dataName != null)
+			code ^= dataName.hashCode();
 		
 		if (interval == 0)
 			return code;
