@@ -17,7 +17,7 @@ public class DataObject_Grid extends DataObject {
 	 * Creates a copy of the given data array
 	 * @param data
 	 */
-	DataObject_Grid(int spaceIndex, double[][] data, double xStep, double yStep) {
+	public DataObject_Grid(int spaceIndex, double[][] data, double xStep, double yStep) {
 		this.spaceIndex = spaceIndex;
 		this.xStep = xStep;
 		this.yStep = yStep;

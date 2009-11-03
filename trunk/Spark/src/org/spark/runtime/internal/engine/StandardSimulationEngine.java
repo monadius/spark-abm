@@ -1,5 +1,7 @@
 package org.spark.runtime.internal.engine;
 
+import java.util.ArrayList;
+
 import org.spark.core.ExecutionMode;
 import org.spark.core.Observer;
 import org.spark.core.ObserverFactory;
@@ -7,10 +9,10 @@ import org.spark.core.SimulationTime;
 import org.spark.core.SparkModel;
 import org.spark.math.RationalNumber;
 import org.spark.runtime.commands.*;
-import org.spark.runtime.data.BadDataSourceException;
-import org.spark.runtime.data.DataCollector;
-import org.spark.runtime.data.DataProcessor;
 import org.spark.runtime.data.DataRow;
+import org.spark.runtime.internal.data.BadDataSourceException;
+import org.spark.runtime.internal.data.DataCollector;
+import org.spark.runtime.internal.data.DataProcessor;
 import org.spark.runtime.internal.manager.BasicModelManager;
 import org.spark.runtime.internal.manager.ICommandExecutor;
 import org.spark.runtime.internal.manager.NonBlockingCommandManager;
@@ -118,7 +120,7 @@ public class StandardSimulationEngine extends AbstractSimulationEngine {
 	 * Processes all data
 	 * @param time
 	 */
-	private void processData(boolean paused) throws Exception {
+	private void processData(boolean paused, boolean specialFlag) throws Exception {
 		// Synchronize variables and methods
 		model.synchronizeVariables();
 		model.synchronizeMethods();
@@ -128,11 +130,12 @@ public class StandardSimulationEngine extends AbstractSimulationEngine {
 		
 		// Create a data row
 		DataRow row = new DataRow(time, paused);
+		ArrayList<DataCollector> collectors = dataCollectors.getActiveCollectors();
 		
 		// Collect all data
-		for (DataCollector collector : dataCollectors) {
+		for (DataCollector collector : collectors) {
 			try {
-				collector.collect(model, row, time);
+				collector.collect(model, row, time, specialFlag);
 			}
 			catch (BadDataSourceException e) {
 				// TODO: remove 'collector' from the list
@@ -204,7 +207,7 @@ public class StandardSimulationEngine extends AbstractSimulationEngine {
 			while (pausedFlag) {
 				// Update data after each received command
 				if (commandManager.receiveCommands(executor)) {
-					processData(true);
+					processData(true, true);
 				}
 				
 				if (stopFlag)
@@ -236,7 +239,7 @@ public class StandardSimulationEngine extends AbstractSimulationEngine {
 		
 		try {
 			// Process data before simulation steps
-			processData(this.pausedFlag);
+			processData(this.pausedFlag, true);
 
 			/* Main process */
 			while (tick < length) {
@@ -250,15 +253,21 @@ public class StandardSimulationEngine extends AbstractSimulationEngine {
 					break;
 
 				// Process data
-				processData(false);
+				processData(false, false);
 
 				// Advance simulation time
 				model.getObserver().advanceSimulationTick();
 				tick = model.getObserver().getSimulationTick();
 			}
 			
+			// Process all data one more time before complete simulation stop
+			processData(false, true);
+
+			
 			// Finalize data processing
-			for (DataCollector dc : dataCollectors) {
+			ArrayList<DataCollector> collectors = dataCollectors.getActiveCollectors();
+
+			for (DataCollector dc : collectors) {
 				dc.reset();
 			}
 			

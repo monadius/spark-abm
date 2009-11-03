@@ -3,6 +3,8 @@ package org.spark.runtime.data;
 import java.io.Serializable;
 import java.util.HashMap;
 
+import static org.spark.runtime.data.DataCollectorDescription.*;
+
 import org.spark.core.SimulationTime;
 import org.spark.utils.RandomHelper;
 
@@ -18,7 +20,7 @@ public final class DataRow implements Serializable {
 	private DataObject_State state;
 	
 	/* All data */
-	HashMap<String, DataObject> data;
+	private HashMap<String, DataObject> data;
 	
 	
 	/**
@@ -28,6 +30,48 @@ public final class DataRow implements Serializable {
 	public DataRow(SimulationTime time, boolean paused) {
 		data = new HashMap<String, DataObject>();
 		state = new DataObject_State(time, RandomHelper.getSeed(), paused);
+	}
+	
+	
+	/**
+	 * Tells whether the row contains the given named item
+	 * @param name
+	 * @return
+	 */
+	public boolean contains(String name) {
+		return data.containsKey(name);
+	}
+	
+	
+	/**
+	 * Returns the given named object
+	 * @param name
+	 * @return
+	 */
+	public DataObject get(String name) {
+		return data.get(name);
+	}
+	
+	
+	/**
+	 * Puts the given data object into the row
+	 * @param name
+	 * @param object
+	 */
+	public void addDataObject(String name, DataObject object) {
+		data.put(name, object);
+	}
+	
+	
+	/**
+	 * Returns all names of items in the row
+	 * @return
+	 */
+	public String[] getNames() {
+		String[] names = new String[data.size()];
+		names = data.keySet().toArray(names);
+		
+		return names;
 	}
 	
 	
@@ -55,7 +99,7 @@ public final class DataRow implements Serializable {
 	 * @return
 	 */
 	public DataObject_Spaces getSpaces() {
-		DataObject obj = data.get("$spaces");
+		DataObject obj = data.get(STR_SPACES);
 		if (obj == null)
 			return null;
 		else
@@ -71,7 +115,7 @@ public final class DataRow implements Serializable {
 	 */
 	public DataObject_Grid getGrid(String dataLayerName) {
 //		String name = "$data-layer:" + spaceName + ":" + dataLayerName;
-		String name = "$data-layer:" + dataLayerName;
+		String name = STR_DATA_LAYER + dataLayerName;
 		
 		DataObject obj = data.get(name);
 		if (obj == null)
@@ -87,7 +131,7 @@ public final class DataRow implements Serializable {
 	 * @return
 	 */
 	public DataObject_SpaceAgents getSpaceAgents(String typeName) {
-		String name = "$agents:" + typeName;
+		String name = STR_SPACE_AGENTS + typeName;
 		
 		DataObject obj = data.get(name);
 		if (obj == null)
@@ -103,7 +147,7 @@ public final class DataRow implements Serializable {
 	 * @return
 	 */
 	public Double getVarDoubleValue(String varName) {
-		String name = "$variable:" + varName;
+		String name = STR_VARIABLE + varName;
 		
 		DataObject obj = data.get(name);
 		if (obj == null)
@@ -121,7 +165,7 @@ public final class DataRow implements Serializable {
 	 * @return
 	 */
 	public Integer getVarIntegerValue(String varName) {
-		String name = "$variable:" + varName;
+		String name = STR_VARIABLE + varName;
 		
 		DataObject obj = data.get(name);
 		if (obj == null)
@@ -139,7 +183,7 @@ public final class DataRow implements Serializable {
 	 * @return
 	 */
 	public Boolean getVarBooleanValue(String varName) {
-		String name = "$variable:" + varName;
+		String name = STR_VARIABLE + varName;
 		
 		DataObject obj = data.get(name);
 		if (obj == null)

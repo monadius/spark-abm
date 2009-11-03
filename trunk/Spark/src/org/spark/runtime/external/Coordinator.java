@@ -12,6 +12,7 @@ import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.PropertyConfigurator;
 import org.spark.core.ExecutionMode;
 import org.spark.runtime.commands.*;
+import org.spark.runtime.data.DataCollectorDescription;
 import org.spark.runtime.external.data.LocalDataReceiver;
 import org.spark.runtime.external.gui.MainWindow;
 import org.spark.runtime.external.gui.ParameterPanel;
@@ -232,7 +233,8 @@ public class Coordinator {
 		modelManager.sendCommand(
 				new Command_LoadLocalModel(modelFile, currentDir));
 		modelManager.sendCommand(new Command_AddLocalDataSender(receiver));
-		modelManager.sendCommand(new Command_AddDCSpaces(1));
+		modelManager.sendCommand(new Command_AddDataCollector(
+				new DataCollectorDescription(DataCollectorDescription.SPACES, null, 1)));
 
 		NodeList list;
 
@@ -280,7 +282,8 @@ public class Coordinator {
 			Node node = list.item(i);
 			String typeName = node.getTextContent().trim();
 			String name = getValue(node, "name", null);
-			modelManager.sendCommand(new Command_AddDCSpaceAgents(typeName, 1));
+			modelManager.sendCommand(new Command_AddDataCollector(
+					new DataCollectorDescription(DataCollectorDescription.SPACE_AGENTS, typeName, 1)));
 			
 			agentTypesAndNames.put(typeName, name);
 		}
@@ -291,7 +294,9 @@ public class Coordinator {
 			Node node = list.item(i);
 			String name = node.getAttributes().getNamedItem("name")
 					.getNodeValue();
-			modelManager.sendCommand(new Command_AddDCVariable(name, 1));
+			
+			modelManager.sendCommand(new Command_AddDataCollector(
+					new DataCollectorDescription(DataCollectorDescription.VARIABLE, name, 1)));
 		}
 		
 		
@@ -305,7 +310,8 @@ public class Coordinator {
 			
 			String name = getValue(node, "name", null);
 			// TODO: space name should be also specified somehow
-			modelManager.sendCommand(new Command_AddDCGrid(name, 1));
+			modelManager.sendCommand(new Command_AddDataCollector(
+					new DataCollectorDescription(DataCollectorDescription.DATA_LAYER, name, 1)));
 		}
 		
 		

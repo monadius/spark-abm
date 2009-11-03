@@ -1,8 +1,11 @@
-package org.spark.runtime.data;
+package org.spark.runtime.internal.data;
 
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
+
+import org.spark.runtime.data.DataObject;
+import org.spark.runtime.data.DataRow;
 
 
 public class TestDataProcessor extends DataProcessor {
@@ -22,14 +25,13 @@ public class TestDataProcessor extends DataProcessor {
 			return;
 
 		DataRow row = rows.get(0);
-		if (row.data.size() == 0)
+		String[] headers = row.getNames();
+		if (headers.length == 0)
 			return;
 	
 		FileOutputStream fos = new FileOutputStream("data.csv");
 		PrintStream out = new PrintStream(fos);
 
-		String[] headers = new String[row.data.size()];
-		headers = row.data.keySet().toArray(headers);
 		// Print out headers
 		for (int i = 0; i < headers.length; i++) {
 			out.print(headers[i]);
@@ -42,7 +44,7 @@ public class TestDataProcessor extends DataProcessor {
 			row = rows.get(k);
 			// Save data values
 			for (int i = 0; i < headers.length; i++) {
-				DataObject obj = row.data.get(headers[i]);
+				DataObject obj = row.get(headers[i]);
 				if (obj == null)
 					out.print("null");
 				else

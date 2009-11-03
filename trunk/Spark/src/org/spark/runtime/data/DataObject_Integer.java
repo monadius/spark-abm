@@ -4,7 +4,7 @@ package org.spark.runtime.data;
 public class DataObject_Integer extends DataObject {
 	private int value;
 	
-	DataObject_Integer(int val) {
+	public DataObject_Integer(int val) {
 		value = val;
 	}
 	
