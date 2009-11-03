@@ -4,7 +4,7 @@ package org.spark.runtime.data;
 public class DataObject_Bool extends DataObject {
 	private boolean value;
 	
-	DataObject_Bool(boolean val) {
+	public DataObject_Bool(boolean val) {
 		value = val;
 	}
 	

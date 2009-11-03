@@ -1,7 +1,7 @@
 package org.spark.runtime.commands;
 
 import org.spark.core.SparkModel;
-import org.spark.runtime.data.TestDataProcessor;
+import org.spark.runtime.internal.data.TestDataProcessor;
 import org.spark.runtime.internal.engine.AbstractSimulationEngine;
 
 @SuppressWarnings("serial")

@@ -4,7 +4,7 @@ package org.spark.runtime.data;
 public class DataObject_Double extends DataObject {
 	private double value;
 	
-	DataObject_Double(double val) {
+	public DataObject_Double(double val) {
 		value = val;
 	}
 	

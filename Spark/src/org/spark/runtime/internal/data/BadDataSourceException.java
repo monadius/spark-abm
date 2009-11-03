@@ -1,4 +1,4 @@
-package org.spark.runtime.data;
+package org.spark.runtime.internal.data;
 
 /**
  * This exception is raised whenever data source is missing

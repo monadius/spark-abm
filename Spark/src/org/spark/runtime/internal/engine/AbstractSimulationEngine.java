@@ -5,8 +5,9 @@ import java.util.ArrayList;
 import org.spark.core.ExecutionMode;
 import org.spark.core.SparkModel;
 import org.spark.runtime.commands.ModelManagerCommand;
-import org.spark.runtime.data.DataCollector;
-import org.spark.runtime.data.DataProcessor;
+import org.spark.runtime.data.DataCollectorDescription;
+import org.spark.runtime.internal.data.DataCollectorManager;
+import org.spark.runtime.internal.data.DataProcessor;
 
 
 /**
@@ -24,8 +25,9 @@ public abstract class AbstractSimulationEngine {
 	/* Number of ticks for a simulation */
 	protected long simulationTime = Long.MAX_VALUE;
 	
-	/* All data collectors */
-	protected final ArrayList<DataCollector> dataCollectors;
+	/* Manager for data collectors */
+	protected final DataCollectorManager dataCollectors;
+	
 	/* All data processors */
 	protected final ArrayList<DataProcessor> dataProcessors;
 	
@@ -37,7 +39,7 @@ public abstract class AbstractSimulationEngine {
 	public AbstractSimulationEngine(SparkModel model) {
 		this.model = model;
 		
-		dataCollectors = new ArrayList<DataCollector>();
+		dataCollectors = new DataCollectorManager();
 		dataProcessors = new ArrayList<DataProcessor>();
 	}
 	
@@ -67,11 +69,20 @@ public abstract class AbstractSimulationEngine {
 	
 	
 	/**
-	 * Adds the data collector dc
+	 * Adds a data collector described by dcd
 	 * @param dc
 	 */
-	public void addDataCollector(DataCollector dc) {
-		dataCollectors.add(dc);
+	public void addDataCollector(DataCollectorDescription dcd) {
+		dataCollectors.addCollector(dcd);
+	}
+	
+	
+	/**
+	 * Removes the given data collector
+	 * @param dcd
+	 */
+	public void removeDataCollector(DataCollectorDescription dcd) {
+		dataCollectors.removeCollector(dcd);
 	}
 	
 	

@@ -9,8 +9,8 @@ import org.apache.log4j.BasicConfigurator;
 import org.spark.runtime.commands.Command_AddDataProcessor;
 import org.spark.runtime.commands.Command_AddLocalDataSender;
 import org.spark.runtime.commands.ModelManagerCommand;
-import org.spark.runtime.data.DataProcessor;
 import org.spark.runtime.data.DataRow;
+import org.spark.runtime.internal.data.DataProcessor;
 import org.spark.runtime.internal.manager.BasicModelManager;
 import org.spark.runtime.internal.manager.SimpleModelManager;
 

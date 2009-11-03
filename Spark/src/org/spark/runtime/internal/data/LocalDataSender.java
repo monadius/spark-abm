@@ -1,5 +1,6 @@
-package org.spark.runtime.data;
+package org.spark.runtime.internal.data;
 
+import org.spark.runtime.data.DataRow;
 import org.spark.runtime.external.data.LocalDataReceiver;
 
 /**

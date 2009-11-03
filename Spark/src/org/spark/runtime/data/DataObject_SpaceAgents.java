@@ -24,7 +24,7 @@ public class DataObject_SpaceAgents extends DataObject {
 	 * Creates a data object for the given number of space agents
 	 * @param agentsNumber
 	 */
-	DataObject_SpaceAgents(int agentsNumber) {
+	public DataObject_SpaceAgents(int agentsNumber) {
 		if (agentsNumber < 0)
 			agentsNumber = 0;
 		
@@ -48,7 +48,7 @@ public class DataObject_SpaceAgents extends DataObject {
 	 * @param color
 	 * @param shape
 	 */
-	void AddAgent(Vector position, double r, Vector4d color, int shape, int spaceIndex) {
+	public void AddAgent(Vector position, double r, Vector4d color, int shape, int spaceIndex) {
 		// Cannot hold any more agents
 		if (counter >= n)
 			return;

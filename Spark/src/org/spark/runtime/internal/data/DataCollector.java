@@ -1,7 +1,9 @@
-package org.spark.runtime.data;
+package org.spark.runtime.internal.data;
 
 import org.spark.core.SimulationTime;
 import org.spark.core.SparkModel;
+import org.spark.runtime.data.DataObject;
+import org.spark.runtime.data.DataRow;
 
 /**
  * Defines basic functionality for data collectors.
@@ -18,22 +20,11 @@ public abstract class DataCollector {
 	
 	
 	/**
-	 * Creates a data collector with the specific data collection interval
-	 * @param collectionInterval
-	 */
-	protected DataCollector(int collectionInterval) {
-		if (collectionInterval < 1)
-			collectionInterval = 1;
-		
-		this.collectionInterval = collectionInterval;
-	}
-	
-	
-	/**
 	 * Creates a default data collector
 	 */
 	protected DataCollector() {
-		this(1);
+		collectionInterval = 1;
+		dataName = null;
 	}
 	
 	
@@ -42,6 +33,9 @@ public abstract class DataCollector {
 	 * @param interval
 	 */
 	public void setCollectionInterval(int interval) {
+		if (interval < 0)
+			interval = 0;
+		
 		this.collectionInterval = interval;
 	}
 	
@@ -51,17 +45,21 @@ public abstract class DataCollector {
 	 * @param row
 	 * @throws Exception
 	 */
-	public final void collect(SparkModel model, DataRow row, SimulationTime time) throws Exception {
+	public final void collect(SparkModel model, DataRow row, SimulationTime time, boolean specialCollection) throws Exception {
 		if (dataName == null)
 			throw new Exception("Name is not specified for the data collector");
+
+		// If the interval == 0, then do only special collections
+		if (collectionInterval == 0 && !specialCollection)
+			return;
 		
-		if (time.getTick() % collectionInterval == 0) {
+		if (specialCollection || time.getTick() % collectionInterval == 0) {
 			// The data is already collected
-			if (row.data.containsKey(dataName))
+			if (row.contains(dataName))
 				return;
 			
 			DataObject obj = collect0(model);
-			row.data.put(dataName, obj);
+			row.addDataObject(dataName, obj);
 		}
 	}
 	

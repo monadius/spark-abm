@@ -22,7 +22,7 @@ public class DataObject_Spaces extends DataObject {
 	 * Creates a data object for the given number of spaces
 	 * @param number
 	 */
-	DataObject_Spaces(int number) {
+	public DataObject_Spaces(int number) {
 		if (number < 0)
 			number = 0;
 		
@@ -42,7 +42,7 @@ public class DataObject_Spaces extends DataObject {
 	 * @param min
 	 * @param max
 	 */
-	void addSpace(String name, int index, Vector min, Vector max) {
+	public void addSpace(String name, int index, Vector min, Vector max) {
 		if (counter >= number)
 			return;
 		

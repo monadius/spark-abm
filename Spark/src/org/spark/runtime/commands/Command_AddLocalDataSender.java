@@ -1,8 +1,8 @@
 package org.spark.runtime.commands;
 
 import org.spark.core.SparkModel;
-import org.spark.runtime.data.LocalDataSender;
 import org.spark.runtime.external.data.LocalDataReceiver;
+import org.spark.runtime.internal.data.LocalDataSender;
 import org.spark.runtime.internal.engine.AbstractSimulationEngine;
 
 /**

@@ -1,27 +1,27 @@
 package org.spark.runtime.commands;
 
 import org.spark.core.SparkModel;
-import org.spark.runtime.internal.data.DataProcessor;
+import org.spark.runtime.data.DataCollectorDescription;
 import org.spark.runtime.internal.engine.AbstractSimulationEngine;
 
 /**
- * Tells to add a data processor to a simulation engine
+ * Tells to add a data collector
  * @author Monad
  *
  */
 @SuppressWarnings("serial")
-public class Command_AddDataProcessor extends ModelManagerCommand {
-	private DataProcessor dp;
+public class Command_AddDataCollector extends ModelManagerCommand {
+	private DataCollectorDescription dcd;
 	
 	
-	public Command_AddDataProcessor(DataProcessor dp) {
-		this.dp = dp;
+	public Command_AddDataCollector(DataCollectorDescription dcd) {
+		this.dcd = dcd;
 	}
-	
+
+
 	@Override
 	public void execute(SparkModel model, AbstractSimulationEngine engine)
 			throws Exception {
-		engine.addDataProcessor(dp);
+		engine.addDataCollector(dcd);
 	}
-
 }

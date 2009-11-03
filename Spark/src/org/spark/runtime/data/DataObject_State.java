@@ -19,7 +19,7 @@ public class DataObject_State extends DataObject {
 	/* Random seed for the current simulation */
 	private long seed;
 
-	DataObject_State(SimulationTime time, long seed, boolean paused) {
+	public DataObject_State(SimulationTime time, long seed, boolean paused) {
 		this.time = time;
 		this.seed = seed;
 		this.paused = paused;
