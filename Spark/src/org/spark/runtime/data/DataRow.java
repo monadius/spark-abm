@@ -34,12 +34,22 @@ public final class DataRow implements Serializable {
 	
 	
 	/**
-	 * Tells whether the row contains the given named item
+	 * Tells whether the row contains the given item
 	 * @param name
 	 * @return
 	 */
-	public boolean contains(String name) {
+	public boolean contains(int type, String dataName) {
+		String name = DataCollectorDescription.typeToString(type);
+		
+		if (dataName != null)
+			name += dataName;
+		
 		return data.containsKey(name);
+	}
+	
+	
+	public boolean contains(String fullName) {
+		return data.containsKey(fullName);
 	}
 	
 	
@@ -48,8 +58,18 @@ public final class DataRow implements Serializable {
 	 * @param name
 	 * @return
 	 */
-	public DataObject get(String name) {
+	public DataObject get(int type, String dataName) {
+		String name = DataCollectorDescription.typeToString(type);
+		
+		if (dataName != null)
+			name += dataName;
+
 		return data.get(name);
+	}
+	
+	
+	public DataObject get(String fullName) {
+		return data.get(fullName);
 	}
 	
 	
