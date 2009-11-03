@@ -132,10 +132,12 @@ public class DataCollectorDescription implements Serializable {
 		
 		DataCollectorDescription dcd = (DataCollectorDescription) obj;
 		
-		if (type == dcd.type &&
-			dataName.equals(dcd.dataName) &&
-			interval == dcd.interval)
-			return true;
+		if (type == dcd.type && interval == dcd.interval) {
+			if (dataName == null)
+				return dcd.dataName == null;
+			else
+				return dataName.equals(dcd.dataName);
+		}
 		else
 			return false;
 	}

@@ -266,6 +266,7 @@ public class RenderProperties extends JDialog implements ActionListener {
 			n = Integer.parseInt( cmd.substring( "agent_vis".length() ) );
 			agentStyles.get(n).visible = visible.isSelected();
 //			GUIModelManager.getInstance().requestUpdate();
+			render.updateDataFilter();
 			return;
 		}
 		
@@ -325,6 +326,7 @@ public class RenderProperties extends JDialog implements ActionListener {
 			
 //			Render.DataLayerStyle dataStyle = render.getDataLayerStyles().get(name);
 			render.setDataLayer(name);
+			render.updateDataFilter();
 //			GUIModelManager.getInstance().requestUpdate();
 			return;
 		}

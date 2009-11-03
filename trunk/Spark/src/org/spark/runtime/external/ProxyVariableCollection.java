@@ -3,6 +3,8 @@ package org.spark.runtime.external;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.spark.runtime.data.DataCollectorDescription;
+import org.spark.runtime.external.data.DataFilter;
 import org.spark.runtime.external.data.DataReceiver;
 import org.spark.utils.XmlDocUtils;
 import org.w3c.dom.Node;
@@ -49,7 +51,9 @@ public class ProxyVariableCollection {
 	 */
 	public void registerVariables(DataReceiver receiver) {
 		for (ProxyVariable var : variables.values()) {
-			receiver.addDataConsumer(var);
+			DataFilter df = new DataFilter(var);
+			df.addData(DataCollectorDescription.VARIABLE, var.getName());
+			receiver.addDataConsumer(df);
 		}
 	}
 }

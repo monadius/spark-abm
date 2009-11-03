@@ -9,7 +9,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
+import org.spark.runtime.data.DataCollectorDescription;
 import org.spark.runtime.data.DataRow;
+import org.spark.runtime.external.data.DataFilter;
 import org.spark.runtime.external.data.IDataConsumer;
 import org.spark.utils.XmlDocUtils;
 
@@ -28,6 +30,9 @@ public abstract class Render implements KeyListener, IDataConsumer {
 	private DataRow data;
 	
 	private Object dataLock = new Object();
+	
+	/* Data filter */
+	private final DataFilter dataFilter;
 	
 
 	/* Active (selected) space to be rendered */
@@ -73,6 +78,8 @@ public abstract class Render implements KeyListener, IDataConsumer {
 	protected Render() {
 		dataLayerStyles = new HashMap<String, DataLayerStyle>();
 		agentStyles = new ArrayList<AgentStyle>();
+		dataFilter = new DataFilter(this);
+		dataFilter.setInterval(1);
 	}
 	
 	
@@ -157,6 +164,32 @@ public abstract class Render implements KeyListener, IDataConsumer {
 			this.data = row;
 			update();
 		}
+	}
+	
+	
+	/**
+	 * Updates data which is consumed by the renderer
+	 */
+	public void updateDataFilter() {
+		dataFilter.removeAllData();
+		
+		dataFilter.addData(DataCollectorDescription.SPACES, null);
+		if (selectedDataLayer != null)
+			dataFilter.addData(DataCollectorDescription.DATA_LAYER, selectedDataLayer.name);
+		
+		for (AgentStyle agentStyle : agentStyles) {
+			if (agentStyle.visible)
+				dataFilter.addData(DataCollectorDescription.SPACE_AGENTS, agentStyle.typeName);
+		}
+	}
+	
+	
+	/**
+	 * Returns the data filter associated with the renderer
+	 * @return
+	 */
+	public DataFilter getDataFilter() {
+		return dataFilter;
 	}
 	
 	

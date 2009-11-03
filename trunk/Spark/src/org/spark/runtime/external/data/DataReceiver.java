@@ -11,7 +11,7 @@ import org.spark.runtime.data.DataRow;
  */
 public abstract class DataReceiver {
 	/* List of all data consumers */
-	protected final ArrayList<IDataConsumer> consumers;
+	protected final ArrayList<DataFilter> consumers;
 	
 
 	
@@ -19,7 +19,7 @@ public abstract class DataReceiver {
 	 * Default protected constructor
 	 */
 	protected DataReceiver() {
-		consumers = new ArrayList<IDataConsumer>();
+		consumers = new ArrayList<DataFilter>();
 	}
 	
 	
@@ -38,7 +38,7 @@ public abstract class DataReceiver {
 	 * Adds the new data consumer
 	 * @param consumer
 	 */
-	public synchronized void addDataConsumer(IDataConsumer consumer) {
+	public synchronized void addDataConsumer(DataFilter consumer) {
 		consumers.add(consumer);
 	}
 	
