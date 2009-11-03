@@ -153,7 +153,7 @@ public class TestSparkClient {
 		
 
 		@Override
-		public void sendCommand(ModelManagerCommand cmd) {
+		public synchronized void sendCommand(ModelManagerCommand cmd) {
 			try {
 				oos.reset();
 				oos.writeObject(cmd);

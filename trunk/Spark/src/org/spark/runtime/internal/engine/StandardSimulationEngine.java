@@ -184,9 +184,16 @@ public class StandardSimulationEngine extends AbstractSimulationEngine {
 				stopFlag = true;
 				return true;
 			}
-
-			// Ignore all other commands
 			
+			// Standard execution for all other commands
+			try {
+				cmd.execute(model, StandardSimulationEngine.this);
+			}
+			catch (Exception e) {
+				logger.error(e);
+				e.printStackTrace();
+			}
+
 			return false;
 		}
 	}

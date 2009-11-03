@@ -185,6 +185,24 @@ public class Coordinator {
 	
 	
 	/**
+	 * Adds a data collector
+	 * @param dcd
+	 */
+	public void addDataCollector(DataCollectorDescription dcd) {
+		modelManager.sendCommand(new Command_AddDataCollector(dcd));
+	}
+	
+	
+	/**
+	 * Removes a data collector
+	 * @param dcd
+	 */
+	public void removeDataCollector(DataCollectorDescription dcd) {
+		modelManager.sendCommand(new Command_RemoveDataCollector(dcd));
+	}
+	
+	
+	/**
 	 * Returns a variable by its name
 	 * @param varName
 	 * @return
