@@ -7,7 +7,7 @@ import org.spark.runtime.commands.ModelManagerCommand;
  * @author Monad
  *
  */
-public abstract class CommandManager {
+public abstract class CommandQueue {
 	public abstract void sendCommand(ModelManagerCommand cmd);
 	
 	/**

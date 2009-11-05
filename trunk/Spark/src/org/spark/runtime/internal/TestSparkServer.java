@@ -11,8 +11,8 @@ import org.spark.runtime.commands.Command_AddLocalDataSender;
 import org.spark.runtime.commands.ModelManagerCommand;
 import org.spark.runtime.data.DataRow;
 import org.spark.runtime.internal.data.DataProcessor;
-import org.spark.runtime.internal.manager.BasicModelManager;
-import org.spark.runtime.internal.manager.SimpleModelManager;
+import org.spark.runtime.internal.manager.IModelManager;
+import org.spark.runtime.internal.manager.ModelManager_Basic;
 
 import com.spinn3r.log5j.Logger;
 
@@ -28,13 +28,13 @@ public class TestSparkServer implements Runnable {
 	private final Socket clientSocket;
 	
 	/* Main model manager */
-	private final BasicModelManager manager;
+	private final IModelManager manager;
 	
 	
 	/**
 	 * Creates a test server
 	 */
-	public TestSparkServer(BasicModelManager manager, Socket clientSocket) {
+	public TestSparkServer(IModelManager manager, Socket clientSocket) {
 		this.manager = manager;
 		this.clientSocket = clientSocket;
 		logger.info("Creating a server for the client: " + clientSocket.toString());
@@ -119,7 +119,7 @@ public class TestSparkServer implements Runnable {
 			System.exit(-1);
 		}
 
-		SimpleModelManager manager = new SimpleModelManager();
+		ModelManager_Basic manager = new ModelManager_Basic();
 		TestSparkServer server = new TestSparkServer(manager, clientSocket);
 		
 		// Start up the server

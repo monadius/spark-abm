@@ -36,37 +36,37 @@ import com.spinn3r.log5j.Logger;
  * @author Monad
  *
  */
-public class SimpleModelManager extends BasicModelManager {
+public class ModelManager_Basic implements IModelManager {
 	/* Logger */
 	private static final Logger logger = Logger.getLogger();
 	
 	
 	/* Command manager */
-	private final CommandManager commandManager = new BlockingCommandManager();
+	private final CommandQueue commandManager = new CommandQueue_Blocking();
 	
 	/* If true, then the execution stops */
 	private boolean exitFlag = false;
 	
 	/* If true, then the simulation should be started */
-	private boolean startFlag = false;
+	protected boolean startFlag = false;
 	private boolean pausedFlag = false;
 	private boolean runningFlag = false;
 	
 	/* Simulation engine */
-	private AbstractSimulationEngine simEngine;
+	protected AbstractSimulationEngine simEngine;
 	
 	/* Custom class loader */
 	private ClassLoader classLoader;
 	
 	/* Model itself */
-	private SparkModel model;
+	protected SparkModel model;
 	
 	
 	/**
 	 * Default constructor
 	 * @param autoExit
 	 */
-	public SimpleModelManager() {
+	public ModelManager_Basic() {
 	}
 
 	
@@ -102,6 +102,8 @@ public class SimpleModelManager extends BasicModelManager {
 	 */
 	private void setupClassPath(File rootPath, Node node) {
 		classLoader = null;
+		if (rootPath == null)
+			return;
 
 		File path = getPath(rootPath, node);
 
@@ -173,7 +175,7 @@ public class SimpleModelManager extends BasicModelManager {
 	 * Loads a local model
 	 * @param modelFile
 	 */
-	public void loadLocalModel(Document xmlDoc, File path) throws Exception {
+	protected void loadLocalModel(Document xmlDoc, File path) throws Exception {
 		model = null;
 		String defaultObserver;
 		int defaultExecutionMode;
@@ -254,7 +256,7 @@ public class SimpleModelManager extends BasicModelManager {
 	}
 	
 
-	@Override
+
 	public void sendCommand(ModelManagerCommand cmd) {
 //		logger.info("sendCommand(): " + cmd.getClass().getSimpleName());
 //		logger.info("running flag: " + runningFlag);
@@ -299,7 +301,7 @@ public class SimpleModelManager extends BasicModelManager {
 	}
 	
 	
-	@Override
+
 	protected void acceptCommand(ModelManagerCommand cmd) throws Exception {
 		/* Command_String */
 		if (cmd instanceof Command_String) {

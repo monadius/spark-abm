@@ -11,11 +11,11 @@ import org.spark.runtime.commands.ModelManagerCommand;
  * @author Monad
  *
  */
-public class NonBlockingCommandManager extends CommandManager {
+public class CommandQueue_NonBlocking extends CommandQueue {
 	private final LinkedList<ModelManagerCommand> buffer;
 	private volatile boolean isEmpty;
 	
-	public NonBlockingCommandManager() {
+	public CommandQueue_NonBlocking() {
 		buffer = new LinkedList<ModelManagerCommand>();
 		isEmpty = true;
 	}
