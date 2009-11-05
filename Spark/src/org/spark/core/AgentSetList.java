@@ -55,7 +55,7 @@ class AgentSetList<T extends Agent> implements AgentSet<T> {
 	}
 
 	public Iterator<T> iterator() {
-		return new MyIterator<T>();
+		return new MyIterator();
 	}
 
 	public void clear() {
@@ -64,7 +64,7 @@ class AgentSetList<T extends Agent> implements AgentSet<T> {
 	}
 
 	
-	class MyIterator<T> implements Iterator<T> {
+	class MyIterator implements Iterator<T> {
 		Agent current;
 
 		public MyIterator() {
@@ -75,6 +75,7 @@ class AgentSetList<T extends Agent> implements AgentSet<T> {
 			return current.next != tmp;
 		}
 
+		@SuppressWarnings("unchecked")
 		public T next() {
 			return (T) current.next;
 		}

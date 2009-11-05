@@ -13,9 +13,9 @@ import org.spark.runtime.data.DataRow;
 import org.spark.runtime.internal.data.BadDataSourceException;
 import org.spark.runtime.internal.data.DataCollector;
 import org.spark.runtime.internal.data.DataProcessor;
-import org.spark.runtime.internal.manager.BasicModelManager;
+import org.spark.runtime.internal.manager.IModelManager;
 import org.spark.runtime.internal.manager.ICommandExecutor;
-import org.spark.runtime.internal.manager.NonBlockingCommandManager;
+import org.spark.runtime.internal.manager.CommandQueue_NonBlocking;
 
 import com.spinn3r.log5j.Logger;
 
@@ -28,7 +28,7 @@ public class StandardSimulationEngine extends AbstractSimulationEngine {
 	private static final Logger logger = Logger.getLogger();
 	
 	/* Non-blocking command manager */
-	private NonBlockingCommandManager commandManager;
+	private CommandQueue_NonBlocking commandManager;
 	
 	private boolean pausedFlag = false;
 	private boolean stopFlag = false;
@@ -37,9 +37,9 @@ public class StandardSimulationEngine extends AbstractSimulationEngine {
 	 * Default constructor
 	 * @param model
 	 */
-	public StandardSimulationEngine(SparkModel model, BasicModelManager manager) {
+	public StandardSimulationEngine(SparkModel model, IModelManager manager) {
 		super(model);
-		this.commandManager = new NonBlockingCommandManager();
+		this.commandManager = new CommandQueue_NonBlocking();
 	}
 	
 	

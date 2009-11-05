@@ -22,6 +22,15 @@ public class Command_Start extends ModelManagerCommand {
 		this.executionMode = mode;
 	}
 	
+	
+	/**
+	 * A copy constructor
+	 * @param cmd
+	 */
+	public Command_Start(Command_Start cmd) {
+		this(cmd.simulationTime, cmd.paused, cmd.observerName, cmd.executionMode);
+	}
+	
 
 	/**
 	 * Executes the command on the given simulation engine

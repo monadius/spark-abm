@@ -10,7 +10,7 @@ import org.apache.log4j.PropertyConfigurator;
 import org.spark.runtime.commands.ModelManagerCommand;
 import org.spark.runtime.data.DataRow;
 import org.spark.runtime.external.data.LocalDataReceiver;
-import org.spark.runtime.internal.manager.BasicModelManager;
+import org.spark.runtime.internal.manager.IModelManager;
 
 import com.spinn3r.log5j.Logger;
 
@@ -131,7 +131,7 @@ public class TestSparkClient {
 	 * @author Monad
 	 *
 	 */
-	private static class ClientModelManager extends BasicModelManager {
+	private static class ClientModelManager implements IModelManager {
 		private ObjectOutputStream oos;
 		
 		
@@ -140,11 +140,7 @@ public class TestSparkClient {
 		}
 		
 
-		@Override
-		protected void acceptCommand(ModelManagerCommand cmd) throws Exception {
-		}
 
-		@Override
 		public void runOnce() {
 		}
 
@@ -152,7 +148,6 @@ public class TestSparkClient {
 		}
 		
 
-		@Override
 		public synchronized void sendCommand(ModelManagerCommand cmd) {
 			try {
 				oos.reset();

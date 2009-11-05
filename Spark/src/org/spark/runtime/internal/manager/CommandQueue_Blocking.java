@@ -11,10 +11,10 @@ import org.spark.runtime.commands.ModelManagerCommand;
  * @author Monad
  *
  */
-public class BlockingCommandManager extends CommandManager {
+public class CommandQueue_Blocking extends CommandQueue {
 	private final LinkedList<ModelManagerCommand> buffer;
 	
-	public BlockingCommandManager() {
+	public CommandQueue_Blocking() {
 		buffer = new LinkedList<ModelManagerCommand>();
 	}
 	

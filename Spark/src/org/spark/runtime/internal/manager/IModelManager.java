@@ -7,23 +7,16 @@ import org.spark.runtime.commands.ModelManagerCommand;
  * @author Monad
  *
  */
-public abstract class BasicModelManager implements Runnable {
+public interface IModelManager extends Runnable {
 	/**
 	 * Sends the command to the model manager
 	 * @param cmd
 	 */
-	public abstract void sendCommand(ModelManagerCommand cmd);
-	
-	
-	/**
-	 * Called for each received command
-	 * @param cmd
-	 */
-	protected abstract void acceptCommand(ModelManagerCommand cmd) throws Exception;
+	public void sendCommand(ModelManagerCommand cmd);
 	
 	
 	/**
 	 * Executes all commands sent to the manager and exits
 	 */
-	public abstract void runOnce();
+	public void runOnce();
 }

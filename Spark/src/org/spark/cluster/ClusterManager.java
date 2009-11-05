@@ -305,6 +305,7 @@ public class ClusterManager {
 
 		/* Space */
 		
+		// TODO: send observer's type and execution mode
 		Observer observer = Observer.getInstance();
 		globalSpace = new GlobalSpace(comm.size() - 1, (BoundedSpace) Observer.getDefaultSpace());
 

@@ -20,8 +20,8 @@ import org.spark.runtime.external.gui.ParameterPanel;
 import org.spark.runtime.external.gui.RenderFrame;
 import org.spark.runtime.external.render.DataLayerStyle;
 import org.spark.runtime.external.render.Render;
-import org.spark.runtime.internal.manager.BasicModelManager;
-import org.spark.runtime.internal.manager.SimpleModelManager;
+import org.spark.runtime.internal.manager.IModelManager;
+import org.spark.runtime.internal.manager.ModelManager_Basic;
 import org.spark.utils.Vector;
 
 import static org.spark.utils.XmlDocUtils.*;
@@ -47,7 +47,7 @@ public class Coordinator {
 	private static Coordinator coordinator;
 
 	/* Main model manager */
-	private BasicModelManager modelManager;
+	private IModelManager modelManager;
 	/* Main data receiver */
 	private LocalDataReceiver receiver;
 	
@@ -90,7 +90,7 @@ public class Coordinator {
 	 * @param manager
 	 * @param receiver
 	 */
-	private Coordinator(BasicModelManager manager, LocalDataReceiver receiver) {
+	private Coordinator(IModelManager manager, LocalDataReceiver receiver) {
 		this.modelManager = manager;
 		this.receiver = receiver;
 		this.currentDir = null;
@@ -110,7 +110,7 @@ public class Coordinator {
 	 * @param manager
 	 * @param receiver
 	 */
-	public static void init(BasicModelManager manager, LocalDataReceiver receiver) {
+	public static void init(IModelManager manager, LocalDataReceiver receiver) {
 		if (coordinator != null) {
 			logger.error("Coordinator is already created");
 			throw new Error("Illegal operation");
@@ -308,15 +308,15 @@ public class Coordinator {
 		}
 
 		/* Collect variables */
-		list = xmlDoc.getElementsByTagName("variable");
-		for (int i = 0; i < list.getLength(); i++) {
-			Node node = list.item(i);
-			String name = node.getAttributes().getNamedItem("name")
-					.getNodeValue();
+//		list = xmlDoc.getElementsByTagName("variable");
+//		for (int i = 0; i < list.getLength(); i++) {
+//			Node node = list.item(i);
+//			String name = node.getAttributes().getNamedItem("name")
+//					.getNodeValue();
 			
 //			modelManager.sendCommand(new Command_AddDataCollector(
 //					new DataCollectorDescription(DataCollectorDescription.VARIABLE, name, 1)));
-		}
+//		}
 		
 		
 		/* Load data layer styles */
@@ -327,7 +327,7 @@ public class Coordinator {
 			Node node = list.item(i);
 			loadDataLayer(node);
 			
-			String name = getValue(node, "name", null);
+//			String name = getValue(node, "name", null);
 			// TODO: space name should be also specified somehow
 //			modelManager.sendCommand(new Command_AddDataCollector(
 //					new DataCollectorDescription(DataCollectorDescription.DATA_LAYER, name, 1)));
@@ -464,7 +464,7 @@ public class Coordinator {
 		}
 
 		
-		SimpleModelManager manager = new SimpleModelManager();
+		ModelManager_Basic manager = new ModelManager_Basic();
 		LocalDataReceiver receiver = new LocalDataReceiver();
 		
 		new Thread(manager).start();
