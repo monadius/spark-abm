@@ -12,15 +12,7 @@ import org.spark.core.Agent;
 import org.spark.core.ExecutionMode;
 import org.spark.core.SparkModel;
 import org.spark.math.RationalNumber;
-import org.spark.runtime.commands.Command_AddDataCollector;
-import org.spark.runtime.commands.Command_LoadLocalModel;
-import org.spark.runtime.commands.Command_PauseResume;
-import org.spark.runtime.commands.Command_RemoveDataCollector;
-import org.spark.runtime.commands.Command_SetVariableValue;
-import org.spark.runtime.commands.Command_Start;
-import org.spark.runtime.commands.Command_Stop;
-import org.spark.runtime.commands.Command_String;
-import org.spark.runtime.commands.ModelManagerCommand;
+import org.spark.runtime.commands.*;
 import org.spark.runtime.internal.ModelVariable;
 import org.spark.runtime.internal.engine.AbstractSimulationEngine;
 import org.spark.runtime.internal.engine.StandardSimulationEngine;
@@ -41,16 +33,11 @@ public class ModelManager_Basic implements IModelManager {
 	private static final Logger logger = Logger.getLogger();
 	
 	
-	/* Command manager */
-	private final CommandQueue commandManager = new CommandQueue_Blocking();
+	/* Command queue */
+	protected final CommandQueue commandQueue;
 	
-	/* If true, then the execution stops */
-	private boolean exitFlag = false;
-	
-	/* If true, then the simulation should be started */
-	protected boolean startFlag = false;
-	private boolean pausedFlag = false;
-	private boolean runningFlag = false;
+	/* If true, then the model manager stops */
+	private boolean exitFlag;
 	
 	/* Simulation engine */
 	protected AbstractSimulationEngine simEngine;
@@ -67,8 +54,22 @@ public class ModelManager_Basic implements IModelManager {
 	 * @param autoExit
 	 */
 	public ModelManager_Basic() {
+		commandQueue = new CommandQueue();
+		exitFlag = false;
+		simEngine = null;
+		model = null;
 	}
-
+	
+	
+	/**
+	 * Returns the command queue of the model manager
+	 * @return
+	 */
+	public CommandQueue getCommandQueue() {
+		return commandQueue;
+	}
+	
+	
 	
 	/**
 	 * Returns the path derived from the 'path' attribute of the node and the
@@ -251,70 +252,30 @@ public class ModelManager_Basic implements IModelManager {
 		}
 */
 		
-		simEngine = new StandardSimulationEngine(model, this);
+		simEngine = new StandardSimulationEngine(model, commandQueue);
 		simEngine.setDefaultObserver(defaultObserver, defaultExecutionMode);
 	}
 	
 
 
-	public void sendCommand(ModelManagerCommand cmd) {
-//		logger.info("sendCommand(): " + cmd.getClass().getSimpleName());
-//		logger.info("running flag: " + runningFlag);
-		
-		if (runningFlag) {
-			if (cmd instanceof Command_PauseResume) {
-				simEngine.sendCommand(cmd);
-				return;
-			}
-			
-			if (cmd instanceof Command_Stop) {
-				simEngine.sendCommand(cmd);
-				return;
-			}
-			
-			if (cmd instanceof Command_SetVariableValue) {
-				simEngine.sendCommand(cmd);
-				return;
-			}
-			
-			if (cmd instanceof Command_AddDataCollector) {
-				simEngine.sendCommand(cmd);
-				return;
-			}
-			
-			if (cmd instanceof Command_RemoveDataCollector) {
-				simEngine.sendCommand(cmd);
-				return;
-			}
-			
-			if (cmd instanceof Command_LoadLocalModel) {
-				simEngine.sendCommand(new Command_Stop());
-			}
-			
-			if (cmd instanceof Command_Start) {
-				simEngine.sendCommand(new Command_Stop());
-				// Do not return here
-			}
-		}
-		
-		commandManager.sendCommand(cmd);
+	/**
+	 * Puts received commands into the command queue
+	 */
+	public final void sendCommand(ModelManagerCommand cmd) {
+		commandQueue.put(cmd);
 	}
 	
 	
 
+	/**
+	 * Executes the given command
+	 * @param cmd
+	 * @throws Exception
+	 */
 	protected void acceptCommand(ModelManagerCommand cmd) throws Exception {
-		/* Command_String */
-		if (cmd instanceof Command_String) {
-			String command = ((Command_String) cmd).getCommand().intern();
-//			String arg = null;
-			
-//			if (cmd instanceof Command_StringWithArgument)
-//				arg = ((Command_StringWithArgument) cmd).getArgument();
-			
-			if (command == "exit") {
-				exitFlag = true;
-			}
-			
+		/* Exit command */
+		if (cmd instanceof Command_Exit) {
+			exitFlag = true;
 			return;
 		}
 		
@@ -323,7 +284,6 @@ public class ModelManager_Basic implements IModelManager {
 			Command_LoadLocalModel command = (Command_LoadLocalModel) cmd;
 			Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(command.getModelPath());
 			loadLocalModel(doc, command.getPath());
-			
 			return;
 		}
 		
@@ -335,8 +295,8 @@ public class ModelManager_Basic implements IModelManager {
 		
 		/* Start command */
 		if (cmd instanceof Command_Start) {
-			startFlag = true;
-			pausedFlag = ((Command_Start) cmd).getPausedFlag();
+			boolean pausedFlag = ((Command_Start) cmd).getPausedFlag();
+			simEngine.run(pausedFlag);
 			return;
 		}
 	}
@@ -345,46 +305,53 @@ public class ModelManager_Basic implements IModelManager {
 	/**
 	 * Main command loop
 	 */
-	public void run() {
+	public final void run() {
 		while (true) {
-			runOnce();
+			executeNextCommand();
 			
 			if (exitFlag)
 				break;
 		}
 		
 		exitFlag = false;
-		startFlag = false;
+	}
+	
+	
+	/**
+	 * Executes all commands in the queue and exits.
+	 */
+	public final void runOnce() {
+		while (true) {
+			ModelManagerCommand cmd = commandQueue.peek();
+			if (cmd == null)
+				break;
+			
+			executeNextCommand();
+			
+			if (exitFlag)
+				break;
+		}
+		
+		exitFlag = false;
 	}
 	
 	
 	
 	/**
-	 * Executes all received commands
+	 * Executes one received command.
+	 * If there are no commands, then waits for a new command
 	 */
-	public void runOnce() {
+	private void executeNextCommand() {
 		try {
-			// Receive and preprocess commands
-			commandManager.receiveCommands(new ICommandExecutor() {
-				public boolean execute(ModelManagerCommand cmd) {
-					try {
-						logger.info("Executing command: " + cmd.getClass().getSimpleName());
-						acceptCommand(cmd);
-					}
-					catch (Exception e) {
-						logger.error(e);
-						e.printStackTrace();
-					}
-					return false;
-				}
-			});
-				
-			if (startFlag) {
-				runningFlag = true;
-				simEngine.run(pausedFlag);
-				runningFlag = false;
-				startFlag = false;
-			}
+			// Receive and process commands
+			ModelManagerCommand cmd = commandQueue.takeBlocking();
+			logger.info("Executing command: " + cmd.getClass().getSimpleName());
+			acceptCommand(cmd);
+		}
+		catch (InterruptedException ie) {
+			// Exit on interruption
+			logger.info("Interrupted");
+			exitFlag = true;
 		}
 		catch (Exception e) {
 			logger.error(e);

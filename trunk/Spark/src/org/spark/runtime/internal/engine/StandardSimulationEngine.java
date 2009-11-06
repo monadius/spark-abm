@@ -13,9 +13,7 @@ import org.spark.runtime.data.DataRow;
 import org.spark.runtime.internal.data.BadDataSourceException;
 import org.spark.runtime.internal.data.DataCollector;
 import org.spark.runtime.internal.data.DataProcessor;
-import org.spark.runtime.internal.manager.IModelManager;
-import org.spark.runtime.internal.manager.ICommandExecutor;
-import org.spark.runtime.internal.manager.CommandQueue_NonBlocking;
+import org.spark.runtime.internal.manager.CommandQueue;
 
 import com.spinn3r.log5j.Logger;
 
@@ -27,9 +25,6 @@ import com.spinn3r.log5j.Logger;
 public class StandardSimulationEngine extends AbstractSimulationEngine {
 	private static final Logger logger = Logger.getLogger();
 	
-	/* Non-blocking command manager */
-	private CommandQueue_NonBlocking commandManager;
-	
 	private boolean pausedFlag = false;
 	private boolean stopFlag = false;
 	
@@ -37,19 +32,10 @@ public class StandardSimulationEngine extends AbstractSimulationEngine {
 	 * Default constructor
 	 * @param model
 	 */
-	public StandardSimulationEngine(SparkModel model, IModelManager manager) {
-		super(model);
-		this.commandManager = new CommandQueue_NonBlocking();
+	public StandardSimulationEngine(SparkModel model, CommandQueue commandQueue) {
+		super(model, commandQueue);
 	}
 	
-	
-	/**
-	 * Sends a command to the engine
-	 */
-	public void sendCommand(ModelManagerCommand cmd) {
-		commandManager.sendCommand(cmd);
-	}
-
 	
 	/**
 	 * Initializes the model
@@ -101,7 +87,7 @@ public class StandardSimulationEngine extends AbstractSimulationEngine {
 	 * @param tickTime
 	 * @param tick
 	 */
-	private boolean mainStep(RationalNumber tickTime, long tick) {
+	protected boolean mainStep(RationalNumber tickTime, long tick) {
 		if (model.begin(tick)) {
 			return true;
 		}
@@ -157,74 +143,89 @@ public class StandardSimulationEngine extends AbstractSimulationEngine {
 	
 	
 	/**
-	 * Engine's command executor class
-	 * @author Monad
-	 *
+	 * Receives and processes commands
 	 */
-	private class CommandExecutor implements ICommandExecutor {
-		public boolean execute(ModelManagerCommand cmd) {
+	private boolean processCommands() {
+		// No commands
+		if (commandQueue.peek() == null)
+			return false;
+		
+		// Process all received commands
+		while (true) {
+			ModelManagerCommand cmd = commandQueue.peek();
+		
+			// No commands
+			if (cmd == null)
+				break;
+		
 			logger.debug("Executing command: " + cmd.getClass().getSimpleName());
+
+			// Process some commands in a special way
 			
-			if (cmd instanceof Command_PauseResume) {
-				pausedFlag = !pausedFlag;
-				return false;
+			// Exit
+			if (cmd instanceof Command_Exit) {
+				stopFlag = true;
+				break;
 			}
 			
-			if (cmd instanceof Command_SetVariableValue) {
-				try {
-					cmd.execute(model, StandardSimulationEngine.this);
-				}
-				catch (Exception e) {
-					logger.error(e);
-					e.printStackTrace();
-				}
+			// Load model
+			if (cmd instanceof Command_LoadLocalModel) {
+				stopFlag = true;
+				break;
 			}
 			
+			// Start
+			if (cmd instanceof Command_Start) {
+				stopFlag = true;
+				break;
+			}
+			
+			
+			// Regular commands
+			cmd = commandQueue.take();
+			
+			// Stop
 			if (cmd instanceof Command_Stop) {
 				stopFlag = true;
-				return true;
+				break;
 			}
-			
+
+			// Pause/resume
+			if (cmd instanceof Command_PauseResume) {
+				pausedFlag = !pausedFlag;
+			}
+		
 			// Standard execution for all other commands
 			try {
-				cmd.execute(model, StandardSimulationEngine.this);
+				cmd.execute(model, this);
 			}
 			catch (Exception e) {
 				logger.error(e);
 				e.printStackTrace();
 			}
-
-			return false;
 		}
+		
+		// There were some commands
+		return true;
 	}
 	
 	
-	private CommandExecutor executor = new CommandExecutor();
-	
-
 	/**
-	 * Receives and processes commands
+	 * Process paused state
 	 */
-	private void processCommands() throws Exception {
-		commandManager.receiveCommands(executor);
-		
+	private void processPause() throws Exception {
 		// TODO: process exceptions properly
-		
-		if (pausedFlag) {
-			while (pausedFlag) {
-				// Update data after each received command
-				if (commandManager.receiveCommands(executor)) {
-					processData(true, true);
-				}
-				
-				if (stopFlag)
-					break;
-				
-				Thread.sleep(1);
+		while (pausedFlag) {
+		// Update data after each received command
+			if (processCommands()) {
+				processData(true, true);
 			}
+				
+			if (stopFlag)
+				break;
+				
+			Thread.sleep(1);
 		}
-		
-		
 	}
 	
 
@@ -233,9 +234,6 @@ public class StandardSimulationEngine extends AbstractSimulationEngine {
 	 */
 	@Override
 	public void run(boolean pausedFlag) throws Exception {
-		// TODO: find a correct solution of the double stop command problem
-		commandManager.clearCommands();
-		
 		if (model == null)
 			throw new Exception("Model is not loaded");
 		
@@ -252,6 +250,8 @@ public class StandardSimulationEngine extends AbstractSimulationEngine {
 			while (tick < length) {
 				// Receive and process commands
 				processCommands();
+				processPause();
+
 				if (stopFlag)
 					break;
 
