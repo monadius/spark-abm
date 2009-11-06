@@ -161,7 +161,7 @@ public class ModelManager_Cluster extends ModelManager_Basic {
 			
 			// Ignore some commands
 			if (!masterAcceptedCommands.contains(cmd)) {
-				logger.error("Received unacceptable commands: " + cmd);
+				logger.error("Received an unacceptable command: " + cmd);
 				return;
 			}
 			
@@ -185,7 +185,7 @@ public class ModelManager_Cluster extends ModelManager_Basic {
 
 			// Ignore some commands
 			if (!slaveAcceptedCommands.contains(cmd)) {
-				logger.error("Received unacceptable commands: " + cmd);
+				logger.error("Received an unacceptable command: " + cmd);
 				return;
 			}
 			
@@ -218,7 +218,7 @@ public class ModelManager_Cluster extends ModelManager_Basic {
 		// Load model locally
 		super.loadLocalModel(xmlDoc, xmlModelFile.getParentFile());
 		// Create simulation engine
-		simEngine = new SimulationEngine_Cluster(model, this);
+		simEngine = new SimulationEngine_Cluster(model, commandQueue);
 		
 		// Broadcast the model description to all slaves
 		broadcastCommand(new Command_LoadModelOnSlave());
@@ -235,6 +235,6 @@ public class ModelManager_Cluster extends ModelManager_Basic {
 		loadLocalModel(doc, null);
 
 		// Create simulation engine
-		simEngine = new SimulationEngine_Cluster(model, this);
+		simEngine = new SimulationEngine_Cluster(model, commandQueue);
 	}
 }

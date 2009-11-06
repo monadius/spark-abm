@@ -14,7 +14,6 @@ public interface IModelManager extends Runnable {
 	 */
 	public void sendCommand(ModelManagerCommand cmd);
 	
-	
 	/**
 	 * Executes all commands sent to the manager and exits
 	 */

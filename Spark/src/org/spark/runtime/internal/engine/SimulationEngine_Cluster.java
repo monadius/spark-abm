@@ -2,12 +2,12 @@ package org.spark.runtime.internal.engine;
 
 import org.spark.cluster.ClusterManager;
 import org.spark.core.SparkModel;
-import org.spark.runtime.internal.manager.ModelManager_Cluster;
+import org.spark.runtime.internal.manager.CommandQueue;
 
 public class SimulationEngine_Cluster extends StandardSimulationEngine {
 
-	public SimulationEngine_Cluster(SparkModel model, ModelManager_Cluster manager) {
-		super(model, manager);
+	public SimulationEngine_Cluster(SparkModel model, CommandQueue commandQueue) {
+		super(model, commandQueue);
 		// TODO Auto-generated constructor stub
 	}
 	

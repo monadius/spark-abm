@@ -4,10 +4,10 @@ import java.util.ArrayList;
 
 import org.spark.core.ExecutionMode;
 import org.spark.core.SparkModel;
-import org.spark.runtime.commands.ModelManagerCommand;
 import org.spark.runtime.data.DataCollectorDescription;
 import org.spark.runtime.internal.data.DataCollectorManager;
 import org.spark.runtime.internal.data.DataProcessor;
+import org.spark.runtime.internal.manager.CommandQueue;
 
 
 /**
@@ -15,8 +15,11 @@ import org.spark.runtime.internal.data.DataProcessor;
  * @author Monad
  */
 public abstract class AbstractSimulationEngine {
+	/* Model manager's command queue associated with the simulation engine */
+	protected final CommandQueue commandQueue;
+	
 	/* Model for which a simulation is running */
-	protected SparkModel model;
+	protected final SparkModel model;
 	
 	/* Default observer parameters */
 	protected String defaultObserverName = "Observer1";
@@ -36,8 +39,9 @@ public abstract class AbstractSimulationEngine {
 	 * Default constructor
 	 * @param model
 	 */
-	public AbstractSimulationEngine(SparkModel model) {
+	public AbstractSimulationEngine(SparkModel model, CommandQueue commandQueue) {
 		this.model = model;
+		this.commandQueue = commandQueue;
 		
 		dataCollectors = new DataCollectorManager();
 		dataProcessors = new ArrayList<DataProcessor>();
@@ -108,10 +112,4 @@ public abstract class AbstractSimulationEngine {
 	 */
 	public abstract void run(boolean pausedFlag) throws Exception;
 	
-
-	/**
-	 * Sends a command to the simulation engine
-	 * @param cmd
-	 */
-	public abstract void sendCommand(ModelManagerCommand cmd);
 }
