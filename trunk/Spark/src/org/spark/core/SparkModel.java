@@ -64,7 +64,7 @@ public abstract class SparkModel {
 		this.defaultExecutionMode = defaultMode;
 	}
 	
-	
+
 	/**
 	 * Returns default observer name
 	 * @return
@@ -104,6 +104,22 @@ public abstract class SparkModel {
 	 */
 	public final ModelMethod getMethod(String name) {
 		return methods.get(name);
+	}
+	
+	
+	/**
+	 * Returns an array of all model methods
+	 * @return
+	 */
+	public final ModelMethod[] getMethods() {
+		ModelMethod[] result = new ModelMethod[methods.size()];
+		
+		int i = 0;
+		for (ModelMethod method : methods.values()) {
+			result[i++] = method;
+		}
+		
+		return result;
 	}
 	
 	

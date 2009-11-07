@@ -26,13 +26,17 @@ public class InvokeFrame extends UpdatableFrame implements ActionListener {
 		panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
 				
-		NodeList nodes = node.getChildNodes();
-		for (int i = 0; i < nodes.getLength(); i++) {
+//		NodeList nodes = node.getChildNodes();
+/*		for (int i = 0; i < nodes.getLength(); i++) {
 			Node methodNode = nodes.item(i);
 			
 			if (methodNode.getNodeName().equals("method")) {
 				addMethod(model, methodNode);
 			}
+		}*/
+		ModelMethod[] methods = model.getMethods();
+		for (int i = 0; i < methods.length; i++) {
+			addMethod(methods[i]);
 		}
 		
 		this.add(panel);
@@ -43,9 +47,7 @@ public class InvokeFrame extends UpdatableFrame implements ActionListener {
 
 
 	
-	private void addMethod(SparkModel model, Node node) {
-		ModelMethod method = ModelMethod.loadMethod(model, node);
-		
+	private void addMethod(ModelMethod method) {
 		if (method != null) {
 			methods.put(method.getName(), method);
 			JButton button = new JButton(method.getName());
