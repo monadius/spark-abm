@@ -10,6 +10,7 @@ import org.spark.core.ExecutionMode;
 import org.spark.core.Observer;
 import org.spark.core.ObserverFactory;
 import org.spark.core.SparkModel;
+import org.spark.core.SparkModelFactory;
 import org.spark.data.GridCommunicator;
 import org.spark.gui.IUpdatableFrame;
 import org.spark.gui.UpdatableFrame;
@@ -199,10 +200,7 @@ public class SlaveModelManager {
 			// First, get xml document file
 			xmlDoc = ClusterManager.getInstance().receiveModelDescription();
 			
-			// Create model instance (not required, actually)
-			String setupName = xmlDoc.getElementsByTagName("setup").item(0).getTextContent();
-			model = (SparkModel) Class.forName(setupName).newInstance();
-//			setup = (ABMModel) classLoader.loadClass(setupName).newInstance();
+			model = SparkModelFactory.loadModel(xmlDoc, null);
 
 			// Then, get all model related data
 			ClusterManager.getInstance().waitInitCommands(model);

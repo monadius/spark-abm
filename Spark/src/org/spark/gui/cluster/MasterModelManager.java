@@ -15,7 +15,7 @@ import org.spark.core.Agent;
 import org.spark.core.ExecutionMode;
 import org.spark.core.Observer;
 import org.spark.core.ObserverFactory;
-import org.spark.core.SparkModel;
+import org.spark.core.SparkModelFactory;
 import org.spark.gui.FrameLocationManager;
 import org.spark.gui.GUIModelManager;
 import org.spark.gui.RenderFrame;
@@ -236,6 +236,8 @@ public class MasterModelManager extends GUIModelManager {
 					.newInstance().newDocumentBuilder();
 			xmlDoc = db.parse(modelFile);
 			xmlDocFile = modelFile;
+			
+			model = SparkModelFactory.loadModel(xmlDoc, modelFile.getParentFile());
 
 			/* Load model */
 			
@@ -244,7 +246,7 @@ public class MasterModelManager extends GUIModelManager {
 				setupClassPath(nodes.item(0));
 			}
 
-			nodes = xmlDoc.getElementsByTagName("setup");
+/*			nodes = xmlDoc.getElementsByTagName("setup");
 			if (nodes.getLength() != 1)
 				throw new Exception(
 						"The setup class must be uniquely specified");
@@ -256,7 +258,7 @@ public class MasterModelManager extends GUIModelManager {
 			else {
 				model = (SparkModel) Class.forName(setupName).newInstance();
 			}
-
+*/
 			/* Load agents */
 
 			nodes = xmlDoc.getElementsByTagName("agent");

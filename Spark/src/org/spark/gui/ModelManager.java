@@ -3,6 +3,9 @@ package org.spark.gui;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
+import java.net.URI;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -51,7 +54,7 @@ public class ModelManager extends GUIModelManager {
 	private HashMap<String, DataLayerStyle> dataLayerStyles = new HashMap<String, DataLayerStyle>();
 	private HashMap<String, Node> dataLayerStyleNodes = new HashMap<String, Node>();
 	
-	private RationalNumber tickTime;
+//	private RationalNumber tickTime;
 	
 
 	public File getCurrentDirectory() {
@@ -279,23 +282,6 @@ public class ModelManager extends GUIModelManager {
 	}
 	
 
-/*	private void setupClassPath(Node node) {
-		classLoader = null;
-
-		File path = getPath(node);
-
-		try {
-			if (path != null) {
-				URI uri = path.toURI();
-				classLoader = new URLClassLoader(new URL[] { uri.toURL() });
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			classLoader = null;
-		}
-
-	}
-*/
 	
 	/**
 	 * Returns a list of children with the specified name
@@ -319,8 +305,10 @@ public class ModelManager extends GUIModelManager {
 	 * Loads definition of all agents
 	 * @param node
 	 */
-/*	@SuppressWarnings("unchecked")
+	@SuppressWarnings("unchecked")
 	private void loadAgents(Node node) throws Exception {
+		ClassLoader classLoader = model.getClass().getClassLoader();
+		
 		NodeList list = xmlDoc.getElementsByTagName("agent");
 		agentTypes = new Class[list.getLength()];
 
@@ -332,16 +320,6 @@ public class ModelManager extends GUIModelManager {
 			String name = (tmp = attributes.getNamedItem("name")) != null ? tmp
 					.getNodeValue()
 					: null;
-
-			// Agent's priority
-			String sPriority = (tmp = attributes.getNamedItem("priority")) != null ?
-					tmp.getNodeValue() :
-					"1000";
-			
-			// Agent's step time
-			String sTime = (tmp = attributes.getNamedItem("time")) != null ?
-					tmp.getNodeValue() :
-					"1";
 
 			// Agent's class
 			String className = list.item(i).getTextContent().trim();
@@ -355,17 +333,10 @@ public class ModelManager extends GUIModelManager {
 
 			// Add agent's type to the table
 			agentNames.put(agentTypes[i], name);
-
-			// Agent's time and priority
-			RationalNumber time = RationalNumber.parse(sTime);
-			int priority = Integer.parseInt(sPriority);  
-			
-			// Add agent's definition to the Observer
-			model.AddAgentType(agentTypes[i], time, priority);
 		}
 		
 	}
-*/	
+	
 	
 	/**
 	 * Loads a model
@@ -398,14 +369,7 @@ public class ModelManager extends GUIModelManager {
 				tickTime = RationalNumber.ONE;
 			}
 	*/		
-			/* Load model */
-
-/*			nodes = getChildrenByTagName(root, "classpath");
-			if (nodes.size() >= 1) {
-				setupClassPath(nodes.get(0));
-			}
-
-			nodes = getChildrenByTagName(root, "setup");
+/*			nodes = getChildrenByTagName(root, "setup");
 			if (nodes.size() != 1)
 				throw new Exception(
 						"The setup class must be uniquely specified");
@@ -436,9 +400,9 @@ public class ModelManager extends GUIModelManager {
 				aboutFile = null;
 			}
 
-			/* Load agents */
+			/* Load agents (for rendering) */
 
-//			loadAgents(null);
+			loadAgents(null);
 			
 			/* Load variables */
 /*			nodes = getChildrenByTagName(root, "variables");
@@ -582,7 +546,7 @@ public class ModelManager extends GUIModelManager {
 			e.printStackTrace();
 		}
 		
-		tickTime = null;
+//		tickTime = null;
 
 //		model.clearVariables();
 		dataLayerStyles.clear();
@@ -782,7 +746,7 @@ public class ModelManager extends GUIModelManager {
 				return false;
 			}
 //			Observer.getInstance().processAllAgents(tick);
-			Observer.getInstance().processAllAgents(tickTime);
+			Observer.getInstance().processAllAgents(model.getTickTime());
 			Observer.getInstance().processAllDataLayers(t);
 			
 			if (model.end(t)) {
