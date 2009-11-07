@@ -26,6 +26,7 @@ import javax.swing.filechooser.FileFilter;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.spark.core.ExecutionMode;
 import org.spark.core.ObserverFactory;
 import org.spark.gui.dialogs.AboutDialog;
 import org.spark.gui.dialogs.BatchRunDialog;
@@ -805,7 +806,7 @@ public class MainFrame extends JFrame implements IUpdatableFrame,
 						GUIModelManager instance = GUIModelManager.getInstance();
 
 						instance.stopModel();
-						instance.CreateObserver(selection, "serial");
+						instance.CreateObserver(selection, ExecutionMode.SERIAL_MODE);
 						instance.setupModel();
 					}
 		

@@ -7,14 +7,12 @@ import org.spark.gui.GUIModelManager;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
-import com.spinn3r.log5j.Logger;
-
 /**
  * Represents a method in a model which can be invoked during runtime
  * @author Monad
  */
 public class ModelMethod {
-	private static final Logger logger = Logger.getLogger();
+//	private static final Logger logger = Logger.getLogger();
 	
 	/* Method's name */
 	private String name;
@@ -51,7 +49,7 @@ public class ModelMethod {
 	 * @param node
 	 * @return null if method was not created
 	 */
-	public static ModelMethod createMethod(SparkModel model, Node node) {
+	public static ModelMethod loadMethod(SparkModel model, Node node) {
 		NamedNodeMap attributes = node.getAttributes();
 		Node tmp;
 		
@@ -72,11 +70,6 @@ public class ModelMethod {
 		
 		if (method != null) {
 			ModelMethod mm = new ModelMethod(name, method);
-			if (!model.addMethod(mm)) {
-				logger.error("Method " + name + " is already defined");
-				return null;
-			}
-			
 			return mm;
 		}
 		

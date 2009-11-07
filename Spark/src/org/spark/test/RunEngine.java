@@ -4,10 +4,6 @@ import java.io.File;
 import java.io.PrintStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.net.URI;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -17,23 +13,21 @@ import org.spark.core.ExecutionMode;
 import org.spark.core.Observer;
 import org.spark.core.ObserverFactory;
 import org.spark.core.SparkModel;
+import org.spark.core.SparkModelFactory;
 import org.spark.math.RationalNumber;
 import org.spark.runtime.AbstractModelManager;
 import org.spark.runtime.ParameterFactory_Old;
 import org.spark.runtime.VariableSetFactory;
-import org.spark.runtime.internal.ModelVariable;
 import org.spark.utils.RandomHelper;
 import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 class RunEngine extends AbstractModelManager {
 	/* Custom class loader */
-	private ClassLoader classLoader;
+//	private ClassLoader classLoader;
 	
 	/* Model xml file */
-	private File xmlDocFile;
+//	private File xmlDocFile;
 	
 	/* Model itself */
 	private SparkModel model;
@@ -71,7 +65,7 @@ class RunEngine extends AbstractModelManager {
 	 * @param node
 	 * @return
 	 */
-	private File getPath(Node node) {
+/*	private File getPath(Node node) {
 		if (xmlDocFile == null || node == null)
 			return null;
 
@@ -89,13 +83,13 @@ class RunEngine extends AbstractModelManager {
 
 		return null;
 	}
-
+*/
 	/**
 	 * Sets up the model class loader
 	 * 
 	 * @param node
 	 */
-	private void setupClassPath(Node node) {
+/*	private void setupClassPath(Node node) {
 		classLoader = null;
 
 		File path = getPath(node);
@@ -111,14 +105,14 @@ class RunEngine extends AbstractModelManager {
 		}
 
 	}
-
+*/
 	/**
 	 * Returns a list of children with the specified name
 	 * 
 	 * @param name
 	 * @return
 	 */
-	private ArrayList<Node> getChildrenByTagName(Node node, String name) {
+/*	private ArrayList<Node> getChildrenByTagName(Node node, String name) {
 		ArrayList<Node> list = new ArrayList<Node>();
 
 		for (Node child = node.getFirstChild(); child != null; child = child
@@ -129,13 +123,13 @@ class RunEngine extends AbstractModelManager {
 
 		return list;
 	}
-
+*/
 	
 	/**
 	 * Loads the definition of all agents
 	 * @param node
 	 */
-	@SuppressWarnings("unchecked")
+/*	@SuppressWarnings("unchecked")
 	private void loadAgents(Document xmlDoc) throws Exception {
 		NodeList list = xmlDoc.getElementsByTagName("agent");
 		agentTypes = new Class[list.getLength()];
@@ -173,7 +167,7 @@ class RunEngine extends AbstractModelManager {
 		}
 		
 	}
-
+*/
 	
 	
 	/**
@@ -190,14 +184,16 @@ class RunEngine extends AbstractModelManager {
 		DocumentBuilder db = DocumentBuilderFactory.newInstance()
 				.newDocumentBuilder();
 		Document xmlDoc = db.parse(modelFile);
-		xmlDocFile = modelFile;
+//		xmlDocFile = modelFile;
+		
+		model = SparkModelFactory.loadModel(modelFile);
 
-		ArrayList<Node> nodes;
+/*		ArrayList<Node> nodes;
 		NodeList list;
 		Node root = xmlDoc.getFirstChild();
 		
 		/* Load tick size */
-		NamedNodeMap attributes = root.getAttributes();
+/*		NamedNodeMap attributes = root.getAttributes();
 		Node tmp = attributes.getNamedItem("tick");
 		if (tmp != null) {
 			tickTime = RationalNumber.parse(tmp.getNodeValue());
@@ -209,7 +205,7 @@ class RunEngine extends AbstractModelManager {
 
 		/* Load model */
 		// Load class path
-		nodes = getChildrenByTagName(root, "classpath");
+/*		nodes = getChildrenByTagName(root, "classpath");
 		if (nodes.size() >= 1) {
 			setupClassPath(nodes.get(0));
 		}
@@ -227,10 +223,10 @@ class RunEngine extends AbstractModelManager {
 		}
 		
 		/* Load agents */
-		loadAgents(xmlDoc);		
+/*		loadAgents(xmlDoc);		
 
 		/* Load variables */
-		nodes = getChildrenByTagName(root, "variables");
+/*		nodes = getChildrenByTagName(root, "variables");
 		if (nodes.size() > 0)
 			nodes = getChildrenByTagName(nodes.get(0), "variable");
 
@@ -241,7 +237,7 @@ class RunEngine extends AbstractModelManager {
 		/* Load parameters and variable sets */
 		ParameterFactory_Old.clear();
 
-		list = xmlDoc.getElementsByTagName("parameterframe");
+		NodeList list = xmlDoc.getElementsByTagName("parameterframe");
 		if (list.getLength() >= 1) {
 			ParameterFactory_Old.loadParameters(model, list.item(0));
 		}
@@ -255,7 +251,7 @@ class RunEngine extends AbstractModelManager {
 
 		out.println();
 		out.println("MODEL: " + modelFile.getName() + "; MainClass = "
-				+ setupName);
+				+ model.getClass().getCanonicalName());
 	}
 	
 	

@@ -6,9 +6,6 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.net.URI;
-import java.net.URL;
-import java.net.URLClassLoader;
 
 import javax.swing.*;
 import javax.xml.parsers.DocumentBuilder;
@@ -20,14 +17,13 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.spark.core.Agent;
 import org.spark.core.Observer;
-import org.spark.core.SparkModel;
+import org.spark.core.SparkModelFactory;
 import org.spark.gui.render.AgentStyle;
 import org.spark.gui.render.DataLayerStyle;
 import org.spark.gui.render.Render;
 import org.spark.math.RationalNumber;
 import org.spark.runtime.ParameterFactory_Old;
 import org.spark.runtime.VariableSetFactory;
-import org.spark.runtime.internal.ModelVariable;
 import org.spark.utils.Vector;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
@@ -283,7 +279,7 @@ public class ModelManager extends GUIModelManager {
 	}
 	
 
-	private void setupClassPath(Node node) {
+/*	private void setupClassPath(Node node) {
 		classLoader = null;
 
 		File path = getPath(node);
@@ -299,7 +295,7 @@ public class ModelManager extends GUIModelManager {
 		}
 
 	}
-
+*/
 	
 	/**
 	 * Returns a list of children with the specified name
@@ -323,7 +319,7 @@ public class ModelManager extends GUIModelManager {
 	 * Loads definition of all agents
 	 * @param node
 	 */
-	@SuppressWarnings("unchecked")
+/*	@SuppressWarnings("unchecked")
 	private void loadAgents(Node node) throws Exception {
 		NodeList list = xmlDoc.getElementsByTagName("agent");
 		agentTypes = new Class[list.getLength()];
@@ -369,7 +365,7 @@ public class ModelManager extends GUIModelManager {
 		}
 		
 	}
-	
+*/	
 	
 	/**
 	 * Loads a model
@@ -387,9 +383,13 @@ public class ModelManager extends GUIModelManager {
 			xmlDoc = db.parse(modelFile);
 			xmlDocFile = modelFile;
 
+			
+			model = SparkModelFactory.loadModel(xmlDoc, modelFile.getParentFile());
+			
+			
 			final Node root = xmlDoc.getFirstChild();
 			/* Load tick time */
-			NamedNodeMap attributes = root.getAttributes();
+/*			NamedNodeMap attributes = root.getAttributes();
 			Node tmp = attributes.getNamedItem("tick");
 			if (tmp != null) {
 				tickTime = RationalNumber.parse(tmp.getNodeValue());
@@ -397,10 +397,10 @@ public class ModelManager extends GUIModelManager {
 			else {
 				tickTime = RationalNumber.ONE;
 			}
-			
+	*/		
 			/* Load model */
 
-			nodes = getChildrenByTagName(root, "classpath");
+/*			nodes = getChildrenByTagName(root, "classpath");
 			if (nodes.size() >= 1) {
 				setupClassPath(nodes.get(0));
 			}
@@ -425,7 +425,7 @@ public class ModelManager extends GUIModelManager {
 					tmp.getNodeValue() : "Observer1";
 			String executionModeName = ((tmp = attributes.getNamedItem("mode")) != null) ?
 					tmp.getNodeValue() : "serial";
-			
+*/			
 			/* Load model description */
 
 			nodes = getChildrenByTagName(root, "about");
@@ -438,10 +438,10 @@ public class ModelManager extends GUIModelManager {
 
 			/* Load agents */
 
-			loadAgents(null);
+//			loadAgents(null);
 			
 			/* Load variables */
-			nodes = getChildrenByTagName(root, "variables");
+/*			nodes = getChildrenByTagName(root, "variables");
 			if (nodes.size() > 0)
 				nodes = getChildrenByTagName(nodes.get(0), "variable");
 
@@ -456,7 +456,7 @@ public class ModelManager extends GUIModelManager {
 			for (int i = 0; i < nodes.size(); i++) {
 				ModelVariable.createVariable(model, nodes.get(i));
 			}
-
+*/
 			/* Load data layers */
 
 			list = xmlDoc.getElementsByTagName("datalayer");
@@ -546,7 +546,7 @@ public class ModelManager extends GUIModelManager {
 			// org.spark.core.ClusterManager.init(args);
 
 			// Create the model observer
-			CreateObserver(observerName, executionModeName);
+			CreateObserver(model.getDefaultObserverName(), model.getDefaultExecutionMode());
 			
 			mainFrame.setupRender(mainFrameNode);
 			setupModel();
@@ -584,7 +584,7 @@ public class ModelManager extends GUIModelManager {
 		
 		tickTime = null;
 
-		model.clearVariables();
+//		model.clearVariables();
 		dataLayerStyles.clear();
 		dataLayerStyleNodes.clear();
 		agentTypes = null;

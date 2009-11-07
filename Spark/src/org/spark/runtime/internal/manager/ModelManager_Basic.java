@@ -1,25 +1,15 @@
 package org.spark.runtime.internal.manager;
 
 import java.io.File;
-import java.net.URI;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.spark.core.Agent;
-import org.spark.core.ExecutionMode;
 import org.spark.core.SparkModel;
-import org.spark.math.RationalNumber;
+import org.spark.core.SparkModelFactory;
 import org.spark.runtime.commands.*;
-import org.spark.runtime.internal.ModelVariable;
 import org.spark.runtime.internal.engine.AbstractSimulationEngine;
 import org.spark.runtime.internal.engine.StandardSimulationEngine;
-import org.spark.utils.XmlDocUtils;
 import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
 
 import com.spinn3r.log5j.Logger;
 
@@ -41,9 +31,6 @@ public class ModelManager_Basic implements IModelManager {
 	
 	/* Simulation engine */
 	protected AbstractSimulationEngine simEngine;
-	
-	/* Custom class loader */
-	private ClassLoader classLoader;
 	
 	/* Model itself */
 	protected SparkModel model;
@@ -78,7 +65,7 @@ public class ModelManager_Basic implements IModelManager {
 	 * @param node
 	 * @return
 	 */
-	private File getPath(File rootPath, Node node) {
+/*	private File getPath(File rootPath, Node node) {
 		if (rootPath == null || node == null)
 			return null;
 
@@ -95,13 +82,13 @@ public class ModelManager_Basic implements IModelManager {
 
 		return null;
 	}
-
+*/
 	
 	/**
 	 * Sets up the model class loader
 	 * @param node
 	 */
-	private void setupClassPath(File rootPath, Node node) {
+/*	private void setupClassPath(File rootPath, Node node) {
 		classLoader = null;
 		if (rootPath == null)
 			return;
@@ -119,14 +106,14 @@ public class ModelManager_Basic implements IModelManager {
 		}
 
 	}
-
+*/
 	
 	
 	/**
 	 * Loads definitions of all agents
 	 * @param node
 	 */
-	@SuppressWarnings("unchecked")
+/*	@SuppressWarnings("unchecked")
 	private void loadAgents(Node root) throws Exception {
 		ArrayList<Node> list = XmlDocUtils.getChildrenByTagName(root, "agents");
 		// No agents
@@ -169,7 +156,7 @@ public class ModelManager_Basic implements IModelManager {
 		}
 		
 	}
-
+*/
 	
 	
 	/**
@@ -178,7 +165,7 @@ public class ModelManager_Basic implements IModelManager {
 	 */
 	protected void loadLocalModel(Document xmlDoc, File path) throws Exception {
 		model = null;
-		String defaultObserver;
+/*		String defaultObserver;
 		int defaultExecutionMode;
 		
 		ArrayList<Node> nodes;
@@ -186,9 +173,9 @@ public class ModelManager_Basic implements IModelManager {
 		
 		if (root == null)
 			throw new Error();
-		
+*/		
 		/* Load tick size */
-		NamedNodeMap attributes = root.getAttributes();
+/*		NamedNodeMap attributes = root.getAttributes();
 		Node tmp = attributes.getNamedItem("tick");
 		RationalNumber tickTime;
 		
@@ -198,10 +185,10 @@ public class ModelManager_Basic implements IModelManager {
 		else {
 			tickTime = RationalNumber.ONE;
 		}
-		
+*/		
 		/* Load model */
 		// Load class path
-		nodes = XmlDocUtils.getChildrenByTagName(root, "classpath");
+/*		nodes = XmlDocUtils.getChildrenByTagName(root, "classpath");
 		if (nodes.size() >= 1) {
 			setupClassPath(path, nodes.get(0));
 		}
@@ -225,10 +212,10 @@ public class ModelManager_Basic implements IModelManager {
 		defaultExecutionMode = ExecutionMode.parse(XmlDocUtils.getValue(nodes.get(0), "mode", "serial"));
 		
 		/* Load agents */
-		loadAgents(xmlDoc);		
+/*		loadAgents(xmlDoc);		
 
 		/* Load variables */
-		nodes = XmlDocUtils.getChildrenByTagName(root, "variables");
+/*		nodes = XmlDocUtils.getChildrenByTagName(root, "variables");
 		if (nodes.size() > 0)
 			nodes = XmlDocUtils.getChildrenByTagName(nodes.get(0), "variable");
 
@@ -236,24 +223,11 @@ public class ModelManager_Basic implements IModelManager {
 			ModelVariable.createVariable(model, nodes.get(i));
 		}
 
-		/* Load parameters and variable sets */
-/*		ParameterFactory.clear();
-
-		list = xmlDoc.getElementsByTagName("parameterframe");
-		if (list.getLength() >= 1) {
-			ParameterFactory.loadParameters(list.item(0));
-		}
-
-		VariableSetFactory.clear();
-
-		list = xmlDoc.getElementsByTagName("variable-sets");
-		if (list.getLength() >= 1) {
-			VariableSetFactory.loadVariableSets(list.item(0));
-		}
 */
+		model = SparkModelFactory.loadModel(xmlDoc, path);
 		
 		simEngine = new StandardSimulationEngine(model, commandQueue);
-		simEngine.setDefaultObserver(defaultObserver, defaultExecutionMode);
+//		simEngine.setDefaultObserver(defaultObserver, defaultExecutionMode);
 	}
 	
 

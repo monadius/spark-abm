@@ -44,7 +44,7 @@ public class InvokeFrame extends UpdatableFrame implements ActionListener {
 
 	
 	private void addMethod(SparkModel model, Node node) {
-		ModelMethod method = ModelMethod.createMethod(model, node);
+		ModelMethod method = ModelMethod.loadMethod(model, node);
 		
 		if (method != null) {
 			methods.put(method.getName(), method);

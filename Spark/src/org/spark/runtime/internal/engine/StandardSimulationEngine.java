@@ -49,15 +49,15 @@ public class StandardSimulationEngine extends AbstractSimulationEngine {
 			throws Exception {
 		// Use default parameters if observerName == null
 		if (observerName == null) {
-			observerName = defaultObserverName;
-			executionMode = defaultExecutionMode;
+			observerName = model.getDefaultObserverName();
+			executionMode = model.getDefaultExecutionMode();
 		}
 		
 		if (!ExecutionMode.isMode(executionMode))
-			executionMode = defaultExecutionMode;
+			executionMode = model.getDefaultExecutionMode();
 		
 		// Set observer
-		ObserverFactory.create(model, "org.spark.core." + observerName, executionMode);
+		ObserverFactory.create(model, observerName, executionMode);
 
 		// First, synchronize variables and methods
 		model.synchronizeVariables();
