@@ -9,6 +9,7 @@ import org.spark.cluster.ClusterManager;
 import org.spark.cluster.Comm;
 import org.spark.cluster.ObjectBuf;
 import org.spark.core.SparkModel;
+import org.spark.core.SparkModelFactory;
 import org.spark.runtime.commands.*;
 import org.spark.runtime.internal.engine.AbstractSimulationEngine;
 import org.spark.runtime.internal.engine.SimulationEngine_Cluster;
@@ -216,8 +217,9 @@ public class ModelManager_Cluster extends ModelManager_Basic {
 		Document xmlDoc = db.parse(xmlModelFile);
 		
 		// Load model locally
-		super.loadLocalModel(xmlDoc, xmlModelFile.getParentFile());
-		// Create simulation engine
+		model = SparkModelFactory.loadModel(xmlDoc, xmlModelFile.getParentFile());
+		
+		// Create a simulation engine
 		simEngine = new SimulationEngine_Cluster(model, commandQueue);
 		
 		// Broadcast the model description to all slaves
@@ -232,9 +234,9 @@ public class ModelManager_Cluster extends ModelManager_Basic {
 	 */
 	private void loadModelSlave() throws Exception {
 		Document doc = ClusterManager.getInstance().receiveModelDescription();
-		loadLocalModel(doc, null);
+		model = SparkModelFactory.loadModel(doc, null);
 
-		// Create simulation engine
+		// Create a simulation engine
 		simEngine = new SimulationEngine_Cluster(model, commandQueue);
 	}
 }
