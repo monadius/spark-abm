@@ -6,7 +6,9 @@ import java.util.HashMap;
 import org.spark.cluster.ClusterCommand;
 import org.spark.cluster.ClusterManager;
 import org.spark.core.Agent;
+import org.spark.core.ExecutionMode;
 import org.spark.core.Observer;
+import org.spark.core.ObserverFactory;
 import org.spark.core.SparkModel;
 import org.spark.data.GridCommunicator;
 import org.spark.gui.IUpdatableFrame;
@@ -83,6 +85,24 @@ public class SlaveModelManager {
 		catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	
+	/**
+	 * Creates the observer for the currently loaded model
+	 * @param name
+	 * @param mode
+	 */
+	public void CreateObserver(String name, String mode) throws Exception {
+		if (model == null)
+			return;
+		
+		if (!name.startsWith("org.spark.core."))
+			name = "org.spark.core." + name;
+		
+		int executionMode = ExecutionMode.parse(mode);
+		
+		ObserverFactory.create(model, name, executionMode);
 	}
 	
 	
@@ -222,6 +242,8 @@ public class SlaveModelManager {
 
 			/* Setup main frame render and start up model */
 			nodes = xmlDoc.getElementsByTagName("mainframe");
+			
+			CreateObserver("Observer1", "serial");
 			
 //			mainFrame.setupRender(nodes.item(0));
 			setupModel();

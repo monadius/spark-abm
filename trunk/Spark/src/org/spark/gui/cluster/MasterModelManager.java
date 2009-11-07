@@ -12,7 +12,9 @@ import javax.swing.*;
 import org.spark.cluster.ClusterCommand;
 import org.spark.cluster.ClusterManager;
 import org.spark.core.Agent;
+import org.spark.core.ExecutionMode;
 import org.spark.core.Observer;
+import org.spark.core.ObserverFactory;
 import org.spark.core.SparkModel;
 import org.spark.gui.FrameLocationManager;
 import org.spark.gui.GUIModelManager;
@@ -83,6 +85,24 @@ public class MasterModelManager extends GUIModelManager {
 		mainFrame.setVisible(true);
 		
 		model = null;
+	}
+	
+	
+	/**
+	 * Creates the observer for the currently loaded model
+	 * @param name
+	 * @param mode
+	 */
+	public void CreateObserver(String name, String mode) throws Exception {
+		if (model == null)
+			return;
+		
+		if (!name.startsWith("org.spark.core."))
+			name = "org.spark.core." + name;
+		
+		int executionMode = ExecutionMode.parse(mode);
+		
+		ObserverFactory.create(model, name, executionMode);
 	}
 	
 	
@@ -286,6 +306,8 @@ public class MasterModelManager extends GUIModelManager {
 				mainFrameNode = null;
 			}
 
+			CreateObserver("Observer1", "serial");
+			
 			// Setup render
 			mainFrame.setupRender(mainFrameNode);
 			// Setup model

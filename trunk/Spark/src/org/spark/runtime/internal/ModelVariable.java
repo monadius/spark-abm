@@ -82,7 +82,7 @@ public class ModelVariable extends AbstractChangeEvent {
 	 * @param node
 	 * @return
 	 */
-	public static void createVariable(SparkModel model, Node node) throws Exception {
+	public static ModelVariable loadVariable(SparkModel model, Node node) throws Exception {
 		NamedNodeMap attributes = node.getAttributes();
 		Node tmp;
 		
@@ -96,8 +96,8 @@ public class ModelVariable extends AbstractChangeEvent {
 		ModelVariable var = new ModelVariable();
 		var.name = name;
 		
-		if (!model.addMovelVariable(var))
-			throw new Exception("A variable " + name + " is already declared");
+//		if (!model.addMovelVariable(var))
+//			throw new Exception("A variable " + name + " is already declared");
 		
 		// Load type and set/get methods
 		try {
@@ -114,6 +114,8 @@ public class ModelVariable extends AbstractChangeEvent {
 			// TODO: do we need to process any exception here?
 			throw e;
 		}
+		
+		return var;
 	}
 	
 

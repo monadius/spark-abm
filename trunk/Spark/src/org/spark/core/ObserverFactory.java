@@ -1,6 +1,6 @@
 package org.spark.core;
 
-import com.spinn3r.log5j.Logger;
+//import com.spinn3r.log5j.Logger;
 
 /**
  * Creates instances of Observer
@@ -8,11 +8,17 @@ import com.spinn3r.log5j.Logger;
  *
  */
 public class ObserverFactory {
-	private static final Logger logger = Logger.getLogger();
+//	private static final Logger logger = Logger.getLogger();
+	
+	public static final String DEFAULT_OBSERVER_NAME = "Observer1";
+	
 	
 	@SuppressWarnings("unchecked")
 	static Observer create(String observerName, int executionMode) throws Exception
 	{
+		if (!observerName.startsWith("org.spark"))
+			observerName = "org.spark.core." + observerName;
+		
 		Class<ObserverImpl> cl = (Class<ObserverImpl>) Class.forName(observerName);
 		if (cl == null)
 				throw new Exception("Observer implementation class "
@@ -31,19 +37,21 @@ public class ObserverFactory {
 	/**
 	 * Creates an Observer for the given model
 	 * @param model
-	 * @param observerName
+	 * @param observerName if null then a default observer is used
 	 * @param executionMode
 	 * @return
 	 */
 	public static Observer create(SparkModel model, String observerName, int executionMode) throws Exception {
-		Observer observer = create(observerName, executionMode);
+		if (model == null)
+			throw new Exception("Observer cannot be created for a null model");
+
+		if (observerName == null) {
+			observerName = model.getDefaultObserverName();
+			executionMode = model.getDefaultExecutionMode();
+		}
 		
-		if (model != null) {
-			model.setObserver(observer);
-		}
-		else {
-			logger.info("Creating observer without associated model");
-		}
+		Observer observer = create(observerName, executionMode);
+		model.setObserver(observer);
 		
 		return observer;
 	}
@@ -54,7 +62,7 @@ public class ObserverFactory {
 	 * @return
 	 */
 	public static String[] getObserversList() {
-		return new String[] { "org.spark.core.Observer1",
-				"org.spark.core.Observer2", "org.spark.core.ObserverParallel" };
+		return new String[] { "Observer1",
+				"Observer2", "ObserverParallel" };
 	}
 }

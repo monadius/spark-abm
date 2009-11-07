@@ -21,6 +21,9 @@ public abstract class SparkModel {
 	/* Observer for this model */
 	private Observer modelObserver;
 	
+	private String defaultObserverName = ObserverFactory.DEFAULT_OBSERVER_NAME;
+	private int defaultExecutionMode = ExecutionMode.SERIAL_MODE;
+	
 	/* Agent types of the model */
 	private final ArrayList<Observer.AgentType> agentTypes = 
 		new ArrayList<Observer.AgentType>(); 
@@ -38,11 +41,54 @@ public abstract class SparkModel {
 	
 	
 	/**
+	 * Sets the model observer
+	 * @param observer
+	 */
+	final void setObserver(Observer observer) {
+		this.modelObserver = observer;
+		
+		// Add definitions of agent types to the observer
+		for (Observer.AgentType type : agentTypes) {
+			observer.setAgentType(type.type, type.timeStep, type.priority);
+		}
+	}
+	
+	
+	/**
+	 * Sets default observer name and mode
+	 * @param defaultObserverName
+	 * @param defaultMode
+	 */
+	final void setDefaultObserver(String defaultObserverName, int defaultMode) {
+		this.defaultObserverName = defaultObserverName;
+		this.defaultExecutionMode = defaultMode;
+	}
+	
+	
+	/**
+	 * Returns default observer name
+	 * @return
+	 */
+	public final String getDefaultObserverName() {
+		return defaultObserverName;
+	}
+	
+	
+	/**
+	 * Returns default execution mode
+	 * @return
+	 */
+	public final int getDefaultExecutionMode() {
+		return defaultExecutionMode;
+	}
+	
+	
+	/**
 	 * Adds a method
 	 * @param method
 	 * @return
 	 */
-	public boolean addMethod(ModelMethod method) {
+	final boolean addMethod(ModelMethod method) {
 		if (methods.containsKey(method.getName()))
 			return false;
 		
@@ -56,7 +102,7 @@ public abstract class SparkModel {
 	 * @param name
 	 * @return
 	 */
-	public ModelMethod getMethod(String name) {
+	public final ModelMethod getMethod(String name) {
 		return methods.get(name);
 	}
 	
@@ -65,7 +111,7 @@ public abstract class SparkModel {
 	/**
 	 * Synchronizes method calls
 	 */
-	public void synchronizeMethods() {
+	public final void synchronizeMethods() {
 		for (ModelMethod method : methods.values()) {
 			try {
 				method.synchronize(this);
@@ -84,7 +130,7 @@ public abstract class SparkModel {
 	 * @param name
 	 * @return null if there is no variable with the given name
 	 */
-	public ModelVariable getVariable(String name) {
+	public final ModelVariable getVariable(String name) {
 		return modelVariables.get(name);
 	}
 	
@@ -93,7 +139,7 @@ public abstract class SparkModel {
 	 * Returns all model variables
 	 * @return
 	 */
-	public ModelVariable[] getVariables() {
+	public final ModelVariable[] getVariables() {
 		ModelVariable[] vars = new ModelVariable[modelVariables.size()];
 		
 		int i = 0;
@@ -109,7 +155,7 @@ public abstract class SparkModel {
 	 * Adds the model variable into the collection of variables for the model
 	 * @param var
 	 */
-	public boolean addMovelVariable(ModelVariable var) {
+	final boolean addMovelVariable(ModelVariable var) {
 		if (modelVariables.containsKey(var.getName()))
 			return false;
 		
@@ -121,16 +167,16 @@ public abstract class SparkModel {
 	/**
 	 * Clears all model variables
 	 */
-	public void clearVariables() {
+/*	public void clearVariables() {
 		modelVariables.clear();
-	}
+	}*/
 	
 	
 	
 	/**
 	 * Synchronizes values of all variables
 	 */
-	public void synchronizeVariables() {
+	public final void synchronizeVariables() {
 		for (ModelVariable var : modelVariables.values()) {
 			try {
 				var.synchronizeValue();
@@ -144,26 +190,12 @@ public abstract class SparkModel {
 		
 	
 	/**
-	 * Sets the model observer
-	 * @param observer
-	 */
-	void setObserver(Observer observer) {
-		this.modelObserver = observer;
-		
-		// Add definitions of agent types to the observer
-		for (Observer.AgentType type : agentTypes) {
-			observer.setAgentType(type.type, type.timeStep, type.priority);
-		}
-	}
-	
-
-	/**
 	 * Adds a definition of the agent type for the model
 	 * @param type
 	 * @param timeStep
 	 * @param priority
 	 */
-	public final void AddAgentType(Class<? extends Agent> type, RationalNumber timeStep, int priority) {
+	final void addAgentType(Class<? extends Agent> type, RationalNumber timeStep, int priority) {
 		agentTypes.add(new Observer.AgentType(type, timeStep, priority));
 	}
 	
@@ -180,7 +212,7 @@ public abstract class SparkModel {
 	/**
 	 * Sets the tick time
 	 */
-	public final void setTickTime(RationalNumber time) {
+	final void setTickTime(RationalNumber time) {
 		tickTime = new RationalNumber(time);
 	}
 	
@@ -192,6 +224,9 @@ public abstract class SparkModel {
 	public final Observer getObserver() {
 		return modelObserver;
 	}
+	
+	
+	/************ Main model methods ******************/
 	
 	
 	/**
@@ -218,4 +253,5 @@ public abstract class SparkModel {
 	public boolean end(long tick) {
 		return false;
 	}
+	
 }

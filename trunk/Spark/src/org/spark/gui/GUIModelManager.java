@@ -8,7 +8,6 @@ import java.util.HashMap;
 
 import javax.swing.JFrame;
 
-import org.spark.core.ExecutionMode;
 import org.spark.core.Observer;
 import org.spark.core.ObserverFactory;
 import org.spark.core.SparkModel;
@@ -24,7 +23,7 @@ import org.w3c.dom.NodeList;
 public abstract class GUIModelManager extends AbstractModelManager {
 	private static GUIModelManager instance;
 	
-	protected ClassLoader classLoader = null;
+//	protected ClassLoader classLoader = null;
 
 	protected IUpdatableFrame mainFrame;
 	protected ArrayList<UpdatableFrame> frames = new ArrayList<UpdatableFrame>();
@@ -59,16 +58,14 @@ public abstract class GUIModelManager extends AbstractModelManager {
 	 * @param name
 	 * @param mode
 	 */
-	public void CreateObserver(String name, String mode) throws Exception {
+	public void CreateObserver(String name, int mode) throws Exception {
 		if (model == null)
 			return;
 		
 		if (!name.startsWith("org.spark.core."))
 			name = "org.spark.core." + name;
 		
-		int executionMode = ExecutionMode.parse(mode);
-		
-		ObserverFactory.create(model, name, executionMode);
+		ObserverFactory.create(model, name, mode);
 	}
 	
 	
@@ -470,7 +467,8 @@ public abstract class GUIModelManager extends AbstractModelManager {
 			in = new FileInputStream(stateFile);
 			ObjectInputStream ois = new ObjectInputStream(in);
 			initTick = ois.readLong();
-			Observer.loadState(model, in, classLoader);
+			throw new Error("Method is not implemented");
+//			Observer.loadState(model, in, classLoader);
 		}
 		catch (Exception e) {
 			e.printStackTrace();

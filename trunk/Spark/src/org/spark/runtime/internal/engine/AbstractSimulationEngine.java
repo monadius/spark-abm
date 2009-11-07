@@ -2,7 +2,6 @@ package org.spark.runtime.internal.engine;
 
 import java.util.ArrayList;
 
-import org.spark.core.ExecutionMode;
 import org.spark.core.SparkModel;
 import org.spark.runtime.data.DataCollectorDescription;
 import org.spark.runtime.internal.data.DataCollectorManager;
@@ -20,10 +19,6 @@ public abstract class AbstractSimulationEngine {
 	
 	/* Model for which a simulation is running */
 	protected final SparkModel model;
-	
-	/* Default observer parameters */
-	protected String defaultObserverName = "Observer1";
-	protected int defaultExecutionMode = ExecutionMode.SERIAL_MODE;
 	
 	/* Number of ticks for a simulation */
 	protected long simulationTime = Long.MAX_VALUE;
@@ -45,18 +40,6 @@ public abstract class AbstractSimulationEngine {
 		
 		dataCollectors = new DataCollectorManager();
 		dataProcessors = new ArrayList<DataProcessor>();
-	}
-	
-	
-	/**
-	 * Sets the default observer parameters
-	 * @param observerName
-	 * @param executionMode
-	 */
-	public void setDefaultObserver(String observerName, int executionMode) {
-		this.defaultObserverName = observerName;
-		if (ExecutionMode.isMode(executionMode))
-			this.defaultExecutionMode = executionMode;
 	}
 	
 	
