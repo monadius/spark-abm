@@ -5,15 +5,13 @@ import java.io.PrintStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
 import org.spark.core.Agent;
 import org.spark.core.ExecutionMode;
 import org.spark.core.Observer;
 import org.spark.core.ObserverFactory;
 import org.spark.core.SparkModel;
 import org.spark.math.RationalNumber;
+import org.spark.modelfile.ModelFileLoader;
 import org.spark.runtime.AbstractModelManager;
 import org.spark.runtime.ParameterFactory_Old;
 import org.spark.runtime.VariableSetFactory;
@@ -181,12 +179,11 @@ class RunEngine extends AbstractModelManager {
 		agentTypes = null;
 		
 		// Open xml file
-		DocumentBuilder db = DocumentBuilderFactory.newInstance()
-				.newDocumentBuilder();
-		Document xmlDoc = db.parse(modelFile);
+		Document xmlDoc = ModelFileLoader.loadModelFile(modelFile); 
+			
 //		xmlDocFile = modelFile;
 		
-		model = SparkModelXMLFactory.loadModel(modelFile);
+		model = SparkModelXMLFactory.loadModel(xmlDoc, modelFile.getParentFile());
 
 /*		ArrayList<Node> nodes;
 		NodeList list;

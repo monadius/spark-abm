@@ -3,16 +3,11 @@ package org.spark.gui;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
-import java.net.URI;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
 import javax.swing.*;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -23,7 +18,7 @@ import org.spark.core.Observer;
 import org.spark.gui.render.AgentStyle;
 import org.spark.gui.render.DataLayerStyle;
 import org.spark.gui.render.Render;
-import org.spark.math.RationalNumber;
+import org.spark.modelfile.ModelFileLoader;
 import org.spark.runtime.ParameterFactory_Old;
 import org.spark.runtime.VariableSetFactory;
 import org.spark.runtime.internal.SparkModelXMLFactory;
@@ -349,9 +344,8 @@ public class ModelManager extends GUIModelManager {
 			NodeList list;
 			UpdatableFrame frame;
 
-			DocumentBuilder db = DocumentBuilderFactory.newInstance()
-					.newDocumentBuilder();
-			xmlDoc = db.parse(modelFile);
+			xmlDoc = ModelFileLoader.loadModelFile(modelFile);
+			ModelFileLoader.saveModelFile(xmlDoc, new File("test.xml"));
 			xmlDocFile = modelFile;
 
 			

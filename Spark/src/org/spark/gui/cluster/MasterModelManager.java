@@ -22,6 +22,7 @@ import org.spark.gui.UpdatableFrame;
 import org.spark.gui.render.AgentStyle;
 import org.spark.gui.render.DataLayerStyle;
 import org.spark.gui.render.Render;
+import org.spark.modelfile.ModelFileLoader;
 import org.spark.runtime.internal.SparkModelXMLFactory;
 import org.spark.utils.Vector;
 import org.w3c.dom.Document;
@@ -232,9 +233,7 @@ public class MasterModelManager extends GUIModelManager {
 			NodeList nodes;
 			UpdatableFrame frame;
 
-			javax.xml.parsers.DocumentBuilder db = javax.xml.parsers.DocumentBuilderFactory
-					.newInstance().newDocumentBuilder();
-			xmlDoc = db.parse(modelFile);
+			xmlDoc = ModelFileLoader.loadModelFile(modelFile);
 			xmlDocFile = modelFile;
 			
 			model = SparkModelXMLFactory.loadModel(xmlDoc, modelFile.getParentFile());

@@ -9,7 +9,6 @@ import javax.swing.*;
 import org.spark.core.SparkModel;
 import org.spark.runtime.internal.ModelMethod;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 
 public class InvokeFrame extends UpdatableFrame implements ActionListener {

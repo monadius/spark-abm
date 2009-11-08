@@ -1,8 +1,7 @@
 package org.spark.runtime.internal.manager;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-
 import org.spark.core.SparkModel;
+import org.spark.modelfile.ModelFileLoader;
 import org.spark.runtime.commands.*;
 import org.spark.runtime.internal.SparkModelXMLFactory;
 import org.spark.runtime.internal.engine.AbstractSimulationEngine;
@@ -79,7 +78,7 @@ public class ModelManager_Basic implements IModelManager {
 		/* Command LoadLocalModel */
 		if (cmd instanceof Command_LoadLocalModel) {
 			Command_LoadLocalModel command = (Command_LoadLocalModel) cmd;
-			Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(command.getModelPath());
+			Document doc = ModelFileLoader.loadModelFile(command.getModelPath()); 
 			
 			model = SparkModelXMLFactory.loadModel(doc, command.getPath());
 			simEngine = new StandardSimulationEngine(model, commandQueue);

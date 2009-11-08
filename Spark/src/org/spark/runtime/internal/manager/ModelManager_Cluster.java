@@ -3,12 +3,11 @@ package org.spark.runtime.internal.manager;
 import java.io.File;
 import java.util.HashSet;
 
-import javax.xml.parsers.DocumentBuilder;
-
 import org.spark.cluster.ClusterManager;
 import org.spark.cluster.Comm;
 import org.spark.cluster.ObjectBuf;
 import org.spark.core.SparkModel;
+import org.spark.modelfile.ModelFileLoader;
 import org.spark.runtime.commands.*;
 import org.spark.runtime.internal.SparkModelXMLFactory;
 import org.spark.runtime.internal.engine.AbstractSimulationEngine;
@@ -212,9 +211,7 @@ public class ModelManager_Cluster extends ModelManager_Basic {
 	 */
 	private void loadModelMaster(File xmlModelFile) throws Exception {
 		// Load xml document
-		DocumentBuilder db = javax.xml.parsers.DocumentBuilderFactory
-									.newInstance().newDocumentBuilder();
-		Document xmlDoc = db.parse(xmlModelFile);
+		Document xmlDoc = ModelFileLoader.loadModelFile(xmlModelFile);
 		
 		// Load model locally
 		model = SparkModelXMLFactory.loadModel(xmlDoc, xmlModelFile.getParentFile());
