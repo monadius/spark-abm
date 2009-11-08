@@ -3,8 +3,8 @@ package org.spark.runtime.internal.manager;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.spark.core.SparkModel;
-import org.spark.core.SparkModelFactory;
 import org.spark.runtime.commands.*;
+import org.spark.runtime.internal.SparkModelXMLFactory;
 import org.spark.runtime.internal.engine.AbstractSimulationEngine;
 import org.spark.runtime.internal.engine.StandardSimulationEngine;
 import org.w3c.dom.Document;
@@ -81,7 +81,7 @@ public class ModelManager_Basic implements IModelManager {
 			Command_LoadLocalModel command = (Command_LoadLocalModel) cmd;
 			Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(command.getModelPath());
 			
-			model = SparkModelFactory.loadModel(doc, command.getPath());
+			model = SparkModelXMLFactory.loadModel(doc, command.getPath());
 			simEngine = new StandardSimulationEngine(model, commandQueue);
 			
 			return;

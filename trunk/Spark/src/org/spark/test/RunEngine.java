@@ -13,11 +13,11 @@ import org.spark.core.ExecutionMode;
 import org.spark.core.Observer;
 import org.spark.core.ObserverFactory;
 import org.spark.core.SparkModel;
-import org.spark.core.SparkModelFactory;
 import org.spark.math.RationalNumber;
 import org.spark.runtime.AbstractModelManager;
 import org.spark.runtime.ParameterFactory_Old;
 import org.spark.runtime.VariableSetFactory;
+import org.spark.runtime.internal.SparkModelXMLFactory;
 import org.spark.utils.RandomHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -186,7 +186,7 @@ class RunEngine extends AbstractModelManager {
 		Document xmlDoc = db.parse(modelFile);
 //		xmlDocFile = modelFile;
 		
-		model = SparkModelFactory.loadModel(modelFile);
+		model = SparkModelXMLFactory.loadModel(modelFile);
 
 /*		ArrayList<Node> nodes;
 		NodeList list;
