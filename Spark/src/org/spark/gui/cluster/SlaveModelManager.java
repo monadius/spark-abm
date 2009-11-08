@@ -10,13 +10,13 @@ import org.spark.core.ExecutionMode;
 import org.spark.core.Observer;
 import org.spark.core.ObserverFactory;
 import org.spark.core.SparkModel;
-import org.spark.core.SparkModelFactory;
 import org.spark.data.GridCommunicator;
 import org.spark.gui.IUpdatableFrame;
 import org.spark.gui.UpdatableFrame;
 import org.spark.gui.render.AgentStyle;
 import org.spark.gui.render.DataLayerStyle;
 import org.spark.gui.render.Render;
+import org.spark.runtime.internal.SparkModelXMLFactory;
 import org.spark.space.GlobalSpace;
 import org.spark.utils.Vector;
 
@@ -200,7 +200,7 @@ public class SlaveModelManager {
 			// First, get xml document file
 			xmlDoc = ClusterManager.getInstance().receiveModelDescription();
 			
-			model = SparkModelFactory.loadModel(xmlDoc, null);
+			model = SparkModelXMLFactory.loadModel(xmlDoc, null);
 
 			// Then, get all model related data
 			ClusterManager.getInstance().waitInitCommands(model);

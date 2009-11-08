@@ -1,4 +1,4 @@
-package org.spark.core;
+package org.spark.runtime.internal;
 
 import java.io.File;
 import java.net.URI;
@@ -8,9 +8,13 @@ import java.util.ArrayList;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.spark.core.Agent;
+import org.spark.core.ExecutionMode;
+import org.spark.core.Observer;
+import org.spark.core.ObserverFactory;
+import org.spark.core.SparkModel;
+import org.spark.core.SparkModel.SparkModelFactory;
 import org.spark.math.RationalNumber;
-import org.spark.runtime.internal.ModelMethod;
-import org.spark.runtime.internal.ModelVariable;
 import org.spark.utils.XmlDocUtils;
 
 import org.w3c.dom.Document;
@@ -24,8 +28,11 @@ import com.spinn3r.log5j.Logger;
  * @author Monad
  * 
  */
-public class SparkModelFactory {
+public class SparkModelXMLFactory extends SparkModel.SparkModelFactory {
 	private static final Logger logger = Logger.getLogger();
+	
+	/* A single instance of the factory */
+	private static SparkModelXMLFactory instance;
 
 	/**
 	 * Loads a model from the given xml description file and using the path to
@@ -49,9 +56,12 @@ public class SparkModelFactory {
 	 */
 	public static SparkModel loadModel(File xmlFile, File rootPath)
 			throws Exception {
+		if (instance == null)
+			instance = new SparkModelXMLFactory();
+		
 		Document doc = DocumentBuilderFactory.newInstance()
 				.newDocumentBuilder().parse(xmlFile);
-		return loadModel(doc, rootPath);
+		return instance.load(doc, rootPath);
 	}
 
 	/**
@@ -64,6 +74,20 @@ public class SparkModelFactory {
 	 */
 	public static SparkModel loadModel(Document xmlDoc, File rootPath)
 			throws Exception {
+		if (instance == null)
+			instance = new SparkModelXMLFactory();
+		
+		return instance.load(xmlDoc, rootPath);
+	}
+	
+	
+	/**
+	 * Internal method for loading a model from the given xml document
+	 * @param xmlDoc
+	 * @param rootPath
+	 * @return
+	 */
+	private SparkModel load(Document xmlDoc, File rootPath) throws Exception {
 		SparkModel model = null;
 		ClassLoader classLoader = null;
 
@@ -93,12 +117,15 @@ public class SparkModelFactory {
 		} else {
 			model = (SparkModel) Class.forName(setupName).newInstance();
 		}
+		
+		startConstruction(model);
+		
 
 		/* Load basic parameters */
-		loadBasicModelParameters(model, root);
+		loadBasicModelParameters(root);
 
 		/* Load agents */
-		loadAgents(model, root, classLoader);
+		loadAgents(root, classLoader);
 
 		/* Load variables */
 		loadVariables(model, root);
@@ -116,13 +143,13 @@ public class SparkModelFactory {
 	 * @param model
 	 * @param root
 	 */
-	private static void loadBasicModelParameters(SparkModel model, Node root) {
+	private void loadBasicModelParameters(Node root) {
 		/* Load tick size */
 		RationalNumber tickTime = RationalNumber.parse(XmlDocUtils.getValue(
 				root, "tick", "1"));
 
 		// Set model's tick time
-		model.setTickTime(tickTime);
+		setTickTime(tickTime);
 
 		// Set model's default observer and execution mode
 		ArrayList<Node> nodes = XmlDocUtils.getChildrenByTagName(root, "setup");
@@ -137,7 +164,7 @@ public class SparkModelFactory {
 			logger.error(e);
 		}
 
-		model.setDefaultObserver(defaultObserver, defaultExecutionMode);
+		setDefaultObserver(defaultObserver, defaultExecutionMode);
 	}
 	
 
@@ -147,7 +174,7 @@ public class SparkModelFactory {
 	 * @param model
 	 * @param root
 	 */
-	private static void loadVariables(SparkModel model, Node root) {
+	private void loadVariables(SparkModel model, Node root) {
 		ArrayList<Node> nodes = XmlDocUtils.getChildrenByTagName(root,
 				"variables");
 		if (nodes.size() > 0)
@@ -163,7 +190,7 @@ public class SparkModelFactory {
 				continue;
 			}
 
-			if (!model.addMovelVariable(var)) {
+			if (!addModelVariable(var)) {
 				logger.error("A variable " + var.getName()
 						+ " is already declared");
 			}
@@ -177,7 +204,7 @@ public class SparkModelFactory {
 	 * @param model
 	 * @param root
 	 */
-	private static void loadMethods(SparkModel model, Node root) {
+	private void loadMethods(SparkModel model, Node root) {
 		ArrayList<Node> nodes = XmlDocUtils.getChildrenByTagName(root,
 				"methods");
 		if (nodes.size() > 0)
@@ -185,7 +212,7 @@ public class SparkModelFactory {
 
 		for (int i = 0; i < nodes.size(); i++) {
 			ModelMethod method = ModelMethod.loadMethod(model, nodes.get(i));
-			if (!model.addMethod(method)) {
+			if (!addMethod(method)) {
 				logger.error("Method " + method.getName()
 						+ " is already defined");
 			}
@@ -199,8 +226,7 @@ public class SparkModelFactory {
 	 * @param node
 	 */
 	@SuppressWarnings("unchecked")
-	private static void loadAgents(SparkModel model, Node root,
-			ClassLoader classLoader) throws Exception {
+	private void loadAgents(Node root, ClassLoader classLoader) throws Exception {
 		ArrayList<Node> list = XmlDocUtils.getChildrenByTagName(root, "agents");
 		// No agents
 		if (list.size() < 1)
@@ -227,7 +253,7 @@ public class SparkModelFactory {
 			}
 
 			// Add agent's definition to the model
-			model.addAgentType(agentType, time, priority);
+			addAgentType(agentType, time, priority);
 		}
 	}
 	
@@ -239,7 +265,7 @@ public class SparkModelFactory {
 	 * @param node
 	 * @return
 	 */
-	private static File getPath(File rootPath, Node node) {
+	private File getPath(File rootPath, Node node) {
 		if (rootPath == null || node == null)
 			return null;
 
@@ -259,7 +285,7 @@ public class SparkModelFactory {
 	 * 
 	 * @param node
 	 */
-	private static ClassLoader setupClassPath(File rootPath, Node node) {
+	private ClassLoader setupClassPath(File rootPath, Node node) {
 		ClassLoader classLoader = null;
 		if (rootPath == null)
 			return null;

@@ -59,7 +59,7 @@ public abstract class SparkModel {
 	 * @param defaultObserverName
 	 * @param defaultMode
 	 */
-	final void setDefaultObserver(String defaultObserverName, int defaultMode) {
+	private final void setDefaultObserver(String defaultObserverName, int defaultMode) {
 		this.defaultObserverName = defaultObserverName;
 		this.defaultExecutionMode = defaultMode;
 	}
@@ -88,7 +88,7 @@ public abstract class SparkModel {
 	 * @param method
 	 * @return
 	 */
-	final boolean addMethod(ModelMethod method) {
+	private final boolean addMethod(ModelMethod method) {
 		if (methods.containsKey(method.getName()))
 			return false;
 		
@@ -171,7 +171,7 @@ public abstract class SparkModel {
 	 * Adds the model variable into the collection of variables for the model
 	 * @param var
 	 */
-	final boolean addMovelVariable(ModelVariable var) {
+	private final boolean addModelVariable(ModelVariable var) {
 		if (modelVariables.containsKey(var.getName()))
 			return false;
 		
@@ -211,7 +211,7 @@ public abstract class SparkModel {
 	 * @param timeStep
 	 * @param priority
 	 */
-	final void addAgentType(Class<? extends Agent> type, RationalNumber timeStep, int priority) {
+	private final void addAgentType(Class<? extends Agent> type, RationalNumber timeStep, int priority) {
 		agentTypes.add(new Observer.AgentType(type, timeStep, priority));
 	}
 	
@@ -228,7 +228,7 @@ public abstract class SparkModel {
 	/**
 	 * Sets the tick time
 	 */
-	final void setTickTime(RationalNumber time) {
+	private final void setTickTime(RationalNumber time) {
 		tickTime = new RationalNumber(time);
 	}
 	
@@ -268,6 +268,77 @@ public abstract class SparkModel {
 	 */
 	public boolean end(long tick) {
 		return false;
+	}
+	
+	
+	/**
+	 * A base class for any spark model factory which has access
+	 * to private methods of the model class
+	 * @author Monad
+	 *
+	 */
+	public static abstract class SparkModelFactory {
+		/* Model which is under construction */
+		private SparkModel model;
+		
+		
+		/**
+		 * Internal initializer of the factory
+		 * @param model
+		 */
+		protected void startConstruction(SparkModel model) {
+			this.model = model;
+		}
+		
+		
+		/**
+		 * Sets model's tick time
+		 * @param model
+		 * @param tickTime
+		 */
+		protected void setTickTime(RationalNumber tickTime) {
+			model.setTickTime(tickTime);
+		}
+		
+		/**
+		 * Sets default observer name and mode
+		 * @param defaultObserverName
+		 * @param defaultMode
+		 */
+		protected void setDefaultObserver(String defaultObserverName, int defaultMode) {
+			model.setDefaultObserver(defaultObserverName, defaultMode);
+		}
+		
+		
+		/**
+		 * Adds a method
+		 * @param method
+		 * @return
+		 */
+		protected boolean addMethod(ModelMethod method) {
+			return model.addMethod(method);
+		}
+		
+
+		/**
+		 * Adds the model variable into the collection of variables for the model
+		 * @param var
+		 */
+		protected boolean addModelVariable(ModelVariable var) {
+			return model.addModelVariable(var);
+		}
+
+		
+		/**
+		 * Adds a definition of the agent type for the model
+		 * @param type
+		 * @param timeStep
+		 * @param priority
+		 */
+		protected void addAgentType(Class<? extends Agent> type, RationalNumber timeStep, int priority) {
+			model.addAgentType(type, timeStep, priority);
+		}
+
 	}
 	
 }

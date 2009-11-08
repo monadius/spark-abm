@@ -20,13 +20,13 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.spark.core.Agent;
 import org.spark.core.Observer;
-import org.spark.core.SparkModelFactory;
 import org.spark.gui.render.AgentStyle;
 import org.spark.gui.render.DataLayerStyle;
 import org.spark.gui.render.Render;
 import org.spark.math.RationalNumber;
 import org.spark.runtime.ParameterFactory_Old;
 import org.spark.runtime.VariableSetFactory;
+import org.spark.runtime.internal.SparkModelXMLFactory;
 import org.spark.utils.Vector;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
@@ -355,7 +355,7 @@ public class ModelManager extends GUIModelManager {
 			xmlDocFile = modelFile;
 
 			
-			model = SparkModelFactory.loadModel(xmlDoc, modelFile.getParentFile());
+			model = SparkModelXMLFactory.loadModel(xmlDoc, modelFile.getParentFile());
 			
 			
 			final Node root = xmlDoc.getFirstChild();
