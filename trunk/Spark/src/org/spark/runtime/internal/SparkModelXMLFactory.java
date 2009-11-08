@@ -6,14 +6,11 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-
 import org.spark.core.Agent;
 import org.spark.core.ExecutionMode;
 import org.spark.core.Observer;
 import org.spark.core.ObserverFactory;
 import org.spark.core.SparkModel;
-import org.spark.core.SparkModel.SparkModelFactory;
 import org.spark.math.RationalNumber;
 import org.spark.utils.XmlDocUtils;
 
@@ -34,35 +31,6 @@ public class SparkModelXMLFactory extends SparkModel.SparkModelFactory {
 	/* A single instance of the factory */
 	private static SparkModelXMLFactory instance;
 
-	/**
-	 * Loads a model from the given xml description file and using the path to
-	 * this file as a root path
-	 * 
-	 * @param xmlFile
-	 * @param rootPath
-	 * @return
-	 */
-	public static SparkModel loadModel(File xmlFile) throws Exception {
-		return loadModel(xmlFile, xmlFile.getParentFile());
-	}
-
-	/**
-	 * Loads a model from the given xml description file and using the given
-	 * root path to the model Java class files
-	 * 
-	 * @param xmlFile
-	 * @param rootPath
-	 * @return
-	 */
-	public static SparkModel loadModel(File xmlFile, File rootPath)
-			throws Exception {
-		if (instance == null)
-			instance = new SparkModelXMLFactory();
-		
-		Document doc = DocumentBuilderFactory.newInstance()
-				.newDocumentBuilder().parse(xmlFile);
-		return instance.load(doc, rootPath);
-	}
 
 	/**
 	 * Loads a model from the given xml document and using the provided root
@@ -97,6 +65,12 @@ public class SparkModelXMLFactory extends SparkModel.SparkModelFactory {
 
 		if (root == null)
 			throw new Exception("No root node in the xml document");
+		
+		nodes = XmlDocUtils.getChildrenByTagName(root, "model");
+		if (nodes.size() < 1)
+			throw new Exception("No model node in the xml document");
+		
+		root = nodes.get(0);
 
 		/* Load class path */
 		nodes = XmlDocUtils.getChildrenByTagName(root, "classpath");
