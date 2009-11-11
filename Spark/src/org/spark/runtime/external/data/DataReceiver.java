@@ -35,6 +35,18 @@ public abstract class DataReceiver {
 	
 	
 	/**
+	 * Sets collection intervals for all filters in the given group
+	 * @param groupName
+	 */
+	public synchronized void setCollectionInterval(String groupName, int interval) {
+		for (DataFilter filter : consumers) {
+			if (filter.getGroupName().equals(groupName))
+				filter.setInterval(interval);
+		}
+	}
+	
+	
+	/**
 	 * Adds the new data consumer
 	 * @param consumer
 	 */

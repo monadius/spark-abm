@@ -43,7 +43,8 @@ public class JavaRender extends Render {
 	/**
 	 * Internal constructor
 	 */
-	JavaRender() {
+	JavaRender(int interval) {
+		super(interval);
 		logger.info("Initializing JavaRender");
 		canvas = new JavaRenderCanvas(this);
 	}

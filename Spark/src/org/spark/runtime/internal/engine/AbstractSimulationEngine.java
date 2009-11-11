@@ -23,6 +23,9 @@ public abstract class AbstractSimulationEngine {
 	/* Number of ticks for a simulation */
 	protected long simulationTime = Long.MAX_VALUE;
 	
+	/* Delay time in ms */
+	protected int delayTime;
+	
 	/* Manager for data collectors */
 	protected final DataCollectorManager dataCollectors;
 	
@@ -52,6 +55,15 @@ public abstract class AbstractSimulationEngine {
 			time = 0;
 		
 		this.simulationTime = time;
+	}
+	
+	
+	/**
+	 * Sets the delay time
+	 * @param time
+	 */
+	public void setDelay(int time) {
+		this.delayTime = time;
 	}
 	
 	

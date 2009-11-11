@@ -99,7 +99,12 @@ public class SparkControlPanel extends JPanel implements ISparkPanel, ActionList
 	 * Invoked when a slider is moving
 	 */
 	public void stateChanged(ChangeEvent e) {
-		// TODO Auto-generated method stub
-		
+		JSlider source = (JSlider) e.getSource();
+		int n = source.getValue();
+		if (n < 0 || n >= delaySize.length)
+			n = 8;
+
+		int delay = delaySize[n];
+		Coordinator.getInstance().setSimulationDelayTime(delay);
 	}
 }
