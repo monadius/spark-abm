@@ -67,8 +67,21 @@ class ModelConverter_1 extends ModelConverter {
 		removeChildren(interfaceNode, "windows");
 		interfaceNode.appendChild(windows);
 
-		// Iterate over all nodes in 'doc'
+		/****** Begin a process ******/
+		// Take the original root node
 		Node root = doc.getFirstChild();
+		
+		// Expand 'charts' node
+		Node charts = getChildByTagName(root, "charts");
+		if (charts != null) {
+			for (Node chart : getChildrenByTagName(charts, "chart")) {
+				root.appendChild(chart);
+			}
+		}
+		
+		removeChildren(root, "charts");
+		
+		// Iterate over all nodes in 'doc'
 		NodeList nodes = root.getChildNodes();
 		HashSet<String> names = new HashSet<String>();
 
