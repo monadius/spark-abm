@@ -214,6 +214,10 @@ public class StandardSimulationEngine extends AbstractSimulationEngine {
 	 * Process paused state
 	 */
 	private void processPause() throws Exception {
+//		if (pausedFlag) {
+//			processData(true, true);
+//		}
+		
 		// TODO: process exceptions properly
 		while (pausedFlag) {
 		// Update data after each received command
@@ -261,6 +265,16 @@ public class StandardSimulationEngine extends AbstractSimulationEngine {
 
 				// Process data
 				processData(false, false);
+				
+				// Make a delay
+				if (delayTime > 0) {
+					try {
+						Thread.sleep(delayTime);
+					}
+					catch (InterruptedException e) {
+						stopFlag = true;
+					}
+				}
 
 				// Advance simulation time
 				model.getObserver().advanceSimulationTick();

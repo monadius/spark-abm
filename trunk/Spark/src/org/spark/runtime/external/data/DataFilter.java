@@ -15,6 +15,9 @@ public class DataFilter implements IDataConsumer {
 	/* Target data consumer for which data is filtered */
 	private final IDataConsumer target;
 	
+	/* Each data filter belongs to some group */
+	private final String group;
+	
 	/* A set of descriptions of acceptable input data */
 	private final ArrayList<DataCollectorDescription> inputDataList;
 	
@@ -35,11 +38,21 @@ public class DataFilter implements IDataConsumer {
 	 * Creates a default data filter which consumes any new data
 	 * @param target
 	 */
-	public DataFilter(IDataConsumer target) {
+	public DataFilter(IDataConsumer target, String groupName) {
 		this.target = target;
+		this.group = groupName;
 		this.inputDataList = new ArrayList<DataCollectorDescription>();
 		this.collectionInterval = 1;
 		this.synchronizedCollection = false;
+	}
+	
+	
+	/**
+	 * Returns the group name of this data filter
+	 * @return
+	 */
+	public String getGroupName() {
+		return group;
 	}
 	
 	

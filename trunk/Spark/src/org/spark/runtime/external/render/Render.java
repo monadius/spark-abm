@@ -75,11 +75,11 @@ public abstract class Render implements KeyListener, IDataConsumer {
 	/**
 	 * Default protected constructor
 	 */
-	protected Render() {
+	protected Render(int interval) {
 		dataLayerStyles = new HashMap<String, DataLayerStyle>();
 		agentStyles = new ArrayList<AgentStyle>();
-		dataFilter = new DataFilter(this);
-		dataFilter.setInterval(1);
+		dataFilter = new DataFilter(this, "render");
+		dataFilter.setInterval(interval);
 	}
 	
 	
@@ -391,7 +391,7 @@ public abstract class Render implements KeyListener, IDataConsumer {
 	 * Creates a new render from the given xml document and
 	 * of the specific type
 	 */
-	public static Render createRender(Node node, int renderType, 
+	public static Render createRender(Node node, int renderType, int interval,
 			HashMap<String, DataLayerStyle> dataLayerStyles,
 			HashMap<String, String> agentTypesAndNames,
 			File modelPath) {
@@ -402,13 +402,13 @@ public abstract class Render implements KeyListener, IDataConsumer {
 //					render = new org.spark.gui.render.JOGLRender3d();
 //				else
 //					render = new org.spark.gui.render.JOGLRender();
-				render = new JavaRender();
+				render = new JavaRender(interval);
 			} catch (Exception e) {
 				e.printStackTrace();
-				render = new JavaRender();
+				render = new JavaRender(interval);
 			}
 		} else {
-			render = new JavaRender();
+			render = new JavaRender(interval);
 		}
 
 		ArrayList<AgentStyle> agentStyles = new ArrayList<AgentStyle>();

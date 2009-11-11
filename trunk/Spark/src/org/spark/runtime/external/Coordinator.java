@@ -12,14 +12,7 @@ import org.spark.modelfile.ModelFileLoader;
 import org.spark.runtime.commands.*;
 import org.spark.runtime.data.DataCollectorDescription;
 import org.spark.runtime.external.data.LocalDataReceiver;
-import org.spark.runtime.external.gui.SparkChartPanel;
-import org.spark.runtime.external.gui.SparkParameterPanel;
-import org.spark.runtime.external.gui.SparkViewPanel;
-import org.spark.runtime.external.gui.SparkControlPanel;
-import org.spark.runtime.external.gui.SparkWindow;
-import org.spark.runtime.external.gui.Swing_WindowManager;
-import org.spark.runtime.external.gui.WindowManager;
-import org.spark.runtime.external.gui.XML_WindowsLoader;
+import org.spark.runtime.external.gui.*;
 import org.spark.runtime.external.gui.menu.SparkMenu;
 import org.spark.runtime.external.gui.menu.StandardMenu;
 import org.spark.runtime.external.render.DataLayerStyle;
@@ -80,6 +73,9 @@ public class Coordinator {
 	/* Observer parameters (for the next run) */
 	private String observerName = null;
 	private int executionMode = ExecutionMode.SERIAL_MODE;
+	
+	/* Initial delay time */
+	private int delayTime;
 
 	
 	/*************** Configuration *****************/
@@ -99,12 +95,23 @@ public class Coordinator {
 		this.modelManager = manager;
 		this.receiver = receiver;
 		this.currentDir = new File(".");
+
+		this.dataLayerStyles = new HashMap<String, DataLayerStyle>();
+		this.agentTypesAndNames = new HashMap<String, String>();
 		
-		// Initilize GUI
 		this.windowManager = new Swing_WindowManager();
 		SparkMenu mainMenu = StandardMenu.create();
 		windowManager.setMainMenu(mainMenu);
 		
+		this.configFile = new ConfigFile(mainMenu.getSubMenu("File"));
+	}
+
+	
+	/**
+	 * Initialization
+	 */
+	private void init() {
+		// Initilize GUI
 		SparkWindow mainWindow = windowManager.getMainWindow();
 		mainWindow.setName("SPARK");
 		
@@ -112,16 +119,7 @@ public class Coordinator {
 		mainWindow.addPanel(controlPanel, BorderLayout.NORTH);
 		
 		// Load config file
-		this.configFile = new ConfigFile(mainMenu.getSubMenu("File"));
 		configFile.readConfigFile();
-
-		dataLayerStyles = new HashMap<String, DataLayerStyle>();
-		agentTypesAndNames = new HashMap<String, String>();
-
-		// mainWindow = new MainWindow();
-		// mainWindow.setVisible(true);
-
-		// mainWindow.setBounds(10, 10, 600, 700);
 	}
 
 	/**
@@ -137,6 +135,7 @@ public class Coordinator {
 		}
 
 		coordinator = new Coordinator(manager, receiver);
+		coordinator.init();
 	}
 
 	/**
@@ -217,6 +216,23 @@ public class Coordinator {
 	public void removeDataCollector(DataCollectorDescription dcd) {
 		modelManager.sendCommand(new Command_RemoveDataCollector(dcd));
 	}
+	
+	
+	/**
+	 * Sets a delay time for a simulation
+	 * @param time
+	 */
+	public void setSimulationDelayTime(int time) {
+		this.delayTime = time;
+		
+		if (modelXmlFile != null && time >= 0)
+			modelManager.sendCommand(new Command_SetDelay(time));
+		
+		if (time < 0) {
+			receiver.setCollectionInterval("render", -time);
+		}
+	}
+	
 
 	/**
 	 * Returns a variable by its name
@@ -418,7 +434,7 @@ public class Coordinator {
 		if (modelXmlDoc == null)
 			return;
 
-		// TODO: verify that the model is not running now
+		setSimulationDelayTime(delayTime);
 		modelManager.sendCommand(new Command_SetSeed(randomSeed, useTimeSeed));
 		modelManager.sendCommand(new Command_Start(Long.MAX_VALUE, true,
 				observerName, executionMode));
@@ -474,7 +490,9 @@ public class Coordinator {
 	 * @return
 	 */
 	public Render createRender(Node node, int renderType) {
-		Render render = Render.createRender(node, renderType, dataLayerStyles,
+		int interval = (delayTime < 0) ? -delayTime : 1;
+		
+		Render render = Render.createRender(node, renderType, interval, dataLayerStyles,
 				agentTypesAndNames, currentDir);
 
 		render.updateDataFilter();

@@ -51,7 +51,7 @@ public class ProxyVariableCollection {
 	 */
 	public void registerVariables(DataReceiver receiver) {
 		for (ProxyVariable var : variables.values()) {
-			DataFilter df = new DataFilter(var);
+			DataFilter df = new DataFilter(var, "variable");
 			df.addData(DataCollectorDescription.VARIABLE, var.getName());
 			receiver.addDataConsumer(df);
 		}
