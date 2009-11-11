@@ -27,22 +27,10 @@ public class RenderProperties extends JDialog implements ActionListener {
 	private JCheckBox swapSpaceXY;
 	
 	
-	public RenderProperties(JDialog owner, Render render, boolean editTitle) {
-		super(owner, "", true);
+	public RenderProperties(Render render, boolean editTitle) {
 		init(render, editTitle);
 	}
 	
-	
-	public RenderProperties(JFrame owner, Render render) {
-		super(owner, "", true);
-		init(render, false);
-	}
-
-	public RenderProperties(JDialog owner, Render render) {
-		super(owner, "", true);
-		init(render, false);
-	}
-
 
 	private void init(Render render, boolean editTitle) {
 		this.render = render;

@@ -535,7 +535,15 @@ public class ModelManager extends GUIModelManager {
 		try {
 			stopModel();
 //			Observer.getInstance().clear();
-			saveGUIChanges();
+
+			
+			
+			
+						saveGUIChanges();
+		
+		
+		
+		
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

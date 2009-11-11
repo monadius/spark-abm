@@ -1,8 +1,13 @@
 package org.spark.utils;
 
+import java.awt.Window;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
+
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileFilter;
+
 
 public class FileUtils {
 	/**
@@ -84,6 +89,55 @@ public class FileUtils {
 		}
 		
 		return ext;
+	}
+	
+	
+	/**
+	 * Shows an open file dialog and returns a selected file
+	 * @return
+	 * @throws Exception
+	 */
+	public static File openFileDialog(File dir, final String extension, Window parent) throws Exception {
+		final JFileChooser fc = new JFileChooser(dir);
+		
+		fc.setFileFilter(new FileFilter() {
+			// Accept all directories and all files with the given extension
+			public boolean accept(File f) {
+				if (f.isDirectory()) {
+					return true;
+				}
+
+				if (extension == null)
+					return true;
+				
+				String ext = getExtension(f);
+				if (ext != null) {
+					if (ext.equals(extension))
+						return true;
+					else
+						return false;
+				}
+
+				return false;
+			}
+
+			// The description of this filter
+			public String getDescription() {
+				if (extension == null)
+					return "*.*";
+				
+				return "*." + extension;
+			}
+		});
+
+		int returnVal = fc.showOpenDialog(parent);
+		
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
+			File file = fc.getSelectedFile();
+			return file;
+		}
+		
+		return null;
 	}
 
 }
