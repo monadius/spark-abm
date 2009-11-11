@@ -186,7 +186,7 @@ public class MainWindow extends JFrame implements IDataConsumer,
 		
 		canvas.addKeyListener(render);
 
-		renderDialog = new RenderProperties(this, render);
+		renderDialog = new RenderProperties(render, false);
 		renderDialog.setVisible(false);
 
 		MouseListener popupListener = new PopupListener();

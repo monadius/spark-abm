@@ -30,6 +30,22 @@ public class XmlDocUtils {
 	
 	
 	/**
+	 * Returns the first child node with the given name
+	 * @param node
+	 * @param name
+	 * @return
+	 */
+	public static Node getChildByTagName(Node node, String name) {
+		for (Node child = node.getFirstChild(); child != null; child = child.getNextSibling()) {
+			if (child.getNodeName().equals(name))
+				return child;
+		}
+		
+		return null;
+	}
+	
+	
+	/**
 	 * Removes all children nodes with the specific name of the given node
 	 * @param node
 	 */
