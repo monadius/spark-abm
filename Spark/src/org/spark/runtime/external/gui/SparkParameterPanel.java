@@ -4,26 +4,27 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.swing.*;
 
-import org.spark.gui.FrameLocationManager;
 import org.spark.runtime.external.Coordinator;
 import org.spark.runtime.external.Parameter;
 import org.spark.runtime.external.VariableSet;
 import org.spark.runtime.external.VariableSetFactory;
 import org.spark.utils.SpringUtilities;
-import org.w3c.dom.Document;
+import org.spark.utils.XmlDocUtils;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 
-public class ParameterPanel extends JDialog implements ActionListener {
-	private static final long serialVersionUID = -1315411629669891403L;
-	
+/**
+ * Parameter panel in SPARK
+ * @author Monad
+ *
+ */
+@SuppressWarnings("serial")
+public class SparkParameterPanel extends JPanel implements ActionListener, ISparkPanel {
 	private final JPanel parameterPanel;
 	private final JPanel setPanel;
 	private final HashMap<String, Parameter> parameters = new HashMap<String, Parameter>();
@@ -66,12 +67,14 @@ public class ParameterPanel extends JDialog implements ActionListener {
 	private final SetsModel setsModel = new SetsModel();
 	
 
-	public ParameterPanel(Node node, JFrame owner) {
-		super(owner, "Model Parameters");
-		
-		// Create main panel
-		JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
+	/**
+	 * Default constructor
+	 * @param manager
+	 * @param node
+	 */
+	public SparkParameterPanel(WindowManager manager, Node node) {
+		// Set layout
+        setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 
         // Create panel for variable sets
         setPanel = new JPanel(new GridLayout(1, 4));
@@ -83,10 +86,8 @@ public class ParameterPanel extends JDialog implements ActionListener {
 		JScrollPane scroll = new JScrollPane(parameterPanel);
 		
 		// Add panels to the main panel
-		panel.add(setPanel);
-		panel.add(scroll);
-		
-		add(panel);
+		add(setPanel);
+		add(scroll);
 		
 		// Heading
 		parameterPanel.add(new JLabel("Name"));
@@ -100,9 +101,9 @@ public class ParameterPanel extends JDialog implements ActionListener {
 		SpringUtilities.makeCompactGrid(parameterPanel, 
 				parameters.values().size() + 1, 3, 
 				5, 5, 15, 5);
-		pack();
 		
-		FrameLocationManager.setLocation(this, node);
+		String location = XmlDocUtils.getValue(node, "location", null);
+		manager.setLocation(this, location);
 	}
 	
 	

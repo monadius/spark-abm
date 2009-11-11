@@ -5,8 +5,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import javax.swing.JDialog;
-
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.PropertyConfigurator;
 import org.spark.core.ExecutionMode;
@@ -14,7 +12,8 @@ import org.spark.modelfile.ModelFileLoader;
 import org.spark.runtime.commands.*;
 import org.spark.runtime.data.DataCollectorDescription;
 import org.spark.runtime.external.data.LocalDataReceiver;
-import org.spark.runtime.external.gui.ParameterPanel;
+import org.spark.runtime.external.gui.SparkChartPanel;
+import org.spark.runtime.external.gui.SparkParameterPanel;
 import org.spark.runtime.external.gui.SparkViewPanel;
 import org.spark.runtime.external.gui.SparkControlPanel;
 import org.spark.runtime.external.gui.SparkWindow;
@@ -88,10 +87,6 @@ public class Coordinator {
 	
 	
 	/*************** GUI ******************/
-//	private MainWindow mainWindow;
-
-	private final ArrayList<JDialog> frames = new ArrayList<JDialog>();
-
 	private final WindowManager windowManager;
 	
 	/**
@@ -355,21 +350,7 @@ public class Coordinator {
 				// name, 1)));
 			}
 
-			/* Load render frames */
-			/*
-			 * list = xmlDoc.getElementsByTagName("renderframe");
-			 * 
-			 * for (int i = 0; i < list.getLength(); i++) { JDialog dialog = new
-			 * RenderFrame(list.item(i), mainWindow, Render.JAVA_2D_RENDER);
-			 * dialog.setVisible(true); frames.add(dialog); }
-			 * 
-			 * 
-			 * /* Main frame
-			 */
-			/*
-			 * list = xmlDoc.getElementsByTagName("mainframe"); Node node =
-			 * list.item(0);
-			 * 
+			 /* 
 			 * DataFilter df = new DataFilter(mainWindow); //
 			 * df.setInterval(100); // df.setSynchronizedFlag(true);
 			 * receiver.addDataConsumer(df); mainWindow.setupRender(node);
@@ -401,7 +382,7 @@ public class Coordinator {
 	private void loadInterface(Node interfaceNode) {
 		XML_WindowsLoader.loadWindows(windowManager, interfaceNode);
 		
-		/* Load render frames */
+		/* Load view panels */
 		ArrayList<Node> list = XmlDocUtils.getChildrenByTagName(interfaceNode, "renderframe");
 		for (Node render : list) {
 			new SparkViewPanel(windowManager, render, Render.JAVA_2D_RENDER);
@@ -410,6 +391,20 @@ public class Coordinator {
 		Node mainWindowRender = XmlDocUtils.getChildByTagName(interfaceNode, "mainframe");
 		if (mainWindowRender != null) {
 			new SparkViewPanel(windowManager, mainWindowRender, Render.JAVA_2D_RENDER);
+		}
+		
+		/* Load the parameter panel */
+		Node parameterNode = XmlDocUtils.getChildByTagName(interfaceNode, "parameterframe");
+		if (parameterNode != null) {
+			new SparkParameterPanel(windowManager, parameterNode);
+		}
+		
+		
+		/* Load charts */
+		list = XmlDocUtils.getChildrenByTagName(interfaceNode, "chart");
+		for (Node chart : list) {
+			SparkChartPanel chartPanel = new SparkChartPanel(windowManager, chart);
+			receiver.addDataConsumer(chartPanel.getDataFilter());
 		}
 	}
 
