@@ -11,6 +11,7 @@ import org.spark.core.ExecutionMode;
 import org.spark.modelfile.ModelFileLoader;
 import org.spark.runtime.commands.*;
 import org.spark.runtime.data.DataCollectorDescription;
+import org.spark.runtime.data.DataObject;
 import org.spark.runtime.external.data.LocalDataReceiver;
 import org.spark.runtime.external.gui.*;
 import org.spark.runtime.external.gui.menu.SparkMenu;
@@ -85,6 +86,9 @@ public class Coordinator {
 	/*************** GUI ******************/
 	private final WindowManager windowManager;
 	
+	/* List of all active renders */
+	private final ArrayList<Render> renders;
+	
 	/**
 	 * Private constructor
 	 * 
@@ -100,8 +104,10 @@ public class Coordinator {
 		this.agentTypesAndNames = new HashMap<String, String>();
 		
 		this.windowManager = new Swing_WindowManager();
-		SparkMenu mainMenu = StandardMenu.create();
+		SparkMenu mainMenu = StandardMenu.create(windowManager);
 		windowManager.setMainMenu(mainMenu);
+		
+		this.renders = new ArrayList<Render>();
 		
 		this.configFile = new ConfigFile(mainMenu.getSubMenu("File"));
 	}
@@ -138,6 +144,7 @@ public class Coordinator {
 		coordinator.init();
 	}
 
+	
 	/**
 	 * Returns the instance of the class
 	 * 
@@ -146,6 +153,27 @@ public class Coordinator {
 	public static Coordinator getInstance() {
 		return coordinator;
 	}
+	
+	
+	/**
+	 * Returns true if a model is loaded
+	 * @return
+	 */
+	public boolean isModelLoaded() {
+		return modelXmlFile != null;
+	}
+	
+	
+	/**
+	 * Returns the most recently received data object of the given type
+	 * @param type
+	 * @param name
+	 * @return
+	 */
+	public DataObject getMostRecentData(int type, String name) {
+		return receiver.getMostRecentData(type, name);
+	}
+	
 
 	/**
 	 * Initial properties of random generator for the next simulation
@@ -165,9 +193,15 @@ public class Coordinator {
 		this.useTimeSeed = useTimeSeed;
 	}
 
+	
+	/**
+	 * Returns visual styles for data layers
+	 * @return
+	 */
 	public HashMap<String, DataLayerStyle> getDataLayerStyles() {
 		return dataLayerStyles;
 	}
+	
 
 	/**
 	 * Sets parameters of the observer (for the next run)
@@ -308,21 +342,7 @@ public class Coordinator {
 				VariableSetFactory.loadVariableSets(list.item(0));
 			}
 
-			/* Load parameter panel */
-			/*
-			 * list = xmlDoc.getElementsByTagName("parameterframe"); if
-			 * (list.getLength() >= 1) { // TODO: only one parameter frame
-			 * should be specified // frame = new ParameterFrame(nodes.item(0),
-			 * mainFrame); // frames.add(frame);
-			 * 
-			 * JDialog dialog = new ParameterPanel(list.item(0), mainWindow);
-			 * dialog.setVisible(true); frames.add(dialog); }
-			 * 
-			 * 
-			 * // parameters.sendUpdateCommands(modelManager);
-			 * 
-			 * /* Collect agents
-			 */
+			/* Collect agents */
 			agentTypesAndNames.clear();
 
 			list = xmlDoc.getElementsByTagName("agent");
@@ -330,25 +350,9 @@ public class Coordinator {
 				Node node = list.item(i);
 				String typeName = node.getTextContent().trim();
 				String name = getValue(node, "name", null);
-				// modelManager.sendCommand(new Command_AddDataCollector(
-				// new
-				// DataCollectorDescription(DataCollectorDescription.SPACE_AGENTS,
-				// typeName, 1)));
 
 				agentTypesAndNames.put(typeName, name);
 			}
-
-			/* Collect variables */
-			// list = xmlDoc.getElementsByTagName("variable");
-			// for (int i = 0; i < list.getLength(); i++) {
-			// Node node = list.item(i);
-			// String name = node.getAttributes().getNamedItem("name")
-			// .getNodeValue();
-
-			// modelManager.sendCommand(new Command_AddDataCollector(
-			// new DataCollectorDescription(DataCollectorDescription.VARIABLE,
-			// name, 1)));
-			// }
 
 			/* Load data layer styles */
 			dataLayerStyles.clear();
@@ -366,13 +370,6 @@ public class Coordinator {
 				// name, 1)));
 			}
 
-			 /* 
-			 * DataFilter df = new DataFilter(mainWindow); //
-			 * df.setInterval(100); // df.setSynchronizedFlag(true);
-			 * receiver.addDataConsumer(df); mainWindow.setupRender(node);
-			 * 
-			 * this.modelXmlFile = modelFile; this.modelXmlDoc = xmlDoc;
-			 */
 			this.modelXmlFile = modelFile;
 			this.modelXmlDoc = xmlDoc;
 			
@@ -423,6 +420,7 @@ public class Coordinator {
 			receiver.addDataConsumer(chartPanel.getDataFilter());
 		}
 	}
+	
 
 	/**
 	 * Starts the loaded model
@@ -439,13 +437,18 @@ public class Coordinator {
 		modelManager.sendCommand(new Command_Start(Long.MAX_VALUE, true,
 				observerName, executionMode));
 	}
+	
 
+	/**
+	 * Pauses/resumes the simulation
+	 */
 	public synchronized void pauseResumeLoadedModel() {
 		if (modelXmlDoc == null)
 			return;
 
 		modelManager.sendCommand(new Command_PauseResume());
 	}
+	
 
 	/**
 	 * Unloads the current model
@@ -459,10 +462,12 @@ public class Coordinator {
 		modelXmlDoc = null;
 		modelXmlFile = null;
 
+		renders.clear();
 		receiver.removeAllConsumers();
 
 		windowManager.disposeAll();
 	}
+	
 
 	/**
 	 * Loads data layer styles
@@ -480,6 +485,7 @@ public class Coordinator {
 				color2));
 		// dataLayerStyleNodes.put(name, node);
 	}
+	
 
 	/**
 	 * Creates a renderer of the given type from the given xml-node with
@@ -497,9 +503,22 @@ public class Coordinator {
 
 		render.updateDataFilter();
 		receiver.addDataConsumer(render.getDataFilter());
+		
+		renders.add(render);
 
 		return render;
 	}
+	
+	
+	/**
+	 * Invokes the update method for all active renders
+	 */
+	public void updateAllRenders() {
+		for (Render render : renders) {
+			render.update();
+		}
+	}
+	
 
 	/**
 	 * Test main method

@@ -12,6 +12,8 @@ public class DataObject_Grid extends DataObject {
 	private int n, m;
 	private double xStep, yStep;
 	
+	private transient Double min, max;
+	
 	
 	/**
 	 * Creates a copy of the given data array
@@ -42,6 +44,51 @@ public class DataObject_Grid extends DataObject {
 	public double getValue(int x, int y) {
 		return data[x * m + y];
 	}
+	
+	
+	/**
+	 * Returns the minimum value in the grid
+	 * @return
+	 */
+	public double getMin() {
+		if (min == null) {
+			int size = data.length;
+			double m = data[0];
+			
+			for (int i = 1; i < size; i++) {
+				double val = data[i];
+				if (val < m)
+					m = val;
+			}
+			
+			min = m;
+		}
+		
+		return min;
+	}
+	
+
+	/**
+	 * Returns the maximum value in the grid
+	 * @return
+	 */
+	public double getMax() {
+		if (max == null) {
+			int size = data.length;
+			double m = data[0];
+			
+			for (int i = 1; i < size; i++) {
+				double val = data[i];
+				if (val > m)
+					m = val;
+			}
+			
+			max = m;
+		}
+		
+		return max;
+	}
+	
 	
 	
 	/**

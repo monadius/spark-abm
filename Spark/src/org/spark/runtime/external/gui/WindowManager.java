@@ -1,5 +1,9 @@
 package org.spark.runtime.external.gui;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.awt.Window;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.spark.runtime.external.gui.menu.SparkCheckBoxMenuItem;
@@ -194,6 +198,75 @@ public abstract class WindowManager {
 			win.addPanel(panel);
 			win.setVisible(true);
 		}
+	}
+	
+	
+	
+	/**
+	 * Tiles open windows
+	 */
+	public void tileWindows() {
+		ArrayList<SparkWindow> charts;
+		ArrayList<SparkWindow> views;
+		ArrayList<SparkWindow> others;
+		SparkWindow parameters = null;
+		
+/*		for (UpdatableFrame frame : GUIModelManager.getInstance().frames) {
+			if (!frame.isVisible())
+				continue;
+			
+			if (frame instanceof ParameterPanel)
+				parameters = frame;
+			else if (frame instanceof ChartFrame || frame instanceof HistogramFrame)
+				charts.add(frame);
+			else if (frame instanceof RenderFrame)
+				views.add(frame);
+			else
+				others.add(frame);
+		}
+		
+		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+		
+		int mainLength = dim.width / 3 + 50;
+		int mainHeight = mainLength + 100;
+		int parametersLength = dim.width * 5 / 12;
+		int parametersHeight = mainHeight / 2;
+		int othersLength = dim.width - mainLength - parametersLength;
+		
+		// MainFrame
+		this.setSize(mainLength, mainHeight);
+		this.setLocation(0, 0);
+		
+		// Parameters frame
+		if (parameters != null) {
+			Dimension parDim = parameters.getPreferredSize();
+			parametersHeight = parDim.height;
+			if (parametersHeight > (mainHeight * 2) / 3)
+				parametersHeight = (mainHeight * 2) / 3;
+			
+			parameters.setSize(parametersLength, parametersHeight);
+			parameters.setLocation(mainLength, 0);
+		}
+		
+		// Other frames
+		FrameLocationManager.tileFrames(others, parametersHeight, 1, 
+				dim.width - othersLength, 0, othersLength, parametersHeight);
+		
+		// Chart frames
+		int x = mainLength;
+		int y = parameters != null ? parametersHeight : 0;
+		int w = parameters != null ? dim.width - x : parametersLength;
+		int h = dim.height - y;
+		
+		FrameLocationManager.tileFrames(charts, 300, 1.5, x, y, w, h);
+		
+		// View frames
+		x = 0;
+		y = mainHeight;
+		w = mainLength;
+		h = dim.height - y;
+		
+		FrameLocationManager.tileFrames(views, mainLength, 1, x, y, w, h);*/		
 	}
 	
 	

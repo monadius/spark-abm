@@ -40,7 +40,30 @@ public class SparkViewPanel extends JPanel implements ISparkPanel,
 	 * @param renderType
 	 */
 	public SparkViewPanel(WindowManager manager, Node node, int renderType) {
-		super(new BorderLayout());
+		init(node, renderType);
+		
+		// Set panel's location
+		String location = XmlDocUtils.getValue(node, "location", null);
+		manager.setLocation(this, location);
+	}
+	
+	
+	/**
+	 * Creates a view panel in the given window
+	 * @param win
+	 * @param renderType
+	 */
+	public SparkViewPanel(SparkWindow win, int renderType) {
+		init(null, renderType);
+		win.addPanel(this);
+	}
+	
+	
+	/**
+	 * Initializes the panel
+	 */
+	private void init(Node node, int renderType) {
+		setLayout(new BorderLayout());
 		
 		// Create render
 		render = Coordinator.getInstance().createRender(node, renderType);
@@ -77,11 +100,8 @@ public class SparkViewPanel extends JPanel implements ISparkPanel,
 		// Add listener to components that can bring up popup menus.
 		MouseListener popupListener = new PopupListener();
 		canvas.addMouseListener(popupListener);
-		
-		// Set panel's location
-		String location = XmlDocUtils.getValue(node, "location", null);
-		manager.setLocation(this, location);
 	}
+	
 
 	/**
 	 * Shows the pop-up menu
