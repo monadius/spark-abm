@@ -225,6 +225,7 @@ public class RenderProperties extends JDialog implements ActionListener {
 			
 			n = Integer.parseInt( cmd.substring( "agent_trans".length() ) );
 			agentStyles.get(n).transparent = transparent.isSelected();
+			render.update();
 //			GUIModelManager.getInstance().requestUpdate();
 			return;
 		}
@@ -236,6 +237,7 @@ public class RenderProperties extends JDialog implements ActionListener {
 			render.setSpace(new SpaceStyle(spaceName, swapSpaceXY.isSelected(), true));
 			initDataLayers();
 			pack();
+			render.update();
 //			GUIModelManager.getInstance().requestUpdate();
 			return;
 		}
@@ -243,6 +245,7 @@ public class RenderProperties extends JDialog implements ActionListener {
 		
 		if (cmd.startsWith("swapXY")) {
 			render.setSwapXYFlag(swapSpaceXY.isSelected());
+			render.update();
 //			GUIModelManager.getInstance().requestUpdate();
 			return;
 		}
@@ -264,6 +267,7 @@ public class RenderProperties extends JDialog implements ActionListener {
 			
 			n = Integer.parseInt( cmd.substring( "agent_border".length() ) );
 			agentStyles.get(n).border = border.isSelected();
+			render.update();
 //			GUIModelManager.getInstance().requestUpdate();
 			return;
 		}
@@ -283,6 +287,7 @@ public class RenderProperties extends JDialog implements ActionListener {
 			initAgents();
 			pack();
 			validate();
+			render.update();
 //			GUIModelManager.getInstance().requestUpdate();
 			return;
 		}
@@ -297,6 +302,7 @@ public class RenderProperties extends JDialog implements ActionListener {
 			initAgents();
 			pack();
 			validate();
+			render.update();
 //			GUIModelManager.getInstance().requestUpdate();
 			return;
 		}
@@ -304,6 +310,7 @@ public class RenderProperties extends JDialog implements ActionListener {
 				
 		if (cmd.equals("none")) {
 			render.setDataLayer(null);
+			render.updateDataFilter();
 //			GUIModelManager.getInstance().requestUpdate();
 			return;
 		}

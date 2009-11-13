@@ -222,7 +222,12 @@ public class SparkChartPanel extends JPanel implements ActionListener, ISparkPan
 		double newValue = row.getVarDoubleValue(varName);
 		long tick = row.getState().getTick();
 		
-		addValue(tick, newValue);
+		try {
+			addValue(tick, newValue);
+		}
+		catch (Exception e) {
+			
+		}
 	}
 
 }

@@ -15,6 +15,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import org.spark.runtime.data.DataCollectorDescription;
+import org.spark.runtime.data.DataObject;
+import org.spark.runtime.data.DataObject_Grid;
+import org.spark.runtime.external.Coordinator;
 import org.spark.runtime.external.render.DataLayerStyle;
 import org.spark.utils.Vector;
 
@@ -36,14 +40,8 @@ public class DataLayersDialog extends JDialog implements ActionListener {
 		initialize();
 	}
 
-	public DataLayersDialog(JDialog owner) {
-		super(owner, "", false);
-		initialize();
-	}
-
-	
 	private void initialize() {
-		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
 
 		panel = new JPanel();
         panel.setLayout(new GridLayout(0, 6));
@@ -138,44 +136,45 @@ public class DataLayersDialog extends JDialog implements ActionListener {
 				v.set(color);
 				((JButton) e.getSource()).setBackground(color);
 				
-//				GUIModelManager.getInstance().requestUpdate();
+				Coordinator.getInstance().updateAllRenders();
 			}
 			
 			return;
 		}
 		
-/*		if (cmd.startsWith("normalize")) {
-			String name= cmd.substring("normalize".length());
-			DataLayer data = Observer.getInstance().findDataLayer(name);
+		if (cmd.startsWith("normalize")) {
+			String name = cmd.substring("normalize".length());
+			DataObject dataObject = Coordinator.getInstance()
+				.getMostRecentData(DataCollectorDescription.DATA_LAYER, name);
 			
-			if (data != null && data instanceof AdvancedDataLayer) {
-				AdvancedDataLayer data2 = (AdvancedDataLayer) data;
+			if (dataObject == null)
+				return;
+			
+			DataObject_Grid data = (DataObject_Grid) dataObject;
+			
+			double min = data.getMin();
+			double max = data.getMax();
 				
-				double min = data2.getMin();
-				double max = data2.getMax();
+			DataLayerStyle style = dataLayers.get(name);
+			if (style == null) return;
 				
-				DataLayerStyle style = dataLayers.get(name);
-				if (style == null) return;
-				
-				style.val1 = min;
-				style.val2 = max;
+			style.val1 = min;
+			style.val2 = max;
 		
-				JTextField val1 = (JTextField) getComponent("val1" + name);
-				JTextField val2 = (JTextField) getComponent("val2" + name);
+			JTextField val1 = (JTextField) getComponent("val1" + name);
+			JTextField val2 = (JTextField) getComponent("val2" + name);
 				
 //				DecimalFormat format = new DecimalFormat("##0.#####E0");
 //				val1.setText(format.format(min));
 //				val2.setText(format.format(max));
-				val1.setText(String.valueOf(min));
-				val2.setText(String.valueOf(max));
-				
+			val1.setText(String.valueOf(min));
+			val2.setText(String.valueOf(max));
+			
+			Coordinator.getInstance().updateAllRenders();
 //				GUIModelManager.getInstance().requestUpdate();
 				
-			}
-			
 			return;
-			
-		}*/
+		}
 		
 		if (cmd.startsWith("val1") || cmd.startsWith("val2")) {
 			boolean first = cmd.startsWith("val1") ? true : false;
@@ -197,7 +196,7 @@ public class DataLayersDialog extends JDialog implements ActionListener {
 				else
 					style.val2 = v;
 
-//				GUIModelManager.getInstance().requestUpdate();
+				Coordinator.getInstance().updateAllRenders();
 			}
 			catch (Exception ex) {
 				ex.printStackTrace();

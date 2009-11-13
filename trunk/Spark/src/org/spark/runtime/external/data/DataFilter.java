@@ -15,6 +15,9 @@ public class DataFilter implements IDataConsumer {
 	/* Target data consumer for which data is filtered */
 	private final IDataConsumer target;
 	
+	/* Most recent local copy of a received data */
+	private DataRow localCopy;
+	
 	/* Each data filter belongs to some group */
 	private final String group;
 	
@@ -145,6 +148,15 @@ public class DataFilter implements IDataConsumer {
 	}
 	
 	
+	/**
+	 * Returns a local copy of the most recently received data 
+	 * @return
+	 */
+	public DataRow getLocalCopy() {
+		return localCopy;
+	}
+	
+	
 	
 	/**
 	 * Main method
@@ -165,6 +177,7 @@ public class DataFilter implements IDataConsumer {
 			}
 		}
 		
+		localCopy = row;
 		target.consume(row);
 	}
 }
