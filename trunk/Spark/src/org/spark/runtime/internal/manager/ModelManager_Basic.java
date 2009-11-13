@@ -144,7 +144,7 @@ public class ModelManager_Basic implements IModelManager {
 		try {
 			// Receive and process commands
 			ModelManagerCommand cmd = commandQueue.takeBlocking();
-			logger.info("Executing command: " + cmd.getClass().getSimpleName());
+			logger.debug("Executing command: " + cmd.getClass().getSimpleName());
 			acceptCommand(cmd);
 		}
 		catch (InterruptedException ie) {

@@ -214,9 +214,9 @@ public class StandardSimulationEngine extends AbstractSimulationEngine {
 	 * Process paused state
 	 */
 	private void processPause() throws Exception {
-//		if (pausedFlag) {
-//			processData(true, true);
-//		}
+		if (pausedFlag) {
+			processData(true, true);
+		}
 		
 		// TODO: process exceptions properly
 		while (pausedFlag) {
