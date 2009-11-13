@@ -3,10 +3,12 @@ package org.spark.runtime.external.gui.menu;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JSeparator;
 
 import com.spinn3r.log5j.Logger;
 
@@ -101,8 +103,34 @@ public class Swing_SparkMenu extends SparkMenu implements SwingMenu {
 		
 		// Remove separators if necessary
 		int n = menu.getMenuComponentCount();
+		if (n == 0)
+			return;
 		
-		// TODO: implement
+		ArrayList<Integer> indices = new ArrayList<Integer>();
+		indices.add(-1);
+		int lastIndex = -1;
+		
+		if (menu.getMenuComponent(0) instanceof JSeparator)
+			indices.add(0);
+
+		// Find double separators
+		for (int i = 0; i < n; i++) {
+			if (i - 1 == lastIndex) {
+				if (menu.getMenuComponent(i) instanceof JSeparator) {
+					indices.add(i);
+					lastIndex = i;
+				}
+			}
+		}
+		
+		if (lastIndex != n - 1)
+			if (menu.getMenuComponent(n - 1) instanceof JSeparator)
+				indices.add(n - 1);
+
+		// Remove double separators
+		for (int i = indices.size() - 1; i > 0; i--) {
+			menu.remove(indices.get(i));
+		}
 	}
 	
 	

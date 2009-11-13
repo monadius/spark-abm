@@ -116,7 +116,6 @@ public class Swing_SparkWindow extends SparkWindow {
 		Swing_SparkMenu m = (Swing_SparkMenu) menu;
 		JMenuBar menuBar = new JMenuBar();
 		m.addToMenuBar(menuBar);
-		menuBar.add(m.getMenu());
 		
 		frame.setJMenuBar(menuBar);
 		frame.pack();
