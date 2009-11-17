@@ -375,39 +375,60 @@ public class Project {
 
 		// Get the javac compiler
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-		if (compiler == null)
-			throw new Exception("Java compiler is not found");
-
-		// Run the compiler with standard input/output streams
-		String[] args = new String[compilerArgs.size()];
-		args = compilerArgs.toArray(args);
-
-		System.out.println("Compiling java files...");
-		int result = compiler.run(null, null, null, args);
-		
-/*		Process proc = Runtime.getRuntime().exec(
-				new String[] { "java", "-jar lib/javac.jar",
-						 "-jar", sparkPath.getPath(),
-						xmlFiles.get(0).getPath() });
-
-		InputStream inputStream = proc.getInputStream();
-		InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-		final BufferedReader bufferedReader = new BufferedReader(
-				inputStreamReader);
-
-		inputStream = proc.getErrorStream();
-		final BufferedReader errReader = new BufferedReader(
-				new InputStreamReader(inputStream));
-
-		// Read streams in separate threads
-		new Thread(new LineReader(bufferedReader)).start();
-		new Thread(new LineReader(errReader)).start();
+		if (compiler == null) {
+			// Try to use the compiler as an external process
+			compilerArgs.add(0, "java");
+			compilerArgs.add(1, "-jar");
+			compilerArgs.add(2, "lib/javac.jar");
+			compilerArgs.add(3, "-verbose");
+			
+/*			Process proc = Runtime.getRuntime().exec(
+					new String[] { "java", "-jar lib/javac.jar",
+							 "-jar", sparkPath.getPath(),
+							xmlFiles.get(0).getPath() });
 */
-		if (result == 0) {
-			System.out.println("SUCCESSFUL");
-		} else {
-			System.out.println("FAILED");
-			throw new Exception("Compilation failed");
+			try {
+				Process proc = Runtime.getRuntime().exec(
+					compilerArgs.toArray(new String[0]));
+
+				InputStream inputStream = proc.getInputStream();
+				InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+				final BufferedReader bufferedReader = new BufferedReader(
+						inputStreamReader);
+
+				inputStream = proc.getErrorStream();
+				final BufferedReader errReader = new BufferedReader(
+						new InputStreamReader(inputStream));
+
+				// Read streams in separate threads
+//				new Thread(new LineReader(bufferedReader)).start();
+				new Thread(new LineReader(errReader)).start();
+				
+				String line;
+				while ((line = bufferedReader.readLine()) != null) {
+					System.out.println(line);
+				}
+			}
+			catch (Exception e) {
+				throw e;
+//				throw new Exception("Java compiler is not found");
+			}
+		}
+		else {
+			// Run the compiler with standard input/output streams
+			String[] args = new String[compilerArgs.size()];
+			args = compilerArgs.toArray(args);
+
+			System.out.println("Compiling java files...");
+			int result = compiler.run(null, null, null, args);
+		
+
+			if (result == 0) {
+				System.out.println("SUCCESSFUL");
+			} else {
+				System.out.println("FAILED");
+				throw new Exception("Compilation failed");
+			}
 		}
 	}
 
