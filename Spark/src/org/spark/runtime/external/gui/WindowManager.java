@@ -2,13 +2,15 @@ package org.spark.runtime.external.gui;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
-import java.awt.Window;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
+import org.spark.runtime.external.gui.menu.ISparkMenuListener;
 import org.spark.runtime.external.gui.menu.SparkCheckBoxMenuItem;
 import org.spark.runtime.external.gui.menu.SparkMenu;
 import org.spark.runtime.external.gui.menu.SparkMenuFactory;
+import org.spark.runtime.external.gui.menu.SparkMenuItem;
 
 /**
  * Manages all windows in the SPARK user interface
@@ -17,9 +19,8 @@ import org.spark.runtime.external.gui.menu.SparkMenuFactory;
  * 
  */
 public abstract class WindowManager {
-	/* Tables of windows and their names (all windows have unique names) */
-	private final HashMap<String, SparkWindow> windowsByName;
-	private final HashMap<SparkWindow, String> namesByWindow;
+	/* Collection of all windows */
+	private final ArrayList<SparkWindow> windows;
 	
 	/* Main window */
 	private final SparkWindow mainWindow;
@@ -31,9 +32,7 @@ public abstract class WindowManager {
 	 * Default protected constructor
 	 */
 	protected WindowManager() {
-		windowsByName = new HashMap<String, SparkWindow>();
-		namesByWindow = new HashMap<SparkWindow, String>();
-		
+		windows = new ArrayList<SparkWindow>();
 		mainWindow = getWindowFactory().getMainWindow();
 	}
 	
@@ -69,9 +68,13 @@ public abstract class WindowManager {
 			name = "";
 
 		String result = name;
+		HashSet<String> existingNames = new HashSet<String>();
+		
+		for (SparkWindow win : windows)
+			existingNames.add(win.getName());
 
 		for (int i = 1; i < 1000; i++) {
-			if (windowsByName.containsKey(result))
+			if (existingNames.contains(result))
 				result = name + " " + String.valueOf(i);
 			else
 				return result;
@@ -86,8 +89,8 @@ public abstract class WindowManager {
 	 * @return
 	 */
 	public SparkWindow[] getWindows() {
-		SparkWindow[] result = new SparkWindow[windowsByName.size()];
-		result = windowsByName.values().toArray(result);
+		SparkWindow[] result = new SparkWindow[windows.size()];
+		result = windows.toArray(result);
 		
 		return result;
 	}
@@ -97,13 +100,11 @@ public abstract class WindowManager {
 	 * Destroys all windows (except the main window)
 	 */
 	public void disposeAll() {
-		for (SparkWindow win : windowsByName.values()) {
+		for (SparkWindow win : windows) {
 			win.dispose();
 		}
 		
-		windowsByName.clear();
-		namesByWindow.clear();
-		
+		windows.clear();
 		updateWindowMenu();
 	}
 	
@@ -115,7 +116,7 @@ public abstract class WindowManager {
 	 */
 	protected final void addWindow(final SparkWindow window) {
 		// Window is already in the table
-		if (namesByWindow.containsKey(window))
+		if (windows.contains(window))
 			return;
 		
 		if (window == mainWindow)
@@ -125,29 +126,25 @@ public abstract class WindowManager {
 		name = getGoodName(name);
 		window.setName(name);
 
-		window.setNameChangedEvent(new SparkWindow.NameChangedEvent() {
+		// Visibility changed event
+		window.addVisibilityChangedEvent(new SparkWindow.VisibilityChangedEvent() {
 			@Override
-			public void nameChanged(String newName) {
-				String oldName = namesByWindow.get(window);
-				if (oldName.equals(newName))
-					return;
-				
-				namesByWindow.remove(window);
-				windowsByName.remove(oldName);
-
+			public void visibilityChanged(SparkWindow window, boolean visible) {
+				updateWindowMenu();
+			}
+		});
+		
+		// Name changed event
+		window.addNameChangedEvent(new SparkWindow.NameChangedEvent() {
+			@Override
+			public void nameChanged(SparkWindow win, String newName) {
 				String name = getGoodName(newName);
-
-				namesByWindow.put(window, name);
-				windowsByName.put(name, window);
-				
 				window.setName(name);
 				updateWindowMenu();
 			}
 		});
 
-		windowsByName.put(name, window);
-		namesByWindow.put(window, name);
-		
+		windows.add(window);
 		updateWindowMenu();
 	}
 	
@@ -162,14 +159,20 @@ public abstract class WindowManager {
 		// Remove all windows from the window menu
 		windowMenu.removeGroup(1);
 		
-		for (SparkWindow win : windowsByName.values()) {
+		for (final SparkWindow win : windows) {
 			SparkMenuFactory factory = SparkMenuFactory.getFactory();
 
 			String name = win.getName();
 			boolean visible = win.isVisible();
 			
-			SparkCheckBoxMenuItem item = factory.createCheckBoxItem(name, 1);
+			final SparkCheckBoxMenuItem item = factory.createCheckBoxItem(name, 1);
 			item.setSelected(visible);
+			
+			item.setActionListener(new ISparkMenuListener() {
+				public void onClick(SparkMenuItem menuItem) {
+					win.setVisible(item.isSelected());
+				}
+			});
 
 			// Add window to the menu
 			windowMenu.addItem(item);
@@ -185,6 +188,11 @@ public abstract class WindowManager {
 	public void setLocation(ISparkPanel panel, String location) {
 		if (location == null)
 			location = "Untitled";
+		
+		HashMap<String, SparkWindow> windowsByName = new HashMap<String, SparkWindow>();
+		for (SparkWindow win : windows) {
+			windowsByName.put(win.getName(), win);
+		}
 		
 		if (windowsByName.containsKey(location)) {
 			SparkWindow win = windowsByName.get(location);
@@ -206,23 +214,25 @@ public abstract class WindowManager {
 	 * Tiles open windows
 	 */
 	public void tileWindows() {
-		ArrayList<SparkWindow> charts;
-		ArrayList<SparkWindow> views;
-		ArrayList<SparkWindow> others;
+		ArrayList<SparkWindow> charts = new ArrayList<SparkWindow>();
+		ArrayList<SparkWindow> views = new ArrayList<SparkWindow>();
+		ArrayList<SparkWindow> others = new ArrayList<SparkWindow>();
 		SparkWindow parameters = null;
 		
-/*		for (UpdatableFrame frame : GUIModelManager.getInstance().frames) {
-			if (!frame.isVisible())
+		for (SparkWindow win : windows) {
+			if (!win.isVisible())
 				continue;
+
+			ISparkPanel panel = win.getPanel();
 			
-			if (frame instanceof ParameterPanel)
-				parameters = frame;
-			else if (frame instanceof ChartFrame || frame instanceof HistogramFrame)
-				charts.add(frame);
-			else if (frame instanceof RenderFrame)
-				views.add(frame);
+			if (panel instanceof SparkParameterPanel)
+				parameters = win;
+			else if (panel instanceof SparkChartPanel)
+				charts.add(win);
+			else if (panel instanceof SparkViewPanel)
+				views.add(win);
 			else
-				others.add(frame);
+				others.add(win);
 		}
 		
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
@@ -234,8 +244,7 @@ public abstract class WindowManager {
 		int othersLength = dim.width - mainLength - parametersLength;
 		
 		// MainFrame
-		this.setSize(mainLength, mainHeight);
-		this.setLocation(0, 0);
+		mainWindow.setLocation(0, 0, mainLength, mainHeight);
 		
 		// Parameters frame
 		if (parameters != null) {
@@ -244,12 +253,11 @@ public abstract class WindowManager {
 			if (parametersHeight > (mainHeight * 2) / 3)
 				parametersHeight = (mainHeight * 2) / 3;
 			
-			parameters.setSize(parametersLength, parametersHeight);
-			parameters.setLocation(mainLength, 0);
+			parameters.setLocation(mainLength, 0, parametersLength, parametersHeight);
 		}
 		
 		// Other frames
-		FrameLocationManager.tileFrames(others, parametersHeight, 1, 
+		tileWindows(others, parametersHeight, 1, 
 				dim.width - othersLength, 0, othersLength, parametersHeight);
 		
 		// Chart frames
@@ -258,7 +266,7 @@ public abstract class WindowManager {
 		int w = parameters != null ? dim.width - x : parametersLength;
 		int h = dim.height - y;
 		
-		FrameLocationManager.tileFrames(charts, 300, 1.5, x, y, w, h);
+		tileWindows(charts, 300, 1.5, x, y, w, h);
 		
 		// View frames
 		x = 0;
@@ -266,7 +274,102 @@ public abstract class WindowManager {
 		w = mainLength;
 		h = dim.height - y;
 		
-		FrameLocationManager.tileFrames(views, mainLength, 1, x, y, w, h);*/		
+		tileWindows(views, mainLength, 1, x, y, w, h);		
+	}
+	
+	
+	/**
+	 * Computes the length of a tiling
+	 * @param k number of windows
+	 * @param w width of a rectangular region
+	 * @param h height of a rectangular region
+	 * @param preferredLength preferred length of a tiling
+	 * @param lengthToHeight ratio length : height
+	 * @return
+	 */
+	private int computeTilingLength(int k, int w, int h, 
+			int preferredLength, double lengthToHeight) {
+		
+		int length = preferredLength;
+
+		// Number of windows along x axis
+		int n = w / length;
+		if (n == 0) {
+			n = 1;
+			length = w;
+		}
+		
+		// Region is too small
+		if (w * h < k)
+			return 1;
+		
+		while (true) {
+			int height = (int)(length / lengthToHeight);
+			if (height <= 0)
+				return 1;
+			
+			// Number of windows along y axis
+			int m = h / height;
+			
+			if (m * n >= k)
+				break;
+			
+			n += 1;
+			length = w / n;
+			
+			if (length <= 0)
+				return 1;
+		}
+		
+		return length;
+	}
+	
+	
+	/**
+	 * Tiles given windows in a specific rectangular region
+	 * @param frames
+	 * @param preferredLength
+	 * @param lengthToHeight
+	 * @param x
+	 * @param y
+	 * @param w
+	 * @param h
+	 */
+	private void tileWindows(ArrayList<SparkWindow> wins, 
+			int preferredLength, double lengthToHeight, 
+			int x, int y, int w, int h) {
+		if (lengthToHeight < 1e-3 || w <= 1 || h <= 1)
+			return;
+		
+		int k = wins.size();
+		
+		if (k == 0)
+			return;
+		
+		int length = computeTilingLength(k, w, h, preferredLength, lengthToHeight);
+		if (length <= 0)
+			return;
+		
+		int height = (int)(length / lengthToHeight);
+		if (height <= 0)
+			return;
+		
+		int n = w / length;
+		int m = h / height;
+		
+		int index = 0; 
+		
+		for (int j = 0; j < m; j++) {
+			for (int i = 0; i < n; i++) {
+				if (index >= k)
+					return;
+				
+				SparkWindow frame = wins.get(index);
+				frame.setLocation(x + i * length, y + j * height, length, height);
+				
+				index++;
+			}
+		}
 	}
 	
 	

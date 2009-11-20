@@ -1,6 +1,8 @@
 package org.spark.runtime.external.gui;
 
+import java.awt.Dimension;
 import java.awt.Rectangle;
+import java.util.LinkedList;
 
 import org.spark.runtime.external.gui.menu.SparkMenu;
 
@@ -13,6 +15,9 @@ public abstract class SparkWindow {
 	/* Window's name */
 	private String name;
 	
+	/* Panel inside the window */
+	private ISparkPanel panel;
+	
 	/* Owner of the window */
 	protected SparkWindow owner;
 	
@@ -22,10 +27,21 @@ public abstract class SparkWindow {
 	 * @author Monad
 	 */
 	abstract static class NameChangedEvent {
-		public abstract void nameChanged(String newName);
+		public abstract void nameChanged(SparkWindow window, String newName);
 	}
 	
-	private NameChangedEvent nameChanged;
+	private final LinkedList<NameChangedEvent> nameChanged;
+	
+	/**
+	 * Event which is invoked when the visibility of the window changes
+	 * @author Monad
+	 *
+	 */
+	abstract static class VisibilityChangedEvent {
+		public abstract void visibilityChanged(SparkWindow window, boolean visible);
+	}
+	
+	private final LinkedList<VisibilityChangedEvent> visibilityChanged;
 	
 	
 	/**
@@ -34,6 +50,8 @@ public abstract class SparkWindow {
 	 */
 	protected SparkWindow(SparkWindow owner) {
 		this.owner = owner;
+		this.nameChanged = new LinkedList<NameChangedEvent>();
+		this.visibilityChanged = new LinkedList<VisibilityChangedEvent>();
 	}
 	
 	
@@ -51,23 +69,66 @@ public abstract class SparkWindow {
 	 * @param name
 	 */
 	public void setName(String name) {
+		// Null names are not allowed
+		if (name == null)
+			return;
+		
 		if (this.name != null && this.name.equals(name))
 			return;
 		
 		this.name = name;
-		
-		if (nameChanged != null)
-			nameChanged.nameChanged(name);
+
+		for (NameChangedEvent event : nameChanged) {
+			event.nameChanged(this, this.name);
+		}
 	}
 	
 	
 	/**
-	 * Sets a handler for the name change event
+	 * Sets the handler for the name change event
 	 * @param event
 	 */
-	void setNameChangedEvent(NameChangedEvent event) {
-		this.nameChanged = event;
+	void addNameChangedEvent(NameChangedEvent event) {
+		nameChanged.add(event);
 	}
+	
+	/**
+	 * Removes the handler for the name change event 
+	 * @param event
+	 */
+	void removeNameChangedEvent(NameChangedEvent event) {
+		nameChanged.remove(event);
+	}
+	
+
+	/**
+	 * Adds the handler for the visibility change event
+	 * @param event
+	 */
+	void addVisibilityChangedEvent(VisibilityChangedEvent event) {
+		visibilityChanged.add(event);
+	}
+
+	
+	/**
+	 * Removes the handler for the visibility change event
+	 * @param event
+	 */
+	void removeVisibilityChangedEvent(VisibilityChangedEvent event) {
+		visibilityChanged.remove(event);
+	}
+	
+	
+	/**
+	 * Invoked when the visibility changes
+	 * @param visibile
+	 */
+	protected void onVisibilityChanged() {
+		for (VisibilityChangedEvent event : visibilityChanged) {
+			event.visibilityChanged(this, isVisible());
+		}
+	}
+
 	
 	
 	/**
@@ -85,6 +146,13 @@ public abstract class SparkWindow {
 	 * @return
 	 */
 	public abstract Rectangle getLocation();
+	
+	
+	/**
+	 * Returns a preferred size of the window
+	 * @return
+	 */
+	public abstract Dimension getPreferredSize();
 	
 	
 	/**
@@ -115,10 +183,41 @@ public abstract class SparkWindow {
 	
 	
 	/**
-	 * Adds a SPARK panel inside the window
+	 * Adds a panel into the window
 	 * @param panel
 	 */
-	public abstract void addPanel(ISparkPanel panel);
+	public final void addPanel(ISparkPanel panel) {
+		if (addPanel0(panel))
+			this.panel = panel;
+	}
+	
+
+	/**
+	 * Adds a SPARK panel to the given position
+	 * @param panel
+	 * @param position
+	 */
+	public final void addPanel(ISparkPanel panel, String position) {
+		if (addPanel0(panel, position))
+			this.panel = panel;
+	}
+
+	
+	/**
+	 * Returns a panel inside the window 
+	 * @return
+	 */
+	protected ISparkPanel getPanel() {
+		return panel;
+	}
+	
+	
+	/**
+	 * Implementation of addPanel()
+	 * @param panel
+	 * @return false if the panel was not added
+	 */
+	protected abstract boolean addPanel0(ISparkPanel panel);
 	
 	
 	/**
@@ -126,6 +225,6 @@ public abstract class SparkWindow {
 	 * @param panel
 	 * @param position
 	 */
-	public abstract void addPanel(ISparkPanel panel, String location);
+	public abstract boolean addPanel0(ISparkPanel panel, String position);
 
 }

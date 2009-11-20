@@ -8,6 +8,7 @@ import org.spark.runtime.external.gui.SparkViewPanel;
 import org.spark.runtime.external.gui.SparkWindow;
 import org.spark.runtime.external.gui.WindowManager;
 import org.spark.runtime.external.gui.dialogs.DataLayersDialog;
+import org.spark.runtime.external.gui.dialogs.RandomSeedDialog;
 import org.spark.utils.FileUtils;
 
 
@@ -119,6 +120,7 @@ public class StandardMenu {
 		SparkMenu options = factory.createMenu("Options", 0);
 		
 		SparkMenuItem dataLayers = factory.createItem("Data Layer Properties", 0);
+		SparkMenuItem randomSeed = factory.createItem("Random Seed", 1);
 		
 		// Data layer properties
 		dataLayers.setActionListener(new ISparkMenuListener() {
@@ -138,6 +140,20 @@ public class StandardMenu {
 			}
 		});
 		
+		// Random seed
+		randomSeed.setActionListener(new ISparkMenuListener() {
+			private RandomSeedDialog dialog;
+			
+			public void onClick(SparkMenuItem item) {
+				if (dialog == null)
+					dialog = new RandomSeedDialog(null);
+				
+				dialog.init();
+				dialog.setVisible(true);
+			}
+		});
+		
+		options.addItem(randomSeed);
 		options.addItem(dataLayers);
 		
 		return options;

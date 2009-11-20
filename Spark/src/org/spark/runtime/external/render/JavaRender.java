@@ -7,10 +7,12 @@ import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 
 import org.spark.runtime.data.DataObject_Grid;
 import org.spark.runtime.data.DataObject_SpaceAgents;
+import org.spark.runtime.data.DataObject_SpaceLinks;
 import org.spark.runtime.data.DataObject_Spaces;
 import org.spark.runtime.data.DataRow;
 import org.spark.space.SpaceAgent;
@@ -50,7 +52,7 @@ public class JavaRender extends Render {
 	}
 
 	@Override
-	public void display(DataRow data) {
+	protected void display(DataRow data) {
 		this.data = data;
 
 		if (canvas != null)
@@ -169,52 +171,37 @@ public class JavaRender extends Render {
 	 * @param g
 	 * @param linkStyle
 	 */
-/*	protected void renderLinks(Graphics2D g, Space space, AgentStyle linkStyle) {
-		Agent[] links;
-
+	protected void renderLinks(Graphics2D g, DataObject_SpaceLinks links, int spaceIndex, AgentStyle linkStyle) {
 		if (!linkStyle.visible)
 			return;
-
-		if (!SpaceLink.class.isAssignableFrom(linkStyle.agentType))
-			return;
-
-		links = Observer.getInstance().getAgents(linkStyle.agentType);
 
 		if (links == null)
 			return;
 
-		int n = links.length;
+		int n = links.getTotalNumber();
+		Vector[] ends1 = links.getEnd1();
+		Vector[] ends2 = links.getEnd2();
+		Vector4d[] colors = links.getColors();
+		int[] spaceIndices = links.getSpaceIndices();
+		double[] width = links.getWidth();
 
 		for (int i = 0; i < n; i++) {
-			SpaceLink link = (SpaceLink) links[i];
-			SpaceAgent end1 = link.getEnd1();
-			SpaceAgent end2 = link.getEnd2();
+			Vector end1 = ends1[i]; 
+			Vector end2 = ends2[i];
 
 			if (end1 == null || end2 == null)
 				continue;
 
-			SpaceNode node1 = end1.getNode();
-			SpaceNode node2 = end2.getNode();
-
-			if (node1 == null || node2 == null)
+			if (spaceIndices[i] != spaceIndex)
 				continue;
 
-			if (node1.getSpace() != space || node2.getSpace() != space)
-				continue;
+			Vector4d color = colors[i];
 
-			Vector pos1 = node1.getPosition();
-			Vector pos2 = node2.getPosition();
+			double x1 = end1.x, y1 = end1.y;
+			double x2 = end2.x, y2 = end2.y;
 
-			Vector4d color = link.getColor();
-
-			if (pos1 == null || pos2 == null || color == null)
-				continue;
-
-			double x1 = pos1.x, y1 = pos1.y;
-			double x2 = pos2.x, y2 = pos2.y;
-
-			float width = (float) link.getWidth();
-			g.setStroke(new BasicStroke(width));
+			float w = (float) width[i];
+			g.setStroke(new BasicStroke(w));
 			g.setColor(color.toAWTColor());
 
 			Shape s = new Line2D.Double(x1, y1, x2, y2);
@@ -222,7 +209,6 @@ public class JavaRender extends Render {
 		}
 
 	}
-*/
 
 
 	/**
@@ -237,12 +223,6 @@ public class JavaRender extends Render {
 			int spaceIndex, AgentStyle agentStyle) {
 		if (!agentStyle.visible)
 			return;
-
-		// TODO: render links
-		// if (SpaceLink.class.isAssignableFrom(agentStyle.agentType)) {
-		// renderLinks(g, space, agentStyle);
-		// return;
-		// }
 
 		if (agents == null)
 			return;
@@ -301,10 +281,9 @@ public class JavaRender extends Render {
 	 * 
 	 * @param g
 	 */
-	public void display(Graphics2D g) {
+	protected void display(Graphics2D g) {
 		if (data == null)
 			return;
-
 
 		if (selectedSpace == null)
 			return;
@@ -342,9 +321,20 @@ public class JavaRender extends Render {
 
 		for (int k = agentStyles.size() - 1; k >= 0; k--) {
 			AgentStyle agentStyle = agentStyles.get(k);
+			
+			if (!agentStyle.visible)
+				continue;
+			
 			DataObject_SpaceAgents agentsData = data
 					.getSpaceAgents(agentStyle.typeName);
-			renderAgents(g, agentsData, spaceIndex, agentStyle);
+			
+			if (agentsData == null)
+				continue;
+			
+			if (agentsData instanceof DataObject_SpaceLinks)
+				renderLinks(g, (DataObject_SpaceLinks) agentsData, spaceIndex, agentStyle);
+			else
+				renderAgents(g, agentsData, spaceIndex, agentStyle);
 		}
 
 	}

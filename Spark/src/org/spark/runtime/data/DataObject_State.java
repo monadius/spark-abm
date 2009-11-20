@@ -18,11 +18,28 @@ public class DataObject_State extends DataObject {
 	
 	/* Random seed for the current simulation */
 	private long seed;
+	
+	/* If true then the state is the initial state */
+	private boolean initialState;
 
-	public DataObject_State(SimulationTime time, long seed, boolean paused) {
+	
+	/**
+	 * Default constructor
+	 * @param time
+	 * @param seed
+	 * @param paused
+	 */
+	public DataObject_State(SimulationTime time, long seed, boolean paused, boolean initial) {
 		this.time = time;
 		this.seed = seed;
 		this.paused = paused;
+		// TODO: initial state should be defined by a special value of time
+		this.initialState = initial;
+	}
+	
+	
+	public boolean isInitial() {
+		return initialState;
 	}
 	
 	

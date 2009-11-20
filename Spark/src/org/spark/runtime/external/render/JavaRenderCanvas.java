@@ -36,6 +36,9 @@ public class JavaRenderCanvas extends Canvas {
 				return;
 		}
 		
+		if (!isVisible())
+			return;
+		
 		Graphics g = bufferImage.getGraphics();
 		display(g);
 		if (g != null)

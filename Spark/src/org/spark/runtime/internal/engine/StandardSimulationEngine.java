@@ -106,7 +106,7 @@ public class StandardSimulationEngine extends AbstractSimulationEngine {
 	 * Processes all data
 	 * @param time
 	 */
-	private void processData(boolean paused, boolean specialFlag) throws Exception {
+	private void processData(boolean paused, boolean specialFlag, boolean initial) throws Exception {
 		// Synchronize variables and methods
 		model.synchronizeVariables();
 		model.synchronizeMethods();
@@ -115,17 +115,20 @@ public class StandardSimulationEngine extends AbstractSimulationEngine {
 		SimulationTime time = model.getObserver().getSimulationTime();
 		
 		// Create a data row
-		DataRow row = new DataRow(time, paused);
+		DataRow row = new DataRow(time, paused, initial);
 		ArrayList<DataCollector> collectors = dataCollectors.getActiveCollectors();
 		
 		// Collect all data
 		for (DataCollector collector : collectors) {
+			if (!collector.isActive())
+				continue;
+			
 			try {
 				collector.collect(model, row, time, specialFlag);
 			}
 			catch (BadDataSourceException e) {
-				// TODO: remove 'collector' from the list
-				// logger.debug(e);
+				logger.error(e);
+				collector.deactivate();
 			}
 		}
 		
@@ -215,14 +218,14 @@ public class StandardSimulationEngine extends AbstractSimulationEngine {
 	 */
 	private void processPause() throws Exception {
 		if (pausedFlag) {
-			processData(true, true);
+			processData(true, true, false);
 		}
 		
 		// TODO: process exceptions properly
 		while (pausedFlag) {
 		// Update data after each received command
 			if (processCommands()) {
-				processData(true, true);
+				processData(true, true, false);
 			}
 				
 			if (stopFlag)
@@ -248,7 +251,7 @@ public class StandardSimulationEngine extends AbstractSimulationEngine {
 		
 		try {
 			// Process data before simulation steps
-			processData(this.pausedFlag, true);
+			processData(this.pausedFlag, true, true);
 
 			/* Main process */
 			while (tick < length) {
@@ -264,7 +267,7 @@ public class StandardSimulationEngine extends AbstractSimulationEngine {
 					break;
 
 				// Process data
-				processData(false, false);
+				processData(false, false, false);
 				
 				// Make a delay
 				if (delayTime > 0) {
@@ -282,7 +285,7 @@ public class StandardSimulationEngine extends AbstractSimulationEngine {
 			}
 			
 			// Process all data one more time before complete simulation stop
-			processData(false, true);
+			processData(false, true, false);
 
 			
 			// Finalize data processing

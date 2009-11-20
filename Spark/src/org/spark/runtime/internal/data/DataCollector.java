@@ -18,6 +18,9 @@ public abstract class DataCollector {
 	/* Name of the data collected by this collector */
 	protected String dataName; 
 	
+	/* Indicates whether the collector is active or not */
+	protected boolean active;
+	
 	
 	/**
 	 * Creates a default data collector
@@ -25,6 +28,24 @@ public abstract class DataCollector {
 	protected DataCollector() {
 		collectionInterval = 1;
 		dataName = null;
+		active = true;
+	}
+	
+	
+	/**
+	 * Returns true if the collector is active
+	 * @return
+	 */
+	public boolean isActive() {
+		return active;
+	}
+	
+	
+	/**
+	 * Makes the collector inactive
+	 */
+	public void deactivate() {
+		active = false;
 	}
 	
 	

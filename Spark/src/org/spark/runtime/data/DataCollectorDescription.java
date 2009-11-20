@@ -71,7 +71,7 @@ public class DataCollectorDescription implements Serializable {
 		
 		case SPACE_AGENTS:
 			return STR_SPACE_AGENTS;
-		
+			
 		case SPACES:
 			return STR_SPACES;
 		}
@@ -154,5 +154,18 @@ public class DataCollectorDescription implements Serializable {
 			return code;
 		else
 			return code * (interval + 1);
+	}
+	
+	
+	@Override
+	public String toString() {
+		String str = typeToString(type);
+		
+		if (dataName != null)
+			str += dataName;
+		
+		str += ":" + interval;
+		
+		return str;
 	}
 }

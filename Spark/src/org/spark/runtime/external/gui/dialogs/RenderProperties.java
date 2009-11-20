@@ -14,35 +14,54 @@ import org.spark.runtime.external.render.SpaceStyle;
 import org.spark.runtime.external.render.DataLayerStyle;
 import org.spark.runtime.external.render.AgentStyle;
 import org.spark.runtime.external.render.Render;
+import org.spark.utils.SpringUtilities;
 
 
+/**
+ * A dialog for setting up visualization properties
+ * @author Monad
+ *
+ */
 public class RenderProperties extends JDialog implements ActionListener {
 	private static final long serialVersionUID = -4770465039114801520L;
 
+	/* Render for this dialog */
 	private Render render;
+	
+	/* Main panels */
 	private JPanel panel, titlePanel, agentPanel, spacePanel, dataPanel;
-//	private ArrayList<Grid> dataLayers;
 	private ArrayList<AgentStyle> agentStyles;
 	
 	private JCheckBox swapSpaceXY;
 	
 	
+	/**
+	 * Default constructor
+	 * @param render
+	 * @param editTitle
+	 */
 	public RenderProperties(Render render, boolean editTitle) {
 		init(render, editTitle);
 	}
 	
 
+	/**
+	 * Initializes the dialog during its creation process
+	 * @param render
+	 * @param editTitle
+	 */
 	private void init(Render render, boolean editTitle) {
 		this.render = render;
 //		dataLayers = new ArrayList<Grid>(20);
 		
 		setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
 
-		agentPanel = new JPanel(new GridLayout(0, 7));
+//		agentPanel = new JPanel(new GridLayout(0, 7));
+		agentPanel = new JPanel(new SpringLayout());
 		agentPanel.setMinimumSize(new Dimension(100, 100));
 //		agentPanel.setPreferredSize(new Dimension(200, 100));
 		agentPanel.setBorder(BorderFactory.createTitledBorder("Agents"));
-
+		
 		dataPanel = new JPanel(new GridLayout(0, 1));
 		dataPanel.setMinimumSize(new Dimension(100, 100));
 //		dataPanel.setPreferredSize(new Dimension(200, 200));
@@ -86,6 +105,9 @@ public class RenderProperties extends JDialog implements ActionListener {
 	}
 	
 	
+	/**
+	 * Initializes controls for data layers
+	 */
 	private void initDataLayers() {
 		dataPanel.removeAll();
 //		dataLayers.clear();
@@ -119,9 +141,10 @@ public class RenderProperties extends JDialog implements ActionListener {
 	}
 	
 	
+	/**
+	 * Initializes controls for agents
+	 */
 	private void initAgents() {
-		// TODO: synchronization
-		
 		agentPanel.removeAll();
 		agentStyles = render.getAgentStyles();
 		
@@ -137,7 +160,6 @@ public class RenderProperties extends JDialog implements ActionListener {
 			JCheckBox border = new JCheckBox("Border", agentStyle.border);
 			
 			JButton advanced = new JButton("Advanced");
-			
 			JButton up = new JButton("Up");
 			JButton down = new JButton("Down");
 
@@ -164,15 +186,20 @@ public class RenderProperties extends JDialog implements ActionListener {
 			agentPanel.add(down);
 			
 		}
+		
+		SpringUtilities.makeCompactGrid(agentPanel, 
+				agentStyles.size(), 7, 
+				5, 5, 15, 5);
 	}
 	
 	
+	/**
+	 * Initializes controls for spaces
+	 */
 	private void initSpaces() {
 		spacePanel.removeAll();
 		SpaceStyle selectedSpace = render.getSelectedSpaceStyle();
-//		String[] spaceNames = Observer.getInstance().getSpaceNames();
-		// FIXME: as soon as possible
-		String[] spaceNames = new String[] {"space"};
+		String[] spaceNames = render.getSpaceNames();
 		
 		if (spaceNames == null)
 			spaceNames = new String[0];
@@ -202,6 +229,9 @@ public class RenderProperties extends JDialog implements ActionListener {
 	}
 	
 	
+	/**
+	 * Initializes all controls
+	 */
 	public void init() {
 		initSpaces();
 		initDataLayers();
@@ -211,7 +241,9 @@ public class RenderProperties extends JDialog implements ActionListener {
 	}
 
 
-//	@Override
+	/**
+	 * Processes commands
+	 */
 	public void actionPerformed(ActionEvent e) {
 		String cmd = e.getActionCommand();
 		if (cmd == null)
@@ -226,7 +258,6 @@ public class RenderProperties extends JDialog implements ActionListener {
 			n = Integer.parseInt( cmd.substring( "agent_trans".length() ) );
 			agentStyles.get(n).transparent = transparent.isSelected();
 			render.update();
-//			GUIModelManager.getInstance().requestUpdate();
 			return;
 		}
 		
@@ -238,7 +269,6 @@ public class RenderProperties extends JDialog implements ActionListener {
 			initDataLayers();
 			pack();
 			render.update();
-//			GUIModelManager.getInstance().requestUpdate();
 			return;
 		}
 		
@@ -246,7 +276,6 @@ public class RenderProperties extends JDialog implements ActionListener {
 		if (cmd.startsWith("swapXY")) {
 			render.setSwapXYFlag(swapSpaceXY.isSelected());
 			render.update();
-//			GUIModelManager.getInstance().requestUpdate();
 			return;
 		}
 		
@@ -256,7 +285,6 @@ public class RenderProperties extends JDialog implements ActionListener {
 			
 			n = Integer.parseInt( cmd.substring( "agent_vis".length() ) );
 			agentStyles.get(n).visible = visible.isSelected();
-//			GUIModelManager.getInstance().requestUpdate();
 			render.updateDataFilter();
 			return;
 		}
@@ -268,7 +296,6 @@ public class RenderProperties extends JDialog implements ActionListener {
 			n = Integer.parseInt( cmd.substring( "agent_border".length() ) );
 			agentStyles.get(n).border = border.isSelected();
 			render.update();
-//			GUIModelManager.getInstance().requestUpdate();
 			return;
 		}
 
@@ -288,7 +315,6 @@ public class RenderProperties extends JDialog implements ActionListener {
 			pack();
 			validate();
 			render.update();
-//			GUIModelManager.getInstance().requestUpdate();
 			return;
 		}
 		
@@ -303,7 +329,6 @@ public class RenderProperties extends JDialog implements ActionListener {
 			pack();
 			validate();
 			render.update();
-//			GUIModelManager.getInstance().requestUpdate();
 			return;
 		}
 
@@ -311,7 +336,6 @@ public class RenderProperties extends JDialog implements ActionListener {
 		if (cmd.equals("none")) {
 			render.setDataLayer(null);
 			render.updateDataFilter();
-//			GUIModelManager.getInstance().requestUpdate();
 			return;
 		}
 
@@ -319,10 +343,8 @@ public class RenderProperties extends JDialog implements ActionListener {
 		if (cmd.startsWith("data")) {
 			String name = cmd.substring("data".length());
 			
-//			Render.DataLayerStyle dataStyle = render.getDataLayerStyles().get(name);
 			render.setDataLayer(name);
 			render.updateDataFilter();
-//			GUIModelManager.getInstance().requestUpdate();
 			return;
 		}
 		

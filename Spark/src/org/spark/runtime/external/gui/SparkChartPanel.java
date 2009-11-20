@@ -52,6 +52,8 @@ public class SparkChartPanel extends JPanel implements ActionListener, ISparkPan
 		
 		varName = XmlDocUtils.getValue(node, "name", null);
 		int interval = XmlDocUtils.getIntegerValue(node, "interval", 1);
+		if (interval < 1)
+			interval = 1;
 		
 		if (varName != null) {
 			dataFilter.setInterval(interval);
@@ -219,6 +221,9 @@ public class SparkChartPanel extends JPanel implements ActionListener, ISparkPan
 	 * Consumes data
 	 */
 	public void consume(DataRow row) {
+		if (row.getState().isInitial())
+			reset();
+		
 		double newValue = row.getVarDoubleValue(varName);
 		long tick = row.getState().getTick();
 		

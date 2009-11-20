@@ -42,13 +42,21 @@ public class DataObject_SpaceAgents extends DataObject {
 	
 	
 	/**
+	 * Empty protected constructor
+	 */
+	protected DataObject_SpaceAgents() {
+		
+	}
+	
+	
+	/**
 	 * Adds agent's parameters into the data object
 	 * @param position
 	 * @param r
 	 * @param color
 	 * @param shape
 	 */
-	public void AddAgent(Vector position, double r, Vector4d color, int shape, int spaceIndex) {
+	public void addAgent(Vector position, double r, Vector4d color, int shape, int spaceIndex) {
 		// Cannot hold any more agents
 		if (counter >= n)
 			return;

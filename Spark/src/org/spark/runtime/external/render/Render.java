@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.HashMap;
 
 import org.spark.runtime.data.DataCollectorDescription;
+import org.spark.runtime.data.DataObject_Spaces;
 import org.spark.runtime.data.DataRow;
 import org.spark.runtime.external.data.DataFilter;
 import org.spark.runtime.external.data.IDataConsumer;
@@ -258,16 +259,40 @@ public abstract class Render implements KeyListener, IDataConsumer {
 			setDataLayerStyles(globalDataLayerStyles);
 		}
 		else {
-//			if (Observer.getSpace(name) != null) {
-				if (selectedSpace != null)
-					reshapeRequested = true;
-				selectedSpace = style;
-				setDataLayerStyles(globalDataLayerStyles);
-//			}
+			if (selectedSpace != null)
+				reshapeRequested = true;
+			selectedSpace = style;
+			setDataLayerStyles(globalDataLayerStyles);
 		}
 	}
 	
 	
+	/**
+	 * Returns names of spaces available for the render
+	 * @return
+	 */
+	public String[] getSpaceNames() {
+		if (data == null)
+			return null;
+		
+		DataObject_Spaces spaces = data.getSpaces();
+		String[] names = spaces.getNames();
+		
+		if (spaces.getTotalNumber() == names.length)
+			return names;
+		
+		names = new String[spaces.getTotalNumber()];
+		for (int i = 0; i < spaces.getTotalNumber(); i++)
+			names[i] = spaces.getNames()[i];
+		
+		return names;
+	}
+	
+	
+	/**
+	 * Sets swapXY flag for the selected space
+	 * @param flag
+	 */
 	public void setSwapXYFlag(boolean flag) {
 		if (selectedSpace != null) {
 			selectedSpace.swapXY = flag;
