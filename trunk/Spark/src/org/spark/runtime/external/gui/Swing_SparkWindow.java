@@ -6,6 +6,8 @@ import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.Window;
 import java.awt.Dialog.ModalityType;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -14,6 +16,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 
+import org.spark.runtime.external.Coordinator;
 import org.spark.runtime.external.gui.menu.SparkMenu;
 import org.spark.runtime.external.gui.menu.Swing_SparkMenu;
 
@@ -48,12 +51,10 @@ public class Swing_SparkWindow extends SparkWindow {
 			// TODO: stop the simulation and save GUI changes first
 			frame.addWindowListener(new WindowAdapter() {
 				public void windowClosing(WindowEvent e) {
-					try {
-//						GUIModelManager.getInstance().unloadModel();
-//						saveConfigFile();
-					} catch (Exception ex) {
-						ex.printStackTrace();
-					}
+					Coordinator c = Coordinator.getInstance();
+					// TODO: make sure that everything is saved
+					if (c != null)
+						c.unloadModel();
 
 					System.exit(0);
 				}
@@ -75,6 +76,16 @@ public class Swing_SparkWindow extends SparkWindow {
 				dialog = new JDialog(o.window, ModalityType.MODELESS);
 				window = dialog;
 				dialog.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
+				
+				dialog.addComponentListener(new ComponentAdapter() {
+					public void componentShown(ComponentEvent e) {
+						onVisibilityChanged();
+					}
+
+					public void componentHidden(ComponentEvent e) {
+						onVisibilityChanged();
+					}
+				});
 			}
 		}
 	}
@@ -145,7 +156,7 @@ public class Swing_SparkWindow extends SparkWindow {
 
 
 	@Override
-	public void addPanel(ISparkPanel panel) {
+	public boolean addPanel0(ISparkPanel panel) {
 		if (panel instanceof JComponent) {
 			Container c;
 			
@@ -160,16 +171,19 @@ public class Swing_SparkWindow extends SparkWindow {
 			component = (JComponent) panel;
 			c.add(component, BorderLayout.CENTER);
 			window.pack();
+			
+			return true;
 		}
 		else {
 			logger.error("Cannot add the panel: " + panel);
 		}
 		
+		return false;
 	}
 
 
 	@Override
-	public void addPanel(ISparkPanel panel, String location) {
+	public boolean addPanel0(ISparkPanel panel, String location) {
 		if (panel instanceof JComponent) {
 			Container c;
 			
@@ -180,11 +194,20 @@ public class Swing_SparkWindow extends SparkWindow {
 			
 			c.add((JComponent) panel, location);
 			window.pack();
+			
+			return true;
 		}
 		else {
 			logger.error("Cannot add the panel: " + panel);
 		}
 		
+		return false;
+	}
+	
+	
+	@Override
+	public Dimension getPreferredSize() {
+		return window.getPreferredSize();
 	}
 
 }

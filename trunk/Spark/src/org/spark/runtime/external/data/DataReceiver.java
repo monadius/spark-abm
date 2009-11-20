@@ -3,6 +3,7 @@ package org.spark.runtime.external.data;
 import java.util.ArrayList;
 
 import org.spark.runtime.data.DataObject;
+import org.spark.runtime.data.DataObject_State;
 import org.spark.runtime.data.DataRow;
 
 import com.spinn3r.log5j.Logger;
@@ -17,7 +18,9 @@ public abstract class DataReceiver {
 	
 	/* List of all data consumers */
 	protected final ArrayList<DataFilter> consumers;
-	
+
+	/* Contains information about the initial state */
+	protected DataObject_State initialState;
 
 	
 	/**
@@ -29,10 +32,23 @@ public abstract class DataReceiver {
 	
 	
 	/**
+	 * Returns the initial state of the current simulation
+	 * @return
+	 */
+	public synchronized DataObject_State getInitialState() {
+		return initialState;
+	}
+	
+	
+	/**
 	 * Invoked whenever new data is received
 	 * @param row
 	 */
-	public synchronized void receive(DataRow row) {
+	public synchronized final void receive(DataRow row) {
+		DataObject_State state = row.getState();
+		if (state.isInitial())
+			initialState = state;
+		
 		int n = consumers.size();
 		
 		for (int i = 0; i < n; i++) {

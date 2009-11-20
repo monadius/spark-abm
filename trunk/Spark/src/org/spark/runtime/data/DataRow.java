@@ -27,9 +27,9 @@ public final class DataRow implements Serializable {
 	 * Creates a data row for the given simulation time value
 	 * @param time
 	 */
-	public DataRow(SimulationTime time, boolean paused) {
+	public DataRow(SimulationTime time, boolean paused, boolean initial) {
 		data = new HashMap<String, DataObject>();
-		state = new DataObject_State(time, RandomHelper.getSeed(), paused);
+		state = new DataObject_State(time, RandomHelper.getSeed(), paused, initial);
 	}
 	
 	

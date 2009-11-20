@@ -24,4 +24,10 @@ public class Command_AddDataCollector extends ModelManagerCommand {
 			throws Exception {
 		engine.addDataCollector(dcd);
 	}
+	
+	
+	@Override
+	public String toString() {
+		return "AddDataCollector: " + dcd.toString();
+	}
 }

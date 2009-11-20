@@ -36,7 +36,6 @@ public class SparkParameterPanel extends JPanel implements ActionListener, ISpar
 	private JComboBox setsBox;
 	
 	
-	@SuppressWarnings("serial")
 	private class SetsModel extends AbstractListModel {
 		public final ArrayList<String> names = new ArrayList<String>();
 

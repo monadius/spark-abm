@@ -6,7 +6,6 @@ import java.awt.event.ActionListener;
 import java.util.Hashtable;
 
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
@@ -26,7 +25,7 @@ public class SparkControlPanel extends JPanel implements ISparkPanel, ActionList
 	private JButton setupButton;
 	
 	/* Synchronization check box */
-	private JCheckBox synchButton;
+//	private JCheckBox synchButton;
 	
 	/* Tick label */
 	private JLabel tickLabel;
@@ -39,17 +38,17 @@ public class SparkControlPanel extends JPanel implements ISparkPanel, ActionList
 	public SparkControlPanel() {
 		this.setMinimumSize(new Dimension(300, 100));
 
-		synchButton = new JCheckBox("Sychronized", null, true);
+//		synchButton = new JCheckBox("Sychronized", null, true);
 		startButton = new JButton("Start");
 		setupButton = new JButton("Setup");
 		tickLabel = new JLabel("");
 		tickLabel.setMinimumSize(new Dimension(100, 80));
 
-		synchButton.setActionCommand("synchronize");
+//		synchButton.setActionCommand("synchronize");
 		startButton.setActionCommand("start");
 		setupButton.setActionCommand("setup");
 		
-		synchButton.addActionListener(this);
+//		synchButton.addActionListener(this);
 		startButton.addActionListener(this);
 		setupButton.addActionListener(this);
 
@@ -69,7 +68,7 @@ public class SparkControlPanel extends JPanel implements ISparkPanel, ActionList
 		framesPerSecond.setLabelTable(labelTable);
 
 		this.add(framesPerSecond);
-		this.add(synchButton);
+//		this.add(synchButton);
 		this.add(setupButton);
 		this.add(startButton);
 		this.add(tickLabel);

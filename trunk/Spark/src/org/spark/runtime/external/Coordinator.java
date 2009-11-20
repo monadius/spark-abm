@@ -12,6 +12,7 @@ import org.spark.modelfile.ModelFileLoader;
 import org.spark.runtime.commands.*;
 import org.spark.runtime.data.DataCollectorDescription;
 import org.spark.runtime.data.DataObject;
+import org.spark.runtime.data.DataObject_State;
 import org.spark.runtime.external.data.LocalDataReceiver;
 import org.spark.runtime.external.gui.*;
 import org.spark.runtime.external.gui.menu.SparkMenu;
@@ -174,6 +175,15 @@ public class Coordinator {
 		return receiver.getMostRecentData(type, name);
 	}
 	
+	
+	/**
+	 * Returns the initial state of the current simulation
+	 * @return
+	 */
+	public DataObject_State getInitialState() {
+		return receiver.getInitialState();
+	}
+	
 
 	/**
 	 * Initial properties of random generator for the next simulation
@@ -181,6 +191,9 @@ public class Coordinator {
 	 * @return
 	 */
 	public long getRandomSeed() {
+		if (receiver.getInitialState() != null)
+			return receiver.getInitialState().getSeed();
+		
 		return randomSeed;
 	}
 
@@ -259,11 +272,15 @@ public class Coordinator {
 	public void setSimulationDelayTime(int time) {
 		this.delayTime = time;
 		
-		if (modelXmlFile != null && time >= 0)
+		if (modelXmlFile != null && time >= 0) {
 			modelManager.sendCommand(new Command_SetDelay(time));
+			receiver.setCollectionInterval("render", 1);
+		}
 		
 		if (time < 0) {
 			receiver.setCollectionInterval("render", -time);
+			if (modelXmlFile != null)
+				modelManager.sendCommand(new Command_SetDelay(0));
 		}
 	}
 	
