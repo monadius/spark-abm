@@ -1,0 +1,19 @@
+@observer(mode = "concurrent")
+model ConcurrentModel
+
+
+space GridSpace -10 10 -10 10 false false
+
+
+global data : grid
+
+
+to setup
+	ask create Agent1 10
+	[
+		set-random-position
+		hatch-one Agent2
+	]
+	
+	data.set-value 1
+end

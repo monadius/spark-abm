@@ -16,9 +16,6 @@ global central-force-coefficient : number
 @parameter(name = "Collision Coefficient", default = 50, min = 0, max = 100, step = 1)
 global collision-coefficient
 
-@parameter(name = "Parallel mode")
-global parallel-mode : boolean
-
 @parameter(name = "dt", min = 0.01, max = 0.2, step = 0.01, default = 0.05)
 global dt : double
 
@@ -27,9 +24,6 @@ global initial-agent-number
 
 
 to begin-step
-        ifelse parallel-mode
-        [ set-parallel-execution-mode ]
-        [ set-serial-execution-mode ]
 end
 
 
