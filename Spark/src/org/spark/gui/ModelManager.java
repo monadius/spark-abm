@@ -717,7 +717,8 @@ public class ModelManager extends GUIModelManager {
 						serializeState(tick);
 					}
 					
-					model.synchronizeMethods();
+					if (model.synchronizeMethods())
+						updateData();
 					// TODO: is it a good idea to put synchronization here?
 					// The problem can be with variables for which
 					// values are computed (the number of agents).

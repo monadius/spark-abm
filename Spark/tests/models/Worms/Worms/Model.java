@@ -25,7 +25,7 @@ public class Model extends SparkModel
 	public void _init()
 	{
 		Model.food = 0.0;
-		Model.medium = Observer.getDefaultSpace().addDataLayer("medium", new Grid((int)(60.0), (int)(60.0)));
+		Model.medium = Observer.getDefaultSpace().addDataLayer("medium", GridFactory.createGrid((int)(60.0), (int)(60.0)));
 	}
 	
 	public boolean end(long tick)

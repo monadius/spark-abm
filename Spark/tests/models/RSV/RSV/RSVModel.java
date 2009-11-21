@@ -43,11 +43,11 @@ public class RSVModel extends SparkModel
 		RSVModel.virusNumber = 0.0;
 		RSVModel.macrophageNumber = 0.0;
 		RSVModel.neutrophilNumber = 0.0;
-		RSVModel.chemokine = Observer.getDefaultSpace().addDataLayer("chemokine", new Grid((int)(((BoundedSpace) Observer.getDefaultSpace()).getXSize()), (int)(((BoundedSpace) Observer.getDefaultSpace()).getYSize())));
-		RSVModel.il8 = Observer.getDefaultSpace().addDataLayer("il8", new Grid((int)(((BoundedSpace) Observer.getDefaultSpace()).getXSize()), (int)(((BoundedSpace) Observer.getDefaultSpace()).getYSize())));
-		RSVModel.il9 = Observer.getDefaultSpace().addDataLayer("il9", new Grid((int)(((BoundedSpace) Observer.getDefaultSpace()).getXSize()), (int)(((BoundedSpace) Observer.getDefaultSpace()).getYSize())));
-		RSVModel.pro = Observer.getDefaultSpace().addDataLayer("pro", new Grid((int)(((BoundedSpace) Observer.getDefaultSpace()).getXSize()), (int)(((BoundedSpace) Observer.getDefaultSpace()).getYSize())));
-		RSVModel.anti = Observer.getDefaultSpace().addDataLayer("anti", new Grid((int)(((BoundedSpace) Observer.getDefaultSpace()).getXSize()), (int)(((BoundedSpace) Observer.getDefaultSpace()).getYSize())));
+		RSVModel.chemokine = Observer.getDefaultSpace().addDataLayer("chemokine", GridFactory.createGrid((int)(((BoundedSpace) Observer.getDefaultSpace()).getXSize()), (int)(((BoundedSpace) Observer.getDefaultSpace()).getYSize())));
+		RSVModel.il8 = Observer.getDefaultSpace().addDataLayer("il8", GridFactory.createGrid((int)(((BoundedSpace) Observer.getDefaultSpace()).getXSize()), (int)(((BoundedSpace) Observer.getDefaultSpace()).getYSize())));
+		RSVModel.il9 = Observer.getDefaultSpace().addDataLayer("il9", GridFactory.createGrid((int)(((BoundedSpace) Observer.getDefaultSpace()).getXSize()), (int)(((BoundedSpace) Observer.getDefaultSpace()).getYSize())));
+		RSVModel.pro = Observer.getDefaultSpace().addDataLayer("pro", GridFactory.createGrid((int)(((BoundedSpace) Observer.getDefaultSpace()).getXSize()), (int)(((BoundedSpace) Observer.getDefaultSpace()).getYSize())));
+		RSVModel.anti = Observer.getDefaultSpace().addDataLayer("anti", GridFactory.createGrid((int)(((BoundedSpace) Observer.getDefaultSpace()).getXSize()), (int)(((BoundedSpace) Observer.getDefaultSpace()).getYSize())));
 	}
 	
 	public boolean end(long tick)

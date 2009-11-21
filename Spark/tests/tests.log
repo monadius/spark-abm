@@ -2806,3 +2806,516 @@ DATA: OK
 RUN: Observer = Observer1; length = 1000; seed = 30002300; mode = serial; all data = true
 END: time = 4704
 DATA: OK
+
+MODEL: StemCellModel.xml; MainClass = StemCellWithPhysAgents.StemCellModel
+RUN: Observer = Observer2; length = 300; seed = 0; mode = serial; all data = false
+END: time = 218
+DATA: OK
+RUN: Observer = Observer1; length = 300; seed = 1; mode = serial; all data = false
+END: time = 188
+DATA: OK
+RUN: Observer = Observer2; length = 300; seed = 0; mode = serial; all data = true
+END: time = 203
+DATA: OK
+
+MODEL: RSVModel.xml; MainClass = RSV.RSVModel
+RUN: Observer = Observer1; length = 100; seed = 100; mode = serial; all data = false
+END: time = 391
+DATA: OK
+RUN: Observer = Observer2; length = 100; seed = 100; mode = serial; all data = false
+END: time = 390
+DATA: OK
+RUN: Observer = Observer1; length = 100; seed = 30; mode = serial; all data = true
+END: time = 391
+DATA: OK
+
+MODEL: Model.xml; MainClass = Worms.Model
+RUN: Observer = Observer1; length = 500; seed = 300; mode = serial; all data = false
+END: time = 94
+DATA: OK
+RUN: Observer = Observer2; length = 500; seed = 300; mode = serial; all data = false
+END: time = 94
+DATA: OK
+RUN: Observer = Observer1; length = 500; seed = 300000; mode = serial; all data = true
+END: time = 109
+DATA: OK
+
+MODEL: GameOfLifeModel.xml; MainClass = GameOfLife.GameOfLifeModel
+RUN: Observer = Observer1; length = 100; seed = 1111; mode = parallel; all data = false
+END: time = 547
+DATA: OK
+RUN: Observer = Observer2; length = 100; seed = 1111; mode = parallel; all data = false
+END: time = 437
+DATA: OK
+RUN: Observer = Observer1; length = 100; seed = 33340; mode = parallel; all data = true
+END: time = 516
+DATA: OK
+
+MODEL: StemCellModel.xml; MainClass = StemCellWithPhysAgents.StemCellModel
+RUN: Observer = Observer2; length = 300; seed = 0; mode = serial; all data = false
+END: time = 250
+DATA: OK
+RUN: Observer = Observer1; length = 300; seed = 1; mode = serial; all data = false
+END: time = 188
+DATA: OK
+RUN: Observer = Observer2; length = 300; seed = 0; mode = serial; all data = true
+END: time = 203
+DATA: OK
+
+MODEL: RSVModel.xml; MainClass = RSV.RSVModel
+RUN: Observer = Observer1; length = 100; seed = 100; mode = serial; all data = false
+END: time = 391
+DATA: OK
+RUN: Observer = Observer2; length = 100; seed = 100; mode = serial; all data = false
+END: time = 391
+DATA: OK
+RUN: Observer = Observer1; length = 100; seed = 30; mode = serial; all data = true
+END: time = 406
+DATA: OK
+
+MODEL: Model.xml; MainClass = Worms.Model
+RUN: Observer = Observer1; length = 500; seed = 300; mode = serial; all data = false
+END: time = 93
+DATA: OK
+RUN: Observer = Observer2; length = 500; seed = 300; mode = serial; all data = false
+END: time = 94
+DATA: OK
+RUN: Observer = Observer1; length = 500; seed = 300000; mode = serial; all data = true
+END: time = 109
+DATA: OK
+
+MODEL: GameOfLifeModel.xml; MainClass = GameOfLife.GameOfLifeModel
+RUN: Observer = Observer1; length = 100; seed = 1111; mode = parallel; all data = false
+END: time = 547
+DATA: OK
+RUN: Observer = Observer2; length = 100; seed = 1111; mode = parallel; all data = false
+END: time = 453
+DATA: OK
+RUN: Observer = Observer1; length = 100; seed = 33340; mode = parallel; all data = true
+END: time = 532
+DATA: OK
+
+MODEL: RSV Bronchiole Model.xml; MainClass = RSV_bronchiole.RSVModel
+RUN: Observer = Observer1; length = 1000; seed = 3003; mode = serial; all data = false
+END: time = 4750
+DATA: OK
+RUN: Observer = Observer2; length = 1000; seed = 3003; mode = serial; all data = false
+END: time = 4875
+DATA: OK
+RUN: Observer = Observer1; length = 1000; seed = 30002300; mode = serial; all data = true
+END: time = 4625
+DATA: OK
+
+MODEL: StemCellModel.xml; MainClass = StemCellWithPhysAgents.StemCellModel
+RUN: Observer = Observer2; length = 300; seed = 0; mode = serial; all data = false
+END: time = 234
+DATA: OK
+RUN: Observer = Observer1; length = 300; seed = 1; mode = serial; all data = false
+END: time = 188
+DATA: OK
+RUN: Observer = Observer2; length = 300; seed = 0; mode = serial; all data = true
+END: time = 235
+DATA: OK
+
+MODEL: RSVModel.xml; MainClass = RSV.RSVModel
+RUN: Observer = Observer1; length = 100; seed = 100; mode = serial; all data = false
+END: time = 375
+DATA: OK
+RUN: Observer = Observer2; length = 100; seed = 100; mode = serial; all data = false
+END: time = 391
+DATA: OK
+RUN: Observer = Observer1; length = 100; seed = 30; mode = serial; all data = true
+END: time = 422
+DATA: OK
+
+MODEL: Model.xml; MainClass = Worms.Model
+RUN: Observer = Observer1; length = 500; seed = 300; mode = serial; all data = false
+END: time = 94
+DATA: OK
+RUN: Observer = Observer2; length = 500; seed = 300; mode = serial; all data = false
+END: time = 62
+DATA: OK
+RUN: Observer = Observer1; length = 500; seed = 300000; mode = serial; all data = true
+END: time = 109
+DATA: OK
+
+MODEL: GameOfLifeModel.xml; MainClass = GameOfLife.GameOfLifeModel
+RUN: Observer = Observer1; length = 100; seed = 1111; mode = parallel; all data = false
+END: time = 578
+DATA: OK
+RUN: Observer = Observer2; length = 100; seed = 1111; mode = parallel; all data = false
+END: time = 453
+DATA: OK
+RUN: Observer = Observer1; length = 100; seed = 33340; mode = parallel; all data = true
+END: time = 485
+DATA: OK
+
+MODEL: CreateDieA.xml; MainClass = org.spark.test.basictests.CreateDieA
+RUN: Observer = Observer1; length = 100; seed = 10; mode = serial; all data = false
+END: time = 484
+DATA: OK
+RUN: Observer = Observer2; length = 100; seed = 10; mode = serial; all data = false
+END: time = 47
+DATA: OK
+RUN: Observer = Observer2; length = 100; seed = 3; mode = serial; all data = true
+END: time = 47
+DATA: OK
+
+MODEL: CreateDieB.xml; MainClass = org.spark.test.basictests.CreateDieB
+RUN: Observer = Observer1; length = 100; seed = 10; mode = serial; all data = false
+END: time = 578
+DATA: OK
+RUN: Observer = Observer2; length = 100; seed = 10; mode = serial; all data = false
+END: time = 47
+DATA: OK
+RUN: Observer = Observer2; length = 100; seed = 3; mode = serial; all data = true
+END: time = 63
+DATA: OK
+
+MODEL: EvaporationAndDiffusion.xml; MainClass = org.spark.test.basictests.EvaporationAndDiffusion
+RUN: Observer = Observer2; length = 100; seed = 1000; mode = serial; all data = false
+END: time = 47
+DATA: OK
+RUN: Observer = Observer1; length = 100; seed = 300; mode = serial; all data = true
+END: time = 47
+DATA: OK
+
+MODEL: MultipleSpaces.xml; MainClass = org.spark.test.basictests.MultipleSpaces
+RUN: Observer = Observer1; length = 20; seed = 10; mode = serial; all data = false
+END: time = 1203
+DATA: OK
+RUN: Observer = Observer2; length = 20; seed = 10; mode = serial; all data = false
+END: time = 1172
+DATA: OK
+RUN: Observer = Observer1; length = 20; seed = 3; mode = serial; all data = true
+END: time = 1141
+DATA: OK
+
+MODEL: ToyInfectionModel.xml; MainClass = org.spark.test.basictests.ToyInfectionModel
+RUN: Observer = Observer1; length = 200; seed = 10; mode = serial; all data = false
+END: time = 766
+DATA: OK
+RUN: Observer = Observer2; length = 200; seed = 10; mode = serial; all data = false
+END: time = 1031
+DATA: OK
+RUN: Observer = Observer1; length = 200; seed = 3; mode = serial; all data = true
+END: time = 906
+DATA: OK
+
+MODEL: RSV Bronchiole Model.xml; MainClass = RSV_bronchiole.RSVModel
+
+MODEL: StemCellModel.xml; MainClass = StemCellWithPhysAgents.StemCellModel
+RUN: Observer = Observer2; length = 300; seed = 0; mode = serial; all data = false
+END: time = 250
+DATA: OK
+RUN: Observer = Observer1; length = 300; seed = 1; mode = serial; all data = false
+END: time = 203
+DATA: OK
+RUN: Observer = Observer2; length = 300; seed = 0; mode = serial; all data = true
+END: time = 250
+DATA: OK
+
+MODEL: RSVModel.xml; MainClass = RSV.RSVModel
+RUN: Observer = Observer1; length = 100; seed = 100; mode = serial; all data = false
+END: time = 390
+DATA: OK
+RUN: Observer = Observer2; length = 100; seed = 100; mode = serial; all data = false
+END: time = 391
+DATA: OK
+RUN: Observer = Observer1; length = 100; seed = 30; mode = serial; all data = true
+END: time = 437
+DATA: OK
+
+MODEL: Model.xml; MainClass = Worms.Model
+RUN: Observer = Observer1; length = 500; seed = 300; mode = serial; all data = false
+END: time = 94
+DATA: OK
+RUN: Observer = Observer2; length = 500; seed = 300; mode = serial; all data = false
+END: time = 94
+DATA: OK
+RUN: Observer = Observer1; length = 500; seed = 300000; mode = serial; all data = true
+END: time = 109
+DATA: OK
+
+MODEL: GameOfLifeModel.xml; MainClass = GameOfLife.GameOfLifeModel
+RUN: Observer = Observer1; length = 100; seed = 1111; mode = parallel; all data = false
+END: time = 547
+DATA: OK
+RUN: Observer = Observer2; length = 100; seed = 1111; mode = parallel; all data = false
+END: time = 454
+DATA: OK
+RUN: Observer = Observer1; length = 100; seed = 33340; mode = parallel; all data = true
+END: time = 484
+DATA: OK
+
+MODEL: RSV Bronchiole Model.xml; MainClass = RSV_bronchiole.RSVModel
+RUN: Observer = Observer1; length = 1000; seed = 3003; mode = serial; all data = false
+END: time = 5156
+DATA: OK
+RUN: Observer = Observer2; length = 1000; seed = 3003; mode = serial; all data = false
+END: time = 4890
+DATA: OK
+RUN: Observer = Observer1; length = 1000; seed = 30002300; mode = serial; all data = true
+END: time = 4593
+DATA: OK
+
+MODEL: RSV Bronchiole Model.xml; MainClass = RSV_bronchiole.RSVModel
+RUN: Observer = Observer1; length = 1000; seed = 3003; mode = serial; all data = false
+END: time = 5282
+DATA: OK
+RUN: Observer = Observer2; length = 1000; seed = 3003; mode = serial; all data = false
+END: time = 4984
+DATA: OK
+RUN: Observer = Observer1; length = 1000; seed = 30002300; mode = serial; all data = true
+END: time = 4781
+DATA: OK
+
+MODEL: RSV Bronchiole Model.xml; MainClass = RSV_bronchiole.RSVModel
+RUN: Observer = Observer1; length = 1000; seed = 3003; mode = serial; all data = false
+END: time = 4781
+DATA: OK
+RUN: Observer = Observer2; length = 1000; seed = 3003; mode = serial; all data = false
+END: time = 4938
+DATA: OK
+RUN: Observer = Observer1; length = 1000; seed = 30002300; mode = serial; all data = true
+END: time = 4594
+DATA: OK
+
+MODEL: RSV Bronchiole Model.xml; MainClass = RSV_bronchiole.RSVModel
+RUN: Observer = Observer1; length = 1000; seed = 3003; mode = serial; all data = false
+END: time = 4734
+DATA: OK
+RUN: Observer = Observer2; length = 1000; seed = 3003; mode = serial; all data = false
+END: time = 4906
+DATA: OK
+RUN: Observer = Observer1; length = 1000; seed = 30002300; mode = serial; all data = true
+END: time = 4609
+DATA: OK
+
+MODEL: StemCellModel.xml; MainClass = StemCellWithPhysAgents.StemCellModel
+RUN: Observer = Observer2; length = 300; seed = 0; mode = serial; all data = false
+END: time = 250
+DATA: OK
+RUN: Observer = Observer1; length = 300; seed = 1; mode = serial; all data = false
+END: time = 188
+DATA: OK
+RUN: Observer = Observer2; length = 300; seed = 0; mode = serial; all data = true
+END: time = 219
+DATA: OK
+
+MODEL: RSVModel.xml; MainClass = RSV.RSVModel
+RUN: Observer = Observer1; length = 100; seed = 100; mode = serial; all data = false
+END: time = 375
+DATA: OK
+RUN: Observer = Observer2; length = 100; seed = 100; mode = serial; all data = false
+END: time = 360
+DATA: OK
+RUN: Observer = Observer1; length = 100; seed = 30; mode = serial; all data = true
+END: time = 391
+DATA: OK
+
+MODEL: Model.xml; MainClass = Worms.Model
+RUN: Observer = Observer1; length = 500; seed = 300; mode = serial; all data = false
+END: time = 93
+DATA: OK
+RUN: Observer = Observer2; length = 500; seed = 300; mode = serial; all data = false
+END: time = 79
+DATA: OK
+RUN: Observer = Observer1; length = 500; seed = 300000; mode = serial; all data = true
+END: time = 109
+DATA: OK
+
+MODEL: GameOfLifeModel.xml; MainClass = GameOfLife.GameOfLifeModel
+RUN: Observer = Observer1; length = 100; seed = 1111; mode = parallel; all data = false
+END: time = 516
+DATA: OK
+RUN: Observer = Observer2; length = 100; seed = 1111; mode = parallel; all data = false
+END: time = 437
+DATA: OK
+RUN: Observer = Observer1; length = 100; seed = 33340; mode = parallel; all data = true
+END: time = 500
+DATA: OK
+
+MODEL: CreateDieA.xml; MainClass = org.spark.test.basictests.CreateDieA
+RUN: Observer = Observer1; length = 100; seed = 10; mode = serial; all data = false
+END: time = 484
+DATA: OK
+RUN: Observer = Observer2; length = 100; seed = 10; mode = serial; all data = false
+END: time = 46
+DATA: OK
+RUN: Observer = Observer2; length = 100; seed = 3; mode = serial; all data = true
+END: time = 47
+DATA: OK
+
+MODEL: CreateDieB.xml; MainClass = org.spark.test.basictests.CreateDieB
+RUN: Observer = Observer1; length = 100; seed = 10; mode = serial; all data = false
+END: time = 579
+DATA: OK
+RUN: Observer = Observer2; length = 100; seed = 10; mode = serial; all data = false
+END: time = 32
+DATA: OK
+RUN: Observer = Observer2; length = 100; seed = 3; mode = serial; all data = true
+END: time = 62
+DATA: OK
+
+MODEL: EvaporationAndDiffusion.xml; MainClass = org.spark.test.basictests.EvaporationAndDiffusion
+RUN: Observer = Observer2; length = 100; seed = 1000; mode = serial; all data = false
+END: time = 63
+DATA: OK
+RUN: Observer = Observer1; length = 100; seed = 300; mode = serial; all data = true
+END: time = 63
+DATA: OK
+
+MODEL: MultipleSpaces.xml; MainClass = org.spark.test.basictests.MultipleSpaces
+RUN: Observer = Observer1; length = 20; seed = 10; mode = serial; all data = false
+END: time = 1219
+DATA: OK
+RUN: Observer = Observer2; length = 20; seed = 10; mode = serial; all data = false
+END: time = 1188
+DATA: OK
+RUN: Observer = Observer1; length = 20; seed = 3; mode = serial; all data = true
+END: time = 1109
+DATA: OK
+
+MODEL: ToyInfectionModel.xml; MainClass = org.spark.test.basictests.ToyInfectionModel
+RUN: Observer = Observer1; length = 200; seed = 10; mode = serial; all data = false
+END: time = 766
+DATA: OK
+RUN: Observer = Observer2; length = 200; seed = 10; mode = serial; all data = false
+END: time = 1047
+DATA: OK
+RUN: Observer = Observer1; length = 200; seed = 3; mode = serial; all data = true
+END: time = 828
+DATA: OK
+
+MODEL: RSV Bronchiole Model.xml; MainClass = RSV_bronchiole.RSVModel
+RUN: Observer = Observer1; length = 1000; seed = 3003; mode = serial; all data = false
+END: time = 4875
+RUN: Observer = Observer2; length = 1000; seed = 3003; mode = serial; all data = false
+END: time = 4922
+
+MODEL: ToyInfectionModel.xml; MainClass = org.spark.test.basictests.ToyInfectionModel
+RUN: Observer = Observer1; length = 1000; seed = 10; mode = serial; all data = false
+END: time = 3000
+RUN: Observer = Observer2; length = 1000; seed = 10; mode = serial; all data = false
+END: time = 3500
+
+MODEL: StemCellModel.xml; MainClass = StemCellWithPhysAgents.StemCellModel
+RUN: Observer = Observer1; length = 3000; seed = 1; mode = serial; all data = false
+END: time = 3390
+RUN: Observer = Observer2; length = 3000; seed = 0; mode = serial; all data = false
+END: time = 2485
+
+MODEL: RSVModel.xml; MainClass = RSV.RSVModel
+RUN: Observer = Observer1; length = 1000; seed = 100; mode = serial; all data = false
+END: time = 3766
+RUN: Observer = Observer2; length = 1000; seed = 100; mode = serial; all data = false
+END: time = 3734
+
+MODEL: RSVModel.xml; MainClass = RSV.RSVModel
+RUN: Observer = Observer1; length = 1000; seed = 100; mode = serial; all data = false
+END: time = 3734
+RUN: Observer = Observer2; length = 1000; seed = 100; mode = serial; all data = false
+END: time = 3766
+RUN: Observer = Observer1; length = 1000; seed = 100; mode = concurrent; all data = false
+END: time = 3969
+RUN: Observer = Observer1; length = 1000; seed = 100; mode = parallel; all data = false
+END: time = 4093
+
+MODEL: RSVModel.xml; MainClass = RSV.RSVModel
+RUN: Observer = Observer1; length = 1000; seed = 100; mode = serial; all data = false
+END: time = 3703
+RUN: Observer = Observer2; length = 1000; seed = 100; mode = serial; all data = false
+END: time = 3734
+RUN: Observer = Observer1; length = 1000; seed = 100; mode = concurrent; all data = false
+END: time = 3938
+RUN: Observer = Observer1; length = 1000; seed = 100; mode = parallel; all data = false
+END: time = 4015
+
+MODEL: RSVModel.xml; MainClass = RSV.RSVModel
+RUN: Observer = Observer1; length = 1000; seed = 100; mode = serial; all data = false
+END: time = 3734
+RUN: Observer = Observer2; length = 1000; seed = 100; mode = serial; all data = false
+END: time = 3781
+RUN: Observer = Observer1; length = 1000; seed = 100; mode = concurrent; all data = false
+END: time = 3938
+RUN: Observer = Observer1; length = 1000; seed = 100; mode = parallel; all data = false
+END: time = 4015
+
+MODEL: RSVModel.xml; MainClass = RSV.RSVModel
+RUN: Observer = Observer1; length = 1000; seed = 100; mode = serial; all data = false
+END: time = 3688
+RUN: Observer = Observer2; length = 1000; seed = 100; mode = serial; all data = false
+END: time = 3703
+RUN: Observer = Observer1; length = 1000; seed = 100; mode = concurrent; all data = false
+END: time = 3969
+
+MODEL: RSVModel.xml; MainClass = RSV.RSVModel
+RUN: Observer = Observer1; length = 1000; seed = 100; mode = serial; all data = false
+END: time = 3594
+RUN: Observer = Observer2; length = 1000; seed = 100; mode = serial; all data = false
+END: time = 3641
+RUN: Observer = Observer1; length = 1000; seed = 100; mode = concurrent; all data = false
+END: time = 3953
+RUN: Observer = ObserverParallel; length = 1000; seed = 100; mode = parallel; all data = false
+END: time = 3297
+
+MODEL: RSVModel.xml; MainClass = RSV.RSVModel
+RUN: Observer = Observer1; length = 1000; seed = 100; mode = serial; all data = false
+END: time = 3625
+RUN: Observer = Observer2; length = 1000; seed = 100; mode = serial; all data = false
+END: time = 3625
+RUN: Observer = Observer1; length = 1000; seed = 100; mode = concurrent; all data = false
+END: time = 3969
+RUN: Observer = ObserverParallel; length = 1000; seed = 100; mode = parallel; all data = false
+END: time = 3266
+
+MODEL: RSV Bronchiole Model.xml; MainClass = RSV_bronchiole.RSVModel
+RUN: Observer = Observer1; length = 1000; seed = 3003; mode = serial; all data = false
+END: time = 4859
+RUN: Observer = Observer1; length = 1000; seed = 100; mode = concurrent; all data = false
+END: time = 6500
+
+MODEL: StemCellModel.xml; MainClass = StemCellWithPhysAgents.StemCellModel
+RUN: Observer = Observer2; length = 300; seed = 0; mode = serial; all data = false
+END: time = 234
+DATA: OK
+RUN: Observer = Observer1; length = 300; seed = 1; mode = serial; all data = false
+END: time = 188
+DATA: OK
+RUN: Observer = Observer2; length = 300; seed = 0; mode = serial; all data = true
+END: time = 235
+DATA: OK
+
+MODEL: RSVModel.xml; MainClass = RSV.RSVModel
+RUN: Observer = Observer1; length = 100; seed = 100; mode = serial; all data = false
+END: time = 390
+DATA: OK
+RUN: Observer = Observer2; length = 100; seed = 100; mode = serial; all data = false
+END: time = 391
+DATA: OK
+RUN: Observer = Observer1; length = 100; seed = 30; mode = serial; all data = true
+END: time = 407
+DATA: OK
+
+MODEL: Model.xml; MainClass = Worms.Model
+RUN: Observer = Observer1; length = 500; seed = 300; mode = serial; all data = false
+END: time = 94
+DATA: OK
+RUN: Observer = Observer2; length = 500; seed = 300; mode = serial; all data = false
+END: time = 78
+DATA: OK
+RUN: Observer = Observer1; length = 500; seed = 300000; mode = serial; all data = true
+END: time = 109
+DATA: OK
+
+MODEL: GameOfLifeModel.xml; MainClass = GameOfLife.GameOfLifeModel
+RUN: Observer = Observer1; length = 100; seed = 1111; mode = parallel; all data = false
+END: time = 547
+DATA: OK
+RUN: Observer = Observer2; length = 100; seed = 1111; mode = parallel; all data = false
+END: time = 437
+DATA: OK
+RUN: Observer = Observer1; length = 100; seed = 33340; mode = parallel; all data = true
+END: time = 468
+DATA: OK

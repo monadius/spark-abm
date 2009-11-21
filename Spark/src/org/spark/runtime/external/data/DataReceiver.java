@@ -97,6 +97,7 @@ public abstract class DataReceiver {
 	 */
 	public synchronized void removeAllConsumers() {
 		consumers.clear();
+		initialState = null;
 	}
 	
 	
