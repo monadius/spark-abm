@@ -63,6 +63,10 @@ public class Coordinator {
 	private ProxyVariableCollection variables;
 	/* Collection of parameters in a loaded model */
 	private ParameterCollection parameters;
+	
+	/* Names of external methods */
+	private final ArrayList<String> methods;
+	
 	/* Styles of all data layers */
 	private final HashMap<String, DataLayerStyle> dataLayerStyles;
 	/* Type names and names of agents */
@@ -103,6 +107,7 @@ public class Coordinator {
 
 		this.dataLayerStyles = new HashMap<String, DataLayerStyle>();
 		this.agentTypesAndNames = new HashMap<String, String>();
+		this.methods = new ArrayList<String>();
 		
 		this.windowManager = new Swing_WindowManager();
 		SparkMenu mainMenu = StandardMenu.create(windowManager);
@@ -245,6 +250,16 @@ public class Coordinator {
 		modelManager
 				.sendCommand(new Command_SetVariableValue(varName, newValue));
 	}
+	
+	
+	/**
+	 * Invokes the given external model method
+	 * @param methodName
+	 */
+	public void invokeMethod(String methodName) {
+		modelManager.sendCommand(new Command_InvokeMethod(methodName));
+	}
+	
 
 	/**
 	 * Adds a data collector
@@ -358,6 +373,24 @@ public class Coordinator {
 			if (list.getLength() >= 1) {
 				VariableSetFactory.loadVariableSets(list.item(0));
 			}
+			
+			/* Load methods */
+			methods.clear();
+			
+			list = xmlDoc.getElementsByTagName("method");
+			for (int i = 0; i < list.getLength(); i++) {
+				Node node = list.item(i);
+				String name = XmlDocUtils.getValue(node, "name", null);
+				String methodName = XmlDocUtils.getValue(node, "method", null);
+				
+				if (methodName == null)
+					continue;
+				
+				if (name == null)
+					name = methodName;
+				
+				methods.add(name);
+			}
 
 			/* Collect agents */
 			agentTypesAndNames.clear();
@@ -435,6 +468,12 @@ public class Coordinator {
 		for (Node chart : list) {
 			SparkChartPanel chartPanel = new SparkChartPanel(windowManager, chart);
 			receiver.addDataConsumer(chartPanel.getDataFilter());
+		}
+		
+		/* Load methods */
+		Node methodsNode = XmlDocUtils.getChildByTagName(interfaceNode, "methods-panel");
+		if (methodsNode != null) {
+			new SparkMethodPanel(windowManager, methodsNode, methods);
 		}
 	}
 	

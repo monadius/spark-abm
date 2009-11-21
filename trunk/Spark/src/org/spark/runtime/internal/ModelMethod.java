@@ -3,7 +3,6 @@ package org.spark.runtime.internal;
 import java.lang.reflect.Method;
 
 import org.spark.core.SparkModel;
-import org.spark.gui.GUIModelManager;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
@@ -88,15 +87,17 @@ public class ModelMethod {
 	/**
 	 * Invokes method
 	 * @throws Exception
+	 * @return true if a method was invoked
 	 */
-	public synchronized void synchronize(SparkModel model) throws Exception {
-		for (int i = 0; i < callsCount; i++) {
+	public synchronized boolean synchronize(SparkModel model) throws Exception {
+		boolean flag = callsCount > 0;
+		
+		while (callsCount > 0) {
+			callsCount--;
 			method.invoke(model);
-			// TODO: remove later
-			GUIModelManager.getInstance().requestUpdate();
 		}
 		
-		callsCount = 0;
+		return flag;
 	}
 	
 

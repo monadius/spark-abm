@@ -94,6 +94,23 @@ class ModelConverter_1 extends ModelConverter {
 			if (name == "classpath" || name == "setup" || name == "agents"
 					|| name == "variables" || name == "methods") {
 				model.appendChild(node);
+				
+				// Special treatment of methods
+				if (name == "methods") {
+					Node methods = result.createElement("methods-panel");
+					int x = getIntegerValue(node, "x", 0);
+					int y = getIntegerValue(node, "y", 0);
+					int width = getIntegerValue(node, "width", 300);
+					int height = getIntegerValue(node, "height", 300);
+					
+					addAttr(result, methods, "x", x);
+					addAttr(result, methods, "y", y);
+					addAttr(result, methods, "width", width);
+					addAttr(result, methods, "height", height);
+					
+					interfaceNode.appendChild(methods);
+					processWindow(result, windows, methods, "methods", names);
+				}
 			} else {
 				interfaceNode.appendChild(node);
 
@@ -124,6 +141,8 @@ class ModelConverter_1 extends ModelConverter {
 			nodeName = "Dataset";
 		else if (name == "parameterframe")
 			nodeName = "Parameters";
+		else if (name == "methods")
+			nodeName = "Methods";
 		else if (name == "chart")
 			nodeName = getValue(node, "name", "Chart");
 		else if (name == "charts") {

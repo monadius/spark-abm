@@ -1,6 +1,7 @@
 package org.spark.runtime.commands;
 
 import org.spark.core.SparkModel;
+import org.spark.runtime.internal.ModelMethod;
 import org.spark.runtime.internal.engine.AbstractSimulationEngine;
 
 
@@ -24,7 +25,11 @@ public class Command_InvokeMethod extends ModelManagerCommand {
 	 * @param model
 	 * @throws Exception
 	 */
-	public void execute(SparkModel model, AbstractSimulationEngine engine) {
-		model.getMethod(methodName).invoke();
+	public void execute(SparkModel model, AbstractSimulationEngine engine) throws Exception {
+		ModelMethod method = model.getMethod(methodName);
+		if (method == null)
+			throw new Exception("Undefined method: " + methodName);
+		
+		method.invoke();
 	}
 }

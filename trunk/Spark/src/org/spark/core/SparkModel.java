@@ -126,17 +126,22 @@ public abstract class SparkModel {
 	
 	/**
 	 * Synchronizes method calls
+	 * @return true if any method was invoked
 	 */
-	public final void synchronizeMethods() {
+	public final boolean synchronizeMethods() {
+		boolean flag = false;
+		
 		for (ModelMethod method : methods.values()) {
 			try {
-				method.synchronize(this);
+				flag |= method.synchronize(this);
 			}
 			catch (Exception e) {
 				logger.error("Error during external method invokation: " + method.getName());
 				logger.error(e.getMessage());
 			}
 		}
+		
+		return flag;
 	}
 
 	
