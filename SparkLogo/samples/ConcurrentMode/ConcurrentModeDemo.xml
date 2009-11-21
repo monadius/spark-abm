@@ -1,0 +1,10 @@
+<spark-project>
+	<name>ConcurrentMode</name>
+	<project-directory>C:\Help\Alexey\My New Projects\Eclipse Projects\SparkLogo\samples\ConcurrentMode</project-directory>
+	<output-directory>output</output-directory>
+
+	<files>
+		<file>ConcurrentModel.spark</file>
+		<file>Agents.spark</file>
+	</files>
+</spark-project>

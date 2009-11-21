@@ -278,6 +278,15 @@
                         (@left + String.valueOf(@right))
                 </translation>
         </reporter>
+        
+        
+        <reporter name = "+" type = "string" infix = "true" precedence = "4">
+                <argument name = "left" type = "string" />
+                <argument name = "right" type = "vector" />
+                <translation>
+                        (@left + @right.toString())
+                </translation>
+        </reporter>
 
 
         <reporter name = "-" type = "double" infix = "true" precedence = "4">
