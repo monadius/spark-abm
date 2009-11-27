@@ -1,15 +1,6 @@
 <config>
-	<spark-path>C:\Help\Alexey\My New Projects\Eclipse Projects\Spark\release\spark.jar</spark-path>
+	<spark-path>C:\Work\My Projects\Eclipse\Spark\release\spark.jar</spark-path>
 	<recent-projects>
-		<file>C:\Help\Alexey\My New Projects\Eclipse Projects\SparkLogo\samples\Worms\Worms project.xml</file>
-		<file>C:\Help\Alexey\My New Projects\Eclipse Projects\SparkLogo\Models\StemCellWithPhysAgents\StemCell + PhysAgents.xml</file>
-		<file>C:\Help\Alexey\My New Projects\Eclipse Projects\SparkLogo\Models\RSV\RSV Project.xml</file>
-		<file>C:\Help\Alexey\My New Projects\Eclipse Projects\SparkLogo\samples\DFU\DFU project.xml</file>
-		<file>C:\Help\Alexey\My New Projects\Eclipse Projects\SparkLogo\Models\SCI2\SCI2 Project.xml</file>
-		<file>C:\Help\Alexey\My New Projects\Eclipse Projects\SparkLogo\Models\SCI3\SCI3 Project.xml</file>
-		<file>C:\Help\Alexey\My New Projects\SPARK-PL\RSV bronchiole\RSV bronchiole.xml</file>
-		<file>C:\Help\Alexey\My New Projects\Eclipse Projects\SparkLogo\samples\ConcurrentMode\ConcurrentModeDemo.xml</file>
-		<file>C:\Help\Alexey\My New Projects\Eclipse Projects\SparkLogo\samples\PhysModel2\Spark PhysModel2.xml</file>
-		<file>C:\Help\Alexey\My New Projects\Eclipse Projects\SparkLogo\Models\SMC Test\SMCTest.xml</file>
+		<file>C:\Work\My Projects\Eclipse\SparkLogo\Models\SMC v2\SMCTest.xml</file>
 	</recent-projects>
 </config>
