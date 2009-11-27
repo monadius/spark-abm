@@ -461,7 +461,7 @@ public class Coordinator {
 		
 		Node mainWindowRender = XmlDocUtils.getChildByTagName(interfaceNode, "mainframe");
 		if (mainWindowRender != null) {
-			new SparkViewPanel(windowManager, mainWindowRender, Render.JAVA_2D_RENDER);
+			new SparkViewPanel(windowManager, mainWindowRender, Render.JOGL_RENDER);
 		}
 		
 		/* Load the parameter panel */
