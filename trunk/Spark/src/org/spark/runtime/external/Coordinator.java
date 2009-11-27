@@ -13,6 +13,7 @@ import org.spark.runtime.commands.*;
 import org.spark.runtime.data.DataCollectorDescription;
 import org.spark.runtime.data.DataObject;
 import org.spark.runtime.data.DataObject_State;
+import org.spark.runtime.external.data.DataFilter;
 import org.spark.runtime.external.data.LocalDataReceiver;
 import org.spark.runtime.external.gui.*;
 import org.spark.runtime.external.gui.menu.SparkMenu;
@@ -28,7 +29,6 @@ import static org.spark.utils.XmlDocUtils.*;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import com.spinn3r.log5j.Logger;
 
@@ -63,9 +63,8 @@ public class Coordinator {
 	private ProxyVariableCollection variables;
 	/* Collection of parameters in a loaded model */
 	private ParameterCollection parameters;
-	
-	/* Names of external methods */
-	private final ArrayList<String> methods;
+	/* Collection of external methods */
+	private MethodCollection methods;
 	
 	/* Styles of all data layers */
 	private final HashMap<String, DataLayerStyle> dataLayerStyles;
@@ -91,6 +90,9 @@ public class Coordinator {
 	/*************** GUI ******************/
 	private final WindowManager windowManager;
 	
+	/* Control panel */
+	private SparkControlPanel controlPanel;
+	
 	/* List of all active renders */
 	private final ArrayList<Render> renders;
 	
@@ -107,7 +109,6 @@ public class Coordinator {
 
 		this.dataLayerStyles = new HashMap<String, DataLayerStyle>();
 		this.agentTypesAndNames = new HashMap<String, String>();
-		this.methods = new ArrayList<String>();
 		
 		this.windowManager = new Swing_WindowManager();
 		SparkMenu mainMenu = StandardMenu.create(windowManager);
@@ -127,7 +128,7 @@ public class Coordinator {
 		SparkWindow mainWindow = windowManager.getMainWindow();
 		mainWindow.setName("SPARK");
 		
-		SparkControlPanel controlPanel = new SparkControlPanel();
+		controlPanel = new SparkControlPanel();
 		mainWindow.addPanel(controlPanel, BorderLayout.NORTH);
 		
 		// Load config file
@@ -148,6 +149,24 @@ public class Coordinator {
 
 		coordinator = new Coordinator(manager, receiver);
 		coordinator.init();
+	}
+	
+	
+	/**
+	 * Disposes the coordinator: saves configuration changes, etc.
+	 */
+	public static void dispose() {
+		try {
+			if (coordinator != null) {
+				// TODO: wait until the simulation is completely stopped
+				coordinator.unloadModel();
+				coordinator.configFile.saveConfigFile();
+			}
+		}
+		catch (Exception e) {
+			logger.error(e);
+			e.printStackTrace();
+		}
 	}
 
 	
@@ -349,82 +368,71 @@ public class Coordinator {
 			modelManager.sendCommand(new Command_LoadLocalModel(modelFile,
 					currentDir));
 			modelManager.sendCommand(new Command_AddLocalDataSender(receiver));
-			// modelManager.sendCommand(new Command_AddDataCollector(
-			// new DataCollectorDescription(DataCollectorDescription.SPACES,
-			// null, 1)));
 
-			NodeList list;
+			// Root node
+			Node root = xmlDoc.getFirstChild();
+			
+			Node modelNode = XmlDocUtils.getChildByTagName(root, "model");
+			Node interfaceNode = XmlDocUtils.getChildByTagName(root, "interface");
+			
+			ArrayList<Node> list;
 
 			/* Load variables (for parameters) */
-			list = xmlDoc.getElementsByTagName("variables");
-			if (list.getLength() >= 1) {
-				variables = new ProxyVariableCollection(list.item(0));
+			list = XmlDocUtils.getChildrenByTagName(modelNode, "variables");
+			if (list.size() >= 1) {
+				variables = new ProxyVariableCollection(list.get(0));
 				variables.registerVariables(receiver);
 			}
 
 			/* Load parameters and variable sets */
 			parameters = new ParameterCollection();
-			list = xmlDoc.getElementsByTagName("parameterframe");
-			if (list.getLength() >= 1) {
-				parameters.loadParameters(list.item(0));
+			list = XmlDocUtils.getChildrenByTagName(interfaceNode, "parameterframe");
+			if (list.size() >= 1) {
+				parameters.loadParameters(list.get(0));
 			}
 
-			list = xmlDoc.getElementsByTagName("variable-sets");
-			if (list.getLength() >= 1) {
-				VariableSetFactory.loadVariableSets(list.item(0));
+			list = XmlDocUtils.getChildrenByTagName(interfaceNode, "variable-sets");
+			if (list.size() >= 1) {
+				VariableSetFactory.loadVariableSets(list.get(0));
 			}
 			
 			/* Load methods */
-			methods.clear();
-			
-			list = xmlDoc.getElementsByTagName("method");
-			for (int i = 0; i < list.getLength(); i++) {
-				Node node = list.item(i);
-				String name = XmlDocUtils.getValue(node, "name", null);
-				String methodName = XmlDocUtils.getValue(node, "method", null);
-				
-				if (methodName == null)
-					continue;
-				
-				if (name == null)
-					name = methodName;
-				
-				methods.add(name);
+			methods = new MethodCollection();
+			list = XmlDocUtils.getChildrenByTagName(modelNode, "methods");
+			if (list.size() >= 1) {
+				methods.loadMethods(list.get(0));
 			}
 
+			
 			/* Collect agents */
 			agentTypesAndNames.clear();
+			
+			Node agents = XmlDocUtils.getChildByTagName(modelNode, "agents");
+			if (agents != null) {
+				list = XmlDocUtils.getChildrenByTagName(agents, "agent");
+				for (int i = 0; i < list.size(); i++) {
+					Node node = list.get(i);
+					String typeName = node.getTextContent().trim();
+					String name = getValue(node, "name", null);
 
-			list = xmlDoc.getElementsByTagName("agent");
-			for (int i = 0; i < list.getLength(); i++) {
-				Node node = list.item(i);
-				String typeName = node.getTextContent().trim();
-				String name = getValue(node, "name", null);
-
-				agentTypesAndNames.put(typeName, name);
+					agentTypesAndNames.put(typeName, name);
+				}
 			}
+
 
 			/* Load data layer styles */
 			dataLayerStyles.clear();
 
-			list = xmlDoc.getElementsByTagName("datalayer");
-			for (int i = 0; i < list.getLength(); i++) {
-				Node node = list.item(i);
+			Node dataLayersNode = XmlDocUtils.getChildByTagName(interfaceNode, "data-layers");
+			list = XmlDocUtils.getChildrenByTagName(dataLayersNode, "datalayer");
+			for (int i = 0; i < list.size(); i++) {
+				Node node = list.get(i);
 				loadDataLayer(node);
-
-				// String name = getValue(node, "name", null);
-				// TODO: space name should be also specified somehow
-				// modelManager.sendCommand(new Command_AddDataCollector(
-				// new
-				// DataCollectorDescription(DataCollectorDescription.DATA_LAYER,
-				// name, 1)));
 			}
 
 			this.modelXmlFile = modelFile;
 			this.modelXmlDoc = xmlDoc;
 			
-			Node root = xmlDoc.getFirstChild();
-			Node interfaceNode = XmlDocUtils.getChildByTagName(root, "interface");
 			
 			if (interfaceNode != null) {
 				loadInterface(interfaceNode);
@@ -473,8 +481,19 @@ public class Coordinator {
 		/* Load methods */
 		Node methodsNode = XmlDocUtils.getChildByTagName(interfaceNode, "methods-panel");
 		if (methodsNode != null) {
-			new SparkMethodPanel(windowManager, methodsNode, methods);
+			new SparkMethodPanel(windowManager, methodsNode, methods.getNames());
 		}
+
+		/* Load a data set panel */
+		Node datasetNode = XmlDocUtils.getChildByTagName(interfaceNode, "dataset");
+		if (datasetNode != null) {
+			SparkDatasetPanel datasetPanel = new SparkDatasetPanel(windowManager, datasetNode);
+			receiver.addDataConsumer(datasetPanel.getDataFilter());
+		}
+
+		
+		/* Set up control panel */
+		receiver.addDataConsumer(new DataFilter(controlPanel, "state"));
 	}
 	
 
@@ -575,7 +594,8 @@ public class Coordinator {
 		}
 	}
 	
-
+	
+	
 	/**
 	 * Test main method
 	 * 

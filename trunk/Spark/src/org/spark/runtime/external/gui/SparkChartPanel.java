@@ -50,7 +50,7 @@ public class SparkChartPanel extends JPanel implements ActionListener, ISparkPan
 
 		dataFilter = new DataFilter(this, "variable");
 		
-		varName = XmlDocUtils.getValue(node, "name", null);
+		varName = XmlDocUtils.getValue(node, "variable", null);
 		int interval = XmlDocUtils.getIntegerValue(node, "interval", 1);
 		if (interval < 1)
 			interval = 1;

@@ -51,11 +51,7 @@ public class Swing_SparkWindow extends SparkWindow {
 			// TODO: stop the simulation and save GUI changes first
 			frame.addWindowListener(new WindowAdapter() {
 				public void windowClosing(WindowEvent e) {
-					Coordinator c = Coordinator.getInstance();
-					// TODO: make sure that everything is saved
-					if (c != null)
-						c.unloadModel();
-
+					Coordinator.dispose();
 					System.exit(0);
 				}
 			});

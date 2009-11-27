@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JMenuItem;
+import javax.swing.KeyStroke;
 
 /**
  * Swing implementation of the SparkMenuItem class
@@ -23,6 +24,17 @@ public class Swing_SparkMenuItem extends SparkMenuItem implements SwingMenu {
 		super(name, group);
 		item = new JMenuItem(name);		
 	}
+	
+	
+	/**
+	 * Sets the shortcut for the menu item
+	 * @param key
+	 * @param action
+	 */
+	public void setShortcut(int key, int action) {
+		item.setAccelerator(KeyStroke.getKeyStroke(key, action));
+	}
+
 	
 	
 	@Override
