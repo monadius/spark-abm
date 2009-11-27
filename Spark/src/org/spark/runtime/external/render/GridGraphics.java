@@ -9,6 +9,15 @@ import org.spark.utils.Vector;
  *
  */
 public class GridGraphics {
+	/**
+	 * Computes colors based on the given data object
+	 * @param data
+	 * @param val1
+	 * @param val2
+	 * @param color1
+	 * @param color2
+	 * @return
+	 */
 	public static Vector[][] getColors(DataObject_Grid data, double val1, double val2, Vector color1, Vector color2) {
 		int xSize = data.getXSize();
 		int ySize = data.getYSize();
@@ -49,4 +58,32 @@ public class GridGraphics {
 			
 		return colors;
 	}
+	
+	
+	/**
+	 * Computes vertex data from the given grid data
+	 * @param data
+	 * @param xMin
+	 * @param yMin
+	 * @return
+	 */
+	public static Vector[][] getGeometry(DataObject_Grid data, double xMin, double yMin) {
+		int xSize = data.getXSize();
+		int ySize = data.getYSize();
+		double xStep = data.getXStep();
+		double yStep = data.getYStep();
+		
+		Vector[][] geometry = new Vector[xSize][ySize];
+
+		double xStepHalf = xStep / 2;
+		double yStepHalf = yStep / 2;
+			
+		for (int i = 0; i < xSize; i++) {
+			for (int j = 0; j < ySize; j++) {
+				geometry[i][j] = new Vector(xMin + i*xStep + xStepHalf, yMin + j*yStep + yStepHalf, 0);
+			}
+		}
+			
+		return geometry;
+	}		
 }

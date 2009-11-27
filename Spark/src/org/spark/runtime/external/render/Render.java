@@ -423,11 +423,7 @@ public abstract class Render implements KeyListener, IDataConsumer {
 		Render render = null;
 		if (renderType == Render.JOGL_RENDER) {
 			try {
-//				if (Observer.getDefaultSpace() instanceof BoundedSpace3d)
-//					render = new org.spark.gui.render.JOGLRender3d();
-//				else
-//					render = new org.spark.gui.render.JOGLRender();
-				render = new JavaRender(interval);
+				render = new JOGLRender(interval);
 			} catch (Exception e) {
 				e.printStackTrace();
 				render = new JavaRender(interval);
