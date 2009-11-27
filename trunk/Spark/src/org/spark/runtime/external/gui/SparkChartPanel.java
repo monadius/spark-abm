@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.PrintStream;
 
 import javax.swing.JButton;
@@ -21,6 +22,7 @@ import org.spark.runtime.data.DataRow;
 import org.spark.runtime.external.data.DataFilter;
 import org.spark.runtime.external.data.IDataConsumer;
 import org.spark.utils.XmlDocUtils;
+import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 /**
@@ -233,6 +235,14 @@ public class SparkChartPanel extends JPanel implements ActionListener, ISparkPan
 		catch (Exception e) {
 			
 		}
+	}
+	
+
+	/**
+	 * Updates XML node
+	 */
+	public void updateXML(SparkWindow location, Document xmlModelDoc, Node interfaceNode, File xmlModelFile) {
+		// Nothing to do here
 	}
 
 }

@@ -3,6 +3,7 @@ package org.spark.runtime.external.gui;
 import static org.spark.utils.XmlDocUtils.*;
 
 import java.awt.Rectangle;
+import java.io.File;
 import java.util.ArrayList;
 
 import org.w3c.dom.Document;
@@ -63,14 +64,14 @@ public class XML_WindowsLoader {
 	 * @param doc
 	 * @param node
 	 */
-	public static void saveWindows(WindowManager windowManager, Document doc, Node node) {
-		ArrayList<Node> winNodes = getChildrenByTagName(node, "windows");
+	public static void saveWindows(WindowManager windowManager, Document xmlModelDoc, Node interfaceNode, File xmlModelFile) {
+		ArrayList<Node> winNodes = getChildrenByTagName(interfaceNode, "windows");
 		Node windowsNode = null;
 		
 		// No windows
 		if (winNodes.size() == 0) {
-			windowsNode = doc.createElement("windows");
-			node.appendChild(windowsNode);
+			windowsNode = xmlModelDoc.createElement("windows");
+			interfaceNode.appendChild(windowsNode);
 		}
 		else {
 			windowsNode = winNodes.get(0);
@@ -81,12 +82,24 @@ public class XML_WindowsLoader {
 		
 		SparkWindow[] windows = windowManager.getWindows();
 		for (SparkWindow win : windows) {
-			saveWindow(doc, windowsNode, win, false);
+			saveWindow(xmlModelDoc, windowsNode, win, false);
+			
+			// TODO: location of the panel is determined by the window
+			// If the name of the window has been changed then the location
+			// also need to be updated. Now, it is done for ViewPanel only.
+			ISparkPanel panel = win.getPanel();
+			if (panel != null)
+				panel.updateXML(win, xmlModelDoc, interfaceNode, xmlModelFile);
 		}
 		
 		SparkWindow mainWindow = windowManager.getMainWindow();
-		if (mainWindow != null)
-			saveWindow(doc, windowsNode, mainWindow, true);
+		if (mainWindow != null) {
+			saveWindow(xmlModelDoc, windowsNode, mainWindow, true);
+			
+			ISparkPanel panel = mainWindow.getPanel();
+			if (panel != null)
+				panel.updateXML(mainWindow, xmlModelDoc, interfaceNode, xmlModelFile);
+		}
 	}
 	
 	

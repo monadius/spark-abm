@@ -2,12 +2,14 @@ package org.spark.runtime.external.gui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.ArrayList;
 
 import javax.swing.*;
 
 import org.spark.runtime.external.Coordinator;
 import org.spark.utils.XmlDocUtils;
+import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 
@@ -28,6 +30,16 @@ public class SparkMethodPanel extends JPanel implements ActionListener, ISparkPa
 		String location = XmlDocUtils.getValue(node, "location", null);
 		manager.setLocation(this, location);
 	}
+	
+
+	/**
+	 * Updates XML node
+	 */
+	public void updateXML(SparkWindow location, Document xmlModelDoc, Node interfaceNode, File xmlModelFile) {
+		// Nothing to do here
+	}
+
+
 
 
 	

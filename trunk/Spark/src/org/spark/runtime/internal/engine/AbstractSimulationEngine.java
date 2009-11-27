@@ -98,7 +98,7 @@ public abstract class AbstractSimulationEngine {
 	/**
 	 * Sets up the model
 	 */
-	public abstract void setup(String observerName, int executionMode)
+	public abstract void setup(String observerName, String executionMode)
 		throws Exception;
 	
 	/**

@@ -2,6 +2,7 @@ package org.spark.runtime.external;
 
 import java.util.HashMap;
 
+import org.spark.utils.XmlDocUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -149,6 +150,8 @@ public class VariableSetFactory {
 	 * @param root
 	 */
 	public static void saveXML(Document doc, Node root) {
+		XmlDocUtils.removeChildren(root, "variable-set");
+		
 		for (VariableSet set : variableSets.values()) {
 			Node node = set.createXML(doc);
 			root.appendChild(node);

@@ -34,7 +34,7 @@ public class SimulationEngine_Cluster extends StandardSimulationEngine {
 	/**
 	 * Cluster setup method
 	 */
-	public void setup(String observerName, int executionMode) throws Exception {
+	public void setup(String observerName, String executionMode) throws Exception {
 		if (!ClusterManager.getInstance().isSlave()) {
 			// Master node
 			super.setup(observerName, executionMode);

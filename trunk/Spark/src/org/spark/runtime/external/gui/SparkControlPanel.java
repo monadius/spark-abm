@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.Hashtable;
 
 import javax.swing.JButton;
@@ -17,6 +18,8 @@ import org.spark.runtime.data.DataObject_State;
 import org.spark.runtime.data.DataRow;
 import org.spark.runtime.external.Coordinator;
 import org.spark.runtime.external.data.IDataConsumer;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 /**
  * Contains all SPARK control elements
@@ -77,6 +80,16 @@ public class SparkControlPanel extends JPanel implements ISparkPanel, IDataConsu
 		this.add(startButton);
 		this.add(tickLabel);
 	}
+	
+	
+	/**
+	 * Updates XML node
+	 */
+	public void updateXML(SparkWindow location, Document xmlModelDoc, Node interfaceNode, File xmlModelFile) {
+		// Nothing to do here
+	}
+
+
 
 
 	/**

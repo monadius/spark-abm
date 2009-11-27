@@ -4,13 +4,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
 
-import org.spark.gui.render.Render;
 import org.spark.runtime.external.Coordinator;
 import org.spark.runtime.external.gui.SparkViewPanel;
 import org.spark.runtime.external.gui.SparkWindow;
 import org.spark.runtime.external.gui.WindowManager;
 import org.spark.runtime.external.gui.dialogs.DataLayersDialog;
-import org.spark.runtime.external.gui.dialogs.RandomSeedDialog;
+import org.spark.runtime.external.gui.dialogs.ModelPropertiesDialog;
+import org.spark.runtime.external.gui.dialogs.SparkPreferencesDialog;
 import org.spark.utils.FileUtils;
 
 
@@ -30,14 +30,14 @@ public class StandardMenu {
 		SparkMenu menu = factory.createMenu("SPARK Menu", 0);
 		
 		SparkMenu file = createFileMenu(factory, manager);
-		SparkMenu options = createOptionsMenu(factory, manager);
+		SparkMenu model = createModelMenu(factory, manager);
 		SparkMenu window = createWindowMenu(factory, manager);
 		SparkMenu help = createHelpMenu(factory, manager);
 		
 		menu.addItem(file);
-		menu.addItem(options);
+		menu.addItem(model);
 		menu.addItem(window);
-		menu.addItem(help);
+//		menu.addItem(help);
 		
 		return menu;
 	}
@@ -53,6 +53,7 @@ public class StandardMenu {
 		// TODO: action handlers
 		SparkMenuItem open = factory.createItem("Open...", 0);
 		SparkMenuItem close = factory.createItem("Close", 0);
+		SparkMenuItem preferences = factory.createItem("Preferences", 1);
 //		SparkMenuItem load = factory.createItem("Load state...", 1);
 //		SparkMenuItem save = factory.createItem("Save state...", 1);
 		SparkMenuItem exit = factory.createItem("Exit", 2);
@@ -91,6 +92,23 @@ public class StandardMenu {
 		});
 		
 		
+		// Preferences action
+		preferences.setShortcut(KeyEvent.VK_P, ActionEvent.CTRL_MASK);
+		preferences.setActionListener(new ISparkMenuListener() {
+			private SparkPreferencesDialog dialog;
+			
+			public void onClick(SparkMenuItem item) {
+				if (dialog == null) {
+					Coordinator c = Coordinator.getInstance();
+					dialog = new SparkPreferencesDialog(null, c.getConfiguration());
+				}
+				
+				dialog.init();
+				dialog.setVisible(true);
+			}
+		});
+		
+		
 		// Exit action
 		exit.setActionListener(new ISparkMenuListener() {
 			public void onClick(SparkMenuItem item) {
@@ -108,6 +126,7 @@ public class StandardMenu {
 		// Add all items to the menu
 		file.addItem(open);
 		file.addItem(close);
+		file.addItem(preferences);
 //		file.addItem(load);
 //		file.addItem(save);
 		file.addItem(exit);
@@ -120,11 +139,11 @@ public class StandardMenu {
 	 * Creates 'File' menu
 	 * @return
 	 */
-	private static SparkMenu createOptionsMenu(SparkMenuFactory factory, WindowManager manager) {
-		SparkMenu options = factory.createMenu("Options", 0);
+	private static SparkMenu createModelMenu(SparkMenuFactory factory, WindowManager manager) {
+		SparkMenu model = factory.createMenu("Model", 0);
 		
 		SparkMenuItem dataLayers = factory.createItem("Data Layer Properties", 0);
-		SparkMenuItem randomSeed = factory.createItem("Random Seed", 1);
+		SparkMenuItem modelProperties = factory.createItem("Model Properties", 0);
 		
 		// Data layer properties
 		dataLayers.setActionListener(new ISparkMenuListener() {
@@ -144,23 +163,23 @@ public class StandardMenu {
 			}
 		});
 		
-		// Random seed
-		randomSeed.setActionListener(new ISparkMenuListener() {
-			private RandomSeedDialog dialog;
+		// Model properties
+		modelProperties.setActionListener(new ISparkMenuListener() {
+			private ModelPropertiesDialog dialog;
 			
 			public void onClick(SparkMenuItem item) {
 				if (dialog == null)
-					dialog = new RandomSeedDialog(null);
+					dialog = new ModelPropertiesDialog(null);
 				
 				dialog.init();
 				dialog.setVisible(true);
 			}
 		});
 		
-		options.addItem(randomSeed);
-		options.addItem(dataLayers);
+		model.addItem(modelProperties);
+		model.addItem(dataLayers);
 		
-		return options;
+		return model;
 	}
 	
 	
@@ -184,7 +203,7 @@ public class StandardMenu {
 					return;
 				
 				SparkWindow win = manager.getWindowFactory().createWindow("View", 100, 100, 300, 300);
-				new SparkViewPanel(win, Render.JAVA_2D_RENDER);
+				new SparkViewPanel(win, c.getConfiguration().getRenderType());
 				win.setVisible(true);
 			}
 		});
