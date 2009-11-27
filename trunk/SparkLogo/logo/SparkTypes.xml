@@ -131,6 +131,14 @@
                 <method name = "add">
                 	<argument name = "object" type = "$Object"/>
                 </method>
+                
+                
+                <method name = "add-all">
+                	<argument name = "list" type = "ArrayList"/>
+                	<translation>
+                		@@object.addAll(@list)
+                	</translation>
+                </method>
         </type>
 
 

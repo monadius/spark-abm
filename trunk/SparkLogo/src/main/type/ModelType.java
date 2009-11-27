@@ -363,12 +363,12 @@ outer:
 		modelWriter.addAboutInformation("readme.txt");
 		modelWriter.addAgents(packageName, agents);
 		modelWriter.addMainFrame();
-		modelWriter.addAnnotations(variables, "variables");
+		modelWriter.addAnnotations(variables, "variables", true, null);
 		modelWriter.addDataLayers(datalayers);
-		modelWriter.addAnnotations(parameters, "parameterframe");
+		modelWriter.addAnnotations(parameters, "parameterframe", false, "Parameters");
 		modelWriter.addCharts(charts);
-		modelWriter.addAnnotations(methods, "methods");
-		modelWriter.addAnnotations(dataset, "dataset");
+		modelWriter.addAnnotations(methods, "methods", true, null);
+		modelWriter.addAnnotations(dataset, "dataset", false, "Data");
 		
 		modelWriter.save();
 	}
