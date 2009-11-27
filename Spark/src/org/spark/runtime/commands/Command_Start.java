@@ -12,10 +12,10 @@ public class Command_Start extends ModelManagerCommand {
 	private long simulationTime;
 	private boolean paused;
 	private String observerName;
-	private int executionMode;
+	private String executionMode;
 	
 	
-	public Command_Start(long simulationTime, boolean paused, String observerName, int mode) {
+	public Command_Start(long simulationTime, boolean paused, String observerName, String mode) {
 		this.simulationTime = simulationTime;
 		this.paused = paused;
 		this.observerName = observerName;

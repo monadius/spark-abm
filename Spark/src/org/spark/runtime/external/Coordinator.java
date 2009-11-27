@@ -5,9 +5,14 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.PropertyConfigurator;
-import org.spark.core.ExecutionMode;
+
 import org.spark.modelfile.ModelFileLoader;
 import org.spark.runtime.commands.*;
 import org.spark.runtime.data.DataCollectorDescription;
@@ -46,11 +51,13 @@ public class Coordinator {
 	/* A single instance of the class */
 	private static Coordinator coordinator;
 
+	/**************** Two main components ********************/
 	/* Main model manager */
 	private IModelManager modelManager;
 	/* Main data receiver */
 	private LocalDataReceiver receiver;
 
+	/**************** Files **********************************/
 	/* Current directory */
 	private File currentDir;
 
@@ -59,6 +66,7 @@ public class Coordinator {
 	/* Loaded model xml document */
 	private Document modelXmlDoc;
 
+	/*************** Collections *****************************/
 	/* Collection of proxy variables */
 	private ProxyVariableCollection variables;
 	/* Collection of parameters in a loaded model */
@@ -68,23 +76,25 @@ public class Coordinator {
 	
 	/* Styles of all data layers */
 	private final HashMap<String, DataLayerStyle> dataLayerStyles;
+	private final HashMap<String, Node> dataLayerStyleNodes;
 	/* Type names and names of agents */
 	private final HashMap<String, String> agentTypesAndNames;
 
+	/********************* Model properties ********************/
 	/* Random generator properties (for the next run) */
 	private long randomSeed;
 	private boolean useTimeSeed = true;
 
 	/* Observer parameters (for the next run) */
 	private String observerName = null;
-	private int executionMode = ExecutionMode.SERIAL_MODE;
+	private String executionMode = "serial";
 	
 	/* Initial delay time */
 	private int delayTime;
 
 	
 	/*************** Configuration *****************/
-	private final ConfigFile configFile;
+	private final Configuration configuration;
 	
 	
 	/*************** GUI ******************/
@@ -108,6 +118,7 @@ public class Coordinator {
 		this.currentDir = new File(".");
 
 		this.dataLayerStyles = new HashMap<String, DataLayerStyle>();
+		this.dataLayerStyleNodes = new HashMap<String, Node>();
 		this.agentTypesAndNames = new HashMap<String, String>();
 		
 		this.windowManager = new Swing_WindowManager();
@@ -116,7 +127,7 @@ public class Coordinator {
 		
 		this.renders = new ArrayList<Render>();
 		
-		this.configFile = new ConfigFile(mainMenu.getSubMenu("File"));
+		this.configuration = new Configuration(mainMenu.getSubMenu("File"));
 	}
 
 	
@@ -132,7 +143,7 @@ public class Coordinator {
 		mainWindow.addPanel(controlPanel, BorderLayout.NORTH);
 		
 		// Load config file
-		configFile.readConfigFile();
+		configuration.readConfigFile();
 	}
 
 	/**
@@ -160,7 +171,7 @@ public class Coordinator {
 			if (coordinator != null) {
 				// TODO: wait until the simulation is completely stopped
 				coordinator.unloadModel();
-				coordinator.configFile.saveConfigFile();
+				coordinator.configuration.saveConfigFile();
 			}
 		}
 		catch (Exception e) {
@@ -177,6 +188,15 @@ public class Coordinator {
 	 */
 	public static Coordinator getInstance() {
 		return coordinator;
+	}
+	
+	
+	/**
+	 * Returns configuration
+	 * @return
+	 */
+	public Configuration getConfiguration() {
+		return configuration;
 	}
 	
 	
@@ -246,7 +266,7 @@ public class Coordinator {
 	 * @param observerName
 	 * @param executionMode
 	 */
-	public void setObserver(String observerName, int executionMode) {
+	public void setObserver(String observerName, String executionMode) {
 		this.observerName = observerName;
 		this.executionMode = executionMode;
 	}
@@ -255,7 +275,7 @@ public class Coordinator {
 		return observerName;
 	}
 
-	public int getExecutionMode() {
+	public String getExecutionMode() {
 		return executionMode;
 	}
 
@@ -422,6 +442,7 @@ public class Coordinator {
 
 			/* Load data layer styles */
 			dataLayerStyles.clear();
+			dataLayerStyleNodes.clear();
 
 			Node dataLayersNode = XmlDocUtils.getChildByTagName(interfaceNode, "data-layers");
 			list = XmlDocUtils.getChildrenByTagName(dataLayersNode, "datalayer");
@@ -438,7 +459,7 @@ public class Coordinator {
 				loadInterface(interfaceNode);
 			}
 			
-			configFile.addRecentProject(modelFile);
+			configuration.addRecentProject(modelFile);
 				
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -456,12 +477,12 @@ public class Coordinator {
 		/* Load view panels */
 		ArrayList<Node> list = XmlDocUtils.getChildrenByTagName(interfaceNode, "renderframe");
 		for (Node render : list) {
-			new SparkViewPanel(windowManager, render, Render.JAVA_2D_RENDER);
+			new SparkViewPanel(windowManager, render, configuration.getRenderType());
 		}
 		
 		Node mainWindowRender = XmlDocUtils.getChildByTagName(interfaceNode, "mainframe");
 		if (mainWindowRender != null) {
-			new SparkViewPanel(windowManager, mainWindowRender, Render.JOGL_RENDER);
+			new SparkViewPanel(windowManager, mainWindowRender, configuration.getRenderType());
 		}
 		
 		/* Load the parameter panel */
@@ -534,6 +555,8 @@ public class Coordinator {
 
 		modelManager.sendCommand(new Command_Stop());
 
+		saveGUIChanges();
+		
 		modelXmlDoc = null;
 		modelXmlFile = null;
 
@@ -558,7 +581,55 @@ public class Coordinator {
 
 		dataLayerStyles.put(name, new DataLayerStyle(name, val1, val2, color1,
 				color2));
-		// dataLayerStyleNodes.put(name, node);
+		dataLayerStyleNodes.put(name, node);
+	}
+	
+	
+	/**
+	 * Called whenever a model is unloading
+	 * @throws Exception
+	 */
+	public void saveGUIChanges() {
+		if (modelXmlDoc == null || modelXmlFile == null)
+			return;
+
+		try {
+			// Save data layers
+			saveDataLayerStyles(modelXmlDoc);
+
+			// Save windows and panels
+			Node interfaceNode = XmlDocUtils.getChildByTagName(modelXmlDoc.getFirstChild(), "interface");
+			XML_WindowsLoader.saveWindows(windowManager, modelXmlDoc, interfaceNode, modelXmlFile);
+
+			
+			// Save file
+			TransformerFactory tFactory = TransformerFactory.newInstance();
+			Transformer transformer = tFactory.newTransformer();
+
+			DOMSource source = new DOMSource(modelXmlDoc);
+//			StreamResult result = new StreamResult(modelXmlFile);
+			StreamResult result = new StreamResult(new File("test2.xml"));
+			transformer.transform(source, result);
+		}
+		catch (Exception e) {
+			logger.error(e);
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Saves changes of data layers
+	 */
+	public void saveDataLayerStyles(Document doc) {
+		for (String name : dataLayerStyles.keySet()) {
+			DataLayerStyle style = dataLayerStyles.get(name);
+			Node node = dataLayerStyleNodes.get(name);
+
+			XmlDocUtils.addAttr(doc, node, "val1", style.val1);
+			XmlDocUtils.addAttr(doc, node, "color1", style.color1);
+			XmlDocUtils.addAttr(doc, node, "val2", style.val2);
+			XmlDocUtils.addAttr(doc, node, "color2", style.color2);
+		}
 	}
 	
 

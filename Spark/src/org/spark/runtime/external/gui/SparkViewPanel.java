@@ -7,11 +7,13 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
 
 import org.spark.runtime.external.Coordinator;
 import org.spark.runtime.external.gui.dialogs.RenderProperties;
 import org.spark.runtime.external.render.Render;
 import org.spark.utils.XmlDocUtils;
+import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import javax.swing.*;
@@ -26,7 +28,9 @@ public class SparkViewPanel extends JPanel implements ISparkPanel,
 		ActionListener {
 	/* Render for this view */
 	private Render render;
-
+	/* Node for the render */
+	private Node xmlNode;
+	
 	/* Pop-up menu */
 	private JPopupMenu popup;
 
@@ -64,6 +68,8 @@ public class SparkViewPanel extends JPanel implements ISparkPanel,
 	 */
 	private void init(Node node, int renderType) {
 		setLayout(new BorderLayout());
+		
+		this.xmlNode = node;
 		
 		// Create render
 		render = Coordinator.getInstance().createRender(node, renderType);
@@ -144,5 +150,21 @@ public class SparkViewPanel extends JPanel implements ISparkPanel,
 		}
 
 	}
+	
+	
+	/**
+	 * Updates XML node
+	 */
+	public void updateXML(SparkWindow location, Document xmlModelDoc, Node interfaceNode, File xmlModelFile) {
+		if (xmlNode == null) {
+			xmlNode = xmlModelDoc.createElement("renderframe");
+			interfaceNode.appendChild(xmlNode);
+		}
+
+		XmlDocUtils.addAttr(xmlModelDoc, xmlNode, "location", location.getName());
+		render.writeXML(xmlModelDoc, xmlNode, xmlModelFile.getParentFile());
+	}
+
+
 
 }

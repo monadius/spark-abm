@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.HashMap;
 
 import javax.swing.*;
@@ -14,6 +15,7 @@ import org.spark.runtime.external.VariableSet;
 import org.spark.runtime.external.VariableSetFactory;
 import org.spark.utils.SpringUtilities;
 import org.spark.utils.XmlDocUtils;
+import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 
@@ -165,7 +167,29 @@ public class SparkParameterPanel extends JPanel implements ActionListener, ISpar
 		parameterPanel.add(p.getWidget());
 		
 		parameters.put(p.getName(), p);
-	}	
+	}
+	
+
+	/**
+	 * Updates the associated xml node
+	 */
+	public void updateXML(SparkWindow location, Document xmlModelDoc, Node interfaceNode, File xmlModelFile) {
+		if (autoSaveFlag && selectedSet != null)
+			selectedSet.saveVariablesIntoSet();
+		
+		Node root = null;
+		root = XmlDocUtils.getChildByTagName(interfaceNode, "variable-sets");
+
+		if (root == null) {
+			root = xmlModelDoc.createElement("variable-sets");
+			interfaceNode.appendChild(root);
+		}
+
+		XmlDocUtils.removeChildren(root, "variable-set");
+		XmlDocUtils.removeChildren(root, "#text");
+
+		VariableSetFactory.saveXML(xmlModelDoc, root);
+	}
 	
 	
 	

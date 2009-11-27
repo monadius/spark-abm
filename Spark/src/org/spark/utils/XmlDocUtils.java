@@ -88,6 +88,8 @@ public class XmlDocUtils {
 	 */
 	public static String getValue(Node node, String attrName, String defaultValue) {
 		Node tmp;
+		if (node == null)
+			return defaultValue;
 		
 		String value = (tmp = node.getAttributes().getNamedItem(attrName)) != null ? 
 				tmp.getNodeValue()

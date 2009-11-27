@@ -45,8 +45,12 @@ public class StandardSimulationEngine extends AbstractSimulationEngine {
 	 * @param serialMode
 	 */
 	@Override
-	public void setup(String observerName, int executionMode)
+	public void setup(String observerName, String mode)
 			throws Exception {
+		int executionMode = model.getDefaultExecutionMode();
+		if (mode != null)
+			executionMode = ExecutionMode.parse(mode);
+		
 		// Use default parameters if observerName == null
 		if (observerName == null) {
 			observerName = model.getDefaultObserverName();

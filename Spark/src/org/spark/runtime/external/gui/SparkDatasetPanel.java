@@ -19,6 +19,7 @@ import org.spark.runtime.external.data.DataFilter;
 import org.spark.runtime.external.data.IDataConsumer;
 import org.spark.utils.FileUtils;
 import org.spark.utils.XmlDocUtils;
+import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import com.spinn3r.log5j.Logger;
@@ -126,6 +127,15 @@ public class SparkDatasetPanel extends JPanel implements ISparkPanel, IDataConsu
 		return dataFilter;
 	}
 
+	
+	/**
+	 * Updates XML node
+	 */
+	public void updateXML(SparkWindow location, Document xmlModelDoc, Node interfaceNode, File xmlModelFile) {
+		// Nothing to do here
+	}
+
+
 
 	/**
 	 * Adds an item for collection
@@ -147,8 +157,10 @@ public class SparkDatasetPanel extends JPanel implements ISparkPanel, IDataConsu
 		this.add(label);
 	}
 	
-	
-	@Override
+
+	/**
+	 * IDataConsumer implementation
+	 */
 	public synchronized void consume(DataRow data) {
 		if (data.getState().isInitial())
 			reset();

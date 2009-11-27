@@ -103,7 +103,7 @@ class RunEngine2 {
 			int mode, boolean saveAllData) throws Exception {
 		// Send initialization commands
 		modelManager.sendCommand(new Command_SetSeed(seed, false));
-		modelManager.sendCommand(new Command_Start(length, false, observerName, mode));
+		modelManager.sendCommand(new Command_Start(length, false, observerName, ExecutionMode.toString(mode)));
 
 		// Log the run
 		out.println("RUN: Observer = " + observerName + "; length = " + length
