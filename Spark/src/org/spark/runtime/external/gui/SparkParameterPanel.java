@@ -4,7 +4,6 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.swing.*;
@@ -36,7 +35,7 @@ public class SparkParameterPanel extends JPanel implements ActionListener, ISpar
 	private JComboBox setsBox;
 	
 	
-	private class SetsModel extends AbstractListModel {
+/*	private class SetsModel extends AbstractListModel {
 		public final ArrayList<String> names = new ArrayList<String>();
 
 		public void addElement(String name) {
@@ -64,7 +63,7 @@ public class SparkParameterPanel extends JPanel implements ActionListener, ISpar
 	
 	// TODO: use this model
 	private final SetsModel setsModel = new SetsModel();
-	
+*/	
 
 	/**
 	 * Default constructor
@@ -168,36 +167,6 @@ public class SparkParameterPanel extends JPanel implements ActionListener, ISpar
 		parameters.put(p.getName(), p);
 	}	
 	
-	
-	
-	
-	
-	/**
-	 * Returns a list of children with the specified name
-	 * @param name
-	 * @return
-	 */
-	private ArrayList<Node> getChildrenByTagName(Node node, String name) {
-		ArrayList<Node> list = new ArrayList<Node>();
-
-		for (Node child = node.getFirstChild(); child != null; child = child
-				.getNextSibling()) {
-			if (child.getNodeName().equals(name))
-				list.add(child);
-		}
-
-		return list;
-	}
-
-	/**
-	 * Removes all children nodes with the specified name of the given node
-	 * @param node
-	 */
-	private void removeChildren(Node node, String name) {
-		for (Node item : getChildrenByTagName(node, name)) {
-			node.removeChild(item);
-		}
-	}
 	
 	
 	public void actionPerformed(ActionEvent e) {

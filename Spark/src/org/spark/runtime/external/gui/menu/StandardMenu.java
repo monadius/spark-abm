@@ -1,5 +1,7 @@
 package org.spark.runtime.external.gui.menu;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.io.File;
 
 import org.spark.gui.render.Render;
@@ -56,6 +58,8 @@ public class StandardMenu {
 		SparkMenuItem exit = factory.createItem("Exit", 2);
 
 		// Open action
+		open.setShortcut(KeyEvent.VK_O, ActionEvent.CTRL_MASK);
+		
 		open.setActionListener(new ISparkMenuListener() {
 			public void onClick(SparkMenuItem item) {
 				Coordinator c = Coordinator.getInstance();

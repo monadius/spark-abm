@@ -12,8 +12,8 @@ abstract public class SparkMenuItem {
 	
 	/* Items can be grouped together */
 	private final int group;
-
-
+	
+	
 	/**
 	 * Default constructor
 	 * @param name
@@ -21,6 +21,15 @@ abstract public class SparkMenuItem {
 	protected SparkMenuItem(String name, int group) {
 		this.name = name;
 		this.group = group;
+	}
+	
+	
+	/**
+	 * Sets the shortcut for the menu item
+	 * @param key
+	 * @param action
+	 */
+	public void setShortcut(int key, int action) {
 	}
 	
 	

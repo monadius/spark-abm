@@ -90,14 +90,15 @@ public class FileUtils {
 		
 		return ext;
 	}
-	
+
 	
 	/**
-	 * Shows an open file dialog and returns a selected file
+	 * Creates a file chooser for the given file extension
+	 * @param dir
+	 * @param extension
 	 * @return
-	 * @throws Exception
 	 */
-	public static File openFileDialog(File dir, final String extension, Window parent) throws Exception {
+	public static JFileChooser createFileChooser(File dir, final String extension) {
 		final JFileChooser fc = new JFileChooser(dir);
 		
 		fc.setFileFilter(new FileFilter() {
@@ -130,7 +131,37 @@ public class FileUtils {
 			}
 		});
 
+		return fc;
+	}
+	
+	
+	/**
+	 * Shows an open file dialog and returns a selected file
+	 * @return
+	 * @throws Exception
+	 */
+	public static File openFileDialog(File dir, String extension, Window parent) {
+		JFileChooser fc = createFileChooser(dir, extension);
 		int returnVal = fc.showOpenDialog(parent);
+		
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
+			File file = fc.getSelectedFile();
+			return file;
+		}
+		
+		return null;
+	}
+	
+	
+	
+	/**
+	 * Shows an open file dialog and returns a selected file
+	 * @return
+	 * @throws Exception
+	 */
+	public static File saveFileDialog(File dir, final String extension, Window parent) {
+		JFileChooser fc = createFileChooser(dir, extension);
+		int returnVal = fc.showSaveDialog(parent);
 		
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File file = fc.getSelectedFile();

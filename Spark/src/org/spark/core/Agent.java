@@ -97,6 +97,8 @@ public abstract class Agent implements Serializable {
 	public Link getFirstConnection(Agent a) {
 //		if (a == this)
 //			return null;
+		if (links == null)
+			return null;
 		
 		for (Link link : links) {
 			if (link.isConnectedTo(a))
@@ -116,6 +118,8 @@ public abstract class Agent implements Serializable {
 	public <T extends Link> T getFirstConnection(Agent a, Class<T> linkType) {
 //		if (a == this)
 //			return null;
+		if (links == null)
+			return null;
 		
 		for (Link link : links) {
 			if (link.getClass() == linkType)

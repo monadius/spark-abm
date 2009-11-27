@@ -1,5 +1,6 @@
 package org.spark.runtime.external;
 
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -173,6 +174,34 @@ public class ParameterCollection {
 	 */
 	public static void saveXML(Document doc, Node parent) {
 		// TODO: implement
+	}
+	
+	
+	/**
+	 * Saves values of parameters into the given output stream
+	 * @param out
+	 */
+	public synchronized void saveParameters(PrintStream out) {
+		out.println("\"Parameters\"");
+		
+		int n = parametersList.size();
+		for (Parameter p : parametersList) {
+			out.print(p.getName());
+			n -= 1;
+			if (n > 0)
+				out.print(',');
+		}
+		
+		out.println();
+		n = parametersList.size();
+		for (Parameter p : parametersList) {
+			out.print(p.getValue());
+			n -= 1;
+			if (n > 0)
+				out.print(',');
+		}
+		
+		out.println();
 	}
 
 }

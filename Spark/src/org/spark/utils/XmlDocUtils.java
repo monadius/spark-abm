@@ -18,6 +18,8 @@ public class XmlDocUtils {
 	 */
 	public static ArrayList<Node> getChildrenByTagName(Node node, String name) {
 		ArrayList<Node> list = new ArrayList<Node>();
+		if (node == null)
+			return list;
 
 		for (Node child = node.getFirstChild(); child != null; child = child
 				.getNextSibling()) {
@@ -36,6 +38,9 @@ public class XmlDocUtils {
 	 * @return
 	 */
 	public static Node getChildByTagName(Node node, String name) {
+		if (node == null)
+			return null;
+		
 		for (Node child = node.getFirstChild(); child != null; child = child.getNextSibling()) {
 			if (child.getNodeName().equals(name))
 				return child;
@@ -50,6 +55,9 @@ public class XmlDocUtils {
 	 * @param node
 	 */
 	public static void removeChildren(Node node, String name) {
+		if (node == null)
+			return;
+		
 		for (Node item : getChildrenByTagName(node, name)) {
 			node.removeChild(item);
 		}
