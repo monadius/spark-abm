@@ -106,7 +106,7 @@ public class SparkControlPanel extends JPanel implements ISparkPanel, IDataConsu
 			c.pauseResumeLoadedModel();
 		}
 		else if (cmd == "setup") {
-			c.startLoadedModel();
+			c.startLoadedModel(Long.MAX_VALUE, true);
 		}
 	}
 	

@@ -97,6 +97,26 @@ public abstract class WindowManager {
 	
 	
 	/**
+	 * Returns a SPARK panel of the given type
+	 * @param <T>
+	 * @param type
+	 * @return
+	 */
+	// TODO: not a good method
+	@SuppressWarnings("unchecked")
+	public <T extends ISparkPanel> T getSparkPanel(Class<T> type) {
+		for (SparkWindow win : windows) {
+			ISparkPanel panel = win.getPanel();
+			if (panel != null)
+				if (panel.getClass() == type)
+					return (T) panel;
+		}
+		
+		return null;
+	}
+	
+	
+	/**
 	 * Destroys all windows (except the main window)
 	 */
 	public void disposeAll() {

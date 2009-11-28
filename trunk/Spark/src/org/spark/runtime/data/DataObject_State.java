@@ -21,6 +21,9 @@ public class DataObject_State extends DataObject {
 	
 	/* If true then the state is the initial state */
 	private boolean initialState;
+	
+	/* If true then the state is the end state */
+	private boolean endState;
 
 	
 	/**
@@ -29,17 +32,23 @@ public class DataObject_State extends DataObject {
 	 * @param seed
 	 * @param paused
 	 */
-	public DataObject_State(SimulationTime time, long seed, boolean paused, boolean initial) {
+	public DataObject_State(SimulationTime time, long seed, boolean paused, boolean initial, boolean end) {
 		this.time = time;
 		this.seed = seed;
 		this.paused = paused;
 		// TODO: initial state should be defined by a special value of time
 		this.initialState = initial;
+		this.endState = end;
 	}
 	
 	
 	public boolean isInitial() {
 		return initialState;
+	}
+	
+	
+	public boolean isEnd() {
+		return endState;
 	}
 	
 	

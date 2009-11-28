@@ -1,0 +1,268 @@
+package org.spark.runtime.external.batchrun;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
+
+import org.spark.runtime.external.Coordinator;
+import org.spark.runtime.external.VariableSet;
+import org.spark.runtime.external.VariableSetFactory;
+import org.spark.runtime.external.gui.SparkDatasetPanel;
+
+/**
+ * Batch run controller
+ * @author Alexey
+ */
+public class BatchRunController {
+	/* The number of repetitions of each simulation */
+	private int numberOfRepetition;
+	/* The repetition counter */
+	private int repetition;
+	
+	/* Counter of different runs */
+	private int counter;
+	
+	/* The number of ticks in each simulation */
+	private long numberOfTicks;
+	
+	/* The prefix of the data file names */
+	private String dataFileName = "data";
+	
+	/* Indicates whether to save the data after each run or not */
+	private boolean saveDataFlag = true;
+	
+	/* Data analyzer */
+	private DataAnalyzer dataAnalyzer;
+	
+	/* Variable name for analysis */
+	private String variableName;
+	
+	/* Parameter sweep controller */
+	private ParameterSweep parameterSweep;
+	
+	/* Variable set containing values of current parameters */
+	private VariableSet currentParameters;
+	
+	/* Variable set containing value of good parameters */
+	private VariableSet goodParameters;
+	private int goodCounter, goodRepetition;
+	
+	/* Results log */
+	private PrintStream log;
+	
+	/* Error estimate of the data */
+	private double error;
+	
+	
+	/**
+	 * Creates a default batch run controller
+	 */
+	public BatchRunController() {
+		numberOfTicks = Long.MAX_VALUE;
+		numberOfRepetition = 1;
+	}
+	
+	
+	/**
+	 * Creates a batch run controller with the given
+	 * number of repetitions and maximum number of ticks
+	 * @param repetitionNumber
+	 * @param maxTicks
+	 */
+	public BatchRunController(int repetitionNumber, long maxTicks) {
+		if (repetitionNumber < 1)
+			repetitionNumber = 1;
+		
+		if (maxTicks < 1)
+			maxTicks = 1;
+		
+		this.numberOfTicks = maxTicks;
+		this.numberOfRepetition = repetitionNumber;
+	}
+
+	
+	/**
+	 * Creates a batch run controller with the given
+	 * number of repetitions, maximum number of ticks,
+	 * and the data file names
+	 * @param repetitionNumber
+	 * @param maxTicks
+	 * @param dataFileName
+	 */
+	public BatchRunController(int repetitionNumber, long maxTicks, String dataFileName) {
+		this(repetitionNumber, maxTicks);
+		this.dataFileName = dataFileName;
+	}
+	
+
+	/**
+	 * Sets the data analyzer
+	 * @param dataAnalyzer
+	 */
+	public void setDataAnalyzer(DataAnalyzer dataAnalyzer, String varName) {
+		this.dataAnalyzer = dataAnalyzer;
+		this.variableName = varName;
+	}
+	
+	
+	/**
+	 * Sets the save data flag
+	 * @param saveData
+	 */
+	public void setSaveDataFlag(boolean saveData) {
+		this.saveDataFlag = saveData;
+	}
+	
+	
+	/**
+	 * Sets the log file
+	 * @param file
+	 */
+	public void setLogFile(File file) throws IOException {
+		if (file == null)
+			return;
+		
+		FileOutputStream fs = new FileOutputStream(file);
+		log = new PrintStream(fs);
+	}
+	
+	
+	/**
+	 * Sets the parameter sweep controller
+	 * @param ps
+	 */
+	public void setParameterSweepController(ParameterSweep ps) {
+		parameterSweep = ps;
+	}
+	
+	
+	/**
+	 * Initializes the controller and returns the number of ticks
+	 * for the first simulation run
+	 * @return
+	 */
+	public synchronized long initialize() {
+		error = 1e+10;
+		repetition = 0;
+		counter = 0;
+		
+		if (parameterSweep != null) {
+			parameterSweep.setInitialValuesAndAdvance();
+		}
+		
+		currentParameters = VariableSetFactory.createVariableSet("batch@run@current@set");
+		currentParameters.synchronizeWithParameters(Coordinator.getInstance().getParameters());
+		goodParameters = null;
+		
+		if (log != null) {
+			log.print("Run,Repetition,Error,");
+			log.println(currentParameters.getVariableNames());
+		}
+		
+		return numberOfTicks;
+	}
+	
+	
+	/**
+	 * Saves all collected data into a file
+	 */
+	public synchronized void saveData() {
+		String fname = dataFileName + counter + "-" + repetition + ".csv";
+		// FIXME: rewrite when data sets are implemented
+		SparkDatasetPanel dataset = Coordinator.getInstance().getWindowManager().getSparkPanel(SparkDatasetPanel.class);
+		
+		if (dataset != null) {
+			dataset.saveData(fname);
+		}
+	}
+	
+	
+	/**
+	 * This function is called when all runs are done
+	 */
+	void stop() {
+		if (goodParameters != null) {
+			if (log != null) {
+				log.println();
+				log.print(goodCounter);
+				log.print(',');
+				log.print(goodRepetition);
+				log.print(',');
+				log.print(error);
+				log.print(',');
+				log.println(goodParameters.getVariableValues());
+				log.flush();
+			}
+		}
+		
+		if (log != null) {
+			log.close();
+			log = null;
+		}
+	}
+	
+	/**
+	 * Saves collected data, begins a new simulation step,
+	 * and return the number of ticks for the new step.
+	 * If ticks number == 0, then end the batch process.
+	 * @return
+	 */
+	public synchronized long nextStep(DataSet dataSet) {
+		// Save data
+		if (saveDataFlag) {
+			saveData();
+		}
+		
+		// Analyze data
+		if (dataAnalyzer != null && dataSet != null) {
+			double err = dataAnalyzer.analyze(dataSet, variableName);
+
+			if (log != null) {
+				log.print(counter);
+				log.print(',');
+				log.print(repetition);
+				log.print(',');
+				log.print(err);
+				log.print(',');
+				log.println(currentParameters.getVariableValues());
+				log.flush();
+			}
+			
+			if (err < error) {
+				error = err;
+				goodCounter = counter;
+				goodRepetition = repetition;
+				goodParameters = currentParameters;
+			}
+			
+		}
+		
+		if (dataSet != null) {
+			dataSet.clear();
+		}
+		
+		repetition++;
+		if (repetition >= numberOfRepetition) {
+			if (parameterSweep != null) {
+				if (!parameterSweep.setCurrentValuesAndAdvance()) {
+					stop();
+					return 0;
+				}
+				
+				repetition = 0;
+				counter++;
+			}
+			else {
+				stop();
+				return 0;
+			}
+		}
+
+		currentParameters = VariableSetFactory.createVariableSet("batch@run@current@set");
+		currentParameters.synchronizeWithParameters(Coordinator.getInstance().getParameters());
+		
+		return numberOfTicks;
+	}
+}
+

@@ -50,13 +50,16 @@ public abstract class DataReceiver {
 			initialState = state;
 		
 		int n = consumers.size();
+		DataFilter[] filters = new DataFilter[n];
+		filters = consumers.toArray(filters);
 		
 		for (int i = 0; i < n; i++) {
 			try {
-				consumers.get(i).consume(row);
+				filters[i].consume(row);
 			}
 			catch (Exception e) {
 				logger.error(e);
+				e.printStackTrace();
 			}
 		}
 	}
@@ -87,8 +90,9 @@ public abstract class DataReceiver {
 	 * Removes the given data consumer
 	 * @param consumer
 	 */
-	public synchronized void removeDataConsumer(IDataConsumer consumer) {
-		consumers.remove(consumer);
+	public synchronized void removeDataConsumer(DataFilter consumer) {
+		if (consumers.remove(consumer))
+			consumer.removeAllData();
 	}
 	
 	
@@ -96,6 +100,9 @@ public abstract class DataReceiver {
 	 * Removes all data consumers
 	 */
 	public synchronized void removeAllConsumers() {
+		for (DataFilter filter : consumers)
+			filter.removeAllData();
+		
 		consumers.clear();
 		initialState = null;
 	}

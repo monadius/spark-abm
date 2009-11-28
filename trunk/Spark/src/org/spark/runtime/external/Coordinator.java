@@ -19,6 +19,7 @@ import org.spark.runtime.data.DataCollectorDescription;
 import org.spark.runtime.data.DataObject;
 import org.spark.runtime.data.DataObject_State;
 import org.spark.runtime.external.data.DataFilter;
+import org.spark.runtime.external.data.DataReceiver;
 import org.spark.runtime.external.data.LocalDataReceiver;
 import org.spark.runtime.external.gui.*;
 import org.spark.runtime.external.gui.menu.SparkMenu;
@@ -210,10 +211,19 @@ public class Coordinator {
 	
 	
 	/**
+	 * Returns the data receiver
+	 * @return
+	 */
+	public DataReceiver getDataReceiver() {
+		return receiver;
+	}
+	
+	
+	/**
 	 * Returns true if a model is loaded
 	 * @return
 	 */
-	public boolean isModelLoaded() {
+	public synchronized boolean isModelLoaded() {
 		return modelXmlFile != null;
 	}
 	
@@ -243,18 +253,18 @@ public class Coordinator {
 	 * 
 	 * @return
 	 */
-	public long getRandomSeed() {
+	public synchronized long getRandomSeed() {
 		if (receiver.getInitialState() != null)
 			return receiver.getInitialState().getSeed();
 		
 		return randomSeed;
 	}
 
-	public boolean getTimeSeedFlag() {
+	public synchronized boolean getTimeSeedFlag() {
 		return useTimeSeed;
 	}
 
-	public void setRandomSeed(long randomSeed, boolean useTimeSeed) {
+	public synchronized void setRandomSeed(long randomSeed, boolean useTimeSeed) {
 		this.randomSeed = randomSeed;
 		this.useTimeSeed = useTimeSeed;
 	}
@@ -275,16 +285,16 @@ public class Coordinator {
 	 * @param observerName
 	 * @param executionMode
 	 */
-	public void setObserver(String observerName, String executionMode) {
+	public synchronized void setObserver(String observerName, String executionMode) {
 		this.observerName = observerName;
 		this.executionMode = executionMode;
 	}
 
-	public String getObserverName() {
+	public synchronized String getObserverName() {
 		return observerName;
 	}
 
-	public String getExecutionMode() {
+	public synchronized String getExecutionMode() {
 		return executionMode;
 	}
 
@@ -332,7 +342,7 @@ public class Coordinator {
 	 * Sets a delay time for a simulation
 	 * @param time
 	 */
-	public void setSimulationDelayTime(int time) {
+	public synchronized void setSimulationDelayTime(int time) {
 		this.delayTime = time;
 		
 		if (modelXmlFile != null && time >= 0) {
@@ -360,6 +370,16 @@ public class Coordinator {
 
 		return variables.getVariable(varName);
 	}
+	
+	
+	/**
+	 * Returns all available variables
+	 * @return
+	 */
+	public ProxyVariableCollection getVariables() {
+		return variables;
+	}
+	
 
 	/**
 	 * Returns a collection of all parameters
@@ -533,13 +553,13 @@ public class Coordinator {
 	 * @param observerName
 	 * @param executionMode
 	 */
-	public synchronized void startLoadedModel() {
+	public synchronized void startLoadedModel(long simulationTime, boolean paused) {
 		if (modelXmlDoc == null)
 			return;
 
 		setSimulationDelayTime(delayTime);
 		modelManager.sendCommand(new Command_SetSeed(randomSeed, useTimeSeed));
-		modelManager.sendCommand(new Command_Start(Long.MAX_VALUE, true,
+		modelManager.sendCommand(new Command_Start(simulationTime, paused,
 				observerName, executionMode));
 	}
 	
@@ -562,10 +582,13 @@ public class Coordinator {
 		if (modelXmlDoc == null)
 			return;
 
-		modelManager.sendCommand(new Command_Stop());
+		// Stop a simulation
+		stopSimulation();
 
+		// Save GUI changes
 		saveGUIChanges();
-		
+
+		// Clear variables
 		modelXmlDoc = null;
 		modelXmlFile = null;
 
@@ -573,6 +596,14 @@ public class Coordinator {
 		receiver.removeAllConsumers();
 
 		windowManager.disposeAll();
+	}
+	
+	
+	/**
+	 * Stops a simulation
+	 */
+	public synchronized void stopSimulation() {
+		modelManager.sendCommand(new Command_Stop());
 	}
 	
 
@@ -629,7 +660,7 @@ public class Coordinator {
 	/**
 	 * Saves changes of data layers
 	 */
-	public void saveDataLayerStyles(Document doc) {
+	private void saveDataLayerStyles(Document doc) {
 		for (String name : dataLayerStyles.keySet()) {
 			DataLayerStyle style = dataLayerStyles.get(name);
 			Node node = dataLayerStyleNodes.get(name);
@@ -650,7 +681,7 @@ public class Coordinator {
 	 * @param renderType
 	 * @return
 	 */
-	public Render createRender(Node node, int renderType) {
+	public synchronized Render createRender(Node node, int renderType) {
 		int interval = (delayTime < 0) ? -delayTime : 1;
 		
 		Render render = Render.createRender(node, renderType, interval, dataLayerStyles,
@@ -668,7 +699,7 @@ public class Coordinator {
 	/**
 	 * Invokes the update method for all active renders
 	 */
-	public void updateAllRenders() {
+	public synchronized void updateAllRenders() {
 		for (Render render : renders) {
 			render.update();
 		}
