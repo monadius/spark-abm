@@ -26,11 +26,13 @@ public abstract class SparkWindow {
 	 * Event class for dealing with name changes
 	 * @author Monad
 	 */
-	abstract static class NameChangedEvent {
+	abstract static class NameChangeEvent {
+		public abstract String nameChanging(SparkWindow window, String newName);
+
 		public abstract void nameChanged(SparkWindow window, String newName);
 	}
 	
-	private final LinkedList<NameChangedEvent> nameChanged;
+	private final LinkedList<NameChangeEvent> nameChange;
 	
 	/**
 	 * Event which is invoked when the visibility of the window changes
@@ -50,7 +52,7 @@ public abstract class SparkWindow {
 	 */
 	protected SparkWindow(SparkWindow owner) {
 		this.owner = owner;
-		this.nameChanged = new LinkedList<NameChangedEvent>();
+		this.nameChange = new LinkedList<NameChangeEvent>();
 		this.visibilityChanged = new LinkedList<VisibilityChangedEvent>();
 	}
 	
@@ -75,10 +77,14 @@ public abstract class SparkWindow {
 		
 		if (this.name != null && this.name.equals(name))
 			return;
+
+		for (NameChangeEvent event : nameChange) {
+			name = event.nameChanging(this, name);
+		}
 		
 		this.name = name;
-
-		for (NameChangedEvent event : nameChanged) {
+		
+		for (NameChangeEvent event : nameChange) {
 			event.nameChanged(this, this.name);
 		}
 	}
@@ -88,16 +94,16 @@ public abstract class SparkWindow {
 	 * Sets the handler for the name change event
 	 * @param event
 	 */
-	void addNameChangedEvent(NameChangedEvent event) {
-		nameChanged.add(event);
+	void addNameChangeEvent(NameChangeEvent event) {
+		nameChange.add(event);
 	}
 	
 	/**
 	 * Removes the handler for the name change event 
 	 * @param event
 	 */
-	void removeNameChangedEvent(NameChangedEvent event) {
-		nameChanged.remove(event);
+	void removeNameChangeEvent(NameChangeEvent event) {
+		nameChange.remove(event);
 	}
 	
 

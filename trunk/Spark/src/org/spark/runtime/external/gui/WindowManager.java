@@ -108,6 +108,22 @@ public abstract class WindowManager {
 		updateWindowMenu();
 	}
 	
+	
+	// TODO: think about using removeWindow(String name)
+	// and name is synchronized using event listeners
+	public boolean removeWindow(SparkWindow window) {
+		if (windows.contains(window)) {
+			// TODO: remove event listeners
+			windows.remove(window);
+			updateWindowMenu();
+			
+			window.dispose();
+			return true;
+		}
+		
+		return false;
+	}
+	
 
 	/**
 	 * Adds a window to the manager
@@ -135,11 +151,15 @@ public abstract class WindowManager {
 		});
 		
 		// Name changed event
-		window.addNameChangedEvent(new SparkWindow.NameChangedEvent() {
+		window.addNameChangeEvent(new SparkWindow.NameChangeEvent() {
+			@Override
+			public String nameChanging(SparkWindow win, String newName) {
+				String name = getGoodName(newName);
+				return name;
+			}
+			
 			@Override
 			public void nameChanged(SparkWindow win, String newName) {
-				String name = getGoodName(newName);
-				window.setName(name);
 				updateWindowMenu();
 			}
 		});
@@ -185,7 +205,7 @@ public abstract class WindowManager {
 	 * @param panel
 	 * @param location
 	 */
-	public void setLocation(ISparkPanel panel, String location) {
+	public SparkWindow setLocation(ISparkPanel panel, String location) {
 		if (location == null)
 			location = "Untitled";
 		
@@ -197,14 +217,17 @@ public abstract class WindowManager {
 		if (windowsByName.containsKey(location)) {
 			SparkWindow win = windowsByName.get(location);
 			win.addPanel(panel);
+			return win;
 		}
 		else if (location.equals(mainWindow.getName())) {
 			mainWindow.addPanel(panel);
+			return mainWindow;
 		}
 		else {
 			SparkWindow win = getWindowFactory().createWindow(location, 0, 0, 200, 200);
 			win.addPanel(panel);
 			win.setVisible(true);
+			return win;
 		}
 	}
 	

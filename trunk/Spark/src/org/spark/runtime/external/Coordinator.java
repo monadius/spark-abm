@@ -201,6 +201,15 @@ public class Coordinator {
 	
 	
 	/**
+	 * Returns the window manager
+	 * @return
+	 */
+	public WindowManager getWindowManager() {
+		return windowManager;
+	}
+	
+	
+	/**
 	 * Returns true if a model is loaded
 	 * @return
 	 */
