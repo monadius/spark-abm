@@ -31,6 +31,9 @@ public class SparkViewPanel extends JPanel implements ISparkPanel,
 	/* Node for the render */
 	private Node xmlNode;
 	
+	/* Window for this panel */
+	private final SparkWindow win;
+	
 	/* Pop-up menu */
 	private JPopupMenu popup;
 
@@ -48,7 +51,7 @@ public class SparkViewPanel extends JPanel implements ISparkPanel,
 		
 		// Set panel's location
 		String location = XmlDocUtils.getValue(node, "location", null);
-		manager.setLocation(this, location);
+		win = manager.setLocation(this, location);
 	}
 	
 	
@@ -60,6 +63,8 @@ public class SparkViewPanel extends JPanel implements ISparkPanel,
 	public SparkViewPanel(SparkWindow win, int renderType) {
 		init(null, renderType);
 		win.addPanel(this);
+		
+		this.win = win;
 	}
 	
 	
@@ -97,6 +102,13 @@ public class SparkViewPanel extends JPanel implements ISparkPanel,
 		popup.add(menuItem);
 
 		popup.addSeparator();
+		
+		menuItem = new JMenuItem("Rename");
+		menuItem.setActionCommand("rename");
+		menuItem.addActionListener(this);
+		popup.add(menuItem);
+		
+		popup.addSeparator();
 
 		menuItem = new JMenuItem("Remove View");
 		menuItem.setActionCommand("remove");
@@ -106,6 +118,20 @@ public class SparkViewPanel extends JPanel implements ISparkPanel,
 		// Add listener to components that can bring up popup menus.
 		MouseListener popupListener = new PopupListener();
 		canvas.addMouseListener(popupListener);
+	}
+	
+	
+	/**
+	 * Removes the panel and its window
+	 */
+	public void remove() {
+		if (Coordinator.getInstance().getWindowManager().removeWindow(win)) {
+			if (xmlNode != null)
+				xmlNode.getParentNode().removeChild(xmlNode);
+			
+			render = null;
+			renderDialog.dispose();
+		}
 	}
 	
 
@@ -141,10 +167,28 @@ public class SparkViewPanel extends JPanel implements ISparkPanel,
 			if (cmd == "properties") {
 				renderDialog.init();
 				renderDialog.setVisible(true);
-			} else if (cmd == "snapshot") {
+				return;
+			} 
+			
+			if (cmd == "snapshot") {
 				if (render != null)
 					render.takeSnapshot();
+				
+				return;
 			}
+			
+			if (cmd == "remove") {
+				remove();
+				return;
+			}
+			
+			if (cmd == "rename") {
+				String newName = JOptionPane.showInputDialog("Input new name", win.getName());
+				if (newName != null)
+					win.setName(newName);
+				return;
+			}
+			
 		} catch (Exception ex) {
 			JOptionPane.showMessageDialog(this, ex.toString());
 		}
