@@ -110,7 +110,8 @@ public class StandardSimulationEngine extends AbstractSimulationEngine {
 	 * Processes all data
 	 * @param time
 	 */
-	private void processData(boolean paused, boolean specialFlag, boolean initial) throws Exception {
+	private void processData(boolean paused, boolean specialFlag, 
+			boolean initial, boolean end) throws Exception {
 		// Synchronize variables and methods
 		model.synchronizeVariables();
 		model.synchronizeMethods();
@@ -119,7 +120,7 @@ public class StandardSimulationEngine extends AbstractSimulationEngine {
 		SimulationTime time = model.getObserver().getSimulationTime();
 		
 		// Create a data row
-		DataRow row = new DataRow(time, paused, initial);
+		DataRow row = new DataRow(time, paused, initial, end);
 		ArrayList<DataCollector> collectors = dataCollectors.getActiveCollectors();
 		
 		// Collect all data
@@ -222,14 +223,14 @@ public class StandardSimulationEngine extends AbstractSimulationEngine {
 	 */
 	private void processPause() throws Exception {
 		if (pausedFlag) {
-			processData(true, true, false);
+			processData(true, true, false, false);
 		}
 		
 		// TODO: process exceptions properly
 		while (pausedFlag) {
 		// Update data after each received command
 			if (processCommands()) {
-				processData(true, true, false);
+				processData(true, true, false, false);
 			}
 				
 			if (stopFlag)
@@ -255,7 +256,7 @@ public class StandardSimulationEngine extends AbstractSimulationEngine {
 		
 		try {
 			// Process data before simulation steps
-			processData(this.pausedFlag, true, true);
+			processData(this.pausedFlag, true, true, false);
 
 			/* Main process */
 			while (tick < length) {
@@ -271,7 +272,7 @@ public class StandardSimulationEngine extends AbstractSimulationEngine {
 					break;
 
 				// Process data
-				processData(false, false, false);
+				processData(false, false, false, false);
 				
 				// Make a delay
 				if (delayTime > 0) {
@@ -288,8 +289,8 @@ public class StandardSimulationEngine extends AbstractSimulationEngine {
 				tick = model.getObserver().getSimulationTick();
 			}
 			
-			// Process all data one more time before complete simulation stop
-			processData(false, true, false);
+			// Process all data one more time before the simulation stops
+			processData(false, true, false, true);
 
 			
 			// Finalize data processing

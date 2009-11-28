@@ -46,6 +46,22 @@ public class ProxyVariableCollection {
 	
 	
 	/**
+	 * Returns all variables in the collection
+	 * @return
+	 */
+	public ProxyVariable[] getVariables() {
+		ProxyVariable[] result = new ProxyVariable[variables.size()];
+		
+		int i = 0;
+		for (ProxyVariable var : variables.values()) {
+			result[i++] = var;
+		}
+		
+		return result;
+	}
+	
+	
+	/**
 	 * Register variables as data consumers
 	 * @param receiver
 	 */

@@ -83,6 +83,16 @@ public class VariableSetFactory {
 	
 	
 	/**
+	 * Creates an empty variable set
+	 * @return
+	 */
+	public static VariableSet createVariableSet(String name) {
+		VariableSet set = new VariableSet(name);
+		return set;
+	}
+	
+	
+	/**
 	 * Clears the table of variable sets
 	 */
 	public static void clear() {

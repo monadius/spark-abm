@@ -8,6 +8,7 @@ import org.spark.runtime.external.Coordinator;
 import org.spark.runtime.external.gui.SparkViewPanel;
 import org.spark.runtime.external.gui.SparkWindow;
 import org.spark.runtime.external.gui.WindowManager;
+import org.spark.runtime.external.gui.dialogs.BatchRunDialog;
 import org.spark.runtime.external.gui.dialogs.DataLayersDialog;
 import org.spark.runtime.external.gui.dialogs.ModelPropertiesDialog;
 import org.spark.runtime.external.gui.dialogs.SparkPreferencesDialog;
@@ -71,7 +72,7 @@ public class StandardMenu {
 					File file = FileUtils.openFileDialog(c.getCurrentDir(), "xml", null);
 					if (file != null) {
 						c.loadModel(file);
-						c.startLoadedModel();
+						c.startLoadedModel(Long.MAX_VALUE, true);
 					}
 				}
 				catch (Exception e) {
@@ -144,6 +145,7 @@ public class StandardMenu {
 		
 		SparkMenuItem dataLayers = factory.createItem("Data Layer Properties", 0);
 		SparkMenuItem modelProperties = factory.createItem("Model Properties", 0);
+		SparkMenuItem batchRun = factory.createItem("Batch run", 1);
 		
 		// Data layer properties
 		dataLayers.setActionListener(new ISparkMenuListener() {
@@ -176,8 +178,23 @@ public class StandardMenu {
 			}
 		});
 		
+		// Batch run
+		batchRun.setActionListener(new ISparkMenuListener() {
+			private BatchRunDialog dialog;
+			
+			public void onClick(SparkMenuItem item) {
+				if (dialog == null) {
+					dialog = new BatchRunDialog(null);
+				}
+				
+				dialog.init();
+				dialog.setVisible(true);
+			}
+		});
+		
 		model.addItem(modelProperties);
 		model.addItem(dataLayers);
+		model.addItem(batchRun);
 		
 		return model;
 	}

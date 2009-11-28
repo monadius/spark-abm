@@ -255,7 +255,7 @@ public class Configuration {
 					
 					try {
 						c.loadModel(project);
-						c.startLoadedModel();
+						c.startLoadedModel(Long.MAX_VALUE, true);
 					}
 					catch (Exception e) {
 						logger.error(e);
