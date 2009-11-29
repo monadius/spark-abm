@@ -13,7 +13,7 @@ class DatasetAnnotation extends VariableAnnotation {
 	protected DatasetAnnotation() {
 		annotationId = "dataset";
 		
-		items.put("$get", new StringElement("get"));
+		items.put("$variable", new StringElement("variable"));
 		items.put("name", new StringElement("name"));
 	}
 
@@ -22,6 +22,8 @@ class DatasetAnnotation extends VariableAnnotation {
 		if (variable != null) {
 			if (items.get("name").value == null)
 				items.get("name").value = variable.id.name;
+			
+			items.get("$variable").value = variable.id.name;
 		}
 		
 		String str = "<item ";
@@ -37,6 +39,8 @@ class DatasetAnnotation extends VariableAnnotation {
 		if (variable != null) {
 			if (items.get("name").value == null)
 				items.get("name").value = variable.id.name;
+
+			items.get("$variable").value = variable.id.name;
 		}
 		
 		return super.toNode(doc, "item");
