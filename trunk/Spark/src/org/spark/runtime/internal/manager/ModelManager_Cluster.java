@@ -7,7 +7,6 @@ import org.spark.cluster.ClusterManager;
 import org.spark.cluster.Comm;
 import org.spark.cluster.ObjectBuf;
 import org.spark.core.SparkModel;
-import org.spark.modelfile.ModelFileLoader;
 import org.spark.runtime.commands.*;
 import org.spark.runtime.internal.SparkModelXMLFactory;
 import org.spark.runtime.internal.engine.AbstractSimulationEngine;
@@ -129,7 +128,7 @@ public class ModelManager_Cluster extends ModelManager_Basic {
 		masterAcceptedCommands.add(Command_AddDataCollector.class);
 		masterAcceptedCommands.add(Command_AddDataProcessor.class);
 		masterAcceptedCommands.add(Command_AddLocalDataSender.class);
-		masterAcceptedCommands.add(Command_LoadLocalModel.class);
+		masterAcceptedCommands.add(Command_LoadModel.class);
 		masterAcceptedCommands.add(Command_PauseResume.class);
 		masterAcceptedCommands.add(Command_RemoveDataCollector.class);
 		masterAcceptedCommands.add(Command_SetSeed.class);
@@ -166,8 +165,11 @@ public class ModelManager_Cluster extends ModelManager_Basic {
 			}
 			
 			// Load model
-			if (cmd instanceof Command_LoadLocalModel) {
-				loadModelMaster(((Command_LoadLocalModel) cmd).getModelPath());
+			if (cmd instanceof Command_LoadModel) {
+				Command_LoadModel loadCommand = (Command_LoadModel) cmd;
+
+				File tmpDir = new File("tmp");
+				loadModelMaster(loadCommand.getModelDocument(), loadCommand.getRootPath(tmpDir));
 				return;
 			}
 			
@@ -195,7 +197,7 @@ public class ModelManager_Cluster extends ModelManager_Basic {
 			}
 			
 			// Ignore this command on slaves
-			if (cmd instanceof Command_LoadLocalModel) {
+			if (cmd instanceof Command_LoadModel) {
 				return;
 			}
 		}
@@ -209,12 +211,9 @@ public class ModelManager_Cluster extends ModelManager_Basic {
 	 * Loads a model on a master node
 	 * @param xmlModelFile
 	 */
-	private void loadModelMaster(File xmlModelFile) throws Exception {
-		// Load xml document
-		Document xmlDoc = ModelFileLoader.loadModelFile(xmlModelFile);
-		
+	private void loadModelMaster(Document xmlDoc, File rootPath) throws Exception {
 		// Load model locally
-		model = SparkModelXMLFactory.loadModel(xmlDoc, xmlModelFile.getParentFile());
+		model = SparkModelXMLFactory.loadModel(xmlDoc, rootPath);
 		
 		// Create a simulation engine
 		simEngine = new SimulationEngine_Cluster(model, commandQueue);

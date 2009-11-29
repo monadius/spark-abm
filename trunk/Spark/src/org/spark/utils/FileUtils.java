@@ -80,12 +80,21 @@ public class FileUtils {
 	 * @return
 	 */
 	public static String getExtension(File f) {
-		String ext = "";
-		String s = f.getName();
-		int i = s.lastIndexOf('.');
+		return getExtension(f.getName());
+	}
+	
 
-		if (i > 0 && i < s.length() - 1) {
-			ext = s.substring(i + 1).toLowerCase();
+	/**
+	 * Returns file's extension
+	 * @param fname
+	 * @return
+	 */
+	public static String getExtension(String fname) {
+		String ext = "";
+		int i = fname.lastIndexOf('.');
+
+		if (i > 0 && i < fname.length() - 1) {
+			ext = fname.substring(i + 1).toLowerCase();
 		}
 		
 		return ext;

@@ -96,10 +96,10 @@ public class SparkViewPanel extends JPanel implements ISparkPanel,
 		menuItem.addActionListener(this);
 		popup.add(menuItem);
 
-		menuItem = new JMenuItem("Snapshot");
-		menuItem.setActionCommand("snapshot");
-		menuItem.addActionListener(this);
-		popup.add(menuItem);
+//		menuItem = new JMenuItem("Snapshot");
+//		menuItem.setActionCommand("snapshot");
+//		menuItem.addActionListener(this);
+//		popup.add(menuItem);
 
 		popup.addSeparator();
 		

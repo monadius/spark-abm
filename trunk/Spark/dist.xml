@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project basedir="." default="src-dist" name="Compiler">
+<project basedir="." default="win-dist" name="Compiler">
 	<description>
 		This Ant dist.xml file is used to create the distributions of 
 		the SPARK framework
@@ -27,11 +27,9 @@
 
 	<!-- Source code, text files, and scripts -->
 	<fileset dir="${basedir}" id="basic-files">
-		<include name="src/**/**" />
 		<include name="LICENSE" />
 		<include name="README" />
 		<include name="Licenses/**/**" />
-		<include name="build.xml" />
 		<include name="spark.log4j.properties" />
 	</fileset>
 
@@ -54,16 +52,6 @@
 		<mkdir dir="${release}" />
 	</target>
 
-
-	<!-- Target: src-dist -->
-	<target name="src-dist" depends="init" description="Creates source distribution">
-		<zip destfile="${release}/${src-name}.zip">
-			<fileset refid="basic-files" />
-			<fileset dir="${basedir}">
-				<include name="lib"/>
-			</fileset>
-		</zip>
-	</target>
 
 	<!-- Target: win-dist -->
 	<target name="win-dist" depends="init" description="Creates Windows distribution">
@@ -97,7 +85,7 @@
 
 
 	<!-- Target: macos-dist -->
-	<target name="macos-dist" depends="init" description="Creates MacOS distributive">
+	<target name="macos-dist" depends="init" description="Creates MacOS X distribution">
 		<zip destfile="${release}/${macos-name}.zip">
 			<fileset refid="basic-files" />
 			<zipfileset refid="docs" />

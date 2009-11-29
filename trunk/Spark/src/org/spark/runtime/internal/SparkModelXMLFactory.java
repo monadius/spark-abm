@@ -66,17 +66,13 @@ public class SparkModelXMLFactory extends SparkModel.SparkModelFactory {
 		if (root == null)
 			throw new Exception("No root node in the xml document");
 		
-		nodes = XmlDocUtils.getChildrenByTagName(root, "model");
-		if (nodes.size() < 1)
+		root = XmlDocUtils.getChildByTagName(root, "model");
+
+		if (root == null)
 			throw new Exception("No model node in the xml document");
 		
-		root = nodes.get(0);
-
 		/* Load class path */
-		nodes = XmlDocUtils.getChildrenByTagName(root, "classpath");
-		if (nodes.size() >= 1) {
-			classLoader = setupClassPath(rootPath, nodes.get(0));
-		}
+		classLoader = setupClassPath(rootPath);
 
 		/* Load main model class */
 		nodes = XmlDocUtils.getChildrenByTagName(root, "setup");
@@ -239,7 +235,7 @@ public class SparkModelXMLFactory extends SparkModel.SparkModelFactory {
 	 * @param node
 	 * @return
 	 */
-	private File getPath(File rootPath, Node node) {
+/*	private File getPath(File rootPath, Node node) {
 		if (rootPath == null || node == null)
 			return null;
 
@@ -252,19 +248,20 @@ public class SparkModelXMLFactory extends SparkModel.SparkModelFactory {
 
 		return null;
 	}
-	
+*/	
 
 	/**
 	 * Returns a class loader for the model
 	 * 
 	 * @param node
 	 */
-	private ClassLoader setupClassPath(File rootPath, Node node) {
+	private ClassLoader setupClassPath(File rootPath) {
 		ClassLoader classLoader = null;
 		if (rootPath == null)
 			return null;
 
-		File path = getPath(rootPath, node);
+//		File path = getPath(rootPath, node);
+		File path = rootPath;
 
 		try {
 			if (path != null) {

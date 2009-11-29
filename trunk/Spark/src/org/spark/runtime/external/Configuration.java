@@ -62,6 +62,9 @@ public class Configuration {
 	public void readConfigFile() {
 		Document doc;
 
+		maxRecentProjects = DEFAULT_MAX_RECENT_PROJECTS;
+		renderType = Render.JAVA_2D_RENDER;
+		
 		try {
 			DocumentBuilder db = DocumentBuilderFactory.newInstance()
 					.newDocumentBuilder();

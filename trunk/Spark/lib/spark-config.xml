@@ -1,15 +1,10 @@
 <config>
-	<render>0</render>
-	<recent-models>
-		<file>C:\Help\Alexey\My New Projects\SPARK-PL\HCCwResults\HCC\output\HCCModel.xml</file>
-		<file>C:\Help\Alexey\My New Projects\Eclipse Projects\Spark\tests\models\Basic\CreateDieA.xml</file>
-		<file>C:\Help\Alexey\My New Projects\Eclipse Projects\Spark\tests\models\Basic\MovingAgentsB.xml</file>
-		<file>C:\Help\Alexey\My New Projects\Eclipse Projects\SparkLogo\samples\GameOfLife\output\GameOfLifeModel.xml</file>
-		<file>C:\Help\Alexey\My New Projects\Eclipse Projects\SparkLogo\samples\TimeSample\output\TimeModel.xml</file>
-		<file>C:\Help\Alexey\My New Projects\Eclipse Projects\Spark\tests\models\Basic\ToyInfectionModel.xml</file>
-		<file>C:\Help\Alexey\My New Projects\Eclipse Projects\Spark\tests\models\RSV\RSVModel.xml</file>
-		<file>C:\Help\Alexey\My New Projects\Eclipse Projects\Spark\tests\models\Basic\MultipleSpaces.xml</file>
-		<file>C:\Help\Alexey\My New Projects\Eclipse Projects\SparkLogo\Models\StemCellWithPhysAgents\output\StemCellModel.xml</file>
-		<file>C:\Help\Alexey\My New Projects\Eclipse Projects\SparkLogo\samples\DFU\output\DFUModel.xml</file>
+	<graphics render = "1"/>
+	<recent-models max = "10">		<file>C:\Work\My Projects\Eclipse\Spark\tests\models\Worms\Model.xml</file>
+		<file>C:\Work\My Projects\Eclipse\Spark\tests\models\RSV\RSVModel.xml</file>
+		<file>C:\Work\My Projects\Eclipse\Spark\tests\models\GameOfLife\GameOfLifeModel.xml</file>
+		<file>C:\Work\My Projects\Eclipse\SparkLogo\Models\SMC v2\output\TestSMCModel.xml</file>
+		<file>c:\work\my projects\eclipse\sparklogo\samples\concurrentmode\output\concurrentmodel.xml</file>
+		<file>c:\work\my projects\eclipse\sparklogo\models\StemCellWithPhysAgents\output\StemCellModel.xml</file>
 	</recent-models>
 </config>

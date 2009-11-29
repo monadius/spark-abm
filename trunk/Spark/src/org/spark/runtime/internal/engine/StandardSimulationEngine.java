@@ -177,7 +177,7 @@ public class StandardSimulationEngine extends AbstractSimulationEngine {
 			}
 			
 			// Load model
-			if (cmd instanceof Command_LoadLocalModel) {
+			if (cmd instanceof Command_LoadModel) {
 				stopFlag = true;
 				break;
 			}

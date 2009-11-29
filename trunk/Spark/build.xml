@@ -41,6 +41,8 @@
         <target name="compile" depends="init" description="Compiles java source files">
                 <javac destdir="${classes}" srcdir="${src}"  target="1.5">
                         <exclude name="**/ClusterGrid.java"/>
+                		<exclude name="**/SerializationTest2.java"/>
+                		<exclude name="**/JOGLRender3d.java"/>
                         <classpath refid="libraries"/>
                 </javac>
         </target>
@@ -49,7 +51,7 @@
         <target name="jar" depends="compile" description="Creates jar-archive">
                 <jar basedir="${classes}" jarfile="${output}/spark.jar">
                         <manifest>
-                                <attribute name="Main-Class" value="org.spark.startup.StartupGUI"/>
+                                <attribute name="Main-Class" value="org.spark.runtime.external.Coordinator"/>
                                 <attribute name="Class-Path" value="../lib/jogl.jar ../lib/gluegen-rt.jar ../lib/jfreechart.jar ../lib/jcommon.jar ../lib/log4j.jar ../lib/log5j-1.2.jar ../lib/colt.jar ../lib/jsr166y.jar ../lib/colt.jar ../lib/extra166y.jar"/>
                         </manifest>
                 </jar>

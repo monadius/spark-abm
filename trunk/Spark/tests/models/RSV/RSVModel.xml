@@ -47,9 +47,9 @@
     </agents>
     <about path="readme.txt" />
     <dataset height="202" width="202" x="1130" y="0">
-      <item get="get_virusNumber" name="Viruses" />
-      <item get="get_macrophageNumber" name="Macrophages" />
-      <item get="get_neutrophilNumber" name="Neutrophils" />
+      <item get="get_virusNumber" name="Viruses" variable = "virus-number"/>
+      <item get="get_macrophageNumber" name="Macrophages" variable = "total-mac"/>
+      <item get="get_neutrophilNumber" name="Neutrophils" variable = "total-neu"/>
     </dataset>
     <mainframe height="630" width="530" x="0" y="0">
       <spacestyle name="space" selected="true" swapXY="true" />
@@ -144,9 +144,9 @@
     </data-layers>
     <charts>
       <chart height="200" interval="0" method="get_virusNumber"
-      name="virus-number" width="300" x="530" y="202" />
+      name="virus-number" width="300" x="530" y="202" variable = "virus-number" />
       <chart height="200" interval="0"
       method="get_macrophageNumber" name="Macrophages" width="300"
-      x="830" y="202" />
+      x="830" y="202" variable = "macrophage-number"/>
     </charts>
 </model>
