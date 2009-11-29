@@ -226,7 +226,10 @@ public class SparkChartPanel extends JPanel implements ActionListener, ISparkPan
 		if (row.getState().isInitial())
 			reset();
 		
-		double newValue = row.getVarDoubleValue(varName);
+		Double newValue = row.getVarDoubleValue(varName);
+		if (newValue == null)
+			return;
+		
 		long tick = row.getState().getTick();
 		
 		try {

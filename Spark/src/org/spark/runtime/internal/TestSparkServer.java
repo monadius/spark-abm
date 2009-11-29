@@ -8,6 +8,7 @@ import java.net.Socket;
 import org.apache.log4j.BasicConfigurator;
 import org.spark.runtime.commands.Command_AddDataProcessor;
 import org.spark.runtime.commands.Command_AddLocalDataSender;
+import org.spark.runtime.commands.Command_Exit;
 import org.spark.runtime.commands.ModelManagerCommand;
 import org.spark.runtime.data.DataRow;
 import org.spark.runtime.internal.data.DataProcessor;
@@ -34,8 +35,8 @@ public class TestSparkServer implements Runnable {
 	/**
 	 * Creates a test server
 	 */
-	public TestSparkServer(IModelManager manager, Socket clientSocket) {
-		this.manager = manager;
+	public TestSparkServer(Socket clientSocket) {
+		this.manager = new ModelManager_Basic();
 		this.clientSocket = clientSocket;
 		logger.info("Creating a server for the client: " + clientSocket.toString());
 	}
@@ -47,6 +48,11 @@ public class TestSparkServer implements Runnable {
 	public void run() {
 		ObjectInputStream ois = null;
 		ObjectOutputStream oos = null;
+		
+		logger.info("Starting a model manager...");
+		Thread managerThread = new Thread(manager);
+		managerThread.start();
+		logger.info("Model manager is started");
 		
 		logger.info("Server is started");
 		
@@ -73,10 +79,11 @@ public class TestSparkServer implements Runnable {
 		}
 		catch (Exception e) {
 			e.printStackTrace();
-			System.exit(1);
 		}
 		finally {
 			try {
+				manager.sendCommand(new Command_Exit());
+				
 				if (ois != null)
 					ois.close();
 				
@@ -84,11 +91,14 @@ public class TestSparkServer implements Runnable {
 					oos.close();
 				
 				clientSocket.close();
+				
+				logger.info("Stopping manager thread...");
+				
+				managerThread.join(5000);
+				logger.info("Done");
 			}
 			catch (Exception e) {}
 		}
-		
-		System.exit(0);
 	}
 	
 	
@@ -99,34 +109,38 @@ public class TestSparkServer implements Runnable {
 	public static void main(String[] args) {
 		BasicConfigurator.configure();
 		ServerSocket serverSocket = null;
+		int port = 12345;
+		
+		if (args.length >= 2) {
+			port = Integer.parseInt(args[1]);
+		}
 		
 		try {
-			serverSocket = new ServerSocket(12345);
+			serverSocket = new ServerSocket(port);
 		}
 		catch (Exception e) {
 			e.printStackTrace();
 			System.exit(-1);
 		}
 		
-		Socket clientSocket = null;
-		logger.info("Waiting for a connection...");
+		while (true) {
+			Socket clientSocket = null;
+			logger.info("Waiting for a connection...");
 		
-		try {
-			clientSocket = serverSocket.accept();
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-			System.exit(-1);
+			try {
+				clientSocket = serverSocket.accept();
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+				System.exit(-1);
+			}
+
+			TestSparkServer server = new TestSparkServer(clientSocket);
+			server.run();
+			// Start up the server
+//			new Thread(server).start();
 		}
 
-		ModelManager_Basic manager = new ModelManager_Basic();
-		TestSparkServer server = new TestSparkServer(manager, clientSocket);
-		
-		// Start up the server
-		new Thread(server).start();
-		
-		// Start up the model manager
-		manager.run();
 	}
 	
 	

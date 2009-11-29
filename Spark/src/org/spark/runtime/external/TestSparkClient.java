@@ -5,12 +5,16 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
+import javax.swing.JOptionPane;
+
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.PropertyConfigurator;
+import org.spark.runtime.commands.FileTransfer;
 import org.spark.runtime.commands.ModelManagerCommand;
 import org.spark.runtime.data.DataRow;
 import org.spark.runtime.external.data.LocalDataReceiver;
 import org.spark.runtime.internal.manager.IModelManager;
+import org.w3c.dom.Node;
 
 import com.spinn3r.log5j.Logger;
 
@@ -49,9 +53,18 @@ public class TestSparkClient {
 		ObjectOutputStream oos = null;
 		ObjectInputStream ois = null;
 		
+		String address = JOptionPane.showInputDialog("Enter SPARK server address", "localhost:12345");
+		if (address == null)
+			return;
+		
+		String[] elements = address.split(":");
+		String host = elements[0];
+		String port = elements.length > 1 ? elements[1] : "12345";
+		int p = Integer.parseInt(port);
+		
 		try {
-			logger.info("Connecting to server...");
-			socket = new Socket("localhost", 12345);
+			logger.info("Connecting to server " + host + ":" + p);
+			socket = new Socket(host, p);
 			
 			logger.info("Obtaining output stream...");
 			oos = new ObjectOutputStream(socket.getOutputStream());
@@ -137,6 +150,11 @@ public class TestSparkClient {
 		
 		public ClientModelManager(ObjectOutputStream oos) {
 			this.oos = oos;
+		}
+		
+		
+		public FileTransfer createFileTransfer(Node filesNode, File xmlModelFile) {
+			return new FileTransfer(filesNode, xmlModelFile.getParentFile());
 		}
 		
 

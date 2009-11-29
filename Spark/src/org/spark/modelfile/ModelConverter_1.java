@@ -54,6 +54,10 @@ class ModelConverter_1 extends ModelConverter {
 
 		newRoot.getAttributes().setNamedItem(nameAttr);
 		result.appendChild(newRoot);
+		
+		// Create 'files' node
+		Node files = result.createElement("files");
+		newRoot.appendChild(files);
 
 		// Create 'model' and 'interface' nodes
 		Node model = result.createElement("model");
@@ -91,7 +95,15 @@ class ModelConverter_1 extends ModelConverter {
 
 			node = result.importNode(node, true);
 
-			if (name == "classpath" || name == "setup" || name == "agents"
+			if (name == "classpath") {
+				String path = getValue(node, "path", ".");
+				addAttr(result, files, "path", path);
+				// Include all files in the given directory
+				addAttr(result, files, "all", true);
+				continue;
+			}
+			
+			if (name == "setup" || name == "agents"
 					|| name == "variables" || name == "methods") {
 				model.appendChild(node);
 				

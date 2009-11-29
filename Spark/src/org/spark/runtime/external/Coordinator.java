@@ -1,14 +1,10 @@
 package org.spark.runtime.external;
 
 import java.awt.BorderLayout;
+import java.awt.EventQueue;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.PropertyConfigurator;
@@ -412,10 +408,10 @@ public class Coordinator {
 			Document xmlDoc = ModelFileLoader.loadModelFile(modelFile);
 			currentDir = modelFile.getParentFile();
 			
-			ModelFileLoader.saveModelFile(xmlDoc, new File("test.xml"));
+//			ModelFileLoader.saveModelFile(xmlDoc, new File("test.xml"));
 
-			modelManager.sendCommand(new Command_LoadLocalModel(modelFile,
-					currentDir));
+			modelManager.sendCommand(new Command_LoadModel(modelFile,
+					modelManager));
 			modelManager.sendCommand(new Command_AddLocalDataSender(receiver));
 
 			// Root node
@@ -642,14 +638,8 @@ public class Coordinator {
 			XML_WindowsLoader.saveWindows(windowManager, modelXmlDoc, interfaceNode, modelXmlFile);
 
 			
-			// Save file
-			TransformerFactory tFactory = TransformerFactory.newInstance();
-			Transformer transformer = tFactory.newTransformer();
-
-			DOMSource source = new DOMSource(modelXmlDoc);
-//			StreamResult result = new StreamResult(modelXmlFile);
-			StreamResult result = new StreamResult(new File("test2.xml"));
-			transformer.transform(source, result);
+			ModelFileLoader.saveModelFile(modelXmlDoc, modelXmlFile);
+//			ModelFileLoader.saveModelFile(modelXmlDoc, new File("test2.xml"));
 		}
 		catch (Exception e) {
 			logger.error(e);
@@ -733,6 +723,22 @@ public class Coordinator {
 		new Thread(manager).start();
 
 		Coordinator.init(manager, receiver);
+		
+		if (args.length == 1) {
+			final String modelPath = args[0];
+			
+			EventQueue.invokeLater(new Runnable() {
+				public void run() {
+					try {
+						Coordinator.getInstance().loadModel(new File(modelPath));
+						Coordinator.getInstance().startLoadedModel(Long.MAX_VALUE, true);
+					}
+					catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			});
+		}
 
 		/*
 		 * Coordinator c = Coordinator.getInstance(); c.loadModel(newFile(

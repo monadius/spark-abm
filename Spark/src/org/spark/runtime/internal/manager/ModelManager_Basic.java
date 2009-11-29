@@ -1,12 +1,14 @@
 package org.spark.runtime.internal.manager;
 
+import java.io.File;
+
 import org.spark.core.SparkModel;
-import org.spark.modelfile.ModelFileLoader;
 import org.spark.runtime.commands.*;
 import org.spark.runtime.internal.SparkModelXMLFactory;
 import org.spark.runtime.internal.engine.AbstractSimulationEngine;
 import org.spark.runtime.internal.engine.StandardSimulationEngine;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 import com.spinn3r.log5j.Logger;
 
@@ -46,6 +48,15 @@ public class ModelManager_Basic implements IModelManager {
 	
 	
 	/**
+	 * Returns null
+	 */
+	public FileTransfer createFileTransfer(Node filesNode, File xmlModelFile) {
+		return null;
+//		return new FileTransfer(filesNode, xmlModelFile.getParentFile());
+	}
+	
+	
+	/**
 	 * Returns the command queue of the model manager
 	 * @return
 	 */
@@ -76,11 +87,12 @@ public class ModelManager_Basic implements IModelManager {
 		}
 		
 		/* Command LoadLocalModel */
-		if (cmd instanceof Command_LoadLocalModel) {
-			Command_LoadLocalModel command = (Command_LoadLocalModel) cmd;
-			Document doc = ModelFileLoader.loadModelFile(command.getModelPath()); 
+		if (cmd instanceof Command_LoadModel) {
+			Command_LoadModel command = (Command_LoadModel) cmd;
+			Document doc = command.getModelDocument(); 
 			
-			model = SparkModelXMLFactory.loadModel(doc, command.getPath());
+			File tmpDir = new File("tmp");
+			model = SparkModelXMLFactory.loadModel(doc, command.getRootPath(tmpDir));
 			simEngine = new StandardSimulationEngine(model, commandQueue);
 			
 			return;

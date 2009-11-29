@@ -51,7 +51,7 @@ class RunEngine2 {
 		Document xmlDoc = db.parse(modelFile);
 //		xmlDocFile = modelFile;
 		
-		modelManager.sendCommand(new Command_LoadLocalModel(modelFile, modelFile.getParentFile()));
+		modelManager.sendCommand(new Command_LoadModel(modelFile, modelManager));
 		modelManager.sendCommand(new Command_AddDPTest());
 
 		NodeList list;
