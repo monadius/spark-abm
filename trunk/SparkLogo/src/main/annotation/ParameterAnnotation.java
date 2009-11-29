@@ -15,8 +15,6 @@ class ParameterAnnotation extends VariableAnnotation {
 	protected ParameterAnnotation() {
 		annotationId = "parameter";
 		
-		items.put("$get", new StringElement("get"));
-		items.put("$set", new StringElement("set"));
 		// TODO: what to do with other types?
 		items.put("default", new DoubleElement("default"));
 		items.put("min", new DoubleElement("min"));

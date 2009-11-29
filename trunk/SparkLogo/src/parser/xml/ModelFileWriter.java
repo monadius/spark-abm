@@ -16,8 +16,11 @@ import main.annotation.ObserverAnnotation;
 import main.type.AgentType;
 
 import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
+
+import parser.xml.modelfile.ModelFileLoader;
+
+import static parser.xml.XmlDocUtils.*;
 
 /**
  * Class for creating new model files and updating existing model files.
@@ -31,6 +34,7 @@ public class ModelFileWriter {
 //	private Node root;
 	private Node modelNode;
 	private Node interfaceNode;
+	private Node filesNode;
 
 	/**
 	 * A basic constructor which creates a new model file when a given file does
@@ -40,15 +44,11 @@ public class ModelFileWriter {
 	 */
 	public ModelFileWriter(File file, String tickTime) throws Exception {
 		this.file = file;
-
-		DocumentBuilder db = DocumentBuilderFactory.newInstance()
-				.newDocumentBuilder();
-
 		Node root = null;
 		
 		if (file.exists()) {
 			try {
-				doc = db.parse(file);
+				doc = ModelFileLoader.loadModelFile(file);
 
 				root = doc.getFirstChild();
 				// Remove all #text nodes
@@ -56,29 +56,59 @@ public class ModelFileWriter {
 				
 				modelNode = getChildByTagName(root, "model");
 				interfaceNode = getChildByTagName(root, "interface");
+				filesNode = getChildByTagName(root, "files");
+				
+				if (modelNode == null)
+					modelNode = root;
+				
+				if (interfaceNode == null)
+					interfaceNode = root;
+				
+				if (filesNode == null)
+					filesNode = root;
 			}
 			catch (Exception e) {
-				doc = db.newDocument();
-				root = doc.createElement("model");
-				doc.appendChild(root);
+				doc = createNewDocument();
 			}
 		} else {
-			doc = db.newDocument();
-			root = doc.createElement("model");
-			doc.appendChild(root);
+			doc = createNewDocument();
 		}
 		
-		if (modelNode == null)
-			modelNode = root;
-		
-		if (interfaceNode == null)
-			interfaceNode = root;
-
 		if (tickTime == null)
 			tickTime = "1";
 		
+		removeChildren(modelNode, "#text");
+		removeChildren(interfaceNode, "#text");
+		removeChildren(filesNode, "#text");
+		
 		addAttr(doc, modelNode, "tick", tickTime);
 	}
+	
+	
+	/**
+	 * Creates a new document
+	 * @param file
+	 * @return
+	 */
+	private Document createNewDocument() throws Exception {
+		DocumentBuilder db = DocumentBuilderFactory.newInstance()
+										.newDocumentBuilder();
+		Document doc = db.newDocument();
+		Node root = doc.createElement("spark");
+		addAttr(doc, root, "version", 1);
+		doc.appendChild(root);
+		
+		filesNode = doc.createElement("files");
+		modelNode = doc.createElement("model");
+		interfaceNode = doc.createElement("interface");
+		
+		root.appendChild(filesNode);
+		root.appendChild(modelNode);
+		root.appendChild(interfaceNode);
+		
+		return doc;
+	}
+	
 
 	/**
 	 * Saves the created xml file
@@ -94,47 +124,6 @@ public class ModelFileWriter {
 		transformer.transform(source, result);
 	}
 
-	/**
-	 * Returns a list of children with the specified name
-	 * 
-	 * @param name
-	 * @return
-	 */
-	private ArrayList<Node> getChildrenByTagName(Node node, String name) {
-		ArrayList<Node> list = new ArrayList<Node>();
-		if (node == null)
-			return list;
-
-		for (Node child = node.getFirstChild(); child != null; child = child
-				.getNextSibling()) {
-			if (child.getNodeName().equals(name))
-				list.add(child);
-		}
-
-		return list;
-	}
-
-	
-	/**
-	 * Returns a list of children with the specified name
-	 * 
-	 * @param name
-	 * @return
-	 */
-	private Node getChildByTagName(Node node, String name) {
-		if (node == null)
-			return null;
-		
-		for (Node child = node.getFirstChild(); child != null; child = child
-				.getNextSibling()) {
-			if (child.getNodeName().equals(name))
-				return child;
-		}
-
-		return null;
-	}
-
-	
 	
 	/**
 	 * Creates a hash map from the given list with keys obtained from the given
@@ -159,17 +148,6 @@ public class ModelFileWriter {
 		return map;
 	}
 	
-	
-	/**
-	 * Removes all children nodes with the specified name of the given node
-	 * @param node
-	 */
-	private void removeChildren(Node node, String name) {
-		for (Node item : getChildrenByTagName(node, name)) {
-			node.removeChild(item);
-		}
-	}
-	
 
 	/**
 	 * Adds a basic setup information into the xml file.
@@ -178,16 +156,11 @@ public class ModelFileWriter {
 	 * @param setupClass
 	 */
 	public void addSetupInformation(String path, String setupClass, ObserverAnnotation observer) {
-		Node setup, classPath;
+		Node setup;
 
 		// First, remove old nodes if they exist
-		for (Node item : getChildrenByTagName(modelNode, "setup")) {
-			modelNode.removeChild(item);
-		}
-
-		for (Node item : getChildrenByTagName(modelNode, "classpath")) {
-			modelNode.removeChild(item);
-		}
+		removeChildren(modelNode, "setup");
+		removeChildren(modelNode, "classpath");
 
 		// Create new nodes
 		if (observer != null)
@@ -195,18 +168,14 @@ public class ModelFileWriter {
 		else
 			setup = doc.createElement("setup");
 		
-		classPath = doc.createElement("classpath");
-
 		// Fill in nodes' attributes
-		Node attr = doc.createAttribute("path");
-		attr.setNodeValue(path);
-		classPath.getAttributes().setNamedItem(attr);
+		addAttr(doc, filesNode, "path", path);
+		addAttr(doc, filesNode, "all", true);
 
 		setup.setTextContent(setupClass);
 
 		// Add nodes to the document
 		modelNode.insertBefore(setup, modelNode.getFirstChild());
-		modelNode.insertBefore(classPath, setup);
 	}
 	
 	
@@ -232,20 +201,10 @@ public class ModelFileWriter {
 	 */
 	public void addAgents(String packageName, ArrayList<AgentType> agentTypes) {
 		// Remove old nodes
-		for (Node item : getChildrenByTagName(modelNode, "agents")) {
-			modelNode.removeChild(item);
-		}
+		removeChildren(modelNode, "agents");
+		removeChildren(modelNode, "agent");
+		removeChildren(modelNode, "space-agents");
 
-		// For compatibility remove also 'agent' and 'space-agents' nodes
-		// appended to the root directly
-		for (Node item : getChildrenByTagName(modelNode, "agent")) {
-			modelNode.removeChild(item);
-		}
-
-		for (Node item : getChildrenByTagName(modelNode, "space-agents")) {
-			modelNode.removeChild(item);
-		}
-		
 		// Create a new 'space-agents' node
 		Node agents = doc.createElement("agents");
 		modelNode.appendChild(agents);
@@ -283,24 +242,55 @@ public class ModelFileWriter {
 		}
 	}
 
+	
 	/**
 	 * Adds a main frame to the document if it does not exist
 	 */
 	public void addMainFrame() {
-		// Do nothing if 'mainframe' node exists
-		if (getChildrenByTagName(interfaceNode, "mainframe").size() > 0)
-			return;
-
-		Node mainFrame = doc.createElement("mainframe");
+		// Manage windows first
+		Node windowsNode = getChildByTagName(interfaceNode, "windows");
+		ArrayList<Node> windows = getChildrenByTagName(windowsNode, "window");
+		String location = null;
 		
-		addAttr(doc, mainFrame, "x", 0);
-		addAttr(doc, mainFrame, "y", 0);
-		addAttr(doc, mainFrame, "width", 500);
-		addAttr(doc, mainFrame, "height", 600);
-		addAttr(doc, mainFrame, "location", "Main Window");
+		for (Node window : windows) {
+			if (getBooleanValue(window, "main", false)) {
+				location = getStringValue(window, "name", null);
+				break;
+			}
+		}
+		
+		// Create main window
+		if (location == null) {
+			if (windowsNode == null) {
+				windowsNode = doc.createElement("windows");
+				interfaceNode.appendChild(windowsNode);
+			}
+			
+			Node window = doc.createElement("window");
+			addAttr(doc, window, "x", 0);
+			addAttr(doc, window, "y", 0);
+			addAttr(doc, window, "width", 500);
+			addAttr(doc, window, "height", 600);
+			addAttr(doc, window, "main", true);
+			
+			location = "Main Window";
+			addAttr(doc, window, "name", location);
+			
+			windowsNode.appendChild(window);
+		}
 
-		interfaceNode.appendChild(mainFrame);
+		
+		// Do nothing if 'mainframe' node exists
+		Node mainFrame = getChildByTagName(interfaceNode, "mainframe");
+
+		if (mainFrame == null) {
+			mainFrame = doc.createElement("mainframe");
+			interfaceNode.appendChild(mainFrame);
+		}
+		
+		addAttr(doc, mainFrame, "location", location);
 	}
+	
 
 	/**
 	 * Adds data layers to the document
@@ -318,9 +308,7 @@ public class ModelFileWriter {
 
 		// For compatibility remove also 'datalayer' nodes
 		// appended to the root directly
-		for (Node item : getChildrenByTagName(interfaceNode, "datalayer")) {
-			interfaceNode.removeChild(item);
-		}
+		removeChildren(interfaceNode, "datalayer");
 
 		// Create a new 'data-layers' node
 		Node dataLayers = doc.createElement("data-layers");
@@ -356,42 +344,36 @@ public class ModelFileWriter {
 	 * @param annotations
 	 */
 	public void addCharts(ArrayList<InterfaceAnnotation> annotations) {
-		HashMap<String, Node> oldCharts = new HashMap<String, Node>();
-		
 		// Remove old nodes
-		for (Node item : getChildrenByTagName(interfaceNode, "charts")) {
-			oldCharts = listToMap(getChildrenByTagName(item, "chart"), "method");
-			interfaceNode.removeChild(item);
-		}
+		removeChildren(interfaceNode, "charts");
+		removeChildren(interfaceNode, "chart");
 
-		for (Node item : getChildrenByTagName(interfaceNode, "chart")) {
-			interfaceNode.removeChild(item);
-			String method = getStringValue(item, "method", null);
-			if (method != null)
-				oldCharts.put(method, item);
-		}
-
-		// Create a new 'charts' node
-//		Node charts = doc.createElement("charts");
-//		root.appendChild(charts);
-
+		// Create new nodes
 		for (InterfaceAnnotation annotation : annotations) {
 			Node tmp = annotation.toNode(doc);
 			if (tmp != null) {
-				// TODO: namedItem == null?
-				String method = tmp.getAttributes().getNamedItem("method").getNodeValue();
-				
-				// Add position and size information from the old definition
-				if (oldCharts.containsKey(method)) {
-					NamedNodeMap attrs = tmp.getAttributes();
-					tmp = oldCharts.get(method);
-					for (int i = 0; i < attrs.getLength(); i++) {
-						tmp.getAttributes().setNamedItem(attrs.item(i).cloneNode(false));
-					}
-				}
-
+				String location = getStringValue(tmp, "name", "Chart");
+				addAttr(doc, tmp, "location", location);
 				interfaceNode.appendChild(tmp);
 			}
+		}
+	}
+	
+	
+	
+	/**
+	 * Adds methods to the document
+	 * @param annotations
+	 */
+	public void addMethods(ArrayList<InterfaceAnnotation> methods) {
+		addAnnotations(methods, "methods", true, null);
+		
+		removeChildren(interfaceNode, "methods-panel");
+		
+		if (methods.size() > 0) {
+			Node panel = doc.createElement("methods-panel");
+			addAttr(doc, panel, "location", "Methods");
+			interfaceNode.appendChild(panel);
 		}
 	}
 	
@@ -448,121 +430,4 @@ public class ModelFileWriter {
 	}
 	
 	
-	/**
-	 * Adds the attribute to the given node
-	 * @param doc
-	 * @param node
-	 * @param attrName
-	 * @param attrValue
-	 */
-	public static void addAttr(Document doc, Node node, String attrName, Object attrValue) {
-		Node attr = doc.createAttribute(attrName);
-		attr.setNodeValue(attrValue.toString());
-		node.getAttributes().setNamedItem(attr);
-	}
-
-	
-	
-	/**
-	 * Gets a string value of the given attribute
-	 * @param node
-	 * @param attrName
-	 * @param defaultValue
-	 * @return
-	 */
-	public static String getStringValue(Node node, String attrName, String defaultValue) {
-		Node tmp;
-		
-		String value = (tmp = node.getAttributes().getNamedItem(attrName)) != null ? 
-				tmp.getNodeValue()
-				: null;
-				
-		if (value == null)
-			return defaultValue;
-		
-		return value;
-	}
-
-	
-	/**
-	 * Gets a boolean value of the given attribute
-	 * @param node
-	 * @param attrName
-	 * @param defaultValue
-	 * @return
-	 */
-	public static boolean getBooleanValue(Node node, String attrName, boolean defaultValue) {
-		String value = getStringValue(node, attrName, null);
-				
-		if (value == null)
-			return defaultValue;
-		
-		return Boolean.valueOf(value);
-	}
-
-	
-	/**
-	 * Gets an integer value of the given attribute
-	 * @param node
-	 * @param attrName
-	 * @param defaultValue
-	 * @return
-	 */
-	public static int getIntegerValue(Node node, String attrName, int defaultValue) {
-		String value = getStringValue(node, attrName, null);
-				
-		if (value == null)
-			return defaultValue;
-		
-		try {
-			return Integer.valueOf(value);
-		}
-		catch (NumberFormatException e) {
-			return defaultValue;
-		}
-	}
-
-
-	/**
-	 * Gets a float value of the given attribute
-	 * @param node
-	 * @param attrName
-	 * @param defaultValue
-	 * @return
-	 */
-	public static float getFloatValue(Node node, String attrName, float defaultValue) {
-		String value = getStringValue(node, attrName, null);
-				
-		if (value == null)
-			return defaultValue;
-		
-		try {
-			return Float.valueOf(value);
-		}
-		catch (NumberFormatException e) {
-			return defaultValue;
-		}
-	}
-	
-
-	/**
-	 * Gets a double value of the given attribute
-	 * @param node
-	 * @param attrName
-	 * @param defaultValue
-	 * @return
-	 */
-	public static double getDoubleValue(Node node, String attrName, double defaultValue) {
-		String value = getStringValue(node, attrName, null);
-				
-		if (value == null)
-			return defaultValue;
-		
-		try {
-			return Double.valueOf(value);
-		}
-		catch (NumberFormatException e) {
-			return defaultValue;
-		}
-	}
 }

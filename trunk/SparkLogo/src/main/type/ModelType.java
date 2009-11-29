@@ -367,7 +367,8 @@ outer:
 		modelWriter.addDataLayers(datalayers);
 		modelWriter.addAnnotations(parameters, "parameterframe", false, "Parameters");
 		modelWriter.addCharts(charts);
-		modelWriter.addAnnotations(methods, "methods", true, null);
+		modelWriter.addMethods(methods);
+//		modelWriter.addAnnotations(methods, "methods", true, null);
 		modelWriter.addAnnotations(dataset, "dataset", false, "Data");
 		
 		modelWriter.save();

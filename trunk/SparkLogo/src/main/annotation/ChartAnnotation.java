@@ -12,31 +12,56 @@ class ChartAnnotation extends VariableAnnotation {
 	protected ChartAnnotation() {
 		annotationId = "chart";
 		
-		items.put("$get", new StringElement("method"));
 		items.put("interval", new IntegerElement("interval"));
+		items.put("$variable", new StringElement("variable"));
 		items.put("name", new StringElement("name"));
-		
 	}
+	
+	
+	private boolean setDefaultValues() {
+		try {
+			if (variable != null) {
+				items.get("$variable").value = variable.id.name; 
+
+				if (items.get("name").value == null)
+					items.get("name").value = variable.id.name;
+			}
+			else {
+				return false;
+			}
+		}
+		catch (Exception e) {
+			return false;
+		}
+		
+		return true;
+	}
+	
 
 	@Override
 	public String toString() {
-		if (variable != null) {
-			if (items.get("name").value == null)
-				items.get("name").value = variable.id.name;
-		}
+		if (setDefaultValues()) {
 
-		String str = "<chart width = \"300\" height = \"200\" x = \"" + 0 + "\" y = \"" + 0 + "\" ";
+			String str = "<chart ";
+			str += super.toString();
+			str += "/>";
 		
-		str += super.toString();
-		str += "/>";
-		
-		return str;
+			return str;
+		}
+		else {
+			return "";
+		}
 	}
 	
 	
 	@Override
 	public Node toNode(Document doc) {
-		Node node = super.toNode(doc, "chart");
-		return node;
+		if (setDefaultValues()) {
+			Node node = super.toNode(doc, "chart");
+			return node;
+		}
+		else {
+			return null;
+		}
 	}
 }
