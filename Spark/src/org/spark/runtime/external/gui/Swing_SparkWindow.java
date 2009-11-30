@@ -5,7 +5,6 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.Window;
-import java.awt.Dialog.ModalityType;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
@@ -69,7 +68,7 @@ public class Swing_SparkWindow extends SparkWindow {
 			}
 			else {
 				Swing_SparkWindow o = (Swing_SparkWindow) owner;
-				dialog = new JDialog(o.window, ModalityType.MODELESS);
+				dialog = new JDialog(o.window);
 				window = dialog;
 				dialog.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
 				

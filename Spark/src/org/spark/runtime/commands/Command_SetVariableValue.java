@@ -48,4 +48,18 @@ public class Command_SetVariableValue extends ModelManagerCommand {
 			var.setValue(value);
 		}
 	}
+	
+	
+	@Override
+	public String toString() {
+		String str = "Set value: ";
+		str += varName;
+		str += " = ";
+		if (value != null)
+			str += value.toString();
+		else
+			str += strValue;
+
+		return str;
+	}
 }
