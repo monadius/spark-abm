@@ -20,7 +20,7 @@ global cidal-compound-production = 4
 global chemotaxis-threshold = 0.5 : double
 
 @parameter
-global yes-toxin = false
+global yes-toxin : boolean
 
 
 global CONST = space-xsize * space-ysize * 100
@@ -52,6 +52,7 @@ end
 
 to setup
   tissue-life.set-value 100
+  total-tissue-damage = 0
 
   ask create InflamCell 500
   [
