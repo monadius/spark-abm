@@ -1,15 +1,15 @@
 <config>
 	<spark-path>C:\Work\My Projects\Eclipse\Spark\release\spark.jar</spark-path>
 	<recent-projects>
-		<file>C:\Work\My Projects\Eclipse\SparkLogo\Models\RSV multiple spaces\RSV multiple spaces.xml</file>
+		<file>C:\Work\My Projects\Eclipse\SparkLogo\Models\SMC Test\SMCTest.xml</file>
+		<file>C:\Work\My Projects\Eclipse\SparkLogo\Models\SMC v1\SMC project v1.xml</file>
+		<file>C:\Work\My Projects\Eclipse\SparkLogo\Models\StemCell\StemCell.xml</file>
+		<file>C:\Work\My Projects\Eclipse\SparkLogo\Models\StemCell2\StemCell + PhysModel Project.xml</file>
 		<file>C:\Work\My Projects\Eclipse\SparkLogo\Models\StemCellNetLogo\StemCellNetLogo.xml</file>
-		<file>C:\Work\My Projects\Eclipse\SparkLogo\samples\Worms\Worms project.xml</file>
-		<file>C:\Work\My Projects\Eclipse\SparkLogo\Models\HCC\HCC Project.xml</file>
 		<file>C:\Work\My Projects\Eclipse\SparkLogo\Models\StemCellWithPhysAgents\StemCell + PhysAgents.xml</file>
-		<file>C:\Work\My Projects\Eclipse\SparkLogo\samples\GameOfLife\Game of Life.xml</file>
-		<file>C:\Work\My Projects\Eclipse\SparkLogo\samples\InnateImmuneResponse Ver2\Innate Immune Response 2.xml</file>
-		<file>C:\Work\My Projects\Eclipse\SparkLogo\samples\LinksDemo2\LinksDemo2.xml</file>
-		<file>C:\Work\My Projects\Eclipse\SparkLogo\samples\Fire\FireModel.xml</file>
-		<file>C:\Work\My Projects\Eclipse\SparkLogo\samples\ToyInfectionModel\ToyInfectionModel Project.xml</file>
+		<file>C:\Work\My Projects\Eclipse\SparkLogo\Models\test\test.xml</file>
+		<file>C:\Work\My Projects\Eclipse\SparkLogo\samples\ConcurrentMode\ConcurrentModeDemo.xml</file>
+		<file>C:\Work\My Projects\Eclipse\SparkLogo\Models\UTI\UTI.xml</file>
+		<file>C:\Work\My Projects\Eclipse\SparkLogo\Models\SMC v2\SMCTest.xml</file>
 	</recent-projects>
 </config>

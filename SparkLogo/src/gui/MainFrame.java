@@ -24,6 +24,8 @@ import org.w3c.dom.NodeList;
 public class MainFrame extends JFrame implements ActionListener {
 	private static final int MAX_RECENT_PROJECTS = 10;
 
+	
+	
 	private final JList fileList;
 	private final Console console;
 	private final JButton addButton;
