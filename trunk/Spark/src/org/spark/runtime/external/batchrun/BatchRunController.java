@@ -2,8 +2,9 @@ package org.spark.runtime.external.batchrun;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.PrintStream;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 import org.spark.runtime.external.Coordinator;
 import org.spark.runtime.external.VariableSet;
@@ -28,6 +29,8 @@ public class BatchRunController {
 	
 	/* The prefix of the data file names */
 	private String dataFileName = "data";
+	/* Folder for saving results */
+	private File dataFolder;
 	
 	/* Indicates whether to save the data after each run or not */
 	private boolean saveDataFlag = true;
@@ -116,15 +119,36 @@ public class BatchRunController {
 	
 	
 	/**
-	 * Sets the log file
+	 * Sets a log file and initializes an output folder
 	 * @param file
 	 */
-	public void setLogFile(File file) throws IOException {
-		if (file == null)
+	public void initOutputFolder(File root) {
+		if (root == null)
 			return;
 		
-		FileOutputStream fs = new FileOutputStream(file);
-		log = new PrintStream(fs);
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
+		String name = sdf.format(Calendar.getInstance().getTime());
+		dataFolder = new File(root, name);
+		
+		for (int i = 1; i < 1000; i++) {
+			if (!dataFolder.exists())
+				break;
+			
+			dataFolder = new File(root, name + " " + i);
+		}
+
+		if (!dataFolder.exists())
+			dataFolder.mkdirs();
+		
+		try {
+			File logFile = new File(dataFolder, dataFileName + "_log.csv");
+			FileOutputStream fs = new FileOutputStream(logFile);
+			log = new PrintStream(fs);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			log = null;
+		}
 	}
 	
 	
@@ -173,7 +197,7 @@ public class BatchRunController {
 		SparkDatasetPanel dataset = Coordinator.getInstance().getWindowManager().getSparkPanel(SparkDatasetPanel.class);
 		
 		if (dataset != null) {
-			dataset.saveData(fname);
+			dataset.saveData(new File(dataFolder, fname));
 		}
 	}
 	

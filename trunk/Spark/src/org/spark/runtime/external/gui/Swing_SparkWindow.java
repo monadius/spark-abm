@@ -68,7 +68,11 @@ public class Swing_SparkWindow extends SparkWindow {
 			}
 			else {
 				Swing_SparkWindow o = (Swing_SparkWindow) owner;
-				dialog = new JDialog(o.window);
+				if (o.frame != null)
+					dialog = new JDialog(o.frame);
+				else
+					dialog = new JDialog(o.dialog);
+				
 				window = dialog;
 				dialog.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
 				
