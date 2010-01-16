@@ -231,13 +231,23 @@ public class SparkDatasetPanel extends JPanel implements ISparkPanel, IDataConsu
 	 * @param fname
 	 */
 	public void saveData(String fname) {
+		File file = new File(Coordinator.getInstance().getCurrentDir(), fname);
+		saveData(file);
+	}
+	
+	
+	/**
+	 * Saves data in the given file
+	 * @param file
+	 */
+	public void saveData(File file) {
 		PrintStream out = null;
 		
 		try {
-			File file = new File(Coordinator.getInstance().getCurrentDir(), fname);
 			out = new PrintStream(file);
 			saveData(out);
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			logger.error(e);
 			e.printStackTrace();
 		}

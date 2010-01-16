@@ -1,152 +1,49 @@
-<?xml version="1.0" encoding="utf-8" standalone="no"?>
-<model>
-    <classpath path="." />
-    <setup>RSV.RSVModel</setup>
-    <variables>
-      <variable get="get_totalMac" name="total-mac"
-      set="set_totalMac" type="Double" />
-      <variable get="get_initVirus" name="init-virus"
-      set="set_initVirus" type="Double" />
-      <variable get="get_totalNeu" name="total-neu"
-      set="set_totalNeu" type="Double" />
-      <variable get="get_proliferationRate"
-      name="proliferation-rate" set="set_proliferationRate"
-      type="Double" />
-      <variable get="get_neutrophilIl8Production"
-      name="neutrophil-il8-production"
-      set="set_neutrophilIl8Production" type="Double" />
-      <variable get="get_neutrophilIl9Production"
-      name="neutrophil-il9-production"
-      set="set_neutrophilIl9Production" type="Double" />
-      <variable get="get_virusEngulfProb" name="virus-engulf-prob"
-      set="set_virusEngulfProb" type="Double" />
-      <variable get="get_macrophageProProduction"
-      name="macrophage-pro-production"
-      set="set_macrophageProProduction" type="Double" />
-      <variable get="get_macrophageAntiProduction"
-      name="macrophage-anti-production"
-      set="set_macrophageAntiProduction" type="Double" />
-      <variable get="get_healingThreshold" name="healing-threshold"
-      set="set_healingThreshold" type="Double" />
-      <variable get="get_macrophageActivationProb"
-      name="macrophage-activation-prob"
-      set="set_macrophageActivationProb" type="Double" />
-      <variable get="get_virusNumber" name="virus-number"
-      set="set_virusNumber" type="Double" />
-      <variable get="get_macrophageNumber" name="macrophage-number"
-      set="set_macrophageNumber" type="Double" />
-      <variable get="get_neutrophilNumber" name="neutrophil-number"
-      set="set_neutrophilNumber" type="Double" />
-    </variables>
-    <agents>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><spark version="1"><files all="true" path="."/><model><setup>RSV.RSVModel</setup><variables>
+      <variable get="get_totalMac" name="total-mac" set="set_totalMac" type="Double"/>
+      <variable get="get_initVirus" name="init-virus" set="set_initVirus" type="Double"/>
+      <variable get="get_totalNeu" name="total-neu" set="set_totalNeu" type="Double"/>
+      <variable get="get_proliferationRate" name="proliferation-rate" set="set_proliferationRate" type="Double"/>
+      <variable get="get_neutrophilIl8Production" name="neutrophil-il8-production" set="set_neutrophilIl8Production" type="Double"/>
+      <variable get="get_neutrophilIl9Production" name="neutrophil-il9-production" set="set_neutrophilIl9Production" type="Double"/>
+      <variable get="get_virusEngulfProb" name="virus-engulf-prob" set="set_virusEngulfProb" type="Double"/>
+      <variable get="get_macrophageProProduction" name="macrophage-pro-production" set="set_macrophageProProduction" type="Double"/>
+      <variable get="get_macrophageAntiProduction" name="macrophage-anti-production" set="set_macrophageAntiProduction" type="Double"/>
+      <variable get="get_healingThreshold" name="healing-threshold" set="set_healingThreshold" type="Double"/>
+      <variable get="get_macrophageActivationProb" name="macrophage-activation-prob" set="set_macrophageActivationProb" type="Double"/>
+      <variable get="get_virusNumber" name="virus-number" set="set_virusNumber" type="Double"/>
+      <variable get="get_macrophageNumber" name="macrophage-number" set="set_macrophageNumber" type="Double"/>
+      <variable get="get_neutrophilNumber" name="neutrophil-number" set="set_neutrophilNumber" type="Double"/>
+    </variables><agents>
       <agent name="Neutrophil" priority="3">RSV.Neutrophil</agent>
       <agent name="Macrophage" priority="4">RSV.Macrophage</agent>
       <agent name="Virus" priority="1">RSV.Virus</agent>
       <agent name="Epithelial" priority="2">RSV.Epithelial</agent>
       <agent name="CellAgent">RSV.CellAgent</agent>
-    </agents>
-    <about path="readme.txt" />
-    <dataset height="202" width="202" x="1130" y="0">
-      <item get="get_virusNumber" name="Viruses" variable = "virus-number"/>
-      <item get="get_macrophageNumber" name="Macrophages" variable = "total-mac"/>
-      <item get="get_neutrophilNumber" name="Neutrophils" variable = "total-neu"/>
+    </agents></model><interface><windows><window height="202" name="Dataset" visible="true" width="202" x="1130" y="0"/><window height="202" name="Parameters" visible="true" width="600" x="530" y="0"/><window height="265" name="Anti" visible="true" width="265" x="0" y="630"/><window height="200" name="virus-number" visible="true" width="300" x="530" y="202"/><window height="200" name="Macrophages" visible="true" width="300" x="830" y="202"/><window height="630" main="true" name="Main Window" visible="true" width="530" x="0" y="0"/></windows>
+    
+    
+    
+    
+    <about path="readme.txt"/>
+    <dataset height="202" location="Dataset" width="202" x="1130" y="0">
+      <item get="get_virusNumber" name="Viruses" variable="virus-number"/>
+      <item get="get_macrophageNumber" name="Macrophages" variable="total-mac"/>
+      <item get="get_neutrophilNumber" name="Neutrophils" variable="total-neu"/>
     </dataset>
-    <mainframe height="630" width="530" x="0" y="0">
-      <spacestyle name="space" selected="true" swapXY="true" />
-      <agentstyle alpha-function-value="0.0" border="true"
-      name="Neutrophil" position="0" texture-env="0"
-      transparent="false" visible="true" />
-      <agentstyle alpha-function-value="0.0" border="true"
-      name="Macrophage" position="1" texture-env="0"
-      transparent="false" visible="true" />
-      <agentstyle alpha-function-value="0.0" border="true"
-      name="Virus" position="2" texture-env="0" transparent="false"
-      visible="true" />
-      <agentstyle alpha-function-value="0.0" border="true"
-      name="Epithelial" position="3" texture-env="0"
-      transparent="false" visible="true" />
-      <agentstyle alpha-function-value="0.0" border="true"
-      name="CellAgent" position="4" texture-env="0"
-      transparent="false" visible="false" />
-    </mainframe>
-    <parameterframe height="202" width="600" x="530" y="0">
-      <parameter default="100.0" get="get_initVirus" max="1000.0"
-      min="0.0" name="init-virus" set="set_initVirus" step="0.0"
-      type="Double" variable="init-virus" widget="Slider" />
-      <parameter default="0.55" get="get_proliferationRate"
-      max="1.0" min="0.0" name="proliferation-rate"
-      set="set_proliferationRate" step="0.05" type="Double"
-      variable="proliferation-rate" widget="Slider" />
-      <parameter default="10.0" get="get_healingThreshold"
-      max="100.0" min="0.0" name="healing-threshold"
-      set="set_healingThreshold" step="0.0" type="Double"
-      values="1, 2, 10, 50, 30" variable="healing-threshold"
-      widget="Slider" />
+    <mainframe height="630" location="Main Window" width="530" x="0" y="0"><spacestyle name="space" selected="true" swapXY="true"/><agentstyle alpha-function-value="0.0" border="true" name="Neutrophil" position="0" texture-env="0" transparent="false" visible="true"/><agentstyle alpha-function-value="0.0" border="true" name="Macrophage" position="1" texture-env="0" transparent="false" visible="true"/><agentstyle alpha-function-value="0.0" border="true" name="Virus" position="2" texture-env="0" transparent="false" visible="true"/><agentstyle alpha-function-value="0.0" border="true" name="Epithelial" position="3" texture-env="0" transparent="false" visible="true"/><agentstyle alpha-function-value="0.0" border="true" name="CellAgent" position="4" texture-env="0" transparent="false" visible="false"/></mainframe>
+    <parameterframe height="202" location="Parameters" width="600" x="530" y="0">
+      <parameter default="100.0" get="get_initVirus" max="1000.0" min="0.0" name="init-virus" set="set_initVirus" step="0.0" type="Double" variable="init-virus" widget="Slider"/>
+      <parameter default="0.55" get="get_proliferationRate" max="1.0" min="0.0" name="proliferation-rate" set="set_proliferationRate" step="0.05" type="Double" variable="proliferation-rate" widget="Slider"/>
+      <parameter default="10.0" get="get_healingThreshold" max="100.0" min="0.0" name="healing-threshold" set="set_healingThreshold" step="0.0" type="Double" values="1, 2, 10, 50, 30" variable="healing-threshold" widget="Slider"/>
     </parameterframe>
-    <renderframe height="265" name="Anti" width="265" x="0"
-    y="630">
-      <spacestyle name="space" selected="true" swapXY="false" />
-      <datalayerstyle name="anti" selected="true" />
-      <agentstyle alpha-function-value="0.0" border="true"
-      name="Neutrophil" position="0" texture-env="0"
-      transparent="false" visible="true" />
-      <agentstyle alpha-function-value="0.0" border="true"
-      name="Macrophage" position="1" texture-env="0"
-      transparent="false" visible="true" />
-      <agentstyle alpha-function-value="0.0" border="true"
-      name="Virus" position="2" texture-env="0" transparent="false"
-      visible="true" />
-      <agentstyle alpha-function-value="0.0" border="true"
-      name="Epithelial" position="3" texture-env="0"
-      transparent="false" visible="false" />
-      <agentstyle alpha-function-value="0.0" border="true"
-      name="CellAgent" position="4" texture-env="0"
-      transparent="false" visible="false" />
-    </renderframe>
-    <variable-sets>
-      <variable-set name="Set 23">
-        <variable name="init-virus" value="100.0" />
-        <variable name="proliferation-rate" value="0.55" />
-        <variable name="healing-threshold" value="10.0" />
-      </variable-set>
-      <variable-set name="fafa">
-        <variable name="init-virus" value="100.0" />
-        <variable name="proliferation-rate" value="0.0" />
-        <variable name="healing-threshold" value="10.0" />
-      </variable-set>
-      <variable-set name="Set 4343">
-        <variable name="init-virus" value="492.0" />
-        <variable name="proliferation-rate" value="0.25" />
-        <variable name="healing-threshold" value="10.0" />
-      </variable-set>
-      <variable-set name="Set">
-        <variable name="init-virus" value="413.0" />
-        <variable name="proliferation-rate" value="0.55" />
-        <variable name="healing-threshold" value="10.0" />
-      </variable-set>
-      <variable-set name="Set2">
-        <variable name="init-virus" value="492.0" />
-        <variable name="proliferation-rate" value="0.25" />
-        <variable name="healing-threshold" value="50.0" />
-      </variable-set>
-    </variable-sets>
+    <renderframe height="265" location="Anti" name="Anti" width="265" x="0" y="630"><spacestyle name="space" selected="true" swapXY="false"/><datalayerstyle name="anti" selected="true"/><agentstyle alpha-function-value="0.0" border="true" name="Neutrophil" position="0" texture-env="0" transparent="false" visible="true"/><agentstyle alpha-function-value="0.0" border="true" name="Macrophage" position="1" texture-env="0" transparent="false" visible="true"/><agentstyle alpha-function-value="0.0" border="true" name="Virus" position="2" texture-env="0" transparent="false" visible="true"/><agentstyle alpha-function-value="0.0" border="true" name="Epithelial" position="3" texture-env="0" transparent="false" visible="false"/><agentstyle alpha-function-value="0.0" border="true" name="CellAgent" position="4" texture-env="0" transparent="false" visible="false"/></renderframe>
+    <variable-sets><variable-set name="Set 23"><variable name="init-virus" value="100.0"/><variable name="proliferation-rate" value="0.55"/><variable name="healing-threshold" value="10.0"/></variable-set><variable-set name="fafa"><variable name="init-virus" value="100.0"/><variable name="proliferation-rate" value="0.0"/><variable name="healing-threshold" value="10.0"/></variable-set><variable-set name="Set 4343"><variable name="init-virus" value="492.0"/><variable name="proliferation-rate" value="0.25"/><variable name="healing-threshold" value="10.0"/></variable-set><variable-set name="Set"><variable name="init-virus" value="413.0"/><variable name="proliferation-rate" value="0.55"/><variable name="healing-threshold" value="10.0"/></variable-set><variable-set name="Set2"><variable name="init-virus" value="492.0"/><variable name="proliferation-rate" value="0.25"/><variable name="healing-threshold" value="50.0"/></variable-set></variable-sets>
     <data-layers>
-      <datalayer color1="0.0;0.0;0.0" color2="0.0;0.0;1.0"
-      name="chemokine" val1="0.0" val2="1.0" />
-      <datalayer color1="0.0;0.0;0.0" color2="0.0;0.0;1.0"
-      name="il8" val1="0.0" val2="1.0" />
-      <datalayer color1="0.0;0.0;0.0" color2="0.0;0.0;1.0"
-      name="il9" val1="0.0" val2="1.0" />
-      <datalayer color1="0.0;0.0;0.0" color2="0.0;0.0;1.0"
-      name="pro" val1="0.0" val2="1.0" />
-      <datalayer color1="0.0;0.0;0.0" color2="0.0;0.0;1.0"
-      name="anti" val1="0.0" val2="1.0" />
+      <datalayer color1="0.0;0.0;0.0" color2="0.0;0.0;1.0" name="chemokine" val1="0.0" val2="1.0"/>
+      <datalayer color1="0.0;0.0;0.0" color2="0.0;0.0;1.0" name="il8" val1="0.0" val2="1.0"/>
+      <datalayer color1="0.0;0.0;0.0" color2="0.0;0.0;1.0" name="il9" val1="0.0" val2="1.0"/>
+      <datalayer color1="0.0;0.0;0.0" color2="0.0;0.0;1.0" name="pro" val1="0.0" val2="1.0"/>
+      <datalayer color1="0.0;0.0;0.0" color2="0.0;0.0;1.0" name="anti" val1="0.0" val2="1.0"/>
     </data-layers>
-    <charts>
-      <chart height="200" interval="0" method="get_virusNumber"
-      name="virus-number" width="300" x="530" y="202" variable = "virus-number" />
-      <chart height="200" interval="0"
-      method="get_macrophageNumber" name="Macrophages" width="300"
-      x="830" y="202" variable = "macrophage-number"/>
-    </charts>
-</model>
+    
+<chart height="200" interval="0" location="virus-number" method="get_virusNumber" name="virus-number" variable="virus-number" width="300" x="530" y="202"/><chart height="200" interval="0" location="Macrophages" method="get_macrophageNumber" name="Macrophages" variable="macrophage-number" width="300" x="830" y="202"/></interface></spark>

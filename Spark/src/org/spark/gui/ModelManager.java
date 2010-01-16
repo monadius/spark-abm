@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.HashMap;
 
 import javax.swing.*;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -345,12 +346,12 @@ public class ModelManager extends GUIModelManager {
 			UpdatableFrame frame;
 
 			xmlDoc = ModelFileLoader.loadModelFile(modelFile);
-			ModelFileLoader.saveModelFile(xmlDoc, new File("test.xml"));
 			xmlDocFile = modelFile;
-
 			
 			model = SparkModelXMLFactory.loadModel(xmlDoc, modelFile.getParentFile());
 			
+			xmlDoc = DocumentBuilderFactory.newInstance()
+					.newDocumentBuilder().parse(modelFile);
 			
 			final Node root = xmlDoc.getFirstChild();
 			/* Load tick time */
@@ -649,6 +650,9 @@ public class ModelManager extends GUIModelManager {
 	/* Model execution routines */
 
 	class ModelRun implements Runnable {
+		private static final int EXTERNAL_STOP = 1;
+		private static final int INTERNAL_STOP = 2;
+		
 		private void updateData(long tick) {
 			for (UpdatableFrame frame : frames) {
 				frame.updateData(tick);
@@ -701,12 +705,12 @@ public class ModelManager extends GUIModelManager {
 		 * Main cycle function
 		 * @return true if the simulation is stopped
 		 */
-		private boolean main(long tick) {
+		private int main(long tick) {
 			while (paused) {
 				try {
 					Thread.sleep(10);
 					if (modelThread == null)
-						return true;
+						return EXTERNAL_STOP;
 					
 					if (updateRequested) {
 						updateRequested = false;
@@ -744,9 +748,9 @@ public class ModelManager extends GUIModelManager {
 			
 			if (model.begin(t)) {
 				Observer.getInstance().advanceSimulationTick();
-				pauseResumeModel();
-				mainFrame.reset();
-				return false;
+//				pauseResumeModel();
+//				mainFrame.reset();
+				return INTERNAL_STOP;
 			}
 //			Observer.getInstance().processAllAgents(tick);
 			Observer.getInstance().processAllAgents(model.getTickTime());
@@ -754,8 +758,10 @@ public class ModelManager extends GUIModelManager {
 			
 			if (model.end(t)) {
 				Observer.getInstance().advanceSimulationTick();
-				pauseResumeModel();
-				mainFrame.reset();
+				batchRunController.updateBatchController(tick);
+//				pauseResumeModel();
+//				mainFrame.reset();
+				return INTERNAL_STOP;
 			}
 			
 			// Main step ends here
@@ -768,7 +774,7 @@ public class ModelManager extends GUIModelManager {
 
 			if (delayTime > 0) {
 				if (modelThread == null)
-					return true;
+					return EXTERNAL_STOP;
 				try {
 					Thread.sleep(delayTime);
 				} catch (InterruptedException e1) {
@@ -783,7 +789,7 @@ public class ModelManager extends GUIModelManager {
 					synchronized (lock) {
 						updateData(tick);
 						if (modelThread == null) {
-							return true;
+							return EXTERNAL_STOP;
 						}
 						try {
 							lock.wait();
@@ -794,15 +800,15 @@ public class ModelManager extends GUIModelManager {
 				} else {
 					updateData(tick);
 					if (modelThread == null)
-						return true;
+						return EXTERNAL_STOP;
 				}
 			} else {
 				updateDataExceptViews(tick);
 				if (modelThread == null)
-					return true;
+					return EXTERNAL_STOP;
 			}
 			
-			return false;
+			return 0;
 		}
 		
 		
@@ -822,11 +828,20 @@ public class ModelManager extends GUIModelManager {
 				long tick = initTick;
 				initTick = 0;
 				
+				ticks:
 				for (; tick < maxTicks; tick++) {
 					// if (modelThread == null) return;
-					if (main(tick))
+					int state = main(tick);
+					
+					switch (state) {
+					case EXTERNAL_STOP:
 						return;
+						
+					case INTERNAL_STOP:
+						break ticks;
+					}
 				}
+				
 
 				maxTicks = batchRunController.nextStep();
 				if (maxTicks == 0)

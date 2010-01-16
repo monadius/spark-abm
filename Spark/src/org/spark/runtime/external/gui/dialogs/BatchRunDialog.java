@@ -365,14 +365,7 @@ public class BatchRunDialog extends JDialog implements ActionListener {
 			batchRunController.setParameterSweepController(sweep);
 			batchRunController.setDataAnalyzer(dataAnalyzer, varName);
 			
-			File logFile = new File(Coordinator.getInstance().getCurrentDir(),
-					dataFileName + "_log.csv");
-			try {
-				batchRunController.setLogFile(logFile);
-			}
-			catch (Exception e) {
-				e.printStackTrace();
-			}
+			batchRunController.initOutputFolder(Coordinator.getInstance().getCurrentDir());
 			
 			// Change parameters before setup method is called
 			sweep.setInitialValuesAndAdvance();
