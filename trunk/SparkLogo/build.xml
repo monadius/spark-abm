@@ -1,4 +1,4 @@
-<project name="Compiler" default="jflex" basedir=".">
+<project name="Compiler" default="jar" basedir=".">
 	<property name="jflex" location="jflex" />
 	<property name="src" location="src" />
 	<property name="lib" location="lib" />
@@ -32,15 +32,24 @@
 
 	<target name="init">
 		<mkdir dir="${dist}"/>
+		<mkdir dir="${class}"/>
 	</target>
 
 
 	<target name="jflex" depends="init">
 		<jflex file="${jflex}/SparkLogo.flex" destdir="${src}" />
 	</target>
+	
+    
+	<!-- Target: compile -->
+     <target name="compile" depends="init" description="Compiles java source files">
+             <javac destdir="${class}" srcdir="${src}"  target="1.5">
+                     <classpath refid="libraries"/>
+             </javac>
+     </target>
 
 
-	<target depends="init" name="jar">
+	<target depends="compile" name="jar">
 		<jar basedir="${class}" jarfile="${dist}/SPARK Manager.jar">
 			<include name="**/*.class" />
 			<manifest>
