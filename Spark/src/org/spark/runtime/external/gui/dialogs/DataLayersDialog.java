@@ -34,23 +34,39 @@ public class DataLayersDialog extends JDialog implements ActionListener {
 	private JPanel panel;
 	private HashMap<String, DataLayerStyle> dataLayers;
 	
+	private DataLayerColors colorsDialog;
 	
+	
+	/**
+	 * Default constructor
+	 * @param owner
+	 */
 	public DataLayersDialog(JFrame owner) {
 		super(owner, "", false);
 		initialize();
+		
+		colorsDialog = new DataLayerColors(this);
 	}
 
+	
+	/**
+	 * Initializer
+	 */
 	private void initialize() {
 		setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
 
 		panel = new JPanel();
-        panel.setLayout(new GridLayout(0, 6));
+        panel.setLayout(new GridLayout(0, 7));
 
 		this.add(panel);
 		this.pack();
 	}
 	
 	
+	/**
+	 * Inits the dialog for the given data layers
+	 * @param dataLayers
+	 */
 	public void init(HashMap<String, DataLayerStyle> dataLayers) {
 		this.dataLayers = dataLayers;
 
@@ -70,6 +86,10 @@ public class DataLayersDialog extends JDialog implements ActionListener {
 			normalize.addActionListener(this);
 			normalize.setActionCommand("normalize" + dataLayer.getName());
 			
+			JButton colors = new JButton("Colors");
+			colors.setActionCommand("colors" + dataLayer.getName());
+			colors.addActionListener(this);
+			
 			val1.setName("val1" + dataLayer.getName());
 			val2.setName("val2" + dataLayer.getName());
 			
@@ -79,6 +99,7 @@ public class DataLayersDialog extends JDialog implements ActionListener {
 			panel.add(val2);
 			panel.add(color2);
 			panel.add(normalize);
+			panel.add(colors);
 			
 			
 			
@@ -120,6 +141,7 @@ public class DataLayersDialog extends JDialog implements ActionListener {
 		if (cmd == null)
 			return;
 		
+		// Color1 or Color2 commands
 		if (cmd.startsWith("color1") || cmd.startsWith("color2")) {
 			boolean first = cmd.startsWith("color1") ? true : false;
 			
@@ -142,6 +164,22 @@ public class DataLayersDialog extends JDialog implements ActionListener {
 			return;
 		}
 		
+
+		// Colors command
+		if (cmd.startsWith("colors")) {
+			String name = cmd.substring("colors".length());
+			DataLayerStyle style = dataLayers.get(name);
+			
+			if (style == null)
+				return;
+			
+			colorsDialog.init(style);
+			colorsDialog.setVisible(true);
+			return;
+		}
+		
+		
+		// Normalize command
 		if (cmd.startsWith("normalize")) {
 			String name = cmd.substring("normalize".length());
 			DataObject dataObject = Coordinator.getInstance()
