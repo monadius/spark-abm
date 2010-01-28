@@ -102,17 +102,18 @@ public class BatchRunManager implements IDataConsumer {
 	 * IDataConsumer implementation and a main method
 	 */
 	public synchronized void consume(DataRow row) {
-		// We use 'runFlag' for preventing receiving of data
+		// We use 'runFlag' for preventing data receiving
 		// of a simulation which is stopping
-		if (row.getState().isInitial())
+		if (row.getState().isInitialState())
 			runFlag = true;
 		
 		if (!runFlag)
 			return;
 		
 		// We are interested in end states only
-		if (row.getState().isEnd()) {
-			if (row.getState().getTick() == currentSimulationLength) {
+		if (row.getState().isFinalState()) {
+//			if (row.getState().getTick() == currentSimulationLength) {
+			if (!row.getState().isTerminated()) {
 				// Proceed to the next batch run step
 				currentSimulationLength = controller.nextStep(dataSet);
 				if (currentSimulationLength == 0) {

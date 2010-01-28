@@ -176,7 +176,7 @@ public abstract class Render implements KeyListener, IDataConsumer {
 		
 		dataFilter.addData(DataCollectorDescription.SPACES, null);
 		if (selectedDataLayer != null)
-			dataFilter.addData(DataCollectorDescription.DATA_LAYER, selectedDataLayer.name);
+			dataFilter.addData(DataCollectorDescription.DATA_LAYER, selectedDataLayer.getName());
 		
 		for (AgentStyle agentStyle : agentStyles) {
 			if (agentStyle.visible)
@@ -545,7 +545,7 @@ public abstract class Render implements KeyListener, IDataConsumer {
 			Node dls = doc.createElement("datalayerstyle");
 			
 			Node attr = doc.createAttribute("name");
-			attr.setNodeValue(selectedDataLayer.name);
+			attr.setNodeValue(selectedDataLayer.getName());
 			dls.getAttributes().setNamedItem(attr);
 			
 			attr = doc.createAttribute("selected");

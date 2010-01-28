@@ -146,9 +146,7 @@ public class JavaRender extends Render {
 		double xStep = grid.getXStep();
 		double yStep = grid.getYStep();
 
-		Vector[][] colors = GridGraphics.getColors(grid, selectedDataLayer.val1,
-				selectedDataLayer.val2, selectedDataLayer.color1,
-				selectedDataLayer.color2);
+		Vector[][] colors = GridGraphics.getColors(grid, selectedDataLayer);
 
 		Rectangle2D.Double rect = new Rectangle2D.Double(0, 0, xStep, yStep);
 		double x = xMin;
@@ -315,7 +313,7 @@ public class JavaRender extends Render {
 
 		
 		if (selectedDataLayer != null) {
-			DataObject_Grid gridData = data.getGrid(selectedDataLayer.name);
+			DataObject_Grid gridData = data.getGrid(selectedDataLayer.getName());
 			renderDataLayer(g, gridData, spaceIndex);
 		}
 

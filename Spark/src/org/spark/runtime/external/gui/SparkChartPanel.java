@@ -223,7 +223,7 @@ public class SparkChartPanel extends JPanel implements ActionListener, ISparkPan
 	 * Consumes data
 	 */
 	public void consume(DataRow row) {
-		if (row.getState().isInitial())
+		if (row.getState().isInitialState())
 			reset();
 		
 		Double newValue = row.getVarDoubleValue(varName);

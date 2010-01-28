@@ -9,6 +9,7 @@ import org.spark.core.SimulationTime;
 import org.spark.core.SparkModel;
 import org.spark.math.RationalNumber;
 import org.spark.runtime.commands.*;
+import org.spark.runtime.data.DataObject_State;
 import org.spark.runtime.data.DataRow;
 import org.spark.runtime.internal.data.BadDataSourceException;
 import org.spark.runtime.internal.data.DataCollector;
@@ -111,7 +112,7 @@ public class StandardSimulationEngine extends AbstractSimulationEngine {
 	 * @param time
 	 */
 	private void processData(boolean paused, boolean specialFlag, 
-			boolean initial, boolean end) throws Exception {
+			int flags) throws Exception {
 		// Synchronize variables and methods
 		model.synchronizeVariables();
 		model.synchronizeMethods();
@@ -119,8 +120,11 @@ public class StandardSimulationEngine extends AbstractSimulationEngine {
 		// Get simulation time
 		SimulationTime time = model.getObserver().getSimulationTime();
 		
+		if (paused)
+			flags |= DataObject_State.PAUSED_FLAG;
+		
 		// Create a data row
-		DataRow row = new DataRow(time, paused, initial, end);
+		DataRow row = new DataRow(time, flags);
 		ArrayList<DataCollector> collectors = dataCollectors.getActiveCollectors();
 		
 		// Collect all data
@@ -223,14 +227,14 @@ public class StandardSimulationEngine extends AbstractSimulationEngine {
 	 */
 	private void processPause() throws Exception {
 		if (pausedFlag) {
-			processData(true, true, false, false);
+			processData(true, true, 0);
 		}
 		
 		// TODO: process exceptions properly
 		while (pausedFlag) {
 		// Update data after each received command
 			if (processCommands()) {
-				processData(true, true, false, false);
+				processData(true, true, 0);
 			}
 				
 			if (stopFlag)
@@ -256,7 +260,7 @@ public class StandardSimulationEngine extends AbstractSimulationEngine {
 		
 		try {
 			// Process data before simulation steps
-			processData(this.pausedFlag, true, true, false);
+			processData(this.pausedFlag, true, DataObject_State.INITIAL_STATE_FLAG);
 
 			/* Main process */
 			while (tick < length) {
@@ -272,7 +276,7 @@ public class StandardSimulationEngine extends AbstractSimulationEngine {
 					break;
 
 				// Process data
-				processData(false, false, false, false);
+				processData(false, false, 0);
 				
 				// Make a delay
 				if (delayTime > 0) {
@@ -290,9 +294,12 @@ public class StandardSimulationEngine extends AbstractSimulationEngine {
 			}
 			
 			// Process all data one more time before the simulation stops
-			processData(false, true, false, true);
-
+			int flags = DataObject_State.FINAL_STATE_FLAG;
+			if (stopFlag)
+				flags |= DataObject_State.TERMINATED_FLAG;
 			
+			processData(false, true, flags);
+
 			// Finalize data processing
 			ArrayList<DataCollector> collectors = dataCollectors.getActiveCollectors();
 

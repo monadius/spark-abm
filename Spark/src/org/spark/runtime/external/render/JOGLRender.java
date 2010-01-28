@@ -342,17 +342,15 @@ public class JOGLRender extends Render implements GLEventListener,
 		if (grid == null)
 			return;
 
-		if (selectedDataLayer.gridGeometry == null)
-			selectedDataLayer.gridGeometry = GridGraphics.getGeometry(grid, xMin, yMin);
+		if (selectedDataLayer.getGeometry() == null)
+			selectedDataLayer.setGeometry(GridGraphics.getGeometry(grid, xMin, yMin));
 
-		Vector[][] gridGeometry = selectedDataLayer.gridGeometry;
+		Vector[][] gridGeometry = selectedDataLayer.getGeometry();
 
 		int n = gridGeometry.length - 1;
 		int m = gridGeometry[0].length - 1;
 
-		Vector[][] colors = GridGraphics.getColors(grid, selectedDataLayer.val1,
-				selectedDataLayer.val2, selectedDataLayer.color1,
-				selectedDataLayer.color2);
+		Vector[][] colors = GridGraphics.getColors(grid, selectedDataLayer);
 
 		// Render center
 		for (int i = 0; i < n; i++) {
@@ -813,7 +811,7 @@ public class JOGLRender extends Render implements GLEventListener,
 
 		// Render selected data layer
 		if (selectedDataLayer != null) {
-			DataObject_Grid gridData = data.getGrid(selectedDataLayer.name);
+			DataObject_Grid gridData = data.getGrid(selectedDataLayer.getName());
 			renderDataLayer(gl, gridData, spaceIndex);
 		}
 

@@ -13,42 +13,48 @@ public class DataObject_State extends DataObject {
 	/* Current simulation time */
 	private SimulationTime time;
 	
-	/* Indicates whether the simulation is paused or not */
-	private boolean paused;
-	
 	/* Random seed for the current simulation */
 	private long seed;
-	
-	/* If true then the state is the initial state */
-	private boolean initialState;
-	
-	/* If true then the state is the end state */
-	private boolean endState;
 
+	/* State flags */
+	private int flags;
 	
+	
+	// Indicates that a simulation is paused
+	public static final int PAUSED_FLAG = 0x1;
+	// Indicates that data contains information about initial simulation state
+	public static final int INITIAL_STATE_FLAG = 0x2;
+	// Indicates that data contains information about final simulation state
+	public static final int FINAL_STATE_FLAG = 0x4;
+	// Indicates that a simulation was terminated
+	public static final int TERMINATED_FLAG = 0x8;
+	
+
 	/**
 	 * Default constructor
 	 * @param time
 	 * @param seed
 	 * @param paused
 	 */
-	public DataObject_State(SimulationTime time, long seed, boolean paused, boolean initial, boolean end) {
+	public DataObject_State(SimulationTime time, long seed, int flags) {
 		this.time = time;
 		this.seed = seed;
-		this.paused = paused;
-		// TODO: initial state should be defined by a special value of time
-		this.initialState = initial;
-		this.endState = end;
+		this.flags = flags;
 	}
 	
 	
-	public boolean isInitial() {
-		return initialState;
+	public boolean isInitialState() {
+		return (flags & INITIAL_STATE_FLAG) != 0;
 	}
 	
 	
-	public boolean isEnd() {
-		return endState;
+	public boolean isFinalState() {
+		return (flags & FINAL_STATE_FLAG) != 0;
+	}
+	
+	
+	public boolean isTerminated() {
+		return (flags & TERMINATED_FLAG) != 0;
 	}
 	
 	
@@ -68,7 +74,7 @@ public class DataObject_State extends DataObject {
 	
 	
 	public boolean isPaused() {
-		return paused;
+		return (flags & PAUSED_FLAG) != 0;
 	}
 	
 	
