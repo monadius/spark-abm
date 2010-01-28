@@ -313,6 +313,7 @@ public class DataLayerStyle {
 	}
 	
 	
+	// TODO: optimize
 	public Vector getColor(double value) {
 		double dv = val2 - val1;
 		if (dv < 1e-6)
