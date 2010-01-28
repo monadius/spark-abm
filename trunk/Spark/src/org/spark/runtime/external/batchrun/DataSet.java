@@ -103,7 +103,7 @@ class DataSet implements IDataConsumer {
 	 * IDataConsumer implementation
 	 */
 	public synchronized void consume(DataRow data) {
-		if (data.getState().isInitial())
+		if (data.getState().isInitialState())
 			clear();
 		
 		long tick = data.getState().getTick();

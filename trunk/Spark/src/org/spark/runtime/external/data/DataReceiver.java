@@ -46,7 +46,7 @@ public abstract class DataReceiver {
 	 */
 	public synchronized final void receive(DataRow row) {
 		DataObject_State state = row.getState();
-		if (state.isInitial())
+		if (state.isInitialState())
 			initialState = state;
 		
 		int n = consumers.size();

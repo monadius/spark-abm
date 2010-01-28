@@ -128,11 +128,11 @@ public class RenderProperties extends JDialog implements ActionListener {
 		dataPanel.add(button);
 		
 		for (DataLayerStyle dataLayer : dataLayerStyles.values()) {
-			button = new JRadioButton(dataLayer.name);
+			button = new JRadioButton(dataLayer.getName());
 			if (dataLayer == activeLayer)
 				button.setSelected(true);
 			
-			button.setActionCommand("data" + dataLayer.name);
+			button.setActionCommand("data" + dataLayer.getName());
 			button.addActionListener(this);
 			group.add(button);
 			dataPanel.add(button);

@@ -65,6 +65,18 @@ public class XmlDocUtils {
 	
 	
 	/**
+	 * Removes the given attribute from the node
+	 * @param doc
+	 * @param node
+	 * @param attrName
+	 */
+	public static void removeAttr(Node node, String attrName) {
+		if (node.getAttributes().getNamedItem(attrName) != null)
+			node.getAttributes().removeNamedItem(attrName);
+	}
+	
+	
+	/**
 	 * Adds the attribute to the given node
 	 * @param doc
 	 * @param node

@@ -56,22 +56,22 @@ public class DataLayersDialog extends JDialog implements ActionListener {
 
 		panel.removeAll();
 		for (DataLayerStyle dataLayer : dataLayers.values()) {
-			JLabel name = new JLabel(dataLayer.name);
+			JLabel name = new JLabel(dataLayer.getName());
 			
-			JTextField val1 = new JTextField(String.valueOf(dataLayer.val1));
+			JTextField val1 = new JTextField(String.valueOf(dataLayer.getVal1()));
 			JButton color1 = new JButton();
-			color1.setBackground(dataLayer.color1.toAWTColor());
+			color1.setBackground(dataLayer.getColor1().toAWTColor());
 			
-			JTextField val2 = new JTextField(String.valueOf(dataLayer.val2));
+			JTextField val2 = new JTextField(String.valueOf(dataLayer.getVal2()));
 			JButton color2 = new JButton();
-			color2.setBackground(dataLayer.color2.toAWTColor());
+			color2.setBackground(dataLayer.getColor2().toAWTColor());
 			
 			JButton normalize = new JButton("Normalize");
 			normalize.addActionListener(this);
-			normalize.setActionCommand("normalize" + dataLayer.name);
+			normalize.setActionCommand("normalize" + dataLayer.getName());
 			
-			val1.setName("val1" + dataLayer.name);
-			val2.setName("val2" + dataLayer.name);
+			val1.setName("val1" + dataLayer.getName());
+			val2.setName("val2" + dataLayer.getName());
 			
 			panel.add(name);
 			panel.add(val1);
@@ -82,15 +82,15 @@ public class DataLayersDialog extends JDialog implements ActionListener {
 			
 			
 			
-			color1.setActionCommand("color1" + dataLayer.name);
+			color1.setActionCommand("color1" + dataLayer.getName());
 			color1.addActionListener(this);
-			color2.setActionCommand("color2" + dataLayer.name);
+			color2.setActionCommand("color2" + dataLayer.getName());
 			color2.addActionListener(this);
 			
 			val1.addActionListener(this);
-			val1.setActionCommand("val1" + dataLayer.name);
+			val1.setActionCommand("val1" + dataLayer.getName());
 			val2.addActionListener(this);
-			val2.setActionCommand("val2" + dataLayer.name);
+			val2.setActionCommand("val2" + dataLayer.getName());
 		}
 		
 		this.pack();
@@ -128,7 +128,7 @@ public class DataLayersDialog extends JDialog implements ActionListener {
 			
 			if (style == null) return;
 			
-			Vector v = first ? style.color1 : style.color2;
+			Vector v = first ? style.getColor1() : style.getColor2();
 			Color color = v.toAWTColor();
 			
 			color = JColorChooser.showDialog(this, "Choose Color", color);
@@ -158,8 +158,8 @@ public class DataLayersDialog extends JDialog implements ActionListener {
 			DataLayerStyle style = dataLayers.get(name);
 			if (style == null) return;
 				
-			style.val1 = min;
-			style.val2 = max;
+			style.setVal1(min);
+			style.setVal2(max);
 		
 			JTextField val1 = (JTextField) getComponent("val1" + name);
 			JTextField val2 = (JTextField) getComponent("val2" + name);
@@ -184,7 +184,7 @@ public class DataLayersDialog extends JDialog implements ActionListener {
 			
 			if (style == null) return;
 			
-			double v = first ? style.val1 : style.val2;
+			double v = first ? style.getVal1() : style.getVal2();
 			
 			String snewVal = ((JTextField) e.getSource()).getText();
 			
@@ -192,9 +192,9 @@ public class DataLayersDialog extends JDialog implements ActionListener {
 				v = Double.parseDouble(snewVal);
 			
 				if (first)
-					style.val1 = v;
+					style.setVal1(v);
 				else
-					style.val2 = v;
+					style.setVal2(v);
 
 				Coordinator.getInstance().updateAllRenders();
 			}

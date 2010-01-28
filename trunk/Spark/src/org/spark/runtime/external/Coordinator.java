@@ -24,7 +24,6 @@ import org.spark.runtime.external.render.DataLayerStyle;
 import org.spark.runtime.external.render.Render;
 import org.spark.runtime.internal.manager.IModelManager;
 import org.spark.runtime.internal.manager.ModelManager_Basic;
-import org.spark.utils.Vector;
 import org.spark.utils.XmlDocUtils;
 
 import static org.spark.utils.XmlDocUtils.*;
@@ -609,14 +608,10 @@ public class Coordinator {
 	 * @param node
 	 */
 	private void loadDataLayer(Node node) {
-		String name = getValue(node, "name", null);
-		double val1 = getDoubleValue(node, "val1", 0);
-		double val2 = getDoubleValue(node, "val2", 0);
-		Vector color1 = getVectorValue(node, "color1", ";", new Vector(0));
-		Vector color2 = getVectorValue(node, "color2", ";", new Vector(1, 0, 0));
-
-		dataLayerStyles.put(name, new DataLayerStyle(name, val1, val2, color1,
-				color2));
+		DataLayerStyle style = DataLayerStyle.LoadXml(node);
+		String name = style.getName();
+		
+		dataLayerStyles.put(name, style); 
 		dataLayerStyleNodes.put(name, node);
 	}
 	
@@ -654,11 +649,8 @@ public class Coordinator {
 		for (String name : dataLayerStyles.keySet()) {
 			DataLayerStyle style = dataLayerStyles.get(name);
 			Node node = dataLayerStyleNodes.get(name);
-
-			XmlDocUtils.addAttr(doc, node, "val1", style.val1);
-			XmlDocUtils.addAttr(doc, node, "color1", style.color1);
-			XmlDocUtils.addAttr(doc, node, "val2", style.val2);
-			XmlDocUtils.addAttr(doc, node, "color2", style.color2);
+			
+			style.SaveXml(doc, node);
 		}
 	}
 	

@@ -162,7 +162,7 @@ public class SparkDatasetPanel extends JPanel implements ISparkPanel, IDataConsu
 	 * IDataConsumer implementation
 	 */
 	public synchronized void consume(DataRow data) {
-		if (data.getState().isInitial())
+		if (data.getState().isInitialState())
 			reset();
 		
 		long tick = data.getState().getTick();
