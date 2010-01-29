@@ -1,0 +1,12 @@
+model FractalsModel
+
+
+space GridSpace -50 50 -50 50 false false
+
+
+to setup
+	var x = complex 1 1
+	print (x * x + 2)
+	print (sin x)
+	print x.conjugate.abs
+end

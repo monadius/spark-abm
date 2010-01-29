@@ -259,6 +259,51 @@
         </type>
 
 
+        <type name = "complex" parent = "$Object">
+                <javaname>Complex</javaname>
+
+                <declaration>
+                        Complex @@id = Complex.Zero;
+                </declaration>
+
+                <declaration_init>
+                        Complex @@id = new Complex(@@value)
+                </declaration_init>
+
+                <set>
+                        @@id = @@value
+                </set>
+
+                <get>
+                        @@id
+                </get>
+
+                <field name = "re" type = "double">
+                	<get>@@object.re()</get>
+                </field>
+                <field name = "im" type = "double">
+                	<get>@@object.im()</get>
+                </field>
+                
+                <field name = "abs" type = "double">
+                	<get>@@object.abs()</get>
+                </field>
+                
+                <field name = "arg" type = "double">
+                	<get>@@object.phase()</get>
+                </field>
+
+                
+				<method name = "reciprocal" type = "complex">
+				</method>
+				
+				
+				<method name = "conjugate" type = "complex">
+				</method>                
+        </type>
+
+
+
 		<!-- $ means translator-only name, user cannot use this type explicitly -->
 		<type name = "$model">
 			<javaname>SparkModel</javaname>
