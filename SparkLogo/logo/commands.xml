@@ -201,6 +201,33 @@
         </reporter>
 
 
+        <reporter name = "*" type = "complex" infix = "true" precedence = "5">
+                <argument name = "left" type = "double" />
+                <argument name = "right" type = "complex" />
+                <translation>
+                        (@right.times(@left))
+                </translation>
+        </reporter>
+
+
+        <reporter name = "*" type = "complex" infix = "true" precedence = "5">
+                <argument name = "left" type = "complex" />
+                <argument name = "right" type = "double" />
+                <translation>
+                        (@left.times(@right))
+                </translation>
+        </reporter>
+
+
+        <reporter name = "*" type = "complex" infix = "true" precedence = "5">
+                <argument name = "left" type = "complex" />
+                <argument name = "right" type = "complex" />
+                <translation>
+                        (@left.times(@right))
+                </translation>
+        </reporter>
+
+
         <reporter name = "/" type = "double" infix = "true" precedence = "5">
                 <argument name = "left" type = "double" />
                 <argument name = "right" type = "double" />
@@ -219,6 +246,25 @@
         </reporter>
 
 
+        <reporter name = "/" type = "complex" infix = "true" precedence = "5">
+                <argument name = "left" type = "complex" />
+                <argument name = "right" type = "double" />
+                <translation>
+                        (@left.div(@right))
+                </translation>
+        </reporter>
+
+
+        <reporter name = "/" type = "complex" infix = "true" precedence = "5">
+                <argument name = "left" type = "complex" />
+                <argument name = "right" type = "complex" />
+                <translation>
+                        (@left.div(@right))
+                </translation>
+        </reporter>
+
+
+
         <reporter name = "%" type = "double" infix = "true" precedence = "5" alias = "mod">
                 <argument name = "left" type = "double" />
                 <argument name = "right" type = "double" />
@@ -235,6 +281,31 @@
                         (@left + @right)
                 </translation>
         </reporter>
+
+        <reporter name = "+" type = "complex" infix = "true" precedence = "4">
+                <argument name = "left" type = "complex" />
+                <argument name = "right" type = "double" />
+                <translation>
+                        (@left.plus(@right))
+                </translation>
+        </reporter>
+
+        <reporter name = "+" type = "complex" infix = "true" precedence = "4">
+                <argument name = "left" type = "complex" />
+                <argument name = "right" type = "complex" />
+                <translation>
+                        (@left.plus(@right))
+                </translation>
+        </reporter>
+
+        <reporter name = "+" type = "complex" infix = "true" precedence = "4">
+                <argument name = "left" type = "double" />
+                <argument name = "right" type = "complex" />
+                <translation>
+                        (@right.plus(@left))
+                </translation>
+        </reporter>
+
 
         <reporter name = "+" type = "vector" infix = "true" precedence = "4">
                 <argument name = "left" type = "vector" />
@@ -297,6 +368,34 @@
                 </translation>
         </reporter>
 
+
+        <reporter name = "-" type = "complex" infix = "true" precedence = "4">
+                <argument name = "left" type = "complex" />
+                <argument name = "right" type = "double" />
+                <translation>
+                        (@left.minus(@right))
+                </translation>
+        </reporter>
+
+
+        <reporter name = "-" type = "complex" infix = "true" precedence = "4">
+                <argument name = "left" type = "double" />
+                <argument name = "right" type = "complex" />
+                <translation>
+                        (new Complex(left, 0).minus(@right))
+                </translation>
+        </reporter>
+
+
+        <reporter name = "-" type = "complex" infix = "true" precedence = "4">
+                <argument name = "left" type = "complex" />
+                <argument name = "right" type = "complex" />
+                <translation>
+                        (@left.minus(@right))
+                </translation>
+        </reporter>
+
+
         <reporter name = "-" type = "vector" infix = "true" precedence = "4">
                 <argument name = "left" type = "vector" />
                 <argument name = "right" type = "vector" />
@@ -353,6 +452,7 @@
                         (@left == @right)
                 </translation>
         </reporter>
+
 
         <reporter name = "==" type = "boolean" infix = "true" precedence = "2">
                 <argument name = "left" type = "$NullObject" />
@@ -416,6 +516,14 @@
                         (-@number)
                 </translation>
         </reporter>
+
+        <reporter name = "@-" type = "complex">
+                <argument name = "number" type = "complex" />
+                <translation>
+                        (@number.negate())
+                </translation>
+        </reporter>
+
 
         <reporter name = "@-" type = "vector">
                 <argument name = "v" type = "vector" />
@@ -599,6 +707,14 @@
                 </translation>
         </reporter>
 
+        <reporter name = "abs" type = "double">
+                <argument name = "number" type = "complex" />
+                <translation>
+                        (@number.abs())
+                </translation>
+        </reporter>
+
+
 		<reporter name = "atan" type = "double">
 			<argument name = "number" type = "double" />
 			<translation>
@@ -642,12 +758,28 @@
 			</translation>
 		</reporter>
 
+		<reporter name = "cos" type = "complex">
+			<argument name = "number" type = "complex" />
+			<translation>
+				(@number.cos())
+			</translation>
+		</reporter>
+
+
 		<reporter name = "exp" type = "double">
 			<argument name = "number" type = "double" />
 			<translation>
 				Math.exp(@number)
 			</translation>
 		</reporter>
+
+		<reporter name = "exp" type = "complex">
+			<argument name = "number" type = "complex" />
+			<translation>
+				(@number.exp())
+			</translation>
+		</reporter>
+
 
 		<reporter name = "floor" type = "double">
 			<argument name = "number" type = "double" />
@@ -677,6 +809,14 @@
 			</translation>
 		</reporter>
 
+		<reporter name = "sin" type = "complex">
+			<argument name = "number" type = "complex" />
+			<translation>
+				(@number.sin())
+			</translation>
+		</reporter>
+
+
 		<reporter name = "sqrt" type = "double">
 			<argument name = "number" type = "double" />
 			<translation>
@@ -688,6 +828,13 @@
 			<argument name = "number" type = "double" />
 			<translation>
 				Math.tan(@number)
+			</translation>
+		</reporter>
+
+		<reporter name = "tan" type = "complex">
+			<argument name = "number" type = "complex" />
+			<translation>
+				(@number.tan())
 			</translation>
 		</reporter>
 
@@ -964,6 +1111,16 @@
 
 
         <!-- C -->
+        <reporter name = "complex" type = "complex">
+        	<argument name = "re" type = "double"/>
+        	<argument name = "im" type = "double"/>
+        	
+        	<translation>
+        		(new Complex(@re, @im))
+        	</translation>
+        </reporter>
+        
+        
         <command name = "continue">
                 <translation>
                         continue
