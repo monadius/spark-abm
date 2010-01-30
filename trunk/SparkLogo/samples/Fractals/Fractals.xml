@@ -5,5 +5,6 @@
 
 	<files>
 		<file>Model.spark</file>
+		<file>Agent.spark</file>
 	</files>
 </spark-project>
