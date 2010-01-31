@@ -1166,6 +1166,14 @@
                         </return>
                 </translation>
         </reporter>
+        
+        
+        <command name = "create-new-file">
+        	<argument name = "name" type = "string"/>
+        	<translation>
+        		FileUtils.createNew(@name)
+        	</translation>
+        </command>
 
 
 
@@ -1372,6 +1380,48 @@
                                 @block
                         }
                 </translation>
+        </command>
+        
+        
+        <command name = "fprint">
+        	<argument name = "file" type = "string"/>
+        	<argument name = "string" type = "string"/>
+        	<translation>
+        		<temp name = "writer"/>
+        		PrintStream @writer = FileUtils.getFileWriter(@file);
+        		if (@writer != null)
+        		{
+					@writer.println(@string);
+				}        		
+        	</translation>
+        </command>
+        
+        
+        <command name = "fprint">
+        	<argument name = "file" type = "string"/>
+        	<argument name = "number" type = "double"/>
+        	<translation>
+        		<temp name = "writer"/>
+        		PrintStream @writer = FileUtils.getFileWriter(@file);
+        		if (@writer != null)
+        		{
+					@writer.println(@number);
+				}        		
+        	</translation>
+        </command>
+
+
+        <command name = "fprint">
+        	<argument name = "file" type = "string"/>
+        	<argument name = "object" type = "$Object"/>
+        	<translation>
+        		<temp name = "writer"/>
+        		PrintStream @writer = FileUtils.getFileWriter(@file);
+        		if (@writer != null)
+        		{
+					@writer.println(@object);
+				}        		
+        	</translation>
         </command>
 
 
