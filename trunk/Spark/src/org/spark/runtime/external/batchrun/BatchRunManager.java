@@ -1,5 +1,7 @@
 package org.spark.runtime.external.batchrun;
 
+import java.util.ArrayList;
+
 import org.spark.runtime.data.DataRow;
 import org.spark.runtime.external.Coordinator;
 import org.spark.runtime.external.data.DataFilter;
@@ -30,6 +32,22 @@ public class BatchRunManager implements IDataConsumer {
 	/* Current simulation length */
 	private long currentSimulationLength;
 	
+	
+	/**
+	 * Event class which indicates that a batch run process is finished
+	 * @author Alexey
+	 *
+	 */
+	public static abstract class BatchRunEnded {
+		public static final int TERMINATED = 1;
+		public static final int FINISHED = 2;
+		
+		public abstract void finished(int flag);
+	}
+	
+	/* List of events */
+	private ArrayList<BatchRunEnded> events = new ArrayList<BatchRunEnded>();
+	
 
 	/**
 	 * Creates a batch run manager
@@ -50,6 +68,24 @@ public class BatchRunManager implements IDataConsumer {
 	}
 	
 	
+	/**
+	 * Adds an event
+	 * @param event
+	 */
+	public void addBatchRunEnded(BatchRunEnded event) {
+		events.add(event);
+	}
+	
+	
+	/**
+	 * Removes an event
+	 * @param event
+	 */
+	public void removeBatchRunEnded(BatchRunEnded event) {
+		events.remove(event);
+	}
+	
+	
 
 	/**
 	 * Starts a batch run process
@@ -64,7 +100,7 @@ public class BatchRunManager implements IDataConsumer {
 		// Set up initial values of parameters
 		currentSimulationLength = controller.initialize();
 		if (currentSimulationLength == 0) {
-			stop();
+			stop(BatchRunEnded.FINISHED);
 			return;
 		}
 		
@@ -86,7 +122,7 @@ public class BatchRunManager implements IDataConsumer {
 	/**
 	 * Stops a batch run process
 	 */
-	private void stop() {
+	private void stop(int flag) {
 		controller.stop();
 		
 		receiver.removeDataConsumer(dataFilter);
@@ -95,6 +131,10 @@ public class BatchRunManager implements IDataConsumer {
 			receiver.removeDataConsumer(dataSet.getFilter());
 		
 		runFlag = false;
+		
+		for (BatchRunEnded event : events) {
+			event.finished(flag);
+		}
 	}
 	
 	
@@ -118,7 +158,7 @@ public class BatchRunManager implements IDataConsumer {
 				currentSimulationLength = controller.nextStep(dataSet);
 				if (currentSimulationLength == 0) {
 					// Stop the batch run process
-					stop();
+					stop(BatchRunEnded.FINISHED);
 					return;
 				}
 				
@@ -129,7 +169,7 @@ public class BatchRunManager implements IDataConsumer {
 				// A simulation was stopped by some external forces
 
 				// Stop the batch run process
-				stop();
+				stop(BatchRunEnded.TERMINATED);
 				return;
 			}
 		}

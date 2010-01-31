@@ -1,13 +1,12 @@
 <config>
-	<render>0</render>
-	<recent-models>
-		<file>C:\Work\My Projects\Eclipse\Spark\tests\models\Worms\Model.xml</file>
+	<graphics render = "0"/>
+	<recent-models max = "10">		<file>C:\Work\My Projects\Eclipse\Spark\tests\models\Worms\Model.xml</file>
 		<file>C:\Work\My Projects\Eclipse\Spark\tests\models\GameOfLife\GameOfLifeModel.xml</file>
 		<file>C:\Work\My Projects\Eclipse\SparkLogo\Models\SMC v2\output\TestSMCModel.xml</file>
 		<file>c:\work\my projects\eclipse\sparklogo\samples\concurrentmode\output\concurrentmodel.xml</file>
 		<file>c:\work\my projects\eclipse\sparklogo\models\StemCellWithPhysAgents\output\StemCellModel.xml</file>
 		<file>c:\work\my projects\eclipse\sparklogo\samples\PhysModel2\output\TestModel.xml</file>
-		<file>C:\Work\My Projects\Eclipse\Spark\tests\models\RSV\RSVModel.xml</file>
 		<file>C:\Work\My Projects\Eclipse\tmp\SPARK_1.0_universal\samples\Test\output\TestModel.xml</file>
+		<file>C:\Work\My Projects\Eclipse\Spark\tests\models\RSV\RSVModel.xml</file>
 	</recent-models>
 </config>

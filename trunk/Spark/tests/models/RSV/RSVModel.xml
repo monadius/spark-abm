@@ -19,7 +19,7 @@
       <agent name="Virus" priority="1">RSV.Virus</agent>
       <agent name="Epithelial" priority="2">RSV.Epithelial</agent>
       <agent name="CellAgent">RSV.CellAgent</agent>
-    </agents></model><interface><windows><window height="202" name="Dataset" visible="true" width="202" x="1130" y="0"/><window height="202" name="Parameters" visible="true" width="600" x="530" y="0"/><window height="265" name="Anti" visible="true" width="265" x="0" y="630"/><window height="200" name="virus-number" visible="true" width="300" x="530" y="202"/><window height="200" name="Macrophages" visible="true" width="300" x="830" y="202"/><window height="630" main="true" name="Main Window" visible="true" width="530" x="0" y="0"/></windows>
+    </agents></model><interface><windows><window height="202" name="Dataset" visible="true" width="202" x="1130" y="0"/><window height="202" name="Parameters" visible="false" width="600" x="660" y="0"/><window height="690" name="Anti" visible="true" width="727" x="833" y="110"/><window height="200" name="virus-number" visible="false" width="300" x="530" y="202"/><window height="200" name="Macrophages" visible="false" width="300" x="830" y="202"/><window height="738" main="true" name="Main Window" visible="true" width="664" x="83" y="76"/></windows>
     
     
     
@@ -42,8 +42,8 @@
       <datalayer color1="0.0;0.0;0.0" color2="0.0;0.0;1.0" name="chemokine" val1="0.0" val2="1.0"/>
       <datalayer color1="0.0;0.0;0.0" color2="0.0;0.0;1.0" name="il8" val1="0.0" val2="1.0"/>
       <datalayer color1="0.0;0.0;0.0" color2="0.0;0.0;1.0" name="il9" val1="0.0" val2="1.0"/>
-      <datalayer color1="0.0;0.0;0.0" color2="0.0;0.0;1.0" name="pro" val1="0.0" val2="1.0"/>
-      <datalayer color1="0.0;0.0;0.0" color2="0.0;0.0;1.0" name="anti" val1="0.0" val2="1.0"/>
+      <datalayer color1="0.0;0.0;0.0" color2="1.0;1.0;1.0" name="pro" val1="0.0" val2="1.337371539959005" values-colors="0.5/1.0;0.0;0.0/0.01/1.0;1.0;0.0/"/>
+      <datalayer color1="0.0;0.0;0.0" color2="1.0;1.0;1.0" name="anti" val1="2.2903130778534767E-4" val2="0.5323849239721546" values-colors="0.5/0.0;0.0;0.8/"/>
     </data-layers>
     
 <chart height="200" interval="0" location="virus-number" method="get_virusNumber" name="virus-number" variable="virus-number" width="300" x="530" y="202"/><chart height="200" interval="0" location="Macrophages" method="get_macrophageNumber" name="Macrophages" variable="macrophage-number" width="300" x="830" y="202"/></interface></spark>

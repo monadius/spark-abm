@@ -43,6 +43,24 @@ public class ParameterCollection {
 	
 	
 	/**
+	 * Returns a parameter by its name
+	 * @param name
+	 * @return
+	 */
+	public Parameter getParameter(String name) {
+		for (String key : parameters.keySet()) {
+			String[] e = key.split(";");
+			if (e.length == 2) {
+				if (e[1].equals(name))
+					return parameters.get(key);
+			}
+		}
+		
+		return null;
+	}
+	
+	
+	/**
 	 * Loads all parameters from the given parent xml-node
 	 * @param parent
 	 * @throws Exception

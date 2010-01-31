@@ -2,14 +2,87 @@ package org.spark.utils;
 
 import java.awt.Window;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
+import com.spinn3r.log5j.Logger;
+
 
 public class FileUtils {
+	private static final Logger logger = Logger.getLogger();
+	
+	/* Collection of all file writers */
+	private static final HashMap<String, PrintStream> writers = new HashMap<String, PrintStream>();
+	
+	
+	/**
+	 * Returns an existing file writer or opens a new file
+	 * @param name
+	 * @return null if there is an error
+	 */
+	public static PrintStream getFileWriter(String name) {
+		PrintStream writer = writers.get(name);
+		
+		if (writer != null)
+			return writer;
+		
+		try {
+			writer = new PrintStream(new FileOutputStream(name, true));
+		}
+		catch (IOException e) {
+			logger.error(e);
+			return null;
+		}
+		
+		writers.put(name, writer);
+		return writer;
+	}
+	
+	
+	/**
+	 * Creates a new file with the given name or erases an existing file
+	 * @param name
+	 */
+	public static void createNew(String name) {
+		File file = new File(name);
+		
+		try {
+			if (!file.exists()) {
+				file.createNewFile();
+			}
+			else {
+				if (file.isFile()) {
+					if (file.delete())
+						file.createNewFile();
+				}
+			}
+			
+		}
+		catch (IOException e) {
+			logger.error(e);
+		}
+	}
+	
+	
+	/**
+	 * Closes all open files
+	 */
+	public static void closeAllOpenFiles() {
+		for (PrintStream writer : writers.values()) {
+			writer.close();
+		}
+		
+		writers.clear();
+	}
+	
+	
 	/**
 	 * Returns all files satisfying the given filter in the given directory
 	 * and its sub-directories

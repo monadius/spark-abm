@@ -9,7 +9,7 @@ import java.util.Calendar;
 import org.spark.runtime.external.Coordinator;
 import org.spark.runtime.external.VariableSet;
 import org.spark.runtime.external.VariableSetFactory;
-import org.spark.runtime.external.gui.SparkDatasetPanel;
+import org.spark.runtime.external.data.DataSetTmp;
 
 /**
  * Batch run controller
@@ -138,7 +138,9 @@ public class BatchRunController {
 		}
 
 		if (!dataFolder.exists())
-			dataFolder.mkdirs();
+			if (!dataFolder.mkdirs()) {
+				System.out.println("Cannot create the folder: " + dataFolder);
+			}
 		
 		try {
 			File logFile = new File(dataFolder, dataFileName + "_log.csv");
@@ -194,7 +196,7 @@ public class BatchRunController {
 	public synchronized void saveData() {
 		String fname = dataFileName + counter + "-" + repetition + ".csv";
 		// FIXME: rewrite when data sets are implemented
-		SparkDatasetPanel dataset = Coordinator.getInstance().getWindowManager().getSparkPanel(SparkDatasetPanel.class);
+		DataSetTmp dataset = Coordinator.getInstance().getDataSet();
 		
 		if (dataset != null) {
 			dataset.saveData(new File(dataFolder, fname));
