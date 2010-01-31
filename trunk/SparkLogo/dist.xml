@@ -83,6 +83,7 @@
 			<zipfileset dir="${spark}" prefix="lib">
 				<include name="README" />
 				<include name="LICENSE" />
+				<include name="BatchRunner.properties"/>
 			</zipfileset>
 
 			<zipfileset refid="docs" />
@@ -137,6 +138,7 @@
 			<zipfileset dir="${spark}" prefix="lib">
 				<include name="README" />
 				<include name="LICENSE" />
+				<include name="BatchRunner.properties"/>
 			</zipfileset>
 
 			<zipfileset refid="docs" />
@@ -153,7 +155,7 @@
 				<include name="spark-client.bat" />
 				<include name="spark-batches.bat" />
 			</zipfileset>
-
+			
 			<zipfileset dir="${basedir}/logo">
 				<include name="spark-config.xml" />
 				<include name="config.xml" />
