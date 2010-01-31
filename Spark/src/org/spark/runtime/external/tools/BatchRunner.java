@@ -248,7 +248,7 @@ public class BatchRunner {
 	 */
 	public static void main(String[] args) throws Exception {
 		if (args.length != 1) {
-			System.out.println("Usage: java -cp spark.jar org.spark.runtime.external.tools.BatchRunner batchfile.xml");
+			System.out.println("Usage: spark-batches batchfile.xml");
 			return;
 		}
 		
