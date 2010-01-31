@@ -1,0 +1,15 @@
+<batches>
+	<model path = "tests/models/RSV/RSVModel.xml">
+		<batch ticks = "1000" repetitions = "1"/>
+
+		<batch ticks = "100" repetitions = "2" save-data = "true" data-file = "test">
+			<parameter name = "init-virus" start = "100" end = "800" step = "100"/>
+		</batch>
+		
+	</model>
+	
+	<model path = "tests/models/Worms/Model.xml">
+		<batch ticks = "1000" repetitions = "3" save-data = "true" data-file = "worms">
+		</batch>
+	</model>
+</batches>

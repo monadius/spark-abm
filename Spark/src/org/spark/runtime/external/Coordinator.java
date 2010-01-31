@@ -16,6 +16,7 @@ import org.spark.runtime.data.DataObject;
 import org.spark.runtime.data.DataObject_State;
 import org.spark.runtime.external.data.DataFilter;
 import org.spark.runtime.external.data.DataReceiver;
+import org.spark.runtime.external.data.DataSetTmp;
 import org.spark.runtime.external.data.LocalDataReceiver;
 import org.spark.runtime.external.gui.*;
 import org.spark.runtime.external.gui.menu.SparkMenu;
@@ -87,6 +88,9 @@ public class Coordinator {
 	
 	/* Initial delay time */
 	private int delayTime;
+	
+	/* Data set */
+	private DataSetTmp dataSet;
 
 	
 	/*************** Configuration *****************/
@@ -94,6 +98,10 @@ public class Coordinator {
 	
 	
 	/*************** GUI ******************/
+	/* If true, then no GUI elements are created */
+	private final boolean noGUI;
+	
+	/* Main window manager */
 	private final WindowManager windowManager;
 	
 	/* Control panel */
@@ -108,7 +116,7 @@ public class Coordinator {
 	 * @param manager
 	 * @param receiver
 	 */
-	private Coordinator(IModelManager manager, LocalDataReceiver receiver) {
+	private Coordinator(IModelManager manager, LocalDataReceiver receiver, boolean noGUI) {
 		this.modelManager = manager;
 		this.receiver = receiver;
 		this.currentDir = new File(".");
@@ -117,13 +125,20 @@ public class Coordinator {
 		this.dataLayerStyleNodes = new HashMap<String, Node>();
 		this.agentTypesAndNames = new HashMap<String, String>();
 		
-		this.windowManager = new Swing_WindowManager();
-		SparkMenu mainMenu = StandardMenu.create(windowManager);
-		windowManager.setMainMenu(mainMenu);
-		
+		this.noGUI = noGUI;
 		this.renders = new ArrayList<Render>();
 		
-		this.configuration = new Configuration(mainMenu.getSubMenu("File"));
+		if (noGUI) {
+			this.windowManager = null;
+			this.configuration = new Configuration(null);
+		}
+		else {
+			this.windowManager = new Swing_WindowManager();
+			SparkMenu mainMenu = StandardMenu.create(windowManager);
+			windowManager.setMainMenu(mainMenu);
+		
+			this.configuration = new Configuration(mainMenu.getSubMenu("File"));
+		}
 	}
 
 	
@@ -131,12 +146,14 @@ public class Coordinator {
 	 * Initialization
 	 */
 	private void init() {
-		// Initilize GUI
-		SparkWindow mainWindow = windowManager.getMainWindow();
-		mainWindow.setName("SPARK");
+		if (!noGUI) {
+			// Initilize GUI
+			SparkWindow mainWindow = windowManager.getMainWindow();
+			mainWindow.setName("SPARK");
 		
-		controlPanel = new SparkControlPanel();
-		mainWindow.addPanel(controlPanel, BorderLayout.NORTH);
+			controlPanel = new SparkControlPanel();
+			mainWindow.addPanel(controlPanel, BorderLayout.NORTH);
+		}
 		
 		// Load config file
 		configuration.readConfigFile();
@@ -147,15 +164,27 @@ public class Coordinator {
 	 * 
 	 * @param manager
 	 * @param receiver
+	 * @param noGUI
 	 */
-	public static void init(IModelManager manager, LocalDataReceiver receiver) {
+	public static void init(IModelManager manager, LocalDataReceiver receiver, boolean noGUI) {
 		if (coordinator != null) {
 			logger.error("Coordinator is already created");
 			throw new Error("Illegal operation");
 		}
 
-		coordinator = new Coordinator(manager, receiver);
+		coordinator = new Coordinator(manager, receiver, noGUI);
 		coordinator.init();
+	}
+	
+	
+	/**
+	 * Creates a coordinator with GUI
+	 * 
+	 * @param manager
+	 * @param receiver
+	 */
+	public static void init(IModelManager manager, LocalDataReceiver receiver) {
+		init(manager, receiver, false);
 	}
 	
 	
@@ -240,6 +269,15 @@ public class Coordinator {
 	 */
 	public DataObject_State getInitialState() {
 		return receiver.getInitialState();
+	}
+	
+	
+	/**
+	 * Returns the current data set
+	 * @return
+	 */
+	public DataSetTmp getDataSet() {
+		return dataSet;
 	}
 	
 
@@ -399,7 +437,7 @@ public class Coordinator {
 	 * 
 	 * @param file
 	 */
-	public synchronized void loadModel(File modelFile) throws Exception {
+	public synchronized void loadModel(File modelFile) {
 		try {
 			if (modelXmlFile != null)
 				unloadModel();
@@ -496,6 +534,17 @@ public class Coordinator {
 	 * @param interfaceNode
 	 */
 	private void loadInterface(Node interfaceNode) {
+		// TODO: load data set properly
+		Node datasetNode = XmlDocUtils.getChildByTagName(interfaceNode, "dataset");
+		if (datasetNode != null) {
+			dataSet = new DataSetTmp(datasetNode);
+			receiver.addDataConsumer(dataSet.getDataFilter());
+		}
+		
+		
+		if (windowManager == null)
+			return;
+		
 		XML_WindowsLoader.loadWindows(windowManager, interfaceNode);
 		
 		/* Load view panels */
@@ -530,10 +579,9 @@ public class Coordinator {
 		}
 
 		/* Load a data set panel */
-		Node datasetNode = XmlDocUtils.getChildByTagName(interfaceNode, "dataset");
+		datasetNode = XmlDocUtils.getChildByTagName(interfaceNode, "dataset");
 		if (datasetNode != null) {
-			SparkDatasetPanel datasetPanel = new SparkDatasetPanel(windowManager, datasetNode);
-			receiver.addDataConsumer(datasetPanel.getDataFilter());
+			new SparkDatasetPanel(windowManager, datasetNode, dataSet);
 		}
 
 		
@@ -584,13 +632,15 @@ public class Coordinator {
 		saveGUIChanges();
 
 		// Clear variables
+		dataSet = null;
 		modelXmlDoc = null;
 		modelXmlFile = null;
 
 		renders.clear();
 		receiver.removeAllConsumers();
 
-		windowManager.disposeAll();
+		if (windowManager != null)
+			windowManager.disposeAll();
 	}
 	
 	
@@ -621,14 +671,16 @@ public class Coordinator {
 	 * @throws Exception
 	 */
 	public void saveGUIChanges() {
+		if (noGUI)
+			return;
+		
 		if (modelXmlDoc == null || modelXmlFile == null)
 			return;
-
+		
 		try {
 			// Save data layers
 			saveDataLayerStyles(modelXmlDoc);
 
-			// Save windows and panels
 			Node interfaceNode = XmlDocUtils.getChildByTagName(modelXmlDoc.getFirstChild(), "interface");
 			XML_WindowsLoader.saveWindows(windowManager, modelXmlDoc, interfaceNode, modelXmlFile);
 
@@ -664,6 +716,9 @@ public class Coordinator {
 	 * @return
 	 */
 	public synchronized Render createRender(Node node, int renderType) {
+		if (noGUI)
+			return null;
+		
 		int interval = (delayTime < 0) ? -delayTime : 1;
 		
 		Render render = Render.createRender(node, renderType, interval, dataLayerStyles,
@@ -682,6 +737,9 @@ public class Coordinator {
 	 * Invokes the update method for all active renders
 	 */
 	public synchronized void updateAllRenders() {
+		if (noGUI)
+			return;
+		
 		for (Render render : renders) {
 			render.update();
 		}
@@ -714,7 +772,7 @@ public class Coordinator {
 
 		new Thread(manager).start();
 
-		Coordinator.init(manager, receiver);
+		Coordinator.init(manager, receiver, false);
 		
 		if (args.length == 1) {
 			final String modelPath = args[0];

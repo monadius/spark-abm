@@ -15,6 +15,7 @@ import org.spark.runtime.internal.data.BadDataSourceException;
 import org.spark.runtime.internal.data.DataCollector;
 import org.spark.runtime.internal.data.DataProcessor;
 import org.spark.runtime.internal.manager.CommandQueue;
+import org.spark.utils.FileUtils;
 
 import com.spinn3r.log5j.Logger;
 
@@ -48,6 +49,9 @@ public class StandardSimulationEngine extends AbstractSimulationEngine {
 	@Override
 	public void setup(String observerName, String mode)
 			throws Exception {
+		// Close all open files
+		FileUtils.closeAllOpenFiles();
+		
 		int executionMode = model.getDefaultExecutionMode();
 		if (mode != null)
 			executionMode = ExecutionMode.parse(mode);
@@ -315,6 +319,7 @@ public class StandardSimulationEngine extends AbstractSimulationEngine {
 			throw e;
 		}
 		finally {
+			FileUtils.closeAllOpenFiles();
 			stopFlag = false;
 		}
 	}

@@ -2,6 +2,8 @@ package org.spark.utils;
 
 import java.util.ArrayList;
 
+import javax.xml.parsers.DocumentBuilderFactory;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -11,6 +13,26 @@ import org.w3c.dom.Node;
  *
  */
 public class XmlDocUtils {
+	/**
+	 * Loads an xml file
+	 * @param fname
+	 * @return
+	 */
+	public static Document loadXmlFile(String fname) {
+		try {
+			Document doc = DocumentBuilderFactory.newInstance()
+								.newDocumentBuilder().parse(fname);
+		
+			return doc;
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	
 	/**
 	 * Returns a list of children with the specified name
 	 * @param name
