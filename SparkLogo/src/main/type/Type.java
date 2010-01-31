@@ -475,6 +475,7 @@ public class Type {
 		java.emptyLine();
 
 		java.println("import java.util.ArrayList;");
+		java.println("import java.io.*;");
 		java.println("import org.spark.core.*;");
 		java.println("import org.spark.data.*;");
 		java.println("import org.spark.space.*;");

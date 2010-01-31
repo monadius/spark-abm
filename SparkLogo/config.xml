@@ -1,12 +1,13 @@
 <config>
 	<spark-path>C:\Work\My Projects\Eclipse\Spark\release\spark.jar</spark-path>
 	<recent-projects>
-		<file>C:\Work\My Projects\Eclipse\SparkLogo\samples\ConcurrentMode\ConcurrentModeDemo.xml</file>
-		<file>C:\Work\My Projects\Eclipse\SparkLogo\samples\InnateImmuneResponse Ver2\Innate Immune Response 2.xml</file>
-		<file>C:\Work\My Projects\Eclipse\SparkLogo\samples\Simple 3d model\Simple 3d Model.xml</file>
-		<file>C:\Work\My Projects\Eclipse\SparkLogo\samples\PhysModel2\Spark PhysModel2.xml</file>
-		<file>C:\Work\My Projects\Eclipse\SparkLogo\samples\DFU\DFU project.xml</file>
-		<file>C:\Work\My Projects\Eclipse\SparkLogo\samples\Fire\FireModel.xml</file>
+		<file>C:\Work\My Projects\Eclipse\SparkLogo\Models\SMC v1\SMC project v1.xml</file>
+		<file>C:\Work\My Projects\Eclipse\SparkLogo\Models\StemCell\StemCell.xml</file>
+		<file>C:\Work\My Projects\Eclipse\SparkLogo\Models\StemCell2\StemCell + PhysModel Project.xml</file>
+		<file>C:\Work\My Projects\Eclipse\SparkLogo\Models\StemCellNetLogo\StemCellNetLogo.xml</file>
+		<file>C:\Work\My Projects\Eclipse\SparkLogo\Models\StemCellWithPhysAgents\StemCell + PhysAgents.xml</file>
+		<file>C:\Work\My Projects\Eclipse\SparkLogo\Models\test\test.xml</file>
 		<file>C:\Work\My Projects\Eclipse\SparkLogo\samples\Fractals\Fractals.xml</file>
+		<file>C:\Work\My Projects\Eclipse\SparkLogo\samples\Worms\Worms project.xml</file>
 	</recent-projects>
 </config>

@@ -128,7 +128,7 @@
 	<target name="win-dist" depends="init" description="Creates Windows distribution">
 		<zip destfile="${dist}/${win-name}.zip">
 			<fileset refid="basic-files" />
-			<zipfileset dir="${spark}/licenses" prefix="licenses">
+			<zipfileset dir="${spark}/Licenses" prefix="licenses">
 				<include name="**/**" />
 			</zipfileset>
 
