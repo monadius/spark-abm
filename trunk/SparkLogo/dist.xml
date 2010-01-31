@@ -97,6 +97,7 @@
 				<include name="spark.jar" />
 				<include name="spark-server.bat" />
 				<include name="spark-client.bat" />
+				<include name="spark-batches.bat" />
 			</zipfileset>
 
 			<zipfileset dir="${basedir}/logo">
@@ -150,6 +151,7 @@
 				<include name="spark.jar" />
 				<include name="spark-server.bat" />
 				<include name="spark-client.bat" />
+				<include name="spark-batches.bat" />
 			</zipfileset>
 
 			<zipfileset dir="${basedir}/logo">

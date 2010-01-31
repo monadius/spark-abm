@@ -81,7 +81,7 @@
 
 
 
-<window height="151" name="Parameters" visible="true" width="769" x="1045" y="97"/><window height="313" name="number-of-agents" visible="false" width="364" x="1218" y="360"/><window height="789" main="true" name="Main Window" visible="true" width="725" x="394" y="44"/></windows>
+<window height="151" name="Parameters" visible="true" width="769" x="1045" y="97"/><window height="313" name="number-of-agents" visible="false" width="364" x="1218" y="360"/><window height="789" main="true" name="Main Window" visible="true" width="725" x="229" y="45"/></windows>
 <mainframe location="Main Window"><spacestyle name="space" selected="true" swapXY="false"/><datalayerstyle name="data" selected="true"/><agentstyle alpha-function-value="0.0" border="true" name="Mandelbrot" position="0" texture-env="0" transparent="false" visible="false"/></mainframe>
 <parameterframe location="Parameters">
 <parameter default="1000.0" max="10000.0" min="10.0" name="max-iteration" step="1.0" type="Double" variable="max-iteration" widget="Slider"/>
