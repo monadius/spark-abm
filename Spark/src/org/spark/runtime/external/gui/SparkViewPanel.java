@@ -52,6 +52,9 @@ public class SparkViewPanel extends JPanel implements ISparkPanel,
 		// Set panel's location
 		String location = XmlDocUtils.getValue(node, "location", null);
 		win = manager.setLocation(this, location);
+		
+		if (render != null)
+			render.setName(win.getName());
 	}
 	
 	
@@ -65,6 +68,8 @@ public class SparkViewPanel extends JPanel implements ISparkPanel,
 		win.addPanel(this);
 		
 		this.win = win;
+		if (render != null && win != null)
+			render.setName(win.getName());
 	}
 	
 	
@@ -96,10 +101,10 @@ public class SparkViewPanel extends JPanel implements ISparkPanel,
 		menuItem.addActionListener(this);
 		popup.add(menuItem);
 
-//		menuItem = new JMenuItem("Snapshot");
-//		menuItem.setActionCommand("snapshot");
-//		menuItem.addActionListener(this);
-//		popup.add(menuItem);
+		menuItem = new JMenuItem("Snapshot");
+		menuItem.setActionCommand("snapshot");
+		menuItem.addActionListener(this);
+		popup.add(menuItem);
 
 		popup.addSeparator();
 		
@@ -172,7 +177,7 @@ public class SparkViewPanel extends JPanel implements ISparkPanel,
 			
 			if (cmd == "snapshot") {
 				if (render != null)
-					render.takeSnapshot();
+					render.takeSnapshot(null, null);
 				
 				return;
 			}
@@ -184,8 +189,10 @@ public class SparkViewPanel extends JPanel implements ISparkPanel,
 			
 			if (cmd == "rename") {
 				String newName = JOptionPane.showInputDialog("Input new name", win.getName());
-				if (newName != null)
+				if (newName != null) {
 					win.setName(newName);
+					render.setName(win.getName());
+				}
 				return;
 			}
 			

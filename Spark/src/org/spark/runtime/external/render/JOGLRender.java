@@ -7,6 +7,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.io.File;
 
 import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
@@ -324,8 +325,9 @@ public class JOGLRender extends Render implements GLEventListener,
 
 
 	@Override
-	protected void saveSnapshot(String fname, DataRow data) {
-		throw new RuntimeException("Not implemented");
+	protected void saveSnapshot(File dir, String fname, DataRow data) {
+		logger.error("Not implemented");
+//		throw new RuntimeException("Not implemented");
 //		this.fname = fname;
 //		takeScreenshot = true;
 //		canvas.display();

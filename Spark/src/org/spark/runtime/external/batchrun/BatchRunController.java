@@ -35,6 +35,9 @@ public class BatchRunController {
 	/* Indicates whether to save the data after each run or not */
 	private boolean saveDataFlag = true;
 	
+	/* Indicates if the final snapshots should be saved */
+	private boolean saveFinalSnapshots = false;
+	
 	/* Data analyzer */
 	private DataAnalyzer dataAnalyzer;
 	
@@ -115,6 +118,15 @@ public class BatchRunController {
 	 */
 	public void setSaveDataFlag(boolean saveData) {
 		this.saveDataFlag = saveData;
+	}
+	
+	
+	/**
+	 * Sets the flag for saving final snapshots
+	 * @param saveSnapshots
+	 */
+	public void setSaveFinalSnapshotsFlag(boolean saveSnapshots) {
+		this.saveFinalSnapshots = saveSnapshots;
 	}
 	
 	
@@ -238,6 +250,12 @@ public class BatchRunController {
 		// Save data
 		if (saveDataFlag) {
 			saveData();
+		}
+		
+		// Save snapshots
+		if (saveFinalSnapshots) {
+			Coordinator.getInstance().saveSnapshots("" + counter + "-" + repetition + "-", 
+							dataFolder);
 		}
 		
 		// Analyze data

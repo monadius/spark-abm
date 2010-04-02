@@ -12,6 +12,7 @@ import java.util.HashMap;
 import org.spark.runtime.data.DataCollectorDescription;
 import org.spark.runtime.data.DataObject_Spaces;
 import org.spark.runtime.data.DataRow;
+import org.spark.runtime.external.Coordinator;
 import org.spark.runtime.external.data.DataFilter;
 import org.spark.runtime.external.data.IDataConsumer;
 import org.spark.utils.XmlDocUtils;
@@ -135,13 +136,13 @@ public abstract class Render implements KeyListener, IDataConsumer {
 	 * Saves a snapshot to the given file.
 	 * This method is always called from the awt event queue
 	 */
-	protected abstract void saveSnapshot(String fname, DataRow data);
+	protected abstract void saveSnapshot(File dir, String name, DataRow data);
 	
 	
 	/**
 	 * Saves a snapshot to an automatically generated file
 	 */
-	public synchronized final void takeSnapshot() {
+	public synchronized final void takeSnapshot(final String prefix, final File outputFolder) {
 		final DataRow tmp = data;
 		
 		EventQueue.invokeLater(new Runnable() {
@@ -149,9 +150,19 @@ public abstract class Render implements KeyListener, IDataConsumer {
 				if (tmp == null)
 					return;
 				
-				String name = (renderName != null) ? renderName : "pic";
-				name += tmp.getTime().getTick();
-				saveSnapshot(name, tmp);
+				File dir;
+				String name = (prefix != null ? prefix : "");
+				name += (renderName != null && renderName != "") ? renderName : "pic";
+				name += "-" + tmp.getTime().getTick();
+				
+				if (outputFolder == null) {
+					dir = Coordinator.getInstance().getCurrentDir();
+				}
+				else {
+					dir = outputFolder;
+				}
+
+				saveSnapshot(dir, name, tmp);
 			}
 		});
 	}
