@@ -35,6 +35,7 @@ public class BatchRunDialog extends JDialog implements ActionListener {
 	private JSpinner spinnerRepetitionNumber;
 	private JTextField textDataFileName;
 	private JCheckBox checkSaveData;
+	private JCheckBox checkSaveSnapshots;
 	
 	/* Data variable for analysis */
 	private JComboBox comboVariable;
@@ -170,6 +171,9 @@ public class BatchRunDialog extends JDialog implements ActionListener {
 		checkSaveData = new JCheckBox();
 		checkSaveData.setSelected(true);
 		
+		checkSaveSnapshots = new JCheckBox();
+		checkSaveSnapshots.setSelected(true);
+		
 		// Add controls
 		generalControls.add(new JLabel("Number of ticks"));
 		generalControls.add(spinnerMaxTicks);
@@ -182,8 +186,11 @@ public class BatchRunDialog extends JDialog implements ActionListener {
 		
 		generalControls.add(new JLabel("Save data"));
 		generalControls.add(checkSaveData);
+		
+		generalControls.add(new JLabel("Save final snapshots"));
+		generalControls.add(checkSaveSnapshots);
 
-		SpringUtilities.makeCompactGrid(generalControls, 4, 2, 5, 5, 10, 10);
+		SpringUtilities.makeCompactGrid(generalControls, 5, 2, 5, 5, 10, 10);
 		
 		panel.add(generalControls);
 	}
@@ -361,6 +368,7 @@ public class BatchRunDialog extends JDialog implements ActionListener {
 			
 			BatchRunController batchRunController = new BatchRunController(repetitions, ticks, dataFileName);
 			batchRunController.setSaveDataFlag(checkSaveData.isSelected());
+			batchRunController.setSaveFinalSnapshotsFlag(checkSaveSnapshots.isSelected());
 			
 			batchRunController.setParameterSweepController(sweep);
 			batchRunController.setDataAnalyzer(dataAnalyzer, varName);

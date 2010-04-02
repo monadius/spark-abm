@@ -9,6 +9,10 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
+
+import javax.imageio.ImageIO;
 
 import org.spark.runtime.data.DataObject_Grid;
 import org.spark.runtime.data.DataObject_SpaceAgents;
@@ -65,9 +69,39 @@ public class JavaRender extends Render {
 	}
 
 	@Override
-	public void saveSnapshot(String fname, DataRow data) {
-		throw new Error("Not implemented");
-		// canvas.takeSnapshot(fname);
+	public void saveSnapshot(File dir, String fname, DataRow data) {
+		// TODO: remove any dependency on canvas
+		// Snapshots should be saved even in headless mode
+		if (canvas == null) {
+			logger.error("Null canvas");
+			return;
+		}
+		
+		int w = canvas.getWidth();
+		int h = canvas.getHeight();
+		
+		if (w <= 0 || h <= 0) {
+			logger.warn("Width or height is negative");
+			return;
+		}
+		
+		BufferedImage image = new BufferedImage(w, h, BufferedImage.TYPE_4BYTE_ABGR);
+		Graphics2D g = image.createGraphics();
+		
+		DataRow tmp = this.data;
+		this.data = data;
+		display(g);
+		this.data = tmp;
+		
+		g.dispose();
+		
+		try {
+			File out = new File(dir, fname + ".png");
+			ImageIO.write(image, "png", out);
+		}
+		catch (Exception e) {
+			logger.error(e);
+		}
 	}
 
 	/**

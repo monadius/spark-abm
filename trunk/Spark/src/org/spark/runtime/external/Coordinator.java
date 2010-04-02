@@ -746,6 +746,17 @@ public class Coordinator {
 	}
 	
 	
+	/**
+	 * Saves snapshots for all renders
+	 * @param outputFolder
+	 */
+	public synchronized void saveSnapshots(String prefix, File outputFolder) {
+		for (Render render : renders) {
+			render.takeSnapshot(prefix, outputFolder);
+		}
+	}
+	
+	
 	
 	/**
 	 * Test main method
