@@ -1,5 +1,6 @@
 package org.spark.runtime.external.batchrun;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import org.spark.runtime.data.DataRow;
@@ -7,6 +8,7 @@ import org.spark.runtime.external.Coordinator;
 import org.spark.runtime.external.data.DataFilter;
 import org.spark.runtime.external.data.DataReceiver;
 import org.spark.runtime.external.data.IDataConsumer;
+import org.spark.runtime.external.render.Render;
 
 /**
  * Manages a batch run process
@@ -90,8 +92,19 @@ public class BatchRunManager implements IDataConsumer {
 	/**
 	 * Starts a batch run process
 	 */
-	public synchronized void start() {
+	public synchronized void start(boolean saveSnapshots, int snapshotInterval) {
 		Coordinator c = Coordinator.getInstance();
+		File outputFolder = controller.getDataFolder();
+		if (outputFolder == null)
+			outputFolder = c.getCurrentDir();
+		
+		// TODO: it does not work in a natural way:
+		// if an output directory is removed in the stop function
+		// then not all snapshots will be saved in that folder
+		// because snapshots are saved on AWTEvent thread
+		c.popOutputDir();
+		c.pushOutputDir(outputFolder);
+		
 		runFlag = false;
 
 		// Stop a simulation
@@ -114,6 +127,14 @@ public class BatchRunManager implements IDataConsumer {
 		if (dataSet != null)
 			receiver.addDataConsumer(dataSet.getFilter());
 		
+		// Start automatic snapshot saving
+		if (saveSnapshots) {
+			Render[] renders = c.getRenders();
+			for (Render render : renders) {
+				render.enableAutomaticSnapshots(snapshotInterval);
+			}
+		}
+		
 		// Start a new simulation
 		c.startLoadedModel(currentSimulationLength, false);
 	}
@@ -134,6 +155,12 @@ public class BatchRunManager implements IDataConsumer {
 		
 		for (BatchRunEnded event : events) {
 			event.finished(flag);
+		}
+		
+		// Stop automatic snapshot saving
+		Render[] renders = Coordinator.getInstance().getRenders();
+		for (Render render : renders) {
+			render.disableAutomaticSnapshots();
 		}
 	}
 	

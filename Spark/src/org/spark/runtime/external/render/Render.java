@@ -14,6 +14,7 @@ import org.spark.runtime.data.DataObject_Spaces;
 import org.spark.runtime.data.DataRow;
 import org.spark.runtime.external.Coordinator;
 import org.spark.runtime.external.data.DataFilter;
+import org.spark.runtime.external.data.DataReceiver;
 import org.spark.runtime.external.data.IDataConsumer;
 import org.spark.utils.XmlDocUtils;
 
@@ -36,6 +37,19 @@ public abstract class Render implements KeyListener, IDataConsumer {
 	/* Data filter */
 	private final DataFilter dataFilter;
 	
+	/***** Snapshot parameters *****/
+	
+	/* Data filter for snapshots (have different collection interval) */
+	private final DataFilter snapshotDataFilter;
+	
+	/* If false, then no snapshots are saved automatically */
+	private boolean saveSnapshotsFlag;
+	
+	/* Prefix for file names of (automatic) snapshots */
+	private String snapshotNamePrefix;
+	
+	
+	/***** Style parameters *****/
 
 	/* Active (selected) space to be rendered */
 	protected SpaceStyle selectedSpace;
@@ -82,6 +96,20 @@ public abstract class Render implements KeyListener, IDataConsumer {
 		agentStyles = new ArrayList<AgentStyle>();
 		dataFilter = new DataFilter(this, "render");
 		dataFilter.setInterval(interval);
+
+		saveSnapshotsFlag = false;
+		
+		snapshotDataFilter = new DataFilter(new IDataConsumer() {
+			public void consume(DataRow row) {
+				if (!saveSnapshotsFlag)
+					return;
+				
+				takeSnapshot(row, snapshotNamePrefix);
+			}
+		}, "render-snapshot");
+		
+		snapshotDataFilter.setInterval(0);
+		snapshotDataFilter.setSynchronizedFlag(true);
 	}
 	
 	
@@ -140,29 +168,30 @@ public abstract class Render implements KeyListener, IDataConsumer {
 	
 	
 	/**
+	 * Saves a snapshot of the current data to an automatically generated file
+	 * @param prefix
+	 */
+	public synchronized final void takeSnapshot(final String prefix) {
+		takeSnapshot(data, prefix);
+	}
+	
+	
+	/**
 	 * Saves a snapshot to an automatically generated file
 	 */
-	public synchronized final void takeSnapshot(final String prefix, final File outputFolder) {
-		final DataRow tmp = data;
-		
+	public synchronized final void takeSnapshot(final DataRow row, final String prefix) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
-				if (tmp == null)
+				if (row == null)
 					return;
 				
 				File dir;
 				String name = (prefix != null ? prefix : "");
 				name += (renderName != null && renderName != "") ? renderName : "pic";
-				name += "-" + tmp.getTime().getTick();
-				
-				if (outputFolder == null) {
-					dir = Coordinator.getInstance().getCurrentDir();
-				}
-				else {
-					dir = outputFolder;
-				}
+				name += "-" + row.getTime().getTick();
 
-				saveSnapshot(dir, name, tmp);
+				dir = Coordinator.getInstance().getOutputDir();
+				saveSnapshot(dir, name, row);
 			}
 		});
 	}
@@ -193,6 +222,8 @@ public abstract class Render implements KeyListener, IDataConsumer {
 			if (agentStyle.visible)
 				dataFilter.addData(DataCollectorDescription.SPACE_AGENTS, agentStyle.typeName);
 		}
+		
+		snapshotDataFilter.copyDataParameters(dataFilter);
 	}
 	
 	
@@ -200,8 +231,56 @@ public abstract class Render implements KeyListener, IDataConsumer {
 	 * Returns the data filter associated with the renderer
 	 * @return
 	 */
-	public DataFilter getDataFilter() {
-		return dataFilter;
+	public void register(DataReceiver receiver) {
+		receiver.addDataConsumer(dataFilter);
+		receiver.addDataConsumer(snapshotDataFilter);
+	}
+
+	
+	
+	/**
+	 * Enables automatic snapshots at the given time intervals
+	 * @param flag
+	 */
+	public void enableAutomaticSnapshots(int interval) {
+		saveSnapshotsFlag = true;
+		snapshotDataFilter.setInterval(interval);
+	}
+	
+	
+	/**
+	 * Disables automatic snapshots
+	 */
+	public void disableAutomaticSnapshots() {
+		saveSnapshotsFlag = false;
+		snapshotDataFilter.setInterval(0);
+	}
+	
+	
+	/**
+	 * Returns saveSnapshotFlag
+	 * @return
+	 */
+	public boolean getSaveSnapshotsFlag() {
+		return saveSnapshotsFlag;
+	}
+	
+	
+	/**
+	 * Sets the prefix for snapshot file names
+	 * @param name
+	 */
+	public void setSnapshotNamePrefix(String name) {
+		snapshotNamePrefix = name;
+	}
+	
+
+	/**
+	 * Returns the prefix for snapshot file names
+	 * @return
+	 */
+	public String getSnapshotNamePrefix() {
+		return snapshotNamePrefix;
 	}
 	
 	

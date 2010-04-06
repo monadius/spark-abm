@@ -10,6 +10,7 @@ import org.spark.runtime.external.Coordinator;
 import org.spark.runtime.external.VariableSet;
 import org.spark.runtime.external.VariableSetFactory;
 import org.spark.runtime.external.data.DataSetTmp;
+import org.spark.runtime.external.render.Render;
 
 /**
  * Batch run controller
@@ -167,6 +168,15 @@ public class BatchRunController {
 	
 	
 	/**
+	 * Returns the folder for saving batch run data
+	 * @return
+	 */
+	public File getDataFolder() {
+		return dataFolder;
+	}
+	
+	
+	/**
 	 * Sets the parameter sweep controller
 	 * @param ps
 	 */
@@ -196,6 +206,10 @@ public class BatchRunController {
 		if (log != null) {
 			log.print("Run,Repetition,Error,");
 			log.println(currentParameters.getVariableNames());
+		}
+
+		for (Render render : Coordinator.getInstance().getRenders()) {
+			render.setSnapshotNamePrefix("" + counter + "-" + repetition + "-");
 		}
 		
 		return numberOfTicks;
@@ -254,8 +268,9 @@ public class BatchRunController {
 		
 		// Save snapshots
 		if (saveFinalSnapshots) {
-			Coordinator.getInstance().saveSnapshots("" + counter + "-" + repetition + "-", 
-							dataFolder);
+			for (Render render : Coordinator.getInstance().getRenders()) {
+				render.takeSnapshot("" + counter + "-" + repetition + "-");
+			}
 		}
 		
 		// Analyze data
@@ -305,6 +320,10 @@ public class BatchRunController {
 
 		currentParameters = VariableSetFactory.createVariableSet("batch@run@current@set");
 		currentParameters.synchronizeWithParameters(Coordinator.getInstance().getParameters());
+
+		for (Render render : Coordinator.getInstance().getRenders()) {
+			render.setSnapshotNamePrefix("" + counter + "-" + repetition + "-");
+		}
 		
 		return numberOfTicks;
 	}

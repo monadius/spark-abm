@@ -213,7 +213,7 @@ class Batch {
 
 		synchronized(lock) {
 			// Start a batch run process
-			batchManager.start();
+			batchManager.start(false, 0);
 		
 			// Block until finished
 			try {

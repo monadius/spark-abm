@@ -60,6 +60,15 @@ public class DataFilter implements IDataConsumer {
 	
 	
 	/**
+	 * Returns the data collection interval
+	 * @return
+	 */
+	public int getCollectionInterval() {
+		return collectionInterval;
+	}
+	
+	
+	/**
 	 * Controls synchronization options
 	 * @param flag
 	 */
@@ -103,6 +112,42 @@ public class DataFilter implements IDataConsumer {
 			inputDataList.add(dcd);
 			c.addDataCollector(dcd);
 		}
+	}
+	
+	
+	/**
+	 * Copies all parameters telling which data to collect from
+	 * a given filter to this filter
+	 * @param src
+	 */
+	public synchronized void copyDataParameters(DataFilter src) {
+		if (collectionInterval < 0)
+			collectionInterval = 0;
+
+		// TODO: think about potential deadlocks
+//		synchronized (src) {
+			DataCollectorDescription[] dcds = new DataCollectorDescription[src.inputDataList.size()];
+			dcds = src.inputDataList.toArray(dcds);
+//		}
+			
+		Coordinator c = Coordinator.getInstance();
+		
+		// Remove old data collectors
+		for (DataCollectorDescription dcd : inputDataList) {
+			c.removeDataCollector(dcd);
+		}
+
+		inputDataList.clear();
+			
+		// Add new data collectors (from src filter)
+		for (int i = 0; i < dcds.length; i++) {
+			int type = dcds[i].getType();
+			String dataName = dcds[i].getDataName();
+			DataCollectorDescription dcd = new DataCollectorDescription(type, dataName, collectionInterval);
+				
+			inputDataList.add(dcd);
+			c.addDataCollector(dcd);
+		}		
 	}
 	
 	
