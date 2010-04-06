@@ -5,6 +5,7 @@ import java.awt.EventQueue;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Stack;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.PropertyConfigurator;
@@ -57,6 +58,9 @@ public class Coordinator {
 	/**************** Files **********************************/
 	/* Current directory */
 	private File currentDir;
+	
+	/* Stack of output directories */
+	private final Stack<File> outputDir;
 
 	/* Loaded model xml file */
 	private File modelXmlFile;
@@ -120,6 +124,7 @@ public class Coordinator {
 		this.modelManager = manager;
 		this.receiver = receiver;
 		this.currentDir = new File(".");
+		this.outputDir = new Stack<File>();
 
 		this.dataLayerStyles = new HashMap<String, DataLayerStyle>();
 		this.dataLayerStyleNodes = new HashMap<String, Node>();
@@ -431,6 +436,39 @@ public class Coordinator {
 	public synchronized File getCurrentDir() {
 		return currentDir;
 	}
+	
+	
+	/**
+	 * Returns the output directory
+	 * @return
+	 */
+	public synchronized File getOutputDir() {
+		if (outputDir.empty())
+			return getCurrentDir();
+		else
+			return outputDir.peek();
+	}
+	
+	
+	/**
+	 * Adds an output directory to the stack
+	 * @param file
+	 * @return
+	 */
+	public synchronized void pushOutputDir(File file) {
+		outputDir.push(file);
+	}
+	
+	
+	/**
+	 * Removes the last added output directory
+	 */
+	public synchronized void popOutputDir() {
+		if (!outputDir.empty())
+			outputDir.pop();
+	}
+	
+	
 
 	/**
 	 * Loads the given model file
@@ -725,7 +763,7 @@ public class Coordinator {
 				agentTypesAndNames, currentDir);
 
 		render.updateDataFilter();
-		receiver.addDataConsumer(render.getDataFilter());
+		render.register(receiver);
 		
 		renders.add(render);
 
@@ -747,13 +785,11 @@ public class Coordinator {
 	
 	
 	/**
-	 * Saves snapshots for all renders
-	 * @param outputFolder
+	 * Returns an array of all renders
 	 */
-	public synchronized void saveSnapshots(String prefix, File outputFolder) {
-		for (Render render : renders) {
-			render.takeSnapshot(prefix, outputFolder);
-		}
+	public synchronized Render[] getRenders() {
+		Render[] result = new Render[renders.size()];
+		return renders.toArray(result);
 	}
 	
 	

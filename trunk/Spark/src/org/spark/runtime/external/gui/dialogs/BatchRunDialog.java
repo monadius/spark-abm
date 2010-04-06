@@ -35,7 +35,10 @@ public class BatchRunDialog extends JDialog implements ActionListener {
 	private JSpinner spinnerRepetitionNumber;
 	private JTextField textDataFileName;
 	private JCheckBox checkSaveData;
+	private JCheckBox checkSaveFinalSnapshots;
+	
 	private JCheckBox checkSaveSnapshots;
+	private JSpinner spinnerSnapshotInterval;
 	
 	/* Data variable for analysis */
 	private JComboBox comboVariable;
@@ -170,9 +173,17 @@ public class BatchRunDialog extends JDialog implements ActionListener {
 		
 		checkSaveData = new JCheckBox();
 		checkSaveData.setSelected(true);
-		
+
+		// Snapshot parameters
+		checkSaveFinalSnapshots = new JCheckBox();
+		checkSaveFinalSnapshots.setSelected(true);
+
 		checkSaveSnapshots = new JCheckBox();
-		checkSaveSnapshots.setSelected(true);
+		checkSaveSnapshots.setSelected(false);
+		
+		spinnerSnapshotInterval = new JSpinner(
+				new SpinnerNumberModel(100, 0, 1000000, 1));
+		spinnerSnapshotInterval.setName("snapshot-interval");
 		
 		// Add controls
 		generalControls.add(new JLabel("Number of ticks"));
@@ -188,9 +199,15 @@ public class BatchRunDialog extends JDialog implements ActionListener {
 		generalControls.add(checkSaveData);
 		
 		generalControls.add(new JLabel("Save final snapshots"));
+		generalControls.add(checkSaveFinalSnapshots);
+		
+		generalControls.add(new JLabel("Save snapshots"));
 		generalControls.add(checkSaveSnapshots);
+		
+		generalControls.add(new JLabel("Snapshot interval"));
+		generalControls.add(spinnerSnapshotInterval);
 
-		SpringUtilities.makeCompactGrid(generalControls, 5, 2, 5, 5, 10, 10);
+		SpringUtilities.makeCompactGrid(generalControls, 7, 2, 5, 5, 10, 3);
 		
 		panel.add(generalControls);
 	}
@@ -365,10 +382,15 @@ public class BatchRunDialog extends JDialog implements ActionListener {
 			long ticks = ((Number) spinnerMaxTicks.getValue()).longValue();
 			int repetitions = ((Number) spinnerRepetitionNumber.getValue()).intValue();
 			String dataFileName = textDataFileName.getText();
+			boolean saveSnapshots = checkSaveSnapshots.isSelected();
+			int interval = ((Number) spinnerSnapshotInterval.getValue()).intValue();
 			
-			BatchRunController batchRunController = new BatchRunController(repetitions, ticks, dataFileName);
+			
+			
+			BatchRunController batchRunController = new BatchRunController(
+									repetitions, ticks, dataFileName);
 			batchRunController.setSaveDataFlag(checkSaveData.isSelected());
-			batchRunController.setSaveFinalSnapshotsFlag(checkSaveSnapshots.isSelected());
+			batchRunController.setSaveFinalSnapshotsFlag(checkSaveFinalSnapshots.isSelected());
 			
 			batchRunController.setParameterSweepController(sweep);
 			batchRunController.setDataAnalyzer(dataAnalyzer, varName);
@@ -379,7 +401,7 @@ public class BatchRunDialog extends JDialog implements ActionListener {
 			sweep.setInitialValuesAndAdvance();
 			
 			// Start a batch run process
-			new BatchRunManager(batchRunController, varName).start();
+			new BatchRunManager(batchRunController, varName).start(saveSnapshots, interval);
 			
 			// Hide the dialog
 			setVisible(false);
