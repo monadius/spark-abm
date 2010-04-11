@@ -11,6 +11,7 @@ import javax.swing.*;
 import org.spark.runtime.external.Coordinator;
 import org.spark.runtime.external.Parameter;
 import org.spark.runtime.external.ProxyVariable;
+import org.spark.runtime.external.ProxyVariableCollection;
 import org.spark.runtime.external.batchrun.BatchRunController;
 import org.spark.runtime.external.batchrun.BatchRunManager;
 import org.spark.runtime.external.batchrun.DataAnalyzer;
@@ -231,7 +232,13 @@ public class BatchRunDialog extends JDialog implements ActionListener {
 		if (!c.isModelLoaded())
 			return;
 		
-		ProxyVariable[] vars = c.getVariables().getVariables();
+		ProxyVariable[] vars;
+		ProxyVariableCollection varCollection = c.getVariables();
+		if (varCollection == null)
+			vars = new ProxyVariable[0];
+		else
+			vars = c.getVariables().getVariables();
+		
 		ArrayList<String> names = new ArrayList<String>();
 		
 		for (int i = 0; i < vars.length; i++) {
