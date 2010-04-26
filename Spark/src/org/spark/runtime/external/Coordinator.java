@@ -605,9 +605,23 @@ public class Coordinator {
 		
 		/* Load charts */
 		list = XmlDocUtils.getChildrenByTagName(interfaceNode, "chart");
+		// TODO: ad hoc implementation of multiple plots in one window
+		HashMap<String, SparkChartPanel> chartPanels = new HashMap<String, SparkChartPanel>();
+		
 		for (Node chart : list) {
+			String name = XmlDocUtils.getValue(chart, "name", null);
+			if (name != null) {
+				if (chartPanels.containsKey(name)) {
+					chartPanels.get(name).addChart(chart);
+					continue;
+				}
+			}
+			
 			SparkChartPanel chartPanel = new SparkChartPanel(windowManager, chart);
 			receiver.addDataConsumer(chartPanel.getDataFilter());
+			
+			if (name != null)
+				chartPanels.put(name, chartPanel);
 		}
 		
 		/* Load methods */

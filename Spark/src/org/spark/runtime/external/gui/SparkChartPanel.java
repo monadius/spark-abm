@@ -6,7 +6,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.PrintStream;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -15,8 +15,8 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.data.xy.DefaultTableXYDataset;
 import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
 import org.spark.runtime.data.DataCollectorDescription;
 import org.spark.runtime.data.DataRow;
 import org.spark.runtime.external.data.DataFilter;
@@ -34,10 +34,23 @@ public class SparkChartPanel extends JPanel implements ActionListener, ISparkPan
 	private JButton clearButton;
 	private JButton saveButton;
 
+	// Name of the chart
 	private String name;
-	private String varName;
-	private DefaultTableXYDataset dataset;
-	private XYSeries series;
+	// Main dataset
+	private XYSeriesCollection dataset;
+	
+	// Information about plotted series
+	private static class SeriesInfo {
+		public String varName;
+		public XYSeries series;
+		
+		public SeriesInfo(String varName, XYSeries series) {
+			this.varName = varName;
+			this.series = series;
+		}
+	}
+	
+	private final ArrayList<SeriesInfo> series;
 	
 	private DataFilter dataFilter;
 
@@ -51,18 +64,28 @@ public class SparkChartPanel extends JPanel implements ActionListener, ISparkPan
 		super(new BorderLayout());
 
 		dataFilter = new DataFilter(this, "variable");
+		series = new ArrayList<SeriesInfo>(2);
 		
-		varName = XmlDocUtils.getValue(node, "variable", null);
+//		String varNames = XmlDocUtils.getValue(node, "variable", null);
+
+		// TODO: distinct intervals for distinct variables
 		int interval = XmlDocUtils.getIntegerValue(node, "interval", 1);
 		if (interval < 1)
 			interval = 1;
 		
-		if (varName != null) {
+/*		if (varNames != null) {
 			dataFilter.setInterval(interval);
-			dataFilter.addData(DataCollectorDescription.VARIABLE, varName);
+			String[] names = varNames.split(",");
+			
+			for (String name : names) {
+				name = name.trim();
+				series.add(new SeriesInfo(name, null));
+				dataFilter.addData(DataCollectorDescription.VARIABLE, name);
+			}
 		}
-		
+*/		
 		setupChart();
+		addChart(node);
 
 		String location = XmlDocUtils.getValue(node, "location", null);
 		manager.setLocation(this, location);
@@ -77,15 +100,41 @@ public class SparkChartPanel extends JPanel implements ActionListener, ISparkPan
 		return dataFilter;
 	}
 	
+	
+	/**
+	 * Adds a chart information to the existing chart panel
+	 * @param node
+	 */
+	public void addChart(Node node) {
+		String varNames = XmlDocUtils.getValue(node, "variable", null);
+
+		if (varNames != null) {
+			String[] names = varNames.split(",");
+			
+			for (String name : names) {
+				name = name.trim();
+				XYSeries s = new XYSeries("", false);
+				
+				series.add(new SeriesInfo(name, s));
+				dataset.addSeries(s);
+
+				dataFilter.addData(DataCollectorDescription.VARIABLE, name);
+			}
+		}		
+	}
+	
 
 	/**
 	 * Creates a JFreeChart
 	 */
 	private void setupChart() {
-		dataset = new DefaultTableXYDataset();
-		series = new XYSeries("", false, false);
-		dataset.addSeries(series);
-
+		dataset = new XYSeriesCollection();
+		
+/*		for (SeriesInfo info : series) {
+			info.series = new XYSeries("", false);
+			dataset.addSeries(info.series);
+		}
+*/
 		JFreeChart chart = ChartFactory.createXYLineChart(name, "x", "y",
 				dataset, PlotOrientation.VERTICAL, true, false, false);
 		
@@ -110,12 +159,19 @@ public class SparkChartPanel extends JPanel implements ActionListener, ISparkPan
 		this.add(buttonPanel, BorderLayout.SOUTH);
 	}
 
-	public void addValue(double x, double y) {
-		synchronized (series) {
-			series.add(x, y);
+	
+	protected void addValue(double x, double y, int index) {
+		addValue(x, y, this.series.get(index));
+	}
+	
+	
+	protected void addValue(double x, double y, SeriesInfo info) {
+		synchronized (info.series) {
+			info.series.add(x, y);
 		}
 	}
 
+	
 	public void updateData(long tick) {
 /*		if (tick % interval == 0) {
 			try {
@@ -128,10 +184,15 @@ public class SparkChartPanel extends JPanel implements ActionListener, ISparkPan
 	}
 
 	public synchronized void reset() {
-		synchronized (series) {
-			dataset.removeAllSeries();
-			series = new XYSeries("", false, false);
-			dataset.addSeries(series);
+//		dataset.removeAllSeries();
+		for (SeriesInfo info : series) {
+			synchronized (info.series) {
+				// TODO: very often causes an exception
+				// because the series can be in use in the redrawing process
+				info.series.clear();
+//				info.series = new XYSeries("", false, false);
+//				dataset.addSeries(info.series);
+			}
 		}
 	}
 
@@ -182,7 +243,7 @@ public class SparkChartPanel extends JPanel implements ActionListener, ISparkPan
 	 * 
 	 * @param out
 	 */
-	public synchronized void saveData(PrintStream out) {
+/*	public synchronized void saveData(PrintStream out) {
 		out.println("tick\t" + name);
 
 		int l = series.getItemCount();
@@ -196,7 +257,7 @@ public class SparkChartPanel extends JPanel implements ActionListener, ISparkPan
 		out.flush();
 		out.close();
 	}
-
+*/
 	/**
 	 * Processes control elements actions
 	 */
@@ -226,17 +287,18 @@ public class SparkChartPanel extends JPanel implements ActionListener, ISparkPan
 		if (row.getState().isInitialState())
 			reset();
 		
-		Double newValue = row.getVarDoubleValue(varName);
-		if (newValue == null)
-			return;
-		
 		long tick = row.getState().getTick();
 		
-		try {
-			addValue(tick, newValue);
-		}
-		catch (Exception e) {
-			
+		for (SeriesInfo info : series) {
+			Double newValue = row.getVarDoubleValue(info.varName);
+			if (newValue == null)
+				continue;
+		
+			try {
+				addValue(tick, newValue, info);
+			}
+			catch (Exception e) {
+			}
 		}
 	}
 	
