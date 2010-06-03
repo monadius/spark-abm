@@ -1201,6 +1201,18 @@
                         Observer.getDefaultSpace().addDataLayer(@name, GridFactory.createGrid((int)(@x-size), (int)(@y-size)))
                 </translation>
         </reporter>
+        
+        
+        <reporter name = "create-grid3d" type = "grid3d">
+                <argument name = "name" type = "string"/>
+                <argument name = "x-size" type = "double"/>
+                <argument name = "y-size" type = "double"/>
+                <argument name = "z-size" type = "double"/>
+
+                <translation>
+                        Observer.getDefaultSpace().addDataLayer(@name, GridFactory.createGrid((int)(@x-size), (int)(@y-size), (int)(@z-size)))
+                </translation>
+        </reporter>
 
 
         <reporter name = "create-grid-in-space" type = "grid">
@@ -1341,11 +1353,31 @@
                         @grid.diffuse(@value)
                 </translation>
         </command>
+        
+        
+        <command name = "diffuse">
+                <argument name = "grid" type = "grid3d"/>
+                <argument name = "value" type = "double"/>
+
+                <translation>
+                        @grid.diffuse(@value)
+                </translation>
+        </command>
 
 
         <!-- E -->
         <command name = "evaporate">
         	<argument name = "grid" type = "grid"/>
+        	<argument name = "value" type = "double"/>
+        	
+        	<translation>
+        		@grid.multiply(@value)
+        	</translation>
+        </command>
+
+
+        <command name = "evaporate">
+        	<argument name = "grid" type = "grid3d"/>
         	<argument name = "value" type = "double"/>
         	
         	<translation>
@@ -1771,6 +1803,21 @@
         		Vector.randomVector(@length)
         	</translation>
         </reporter>
+        
+        
+        
+        <command name = "region">
+        	<argument name = "name" type = "string"/>
+        	<block/>
+        	
+        	<translation>
+        		<parameter name = "@name" type = "boolean" label = "par" group = "region"/>
+        		if (@par)
+        		{
+        			@block
+        		}
+        	</translation>
+        </command>
 
 
         <command name = "repeat">
@@ -1894,6 +1941,14 @@
 
         <reporter name = "sum" type = "double">
                 <argument name = "grid" type = "grid"/>
+                <translation>
+                        @grid.getTotalNumber()
+                </translation>
+        </reporter>
+        
+        
+        <reporter name = "sum" type = "double">
+                <argument name = "grid" type = "grid3d"/>
                 <translation>
                         @grid.getTotalNumber()
                 </translation>

@@ -118,7 +118,6 @@ public class Translation {
 	 * @param java
 	 */
 	public void doTranslation(JavaEmitter java, int flag) throws Exception {
-		// TODO: create temporary variables
 		for (int i = 0; i < tempVars.size(); i++) {
 			TemporaryVariable var = tempVars.get(i);
 			String tempName = java.createTempVariable(var.typeNameString, var.nameTag);

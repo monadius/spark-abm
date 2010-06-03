@@ -107,10 +107,13 @@ public class ModelType extends Type {
 				continue;
 			
 			Type gridType = SparkModel.getInstance().getType(new Id("grid"));
+			Type grid3dType = SparkModel.getInstance().getType(new Id("grid3d"));
 			Type parallelGridType = SparkModel.getInstance().getType(new Id("parallel-grid"));
 			
 			// We are interested only in grids
-			if (field.type != gridType && field.type != parallelGridType)
+			if (field.type != gridType &&
+					field.type != grid3dType &&
+					field.type != parallelGridType)
 				continue;
 			
 			// We are interested only in uninitialized fields
@@ -121,6 +124,8 @@ public class ModelType extends Type {
 			
 			if (field.type == gridType)
 				translation = "create-grid \"@@id\" @x-size @y-size";
+			else if (field.type == grid3dType)
+				translation = "create-grid3d \"@@id\" @x-size @y-size @z-size";
 			else
 				translation = "create-parallel-grid \"@@id\" @x-size @y-size";
 			
@@ -130,9 +135,11 @@ public class ModelType extends Type {
 			
 			String xSizeTranslation = "space-xsize";
 			String ySizeTranslation = "space-ysize";
+			String zSizeTranslation = "space-zsize";
 			
 			translation = translation.replaceAll("@x-size", xSizeTranslation);
 			translation = translation.replaceAll("@y-size", ySizeTranslation);
+			translation = translation.replaceAll("@z-size", zSizeTranslation);
 
 			field.initializationSource = SparkLogoParser.stringToSymbols(translation);
 			
