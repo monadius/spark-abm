@@ -15,6 +15,7 @@ class ChartAnnotation extends VariableAnnotation {
 		items.put("interval", new IntegerElement("interval"));
 		items.put("$variable", new StringElement("variable"));
 		items.put("name", new StringElement("name"));
+		items.put("label", new StringElement("label"));
 	}
 	
 	
@@ -25,6 +26,9 @@ class ChartAnnotation extends VariableAnnotation {
 
 				if (items.get("name").value == null)
 					items.get("name").value = variable.id.name;
+				
+				if (items.get("label").value == null)
+					items.get("label").value = variable.id.name;
 			}
 			else {
 				return false;

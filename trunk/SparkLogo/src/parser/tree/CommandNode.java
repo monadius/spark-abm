@@ -67,7 +67,7 @@ public class CommandNode extends MultiNode {
 		java.endBuffer();
 		
 		
-		// FIXME: find a better solution (universal one)
+		// FIXME: find a better solution (a universal one)
 		if (cmd.getName().equals("ask")) {
 			BlockNode askBlock = (BlockNode) children.get(1);
 			Variable selfVariable = askBlock.getCodeBlock().getSelfVariable();

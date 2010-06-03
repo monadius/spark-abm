@@ -1043,6 +1043,52 @@
                 </field>
         </type>
         
+
+
+
+		<!-- Grid3d -->
+        <type name = "grid3d" parent = "$DataLayer">
+                <javaname>Grid3d</javaname>
+
+                <declaration>
+                        Grid3d @@id = null;
+                </declaration>
+                
+                <set>
+                	@@id = @@value
+                </set>
+                
+                <get>
+                	@@id
+                </get>
+
+                
+                <method name = "get-smooth-gradient" type = "vector">
+                	<argument name = "point" type = "vector"/>
+                </method>
+                
+                <!-- TODO: experimental feature (to be removed later) -->
+                <field name = "data" type = "double">
+                	<set>
+                		{
+                			double[][][] _data = @@object.getData();
+                			
+                			for (int _i = 0; _i &lt; _data.length; _i++)
+                			{
+                				for (int _j = 0; _j &lt; _data[0].length; _j++)
+                				{
+                					for (int _k = 0; _k &lt; _data[0][0].length; _k++)
+                						_data[_i][_j][_k] = @@value;
+                				}
+                			}   
+                		}
+                	</set>
+                	<get>
+                	    @@object.getValue(_i, _j, _k)
+                	</get>
+                </field>
+        </type>
+
         
         
         

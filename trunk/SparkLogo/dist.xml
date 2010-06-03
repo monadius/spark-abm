@@ -30,6 +30,8 @@
 
 	<!-- Windows distribution name -->
 	<property name="win-name" value="SPARK_${version}_windows" />
+	<!-- MacOS distribution name -->
+	<property name="mac-name" value="SPARK_${version}_mac" />
 	<!-- Universal distribution name -->
 	<property name="universal-name" value="SPARK_${version}_universal" />
 
@@ -187,8 +189,68 @@
 		</copy>
 	</target>
 
+	
+	
+	<!-- Target: mac-dist -->
+	<target name="mac-dist" depends="init" description="Creates MacOS distribution">
+		<zip destfile="${dist}/${mac-name}.zip">
+			<fileset refid="basic-files" />
+			<zipfileset dir="${spark}/Licenses" prefix="licenses">
+				<include name="**/**" />
+			</zipfileset>
 
-	<target name="all" depends="universal-dist,win-dist">
+			<fileset refid="libs" />
+			<zipfileset dir="${spark}" prefix="lib">
+				<include name="README" />
+				<include name="LICENSE" />
+				<include name="BatchRunner.properties"/>
+			</zipfileset>
+
+			<zipfileset refid="docs" />
+
+			<zipfileset dir="${spark-lib}" prefix="lib">
+				<include name="*.jar" />
+				<exclude name="p2pmpi*" />
+				<exclude name="pj*" />
+			</zipfileset>
+
+			<zipfileset dir="${spark-release}" prefix="lib">
+				<include name="spark.jar" />
+			</zipfileset>
+			
+			<zipfileset dir="${basedir}/logo">
+				<include name="spark-config.xml" />
+				<include name="config.xml" />
+			</zipfileset>
+
+			<zipfileset dir="${spark-lib}">
+				<include name="logo.jpg" />
+			</zipfileset>
+
+			<zipfileset dir="${release}">
+				<include name="*.jar" />
+				<include name="*.jnilib" />
+			</zipfileset>
+
+
+			<zipfileset dir="${spark-release}" prefix="">
+				<include name="*.jnilib" />
+			</zipfileset>
+
+			<fileset refid="samples" />
+		</zip>
+
+
+		<copy tofile="${dist-archive}/${mac-name}-${DSTAMP}.zip">
+			<fileset dir="${dist}">
+				<include name="${mac-name}.zip" />
+			</fileset>
+		</copy>
+	</target>
+
+	
+
+	<target name="all" depends="universal-dist,win-dist,mac-dist">
 	</target>
 
 

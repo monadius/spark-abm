@@ -6,10 +6,6 @@ import java.util.HashMap;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import main.annotation.InterfaceAnnotation;
 import main.annotation.ObserverAnnotation;
@@ -114,14 +110,7 @@ public class ModelFileWriter {
 	 * Saves the created xml file
 	 */
 	public void save() throws Exception {
-		TransformerFactory tFactory = TransformerFactory.newInstance();
-		Transformer transformer = tFactory.newTransformer();
-
-		transformer.setOutputProperty("indent", "yes");
-
-		DOMSource source = new DOMSource(doc);
-		StreamResult result = new StreamResult(file);
-		transformer.transform(source, result);
+		ModelFileLoader.saveModelFile(doc, file);
 	}
 
 	

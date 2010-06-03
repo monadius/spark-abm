@@ -3,6 +3,7 @@ package parser.xml.modelfile;
 import java.io.File;
 
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -45,6 +46,9 @@ public class ModelFileLoader {
 
 		TransformerFactory tFactory = TransformerFactory.newInstance();
 		Transformer transformer = tFactory.newTransformer();
+		
+		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+		transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
 
 		DOMSource source = new DOMSource(modelDoc);
 		StreamResult result = new StreamResult(fileName);
