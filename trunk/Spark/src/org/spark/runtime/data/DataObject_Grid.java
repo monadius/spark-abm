@@ -7,13 +7,31 @@ package org.spark.runtime.data;
  */
 @SuppressWarnings("serial")
 public class DataObject_Grid extends DataObject {
-	private int spaceIndex;
-	private double[] data;
-	private int n, m;
-	private double xStep, yStep;
+	private final int spaceIndex;
+	private final double[] data;
+	private final int n, m, k;
+	private final double xStep, yStep, zStep;
 	
 	private transient Double min, max;
 	
+
+	
+	/**
+	 * Creates a shallow copy of the given grid data
+	 * @param grid
+	 */
+	protected DataObject_Grid(DataObject_Grid grid) {
+		this.spaceIndex = grid.spaceIndex;
+		this.xStep = grid.xStep;
+		this.yStep = grid.yStep;
+		this.zStep = grid.zStep;
+		this.n = grid.n;
+		this.m = grid.m;
+		this.k = grid.k;
+		this.min = grid.min;
+		this.max = grid.max;
+		this.data = grid.data;
+	}
 	
 	/**
 	 * Creates a copy of the given data array
@@ -23,9 +41,11 @@ public class DataObject_Grid extends DataObject {
 		this.spaceIndex = spaceIndex;
 		this.xStep = xStep;
 		this.yStep = yStep;
+		this.zStep = 0;
 		
 		this.n = data.length;
 		this.m = data[0].length;
+		this.k = 0;
 		
 		this.data = new double[n * m];
 		
@@ -33,6 +53,32 @@ public class DataObject_Grid extends DataObject {
 			System.arraycopy(data[i], 0, this.data, pos, m);
 		}
 	}
+
+	
+	/**
+	 * Creates a copy of the given data array
+	 * @param data
+	 */
+	public DataObject_Grid(int spaceIndex, double[][][] data, 
+				double xStep, double yStep, double zStep) {
+		this.spaceIndex = spaceIndex;
+		this.xStep = xStep;
+		this.yStep = yStep;
+		this.zStep = zStep;
+		
+		this.n = data.length;
+		this.m = data[0].length;
+		this.k = data[0][0].length;
+		
+		this.data = new double[n * m * k];
+		
+		for (int i = 0, pos = 0; i < n; i++) {
+			for (int j = 0; j < m; j++, pos += k) {
+				System.arraycopy(data[i][j], 0, this.data, pos, k);
+			}
+		}
+	}
+
 	
 	
 	/**
@@ -43,6 +89,18 @@ public class DataObject_Grid extends DataObject {
 	 */
 	public double getValue(int x, int y) {
 		return data[x * m + y];
+	}
+	
+	
+	/**
+	 * Returns a value at the position (x,y,z)
+	 * @param x
+	 * @param y
+	 * @param z
+	 * @return
+	 */
+	public double getValue(int x, int y, int z) {
+		return data[(x * m + y) * k + z];
 	}
 	
 	
@@ -110,6 +168,15 @@ public class DataObject_Grid extends DataObject {
 	
 	
 	/**
+	 * Returns grid's z-dimension
+	 * @return
+	 */
+	public int getZSize() {
+		return k;
+	}
+	
+	
+	/**
 	 * Returns grid's x step value
 	 * @return
 	 */
@@ -124,6 +191,15 @@ public class DataObject_Grid extends DataObject {
 	 */
 	public double getYStep() {
 		return yStep;
+	}
+	
+	
+	/**
+	 * Returns grid's z step value
+	 * @return
+	 */
+	public double getZStep() {
+		return zStep;
 	}
 	
 	

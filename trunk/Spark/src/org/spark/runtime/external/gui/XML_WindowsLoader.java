@@ -80,6 +80,9 @@ public class XML_WindowsLoader {
 		// Remove old definitions of windows
 		removeChildren(windowsNode, "window");
 		
+		// Remove junk as well
+		removeChildren(windowsNode, "#text");
+		
 		SparkWindow[] windows = windowManager.getWindows();
 		for (SparkWindow win : windows) {
 			saveWindow(xmlModelDoc, windowsNode, win, false);

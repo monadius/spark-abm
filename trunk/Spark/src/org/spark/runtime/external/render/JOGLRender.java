@@ -2,6 +2,7 @@ package org.spark.runtime.external.render;
 
 import java.awt.Canvas;
 import java.awt.Dimension;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -39,10 +40,10 @@ public class JOGLRender extends Render implements GLEventListener,
 	/* Logger */
 	private static final Logger logger = Logger.getLogger();
 
-	// TODO: unused
 	private float view_rotx = 20.0f, view_roty = 30.0f;// , view_rotz = 0.0f;
 	private float wheel_scale = 1.0f;
-	private float mouse_x = 0.0f, mouse_y = 0.0f;
+//	private float mouse_x = 0.0f, mouse_y = 0.0f;
+	private boolean rightButtonPressed = false;
 
 	private int prevMouseX, prevMouseY;
 
@@ -62,8 +63,12 @@ public class JOGLRender extends Render implements GLEventListener,
 	/* Current data */
 	private DataRow data;
 	
+	/* If true then a 2d Z-slice is rendered */
+	private boolean slicedMode = false;
+	private float zPlane = 0;
+	
 	/* Information about current space bounds */
-	private float xMin, yMin, xMax, yMax;
+	private float xMin, yMin, xMax, yMax, zMin, zMax;
 
 
 	/**
@@ -143,8 +148,9 @@ public class JOGLRender extends Render implements GLEventListener,
 
 		drawable.addMouseListener(this);
 		drawable.addMouseMotionListener(this);
-		// drawable.addMouseWheelListener(this);
+		drawable.addMouseWheelListener(this);
 
+		// Disable the depth test by default (for 2d-case mostly)
 		gl.glDisable(GL.GL_DEPTH_TEST);
 
 		int n = 10;
@@ -297,8 +303,11 @@ public class JOGLRender extends Render implements GLEventListener,
 					
 					xMin = (float) min.x;
 					yMin = (float) min.y;
+					zMin = (float) min.z;
+					
 					xMax = (float) max.x;
 					yMax = (float) max.y;
+					zMax = (float) max.z;
 				}
 			}
 		}
@@ -317,8 +326,14 @@ public class JOGLRender extends Render implements GLEventListener,
 			xMax = yMax;
 			yMax = t;
 		}
+
+		if (zMin >= zMax - 1)
+		{
+			zMin = -100;
+			zMax = 100;
+		}
 		
-		gl.glOrtho(xMin, xMax, yMin, yMax, -100, 100);
+		gl.glOrtho(xMin, xMax, yMin, yMax, zMin - 10, zMax + 10);
 		gl.glMatrixMode(GL.GL_MODELVIEW);
 		gl.glLoadIdentity();
 	}
@@ -343,6 +358,22 @@ public class JOGLRender extends Render implements GLEventListener,
 	protected void renderDataLayer(GL gl, DataObject_Grid grid, int spaceIndex) {
 		if (grid == null)
 			return;
+		
+		// Deal with a 3d-case
+		if (grid.getZSize() > 0) {
+			try {
+				grid = new DataGridZSlice(grid, zPlane, zMin, zMax);
+			}
+			catch (Exception e) {
+				logger.error(e);
+				return;
+			}
+
+			if (!slicedMode) {
+				gl.glPushMatrix();
+				gl.glTranslatef(0, 0, zPlane);
+			}
+		}
 
 		if (selectedDataLayer.getGeometry() == null)
 			selectedDataLayer.setGeometry(GridGraphics.getGeometry(grid, xMin, yMin));
@@ -484,6 +515,11 @@ public class JOGLRender extends Render implements GLEventListener,
 
 		gl.glVertex2d(x, y);
 		gl.glEnd();
+
+		
+		if (grid.getZSize() > 0 && !slicedMode) {
+			gl.glPopMatrix();
+		}
 	}
 	
 	
@@ -668,6 +704,9 @@ public class JOGLRender extends Render implements GLEventListener,
 	 */
 	protected void renderAgents3d(GL gl, DataObject_SpaceAgents agents, AgentStyle agentStyle,
 			int spaceIndex) {
+		if (!agentStyle.visible)
+			return;
+		
 		if (agents == null)
 			return;
 		
@@ -717,6 +756,138 @@ public class JOGLRender extends Render implements GLEventListener,
 
 			// Restore world matrix
 			gl.glPopMatrix();
+		}
+	}
+	
+	
+	
+	/**
+	 * Displays 3d agents on a 2d slice
+	 * @param gl
+	 * @param agents
+	 * @param agentStyle
+	 * @param spaceIndex
+	 */
+	protected void renderAgents3dSliced(GL gl, DataObject_SpaceAgents agents, AgentStyle agentStyle,
+			int spaceIndex) {
+		if (!agentStyle.visible)
+			return;
+
+		if (agents == null)
+			return;
+
+		int n = agents.getTotalNumber();
+		Vector[] positions = agents.getPositions();
+		double[] radii = agents.getRadii();
+		Vector4d[] colors = agents.getColors();
+		int[] shapes = agents.getShapes();
+		int[] spaceIndices = agents.getSpaceIndices();
+
+		/* Transparent agents */
+		if (agentStyle.transparent) {
+			gl.glEnable(GL.GL_BLEND);
+			gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
+		}
+
+		/* Textured agents */
+		if (agentStyle.getTexture() != null) {
+			int blendSrc = agentStyle.getSrcBlend();
+			int blendDst = agentStyle.getDstBlend();
+
+			if (blendSrc >= 0 && blendDst >= 0) {
+				gl.glEnable(GL.GL_BLEND);
+				// gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE);
+				gl.glBlendFunc(blendSrc, blendDst);
+			}
+
+			int alphaFunc = agentStyle.getAlphaFunc();
+
+			if (alphaFunc >= 0) {
+				gl.glEnable(GL.GL_ALPHA_TEST);
+				gl.glAlphaFunc(alphaFunc, agentStyle.alphaFuncValue);
+			}
+
+			gl.glTexEnvi(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE,
+					agentStyle.getTextureEnv());
+
+			// enable texturing
+			gl.glEnable(GL.GL_TEXTURE_2D);
+			agentStyle.getTexture().bind();
+		}
+
+		// Render lists
+		int circle = agentStyle.border ? this.circle : this.circle2;
+		int square = agentStyle.border ? this.square : this.square2;
+		int donnut = agentStyle.border ? this.torus : this.torus2;
+
+		/* Iterate through all agents */
+		for (int i = 0; i < n; i++) {
+			if (spaceIndices[i] != spaceIndex)
+				continue;
+
+			Vector pos = positions[i];
+			Vector4d color = colors[i];
+
+			if (pos == null || color == null)
+				continue;
+			
+			// Compute the distance between the agent and the plane
+			double dist = Math.abs(pos.z - zPlane);
+			double r = radii[i];
+			if (dist >= r - 1e-6)
+				continue;
+
+			gl.glPushMatrix();
+			gl.glTranslated(pos.x, pos.y, 0);
+			float scale = (float) Math.sqrt(r * r - dist * dist);
+			gl.glScalef(scale, scale, scale);
+
+			if (agentStyle.getTexture() != null) {
+				gl.glColor4d(color.x, color.y, color.z, color.a);
+				/* Render a textured agent */
+				gl.glBegin(GL.GL_QUADS);
+				gl.glTexCoord2f(0.0f, 0.0f);
+				gl.glVertex2f(-1, -1);
+				gl.glTexCoord2f(1.0f, 0.0f);
+				gl.glVertex2f(1, -1);
+				gl.glTexCoord2f(1.0f, 1.0f);
+				gl.glVertex2f(1, 1);
+				gl.glTexCoord2f(0.0f, 1.0f);
+				gl.glVertex2f(-1, 1);
+				gl.glEnd();
+			} else {
+				/* Usual rendering */
+				if (agentStyle.transparent)
+					gl.glColor4d(color.x, color.y, color.z, 0.5);
+				else
+					gl.glColor3d(color.x, color.y, color.z);
+				switch (shapes[i]) {
+				case SpaceAgent.CIRCLE:
+					gl.glCallList(circle);
+					break;
+				case SpaceAgent.SQUARE:
+					gl.glCallList(square);
+					break;
+				case SpaceAgent.TORUS:
+					gl.glCallList(donnut);
+					break;
+				}
+			}
+			gl.glPopMatrix();
+		}
+
+		/* Disable transparency */
+		if (agentStyle.transparent) {
+			gl.glDisable(GL.GL_BLEND);
+		}
+
+		/* Disable texture */
+		if (agentStyle.getTexture() != null) {
+			gl.glDisable(GL.GL_TEXTURE_2D);
+			// switch back to modulation of quad colours and texture
+
+			gl.glDisable(GL.GL_ALPHA_TEST); // switch off transparency
+			gl.glDisable(GL.GL_BLEND);
 		}
 	}
 	
@@ -801,10 +972,12 @@ public class JOGLRender extends Render implements GLEventListener,
 			gl.glRotatef(-90, 0, 0, 1);
 		}
 
-		if (space3d) {
+		if (space3d && !slicedMode) {
 			gl.glRotatef(view_rotx, 1.0f, 0.0f, 0.0f);
 			gl.glRotatef(view_roty, 0.0f, 1.0f, 0.0f);
+			gl.glScalef(wheel_scale, wheel_scale, wheel_scale);
 
+			gl.glEnable(GL.GL_DEPTH_TEST);
 			gl.glEnable(GL.GL_COLOR_MATERIAL);
 
 			gl.glEnable(GL.GL_LIGHT0); // Enable Light 0
@@ -833,17 +1006,23 @@ public class JOGLRender extends Render implements GLEventListener,
 			if (agentsData instanceof DataObject_SpaceLinks)
 				renderLinks(gl, (DataObject_SpaceLinks) agentsData, spaceIndex, agentStyle);
 			else {
-				if (!space3d)
+				if (!space3d) {
 					renderAgents(gl, agentsData, spaceIndex, agentStyle);
-				else
+				}
+				else if (slicedMode) {
+					renderAgents3dSliced(gl, agentsData, agentStyle, spaceIndex);
+				}
+				else {
 					renderAgents3d(gl, agentsData, agentStyle, spaceIndex);
+				}
 			}
 		}
 
-		if (space3d) {
+		if (space3d && !slicedMode) {
+			gl.glDisable(GL.GL_DEPTH_TEST);
 			gl.glDisable(GL.GL_COLOR_MATERIAL);
-			gl.glDisable(GL.GL_LIGHT0); // Enable Light 0
-			gl.glDisable(GL.GL_LIGHTING); // Enable Lighting
+			gl.glDisable(GL.GL_LIGHT0); // Disable Light 0
+			gl.glDisable(GL.GL_LIGHTING); // Disable Lighting
 		}
 
 		// Restore world matrix
@@ -874,6 +1053,7 @@ public class JOGLRender extends Render implements GLEventListener,
 		prevMouseX = e.getX();
 		prevMouseY = e.getY();
 		if ((e.getModifiers() & MouseEvent.BUTTON3_MASK) != 0) {
+			rightButtonPressed = true;
 			// mouseRButtonDown = true;
 		}
 	}
@@ -881,6 +1061,7 @@ public class JOGLRender extends Render implements GLEventListener,
 
 	public void mouseReleased(MouseEvent e) {
 		if ((e.getModifiers() & MouseEvent.BUTTON3_MASK) != 0) {
+			rightButtonPressed = false;
 			// mouseRButtonDown = false;
 		}
 	}
@@ -902,12 +1083,21 @@ public class JOGLRender extends Render implements GLEventListener,
 		prevMouseX = x;
 		prevMouseY = y;
 
-		view_rotx += thetaX;
-		view_roty += thetaY;
-		mouse_y -= thetaX;
-		mouse_x -= thetaY;
+		if (!rightButtonPressed) {
+			view_rotx += thetaX;
+			view_roty += thetaY;
+		}
+		else {
+//			mouse_y -= thetaX;
+//			mouse_x -= thetaY;
+			zPlane += thetaY;
+			
+			if (zPlane < zMin)
+				zPlane = zMin;
+			else if (zPlane > zMax)
+				zPlane = zMax;
+		}
 
-		// if (!active) canvas.display();
 		canvas.display();
 	}
 	
@@ -927,5 +1117,28 @@ public class JOGLRender extends Render implements GLEventListener,
 
 		// if (!active) canvas.display();
 		canvas.display();
+	}
+	
+	
+	/**
+	 * Key event action
+	 */
+	public void keyPressed(KeyEvent e) {
+		int code = e.getKeyCode();
+		boolean flag = false;
+
+		switch (code) {
+		case KeyEvent.VK_SPACE:
+			slicedMode = !slicedMode;
+			flag = true;
+			break;
+			
+		default:
+			super.keyPressed(e);	
+			return;
+		}
+		
+		if (flag)
+			canvas.display();
 	}
 }
