@@ -107,13 +107,14 @@ public class SparkChartPanel extends JPanel implements ActionListener, ISparkPan
 	 */
 	public void addChart(Node node) {
 		String varNames = XmlDocUtils.getValue(node, "variable", null);
+		String label = XmlDocUtils.getValue(node, "label", "");
 
 		if (varNames != null) {
 			String[] names = varNames.split(",");
 			
 			for (String name : names) {
 				name = name.trim();
-				XYSeries s = new XYSeries("", false);
+				XYSeries s = new XYSeries(label, false);
 				
 				series.add(new SeriesInfo(name, s));
 				dataset.addSeries(s);

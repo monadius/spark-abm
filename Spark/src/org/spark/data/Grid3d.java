@@ -481,6 +481,32 @@ public class Grid3d implements AdvancedDataLayer, DataLayerWithColors {
 		return new Vector(x1, y1, z1);
 	}
 	
+	
+	
+	/**
+	 * Returns a "smooth" gradient at the given point
+	 * @param p
+	 * @return
+	 */
+	public Vector getSmoothGradient(Vector p) {
+		int x = findX(p.x);
+		int y = findY(p.y);
+		int z = findZ(p.z);
+		
+		int x0 = restrictX(x - 1);
+		int x1 = restrictX(x + 1);
+		int y0 = restrictY(y - 1);
+		int y1 = restrictY(y + 1);
+		int z0 = restrictZ(z - 1);
+		int z1 = restrictZ(z + 1);
+		
+		double dx = data[x1][y][z] - data[x0][y][z];
+		double dy = data[x][y1][z] - data[x][y0][z];
+		double dz = data[x][y][z1] - data[x][y][z0];
+		
+		return new Vector(dx / (2 * xStep), dy / (2 * yStep), dz / (2 * zStep));
+	}
+	
 
 	public Vector getGradient(Vector p) {
 		int x = findX(p.x);
@@ -728,20 +754,44 @@ public class Grid3d implements AdvancedDataLayer, DataLayerWithColors {
 								int yy = y + j;
 								int zz = z + k;
 
-								if (xx < 0)
-									xx = xSize - 1;
-								else if (xx >= xSize)
-									xx = 0;
+								if (xx < 0) {
+//									if (wrapX)
+										xx = xSize - 1;
+//									else
+//										continue;
+								}
+								else if (xx >= xSize) {
+//									if (wrapX)
+										xx = 0;
+//									else
+//										continue;
+								}
 
-								if (yy < 0)
-									yy = ySize - 1;
-								else if (yy >= ySize)
-									yy = 0;
+								if (yy < 0) {
+//									if (wrapY)
+										yy = ySize - 1;
+//									else
+//										continue;
+								}
+								else if (yy >= ySize) {
+//									if (wrapY)
+										yy = 0;
+//									else
+//										continue;
+								}
 
-								if (zz < 0)
-									zz = zSize - 1;
-								else if (zz >= zSize)
-									zz = 0;
+								if (zz < 0) {
+//									if (wrapZ)
+										zz = zSize - 1;
+//									else
+//										continue;
+								}
+								else if (zz >= zSize) {
+//									if (wrapZ)
+										zz = 0;
+//									else
+//										continue;
+								}
 
 								v += data[xx][yy][zz] * q;
 							}
