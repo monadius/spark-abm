@@ -317,14 +317,16 @@ public class JOGLRender extends Render implements GLEventListener,
 			xMax = yMax = 60;
 		}
 
+		float x0 = xMin;
+		float x1 = xMax;
+		float y0 = yMin;
+		float y1 = yMax;
+		
 		if (swapXY) {
-			float t = xMin;
-			xMin = yMin;
-			yMin = t;
-			
-			t = xMax;
-			xMax = yMax;
-			yMax = t;
+			x0 = yMin;
+			x1 = yMax;
+			y0 = xMin;
+			y1 = xMax;
 		}
 
 		if (zMin >= zMax - 1)
@@ -333,7 +335,7 @@ public class JOGLRender extends Render implements GLEventListener,
 			zMax = 100;
 		}
 		
-		gl.glOrtho(xMin, xMax, yMin, yMax, zMin - 10, zMax + 10);
+		gl.glOrtho(x0, x1, y0, y1, zMin - 10, zMax + 10);
 		gl.glMatrixMode(GL.GL_MODELVIEW);
 		gl.glLoadIdentity();
 	}
@@ -976,12 +978,7 @@ public class JOGLRender extends Render implements GLEventListener,
 			gl.glRotatef(view_rotx, 1.0f, 0.0f, 0.0f);
 			gl.glRotatef(view_roty, 0.0f, 1.0f, 0.0f);
 			gl.glScalef(wheel_scale, wheel_scale, wheel_scale);
-
 			gl.glEnable(GL.GL_DEPTH_TEST);
-			gl.glEnable(GL.GL_COLOR_MATERIAL);
-
-			gl.glEnable(GL.GL_LIGHT0); // Enable Light 0
-			gl.glEnable(GL.GL_LIGHTING); // Enable Lighting
 		}
 
 		// Render selected data layer
@@ -990,6 +987,14 @@ public class JOGLRender extends Render implements GLEventListener,
 			renderDataLayer(gl, gridData, spaceIndex);
 		}
 
+
+		if (space3d && !slicedMode) {
+			gl.glEnable(GL.GL_COLOR_MATERIAL);
+			gl.glEnable(GL.GL_LIGHT0); // Enable Light 0
+			gl.glEnable(GL.GL_LIGHTING); // Enable Lighting
+		}
+		
+		
 		// Render visible agents
 		for (int k = agentStyles.size() - 1; k >= 0; k--) {
 			AgentStyle agentStyle = agentStyles.get(k);
