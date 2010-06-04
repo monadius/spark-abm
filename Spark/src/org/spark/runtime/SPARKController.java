@@ -6,16 +6,21 @@ import org.spark.gui.DatasetFrame;
 import org.spark.gui.GUIModelManager;
 import org.spark.gui.render.Render;
 
+import com.spinn3r.log5j.Logger;
+
 /**
  * Class for controlling the SPARK runtime from a model
  * @author Monad
  */
 public class SPARKController {
+	private static final Logger logger = Logger.getLogger();
+	
 	/**
 	 * Resets the collected data
 	 */
 	public static void resetDataset() {
-		GUIModelManager manager = GUIModelManager.getInstance();
+		logger.error("No effect");
+/*		GUIModelManager manager = GUIModelManager.getInstance();
 		if (manager == null)
 			return;
 		
@@ -24,6 +29,7 @@ public class SPARKController {
 			return;
 		
 		data.reset();
+*/		
 	}
 	
 
@@ -32,7 +38,8 @@ public class SPARKController {
 	 * @param fname
 	 */
 	public static void saveDataset(String fname) {
-		if (fname == null)
+		logger.error("No effect");
+/*		if (fname == null)
 			return;
 		
 		GUIModelManager manager = GUIModelManager.getInstance();
@@ -43,7 +50,7 @@ public class SPARKController {
 		if (data == null)
 			return;
 
-		data.saveData(fname);
+		data.saveData(fname);*/
 	}
 	
 	
@@ -54,7 +61,8 @@ public class SPARKController {
 	 * @param fname
 	 */
 	public static void saveSnapshots() {
-		if (!invoked) {
+		logger.error("No effect");
+/*		if (!invoked) {
 			invoked = true;
 			
 			GUIModelManager manager = GUIModelManager.getInstance();
@@ -71,7 +79,7 @@ public class SPARKController {
 					invoked = false;
 				}
 			});
-		}		
+		}*/		
 	}
 	
 	
@@ -80,7 +88,9 @@ public class SPARKController {
 	 * Output file format: "state"+Tick+".dat"
 	 */
 	public static void saveState() {
-		saveState(null);
+		logger.error("No effect");
+		
+//		saveState(null);
 	}
 	
 	/**
@@ -89,12 +99,14 @@ public class SPARKController {
 	 * @param fileName for example: "backup"
 	 */
 	public static void saveState(String fileName) {
+		logger.error("No effect");
+/*
 		GUIModelManager manager = GUIModelManager.getInstance();
 		
 		if (manager == null)
 			return;
 		
-		manager.saveModelState(fileName);
+		manager.saveModelState(fileName);*/
 	}
 	
 	/**
@@ -103,7 +115,8 @@ public class SPARKController {
 	 * @param fileName
 	 */
 	public static void saveSnapshot(String renderName, final String fileName) {
-		if (!invoked) {
+		logger.error("No effect");
+/*		if (!invoked) {
 			invoked = true;
 			
 			GUIModelManager manager = GUIModelManager.getInstance();
@@ -124,6 +137,6 @@ public class SPARKController {
 					});
 				}
 			}			
-		}		
+		}*/		
 	}
 }

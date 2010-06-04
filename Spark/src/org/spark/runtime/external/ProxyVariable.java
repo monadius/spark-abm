@@ -150,7 +150,10 @@ public class ProxyVariable extends AbstractChangeEvent implements IDataConsumer 
 		}
 		
 		if (typeName == "double") {
-			setValue(Double.parseDouble(svalue));
+			if (svalue == null || svalue.equals("null"))
+				setValue((Object)null);
+			else
+				setValue(Double.parseDouble(svalue));
 			return;
 		}
 	}

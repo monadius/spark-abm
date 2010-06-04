@@ -177,7 +177,7 @@ public class SparkViewPanel extends JPanel implements ISparkPanel,
 			
 			if (cmd == "snapshot") {
 				if (render != null)
-					render.takeSnapshot(null, null);
+					render.takeSnapshot("");
 				
 				return;
 			}

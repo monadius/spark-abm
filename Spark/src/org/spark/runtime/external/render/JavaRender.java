@@ -136,20 +136,22 @@ public class JavaRender extends Render {
 			xMax = yMax = 60;
 		}
 
+		float x0 = xMin;
+		float x1 = xMax;
+		float y0 = yMin;
+		float y1 = yMax;
+		
 		if (selectedSpace != null && selectedSpace.swapXY) {
-			float t = xMin;
-			xMin = yMin;
-			yMin = t;
-
-			t = xMax;
-			xMax = yMax;
-			yMax = xMax;
+			x0 = yMin;
+			x1 = yMax;
+			y0 = xMin;
+			y1 = xMax;
 		}
 
-		float a = width / (xMax - xMin);
-		float c = -height / (yMax - yMin);
-		float b = -a * xMin;
-		float d = -c * yMax;
+		float a = width / (x1 - x0);
+		float c = -height / (y1 - y0);
+		float b = -a * x0;
+		float d = -c * y1;
 
 		AffineTransform t2 = new AffineTransform();
 		t2.scale(a, c);

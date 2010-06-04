@@ -3,8 +3,10 @@ package org.spark.runtime.internal.data;
 import org.spark.core.Observer;
 import org.spark.core.SparkModel;
 import org.spark.data.DataLayer;
+import org.spark.data.Diffuse;
 import org.spark.data.Grid;
 import org.spark.data.Grid3d;
+import org.spark.data.QueueGrid;
 import org.spark.runtime.data.DataCollectorDescription;
 import org.spark.runtime.data.DataObject;
 import org.spark.runtime.data.DataObject_Grid;
@@ -66,7 +68,7 @@ public class DCDataLayer extends DataCollector {
 		// TODO: maybe it is better to get data collectors
 		// directly from data layers, i.e. define a new interface method
 		// getDataCollector()
-		if (data instanceof Grid) {
+		if (data instanceof Grid || data instanceof QueueGrid) {
 			Grid grid = (Grid) data;
 			double[][] vals = grid.getData();
 			return new DataObject_Grid(spaceIndex, vals, grid.getXStep(), grid
@@ -77,6 +79,11 @@ public class DCDataLayer extends DataCollector {
 			double[][][] vals = grid.getData();
 			return new DataObject_Grid(spaceIndex, vals, 
 					grid.getXStep(), grid.getYStep(), grid.getZStep());
+		}
+		else if (data instanceof Diffuse) {
+			Diffuse diffuseGrid = (Diffuse) data;
+			double[][] vals = diffuseGrid.getData().getDouble2d();
+			return new DataObject_Grid(spaceIndex, vals, diffuseGrid.getXStep(), diffuseGrid.getYStep());
 		} else {
 			throw new BadDataSourceException("Unknown data layer type "
 					+ dataLayerName.getClass());
