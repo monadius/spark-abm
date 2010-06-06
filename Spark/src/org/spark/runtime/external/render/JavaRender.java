@@ -70,15 +70,14 @@ public class JavaRender extends Render {
 
 	@Override
 	public void saveSnapshot(File dir, String fname, DataRow data) {
-		// TODO: remove any dependency on canvas
-		// Snapshots should be saved even in headless mode
-		if (canvas == null) {
-			logger.error("Null canvas");
-			return;
-		}
+		// Default values of width and height
+		int w = 500;
+		int h = 500;
 		
-		int w = canvas.getWidth();
-		int h = canvas.getHeight();
+		if (canvas != null) {
+			w = canvas.getWidth();
+			h = canvas.getHeight();
+		}
 		
 		if (w <= 0 || h <= 0) {
 			logger.warn("Width or height is negative");

@@ -8,13 +8,19 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.awt.image.BufferedImage;
 import java.io.File;
 
+import javax.imageio.ImageIO;
 import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCanvas;
+import javax.media.opengl.GLCapabilities;
+import javax.media.opengl.GLContext;
+import javax.media.opengl.GLDrawableFactory;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.GLJPanel;
+import javax.media.opengl.GLPbuffer;
 import javax.media.opengl.glu.GLU;
 import javax.media.opengl.glu.GLUquadric;
 
@@ -28,6 +34,7 @@ import org.spark.utils.Vector;
 import org.spark.utils.Vector4d;
 
 import com.spinn3r.log5j.Logger;
+import com.sun.opengl.util.Screenshot;
 
 
 /**
@@ -58,8 +65,6 @@ public class JOGLRender extends Render implements GLEventListener,
 	private GLU glu = new GLU();
 	private GLUquadric ball, cube;
 	
-//	private boolean takeScreenshot = false;
-	
 	/* Current data */
 	private DataRow data;
 	
@@ -69,6 +74,11 @@ public class JOGLRender extends Render implements GLEventListener,
 	
 	/* Information about current space bounds */
 	private float xMin, yMin, xMax, yMax, zMin, zMax;
+	
+	
+	/* Pbuffer for taking screenshots */
+	private GLPbuffer pbuffer;
+	private int pbufferWidth, pbufferHeight;
 
 
 	/**
@@ -108,6 +118,78 @@ public class JOGLRender extends Render implements GLEventListener,
 			canvas.display();
 	}
 
+
+	/**
+	 * Saves a screenshot into a file
+	 */
+	@Override
+	protected void saveSnapshot(File dir, String fname, DataRow data) {
+		GLDrawableFactory factory = GLDrawableFactory.getFactory();
+		
+		if (factory == null || !factory.canCreateGLPbuffer())
+		{
+			logger.error("Cannot create a pbuffer for taking a screenshot");
+			return;
+		}
+		
+		int w = 500;
+		int h = 500;
+		
+		if (canvas != null) {
+			w = canvas.getWidth();
+			h = canvas.getHeight();
+		}
+		
+		if (w <= 0 || h <= 0) {
+			logger.error("Canvas width or height is invalid");
+			return;
+		}
+
+		// Create a new pbuffer if something has been changed
+		if (pbuffer == null || w != pbufferWidth || h != pbufferHeight) {
+			if (pbuffer != null) {
+				pbuffer.destroy();
+			}
+
+			// Create a pbuffer
+			GLCapabilities glCap = new GLCapabilities();
+			pbuffer = factory.createGLPbuffer(glCap, null, w, h, null);
+			if (pbuffer == null) {
+				logger.error("Cannot create a pbuffer");
+				return;
+			}
+
+			pbuffer.addGLEventListener(this);
+			pbufferWidth = w;
+			pbufferHeight = h;
+		}
+		
+		try {
+			// Render the data
+			DataRow currentData = this.data;
+			this.data = data; 
+			pbuffer.display();
+			this.data = currentData;
+
+			// Save the buffer content into a file
+			GLContext context = pbuffer.createContext(null);
+			
+			context.makeCurrent();
+			BufferedImage img = Screenshot.readToBufferedImage(w, h);
+			context.release();
+			
+			context.destroy();
+
+			File out = new File(dir, fname + ".png");
+			ImageIO.write(img, "png", out);
+		}
+		catch (Exception e) {
+			logger.error(e);
+		}
+	}
+
+
+	
 	/*
 	 * public void resize() { if (canvas == null) return;
 	 * canvas.setSize(canvas.getSize()); canvas.display(); }
@@ -338,16 +420,6 @@ public class JOGLRender extends Render implements GLEventListener,
 		gl.glOrtho(x0, x1, y0, y1, zMin - 10, zMax + 10);
 		gl.glMatrixMode(GL.GL_MODELVIEW);
 		gl.glLoadIdentity();
-	}
-
-
-	@Override
-	protected void saveSnapshot(File dir, String fname, DataRow data) {
-		logger.error("Not implemented");
-//		throw new RuntimeException("Not implemented");
-//		this.fname = fname;
-//		takeScreenshot = true;
-//		canvas.display();
 	}
 
 
@@ -898,26 +970,6 @@ public class JOGLRender extends Render implements GLEventListener,
 	 * Main display method
 	 */
 	public void display(GLAutoDrawable drawable) {
-/*		if (takeScreenshot) {
-
-			try {
-				com.sun.opengl.util.Screenshot.writeToFile(
-						new File(GUIModelManager.getInstance().getXmlDocumentFile().getParentFile(),
-								fname + ".png"),
-				// new File("out.png"),
-						canvas.getWidth(), canvas.getHeight());
-			} catch (GLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-			takeScreenshot = false;
-			return;
-		}
-*/
 		if (data == null)
 			return;
 
