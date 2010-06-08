@@ -1,0 +1,25 @@
+<spark-project>
+        <name>InnateImmuneResponse</name>
+        <project-directory>C:\Help\Alexey\My New Projects\Eclipse Projects\SparkLogo\samples\InnateImmuneResponse Ver2</project-directory>
+        <output-directory>output</output-directory>
+
+        <files>
+                <file>band.spark</file>
+                <file>gen-mono-marrow.spark</file>
+                <file>inj.spark</file>
+                <file>Model.spark</file>
+                <file>mono-marrow.spark</file>
+                <file>mono.spark</file>
+                <file>nk.spark</file>
+                <file>patch.spark</file>
+                <file>pmn-marrow.spark</file>
+                <file>pmn.spark</file>
+                <file>th0-germ.spark</file>
+                <file>th0.spark</file>
+                <file>th1-germ.spark</file>
+                <file>th1.spark</file>
+                <file>th2-germ.spark</file>
+                <file>th2.spark</file>
+                <file>tutrtle.spark</file>
+        </files>
+</spark-project>

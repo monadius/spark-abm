@@ -1,0 +1,301 @@
+model InnateImmuneResponseModel
+
+global system-oxy = 0
+
+@chart(name = "Oxygen Deficit")
+global oxy-deficit = 0
+
+@chart(name = "Total Infection")
+global total-infection = 0
+
+@chart(name = "Total TNF")
+global total-tnf = 0
+
+global total-stnfr = 0
+
+@chart(name = "Total IL-10")
+global total-il-10 = 0
+
+global total-il-6 = 0
+
+@chart(name = "Total GCSF")
+global total-gcsf = 0
+global step = 0
+global time = 1
+global loop-run = 0
+;global total-pro-th1 = 0
+;global total-pro-th2 = 0
+
+global oxy : grid
+global ec-activation : grid
+global ec-roll : grid
+global ec-stick : grid
+global ec-migrate : grid
+global cytotox : grid
+global infection : grid
+global endotoxin : grid
+global paf : grid
+global tnf : grid
+global stnfr : grid
+global il-1 : grid
+global sil-1r : grid
+global il-1ra : grid
+global inf-g : grid
+global il-2 : grid
+global il-4 : grid
+global il-6 : grid
+global il-8 : grid
+global il-10 : grid
+global il-12 : grid
+global gcsf : grid
+
+global inj-number = 1000
+
+
+space GridSpace -50 50 -50 50 true true
+
+
+to setup
+	oxy.set-value 100
+	
+	
+	; creating patches
+	for x = space-xmin + 0.5 : space-xmax - 0.5
+	[
+		for y = space-ymin + 0.5 : space-ymax - 0.5
+		[
+			ask create-one patch
+			[
+				move-to create-vector x y 0
+			]
+		]
+	]
+	
+	ask create pmn 500
+	[
+		color = white
+		repeat 10 [ jump random 100 ]
+		pmn-age = random 50
+		wbc-roll = 1
+		wbc-stick = 0
+		wbc-migrate = 0
+		pmn-pcd = 10
+	]
+	
+	ask create mono 50
+	[
+		color = green
+		repeat 10 [ jump random 50 ]
+		tnfr = 0
+		il-1r = 0
+		activation = 0
+	]
+	
+	ask create TH1 50
+	[
+		color = blue
+		repeat 10 [ jump random 100 ]
+		th1-age = random 100
+	]
+	
+	ask create TH2 50
+	[
+		color = cyan
+		repeat 10 [ jump random 100 ]
+		th2-age = random 100
+	]
+	
+	ask create pmn-marrow 100
+	[
+		color = brown
+		repeat 10 [ jump random 100 ]
+	]
+	
+	ask create mono-marrow 100
+	[
+		color = orange
+		repeat 10 [ jump random 100 ]
+	]
+	
+	ask create TH0-germ 100
+	[
+		color = red
+		repeat 10 [ jump random 100 ]
+	]
+	
+	ask create TH1-germ 100
+	[
+		color = red
+		repeat 10 [jump random 100 ]
+	]
+	
+	ask create TH2-germ 100
+	[
+		color = red
+		repeat 10 [jump random 100 ]
+	]
+	
+	set-scale-pc
+	system-oxy = 10201
+	oxy-deficit = 0
+	
+	; for test
+	injure-infection
+end
+
+
+to set-scale-pc
+; We do not need this function since 
+; it is possible to visualize DataLayers directly
+end
+
+
+to injure-sterile
+	ask create inj inj-number
+	[
+		jump random (sqrt inj-number)
+		oxy.value = 0
+		ec-roll.value = 3
+		ec-stick.value = 100
+		die
+	]
+end
+
+
+to injure-infection
+	ask create inj inj-number
+	[
+		jump random (sqrt inj-number)
+		infection.value = 100
+		die
+	]
+end
+
+
+to update-system-oxy
+	system-oxy = sum oxy / 100
+	oxy-deficit = 10201 - system-oxy
+	total-infection = sum infection / 100
+	total-tnf = sum tnf / 100
+	total-stnfr = sum stnfr / 100
+	total-il-10 = sum il-10 / 100
+;	total-pro-th1 = sum pro-th1 / 100
+;	total-pro-th2 = sum pro-th2 / 100
+	total-gcsf = sum gcsf / 100
+end
+
+
+
+to begin-step : boolean
+	if loop-run == 100
+	[
+		loop-run = 0
+		print "Above Inj-number is " + inj-number
+		inj-number = inj-number + 50
+		; it is strictly discouraged to call setup directly
+		; setup
+		; injure-infection
+		
+		; instead return stop flag
+		return true
+	]
+	
+	if time == 58
+	[
+		loop-run = loop-run + 1
+		print "oxy-deficit = " + oxy-deficit
+		print "total-infection = " + total-infection
+		print "time = " + time
+		;setup
+		;injure-infection
+		
+		return true
+	]
+	
+	if oxy-deficit > 8160.8
+	[
+		loop-run = loop-run + 1
+		print "oxy-deficit = " + oxy-deficit
+		print "total-infection = " + total-infection
+		print "time + step / 100 = " + (time + (step / 100))
+		;setup
+		;injure-infection
+		
+		return true
+	]
+	
+	step += 1
+	
+	if step == 100
+	[
+		time += 1
+		step = 0
+	]
+	
+	update-system-oxy
+	
+	ask agents TH0 [ th0-function ]
+	ask agents patch [ inj-function ec-function]
+	ask agents pmn [pmn-function]
+	ask agents mono [mono-function]
+	ask agents TH1 [th1-function]
+	ask agents TH2 [th2-function]
+	ask agents pmn-marrow [pmn-marrow-function]
+	ask agents mono-marrow [mono-marrow-function]
+	ask agents TH1-germ [th1-germ-function]
+	ask agents TH2-germ [th2-germ-function]
+	ask agents TH0-germ [th0-germ-function]
+	
+	if step == 99
+	[
+		ask create inj 5
+		[
+			heading = random 360
+			jump random 100
+			infection.value = 100
+		]
+	]
+end
+
+
+to end-step
+	diffuse endotoxin 1.0
+	diffuse paf 0.6
+	diffuse cytotox 0.4
+	diffuse tnf 0.6
+	diffuse stnfr 0.8
+	diffuse il-1 0.6
+	diffuse inf-g 0.8
+	diffuse il-8 0.6
+	diffuse il-10 0.8
+	diffuse il-1ra 0.8
+	diffuse sil-1r 0.8
+	diffuse il-12 0.8
+	diffuse il-4 0.8
+	diffuse gcsf 1.0
+	
+	; ask patches [ evaporate ]
+	evaporate
+	
+	set-scale-pc
+	
+;	if graph [ draw-graph ]
+end
+
+
+to evaporate
+	endotoxin *= 0.7
+	paf *= 0.7
+	cytotox *= 0.7
+	tnf *= 0.8
+	il-1 *= 0.8
+	stnfr *= 0.9
+	il-1ra *= 0.9
+	sil-1r *= 0.9
+	inf-g *= 0.8
+	il-8 *= 0.7
+	il-10 *= 0.95
+	il-12 *= 0.8
+	il-4 *= 0.95
+	gcsf *= 0.95
+end

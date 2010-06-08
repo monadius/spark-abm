@@ -1,0 +1,12 @@
+model Simple3dModel
+
+
+space GridSpace3d -20 20 -20 20 -20 20 false false false
+
+
+to setup
+	ask create Agent3d 500
+	[
+		set-random-position
+	]
+end

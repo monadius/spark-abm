@@ -1,0 +1,1128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<types>
+        <type name = "double" alias = "number"> 
+                <javaname>double</javaname>
+
+                <declaration>
+                        double @@id = 0;
+                </declaration>
+
+                <declaration_init>
+                        double @@id = @@value
+                </declaration_init>
+
+                <set>
+                        @@id = @@value
+                </set>
+
+                <get>
+                        @@id
+                </get>
+        </type>
+        
+        <type name = "string">
+        	<javaname>String</javaname>
+
+			<declaration>
+				String @@id = "";
+			</declaration>
+			
+			<set>
+				@@id = @@value
+			</set>
+			
+			<get>
+				@@id
+			</get>        	
+        </type>
+
+        <type name = "$integer">
+                <javaname>int</javaname>
+
+                <declaration>
+                        int @@id = 0;
+                </declaration>
+
+                <declaration_init>
+                        int @@id = @@value
+                </declaration_init>
+
+                <set>
+                        @@id = @@value
+                </set>
+
+                <get>
+                        @@id
+                </get>
+                
+                
+                <get-convert to = "double">
+                	<translation>
+                		(double)(@@this)
+                	</translation>
+                </get-convert>
+                
+                <set-convert to = "double">
+                	<translation>
+                		@@this = (int)(@@value) 
+                	</translation>
+                </set-convert>
+        </type>
+
+
+
+        <type name = "$long">
+                <javaname>long</javaname>
+
+                <declaration>
+                        long @@id = 0;
+                </declaration>
+
+                <declaration_init>
+                        long @@id = @@value
+                </declaration_init>
+
+                <set>
+                        @@id = @@value
+                </set>
+
+                <get>
+                        @@id
+                </get>
+
+        </type>
+        
+        
+        <type name = "$time">
+        	<javaname>SimulationTime</javaname>
+        </type>
+
+        
+        
+        <type name = "boolean">
+                <javaname>boolean</javaname>
+
+                <declaration>
+                        boolean @@id = false;
+                </declaration>
+
+                <set>
+                        @@id = @@value
+                </set>
+
+                <get>
+                        @@id
+                </get>
+        </type>
+        
+        
+        
+        <type name = "ArrayList" composite = "true" parent = "$Object">
+                <javaname>ArrayList&lt;@subtype&gt;</javaname>
+
+                <set>
+                        @@id = @@value
+                </set>
+
+                <get>
+                        @@id
+                </get>
+                
+                <method name = "add">
+                	<argument name = "object" type = "$Object"/>
+                </method>
+                
+                
+                <method name = "add-all">
+                	<argument name = "list" type = "ArrayList"/>
+                	<translation>
+                		@@object.addAll(@list)
+                	</translation>
+                </method>
+        </type>
+
+
+
+        <type name = "Array" composite = "true" parent = "$Object">
+                <javaname>@subtype[]</javaname>
+
+                <set>
+                        @@id = @@value
+                </set>
+
+                <get>
+                        @@id
+                </get>
+        </type>
+
+
+		<type name = "$NullObject">
+			<javaname>null</javaname>
+		</type>
+
+
+		<type name = "$Object" parent = "$NullObject">
+			<javaname>Object</javaname>
+		</type>
+
+
+        <type name = "vector" parent = "$Object">
+                <javaname>Vector</javaname>
+
+                <declaration>
+                        Vector @@id = new Vector();
+                </declaration>
+
+                <declaration_init>
+                        Vector @@id = new Vector(@@value)
+                </declaration_init>
+
+                <set>
+                        @@id.set(@@value)
+                </set>
+
+                <get>
+                        @@id
+                </get>
+
+                <field name = "x" type = "double" />
+                <field name = "y" type = "double" />
+                <field name = "z" type = "double" />
+
+                <method name = "add" type = "vector">
+                        <argument name = "v" type = "vector"/>
+                </method>
+                
+                
+                <method name = "normalize" type = "vector">
+                </method>
+               
+               	
+               	<method name = "truncate-length" type = "vector">
+               		<argument name = "length" type = "double"/>
+               		<translation>
+               			@@object.truncateLength(@length)
+               		</translation>
+               	</method>
+               
+                
+                <field name = "length" type = "double">
+                	<get>@@object.length()</get>
+                </field>
+                
+                
+                <method name = "length-squared" type = "double">
+                	<translation>
+                		@@object.lengthSquared()
+                	</translation>
+                </method>
+                
+                
+                <method name = "dot" type = "double">
+                	<argument name = "v" type = "vector"/>
+                	<translation>
+                		@@object.dot(@v)
+                	</translation>
+                </method>
+                
+                
+                <method name = "copy" type = "vector">
+                	<translation>
+                		(new Vector(@@object))
+                	</translation>
+                </method>
+                
+                
+                <method name = "cross" type = "vector">
+                	<argument name = "v" type = "vector"/>
+                	<translation>
+                		@@object.cross(@v)
+                	</translation>
+                </method>
+                
+
+                <method name = "parallel-component" type = "vector">
+                	<argument name = "unit-vector" type = "vector"/>
+                	<translation>
+                		@@object.parallelComponent(@unit-vector)
+                	</translation>
+                </method>
+
+
+                <method name = "perpendicular-component" type = "vector">
+                	<argument name = "unit-vector" type = "vector"/>
+                	<translation>
+                		@@object.perpendicularComponent(@unit-vector)
+                	</translation>
+                </method>
+               
+        </type>
+
+
+        <type name = "complex" parent = "$Object">
+                <javaname>Complex</javaname>
+
+                <declaration>
+                        Complex @@id = Complex.Zero;
+                </declaration>
+
+                <declaration_init>
+                        Complex @@id = new Complex(@@value)
+                </declaration_init>
+
+                <set>
+                        @@id = @@value
+                </set>
+
+                <get>
+                        @@id
+                </get>
+
+                <field name = "re" type = "double">
+                	<get>@@object.re()</get>
+                </field>
+                <field name = "im" type = "double">
+                	<get>@@object.im()</get>
+                </field>
+                
+                <field name = "abs" type = "double">
+                	<get>@@object.abs()</get>
+                </field>
+                
+                <field name = "arg" type = "double">
+                	<get>@@object.phase()</get>
+                </field>
+
+                
+				<method name = "reciprocal" type = "complex">
+				</method>
+				
+				
+				<method name = "conjugate" type = "complex">
+				</method>                
+        </type>
+
+
+
+		<!-- $ means translator-only name, user cannot use this type explicitly -->
+		<type name = "$model">
+			<javaname>SparkModel</javaname>
+			
+			<method name = "$StandardSpace">
+				<argument name = "xMin" type = "double"/>
+				<argument name = "xMax" type = "double"/>
+				<argument name = "yMin" type = "double"/>
+				<argument name = "yMax" type = "double"/>
+				<argument name = "xWrap" type = "boolean"/>
+				<argument name = "yWrap" type = "boolean"/>
+				
+				<translation>
+					StandardSpace __space = new StandardSpace(@xMin, @xMax, @yMin, @yMax, @xWrap, @yWrap);
+					Observer.getInstance().addSpace("space", __space)
+				</translation>
+			</method>
+			
+			<method name = "$GridSpace">
+				<argument name = "xMin" type = "double"/>
+				<argument name = "xMax" type = "double"/>
+				<argument name = "yMin" type = "double"/>
+				<argument name = "yMax" type = "double"/>
+				<argument name = "xWrap" type = "boolean"/>
+				<argument name = "yWrap" type = "boolean"/>
+				
+				<translation>
+					GridSpace __space = new GridSpace(@xMin, @xMax, @yMin, @yMax, @xWrap, @yWrap);
+					Observer.getInstance().addSpace("space", __space)
+				</translation>
+				
+			</method>
+			
+			
+			<method name = "$GridSpace3d">
+				<argument name = "xMin" type = "double"/>
+				<argument name = "xMax" type = "double"/>
+				<argument name = "yMin" type = "double"/>
+				<argument name = "yMax" type = "double"/>
+				<argument name = "zMin" type = "double"/>
+				<argument name = "zMax" type = "double"/>
+				<argument name = "xWrap" type = "boolean"/>
+				<argument name = "yWrap" type = "boolean"/>
+				<argument name = "zWrap" type = "boolean"/>
+				
+				<translation>
+					GridSpace3d __space = new GridSpace3d(@xMin, @xMax, @yMin, @yMax, @zMin, @zMax, @xWrap, @yWrap, @zWrap);
+					Observer.getInstance().addSpace("space", __space)
+				</translation>
+				
+			</method>
+
+
+			<method name = "$StandardSpace3d">
+				<argument name = "xMin" type = "double"/>
+				<argument name = "xMax" type = "double"/>
+				<argument name = "yMin" type = "double"/>
+				<argument name = "yMax" type = "double"/>
+				<argument name = "zMin" type = "double"/>
+				<argument name = "zMax" type = "double"/>
+				<argument name = "xWrap" type = "boolean"/>
+				<argument name = "yWrap" type = "boolean"/>
+				<argument name = "zWrap" type = "boolean"/>
+				
+				<translation>
+					StandardSpace3d __space = new StandardSpace3d(@xMin, @xMax, @yMin, @yMax, @zMin, @zMax, @xWrap, @yWrap, @zWrap);
+					Observer.getInstance().addSpace("space", __space)
+				</translation>
+				
+			</method>
+			
+			
+			<method name = "$PhysicalSpace2d">
+				<argument name = "xMin" type = "double"/>
+				<argument name = "xMax" type = "double"/>
+				<argument name = "yMin" type = "double"/>
+				<argument name = "yMax" type = "double"/>
+				<argument name = "xWrap" type = "boolean"/>
+				<argument name = "yWrap" type = "boolean"/>
+				
+				<translation>
+					PhysicalSpace2d __space = new PhysicalSpace2d(@xMin, @xMax, @yMin, @yMax, @xWrap, @yWrap);
+					Observer.getInstance().addSpace("space", __space)
+				</translation>
+				
+			</method>
+		</type>
+		
+		
+		<type name = "Space" parent = "$Object">
+			<javaname>Space</javaname>
+		
+		    <method name = "create" type = "Array" subtype = "ArgumentType:type">
+                <argument name = "type" type = "NameType" />
+                <argument name = "number" type = "double" />
+
+                <translation>
+                        <temp name = "nn"/>
+                        <temp name = "agents"/>
+                        <temp name = "i"/>
+                        <prelude>
+                                int @nn = (int)(@number);
+                                @type[] @agents = new @type[@nn];
+                                for (int @i = 0; @i &lt; @nn; @i++)
+                                {
+                                        @agents[@i] = new @type();
+                                        @agents[@i].moveToSpace(@@object, new Vector());
+                                }
+                        </prelude>
+                        <return>
+                                @agents
+                        </return>
+                </translation>
+        	</method>
+
+
+
+               <method name = "create-one" type = "ArgumentType:type">
+                	<argument name = "type" type = "NameType"/>
+                	
+                	<translation>
+                		<prelude>
+                			@agent = new @type();
+                			@agent.moveToSpace(@@object, new Vector());
+                		</prelude>
+                		<temp name = "agent" type = "@type"/>
+                		<return>
+               		    	@agent
+               		    </return>
+                	</translation>
+                </method>
+                
+                
+             <method name = "x-size" type = "double">
+             	<translation>
+             		((BoundedSpace) @@object).getXSize()
+             	</translation>
+             </method>
+             
+             <method name = "y-size" type = "double">
+             	<translation>
+             		((BoundedSpace) @@object).getYSize()
+             	</translation>
+             </method>
+
+             <method name = "x-min" type = "double">
+             	<translation>
+             		((BoundedSpace) @@object).getXMin()
+             	</translation>
+             </method>
+
+             <method name = "x-max" type = "double">
+             	<translation>
+             		((BoundedSpace) @@object).getXMax()
+             	</translation>
+             </method>
+
+             <method name = "y-min" type = "double">
+             	<translation>
+             		((BoundedSpace) @@object).getYMin()
+             	</translation>
+             </method>
+             
+             <method name = "y-max" type = "double">
+             	<translation>
+             		((BoundedSpace) @@object).getYMax()
+             	</translation>
+             </method>
+             
+             
+             <method name = "get-grid" type = "$DataLayer">
+             	<argument name = "name" type = "string"/>
+             	
+             	<translation>
+             		@@object.getDataLayer(@name)
+             	</translation>
+             </method>
+             
+             
+             <method name = "agents-at" type = "ArrayList" subtype = "ArgumentType:type">
+                <argument name = "type" type = "NameType"/>
+                <argument name = "point" type = "vector"/>
+                <argument name = "radius" type = "double"/>
+
+                <translation>
+                        <temp name = "result"/>
+                        <prelude>
+                                ArrayList&lt;@type&gt; @result = @@object.getAgents(@point, @radius, @type.class);
+                        </prelude>
+                        <return>
+                                @result
+                        </return>
+                </translation>
+        	</method>
+        	
+        	
+          	<method name = "agents-at-as" type = "ArrayList" subtype = "ArgumentType:type">
+                <argument name = "type" type = "NameType"/>
+                <argument name = "point" type = "vector"/>
+                <argument name = "radius" type = "double"/>
+
+                <translation>
+                        <temp name = "result"/>
+                        <prelude>
+                                ArrayList&lt;@type&gt; @result = @@object.getAgentsOfKind(@point, @radius, @type.class);
+                        </prelude>
+                        <return>
+                                @result
+                        </return>
+                </translation>
+        	</method>
+
+
+    	    <method name = "agents-here" type = "ArrayList" subtype = "ArgumentType:type">
+                <argument name = "type" type = "NameType"/>
+
+                <translation>
+                        <temp name = "result"/>
+                        <prelude>
+                                ArrayList&lt;@type&gt; @result = @@object.getAgents(@@self, @type.class);
+                        </prelude>
+                        <return>
+                                @result
+                        </return>
+                </translation>
+	        </method>
+
+
+    	    <method name = "agents-here-as" type = "ArrayList" subtype = "ArgumentType:type">
+                <argument name = "type" type = "NameType"/>
+
+                <translation>
+                        <temp name = "result"/>
+                        <prelude>
+                                ArrayList&lt;@type&gt; @result = @@object.getAgentsOfKind(@@self, @type.class);
+                        </prelude>
+                        <return>
+                                @result
+                        </return>
+                </translation>
+	        </method>
+
+
+
+        	<method name = "all-agents-at" type = "ArrayList" subtype = "SpaceAgent">
+                <argument name = "point" type = "vector"/>
+                <argument name = "radius" type = "double"/>
+
+                <translation>
+                        <temp name = "result"/>
+                        <prelude>
+                                ArrayList&lt;SpaceAgent&gt; @result = @@object.getAgents(@point, @radius);
+                        </prelude>
+                        <return>
+                                @result
+                        </return>
+                </translation>
+        	</method>
+
+
+        	<method name = "all-agents-here" type = "ArrayList" subtype = "SpaceAgent">
+                <translation>
+                        <temp name = "result"/>
+                        <prelude>
+                                ArrayList&lt;SpaceAgent&gt; @result = @@object.getAgents(@@self);
+                        </prelude>
+                        <return>
+                                @result
+                        </return>
+                </translation>
+        	</method>
+		</type>
+
+
+
+		<type name = "Agent" parent = "$Object">
+			<javaname>Agent</javaname>
+
+            <method name = "die">
+            </method>
+            
+            
+            <method name = "all-links" type = "ArrayList" subtype = "AbstractLink">
+            	<translation>
+            		<temp name = "links"/>
+            		<prelude>
+            			ArrayList&lt;Link&gt; @links = @@object.getLinks();  
+            		</prelude>
+            		<return>
+            			@links
+            		</return>
+            	</translation>
+            </method>
+
+
+            <method name = "links-of-type" type = "ArrayList" subtype = "ArgumentType:type">
+            	<argument name = "type" type = "NameType"/>
+            	<translation>
+            		<temp name = "links"/>
+    	        	<prelude>
+	            		ArrayList&lt;@type&gt; @links = @@object.getLinks(@type.class);  
+            		</prelude>
+            		<return>
+            			@links
+            		</return>
+            	</translation>
+            </method>
+            
+            
+            <method name = "link" type = "AbstractLink">
+            	<argument name = "agent" type = "Agent"/>
+            	<translation>
+            		@@object.getFirstConnection(@agent)
+            	</translation>
+            </method>
+            
+            
+            <method name = "link-of-type" type = "ArgumentType:type">
+            	<argument name = "type" type = "NameType"/>
+            	<argument name = "agent" type = "Agent"/>
+            	
+            	<translation>
+            		@@object.getFirstConnection(@agent, @type.class)
+            	</translation>
+            </method>
+
+		</type>
+
+
+		<type name = "AbstractLink" parent = "Agent">
+			<javaname>Link</javaname>
+			
+			<method name = "connect">
+				<argument name = "end1" type = "Agent"/>
+				<argument name = "end2" type = "Agent"/>
+				
+				<translation>
+					@@object.connect(@end1, @end2)
+				</translation>
+			</method>
+		</type>
+		
+		
+		<type name = "Link" parent = "AbstractLink">
+			<javaname>SpaceLink</javaname>
+			
+            <field name = "color" type = "vector">
+              	<set>@@object.setColor(@@value)</set>
+               	<get>@@object.getRGBColor()</get>
+            </field>
+            
+            <field name = "width" type = "double">
+            	<set>@@object.setWidth(@@value)</set>
+            	<get>@@object.getWidth()</get>
+            </field>
+            
+            
+            <field name = "end1" type = "SpaceAgent">
+            	<get>@@object.getEnd1()</get>
+            </field>		
+            
+            
+            <field name = "end2" type = "SpaceAgent">
+            	<get>@@object.getEnd2()</get>
+            </field>
+            
+            
+            <method name = "distance" type = "vector">
+            	<translation>
+            		<temp name = "result" type = "vector"/>
+            		<prelude>
+            			@result = @@object.getVector();
+            			if (@result == null)
+            				@result = new Vector();
+            		</prelude>
+            		<return>
+            			@result
+            		</return>
+            	</translation>
+            </method> 
+       	</type>
+		
+		
+        <type name = "SpaceAgent" parent = "Agent">
+                <javaname>SpaceAgent</javaname>
+
+                <set>
+                	@@id = @@value
+                </set>
+
+                <get>
+                	@@id
+                </get>
+
+                <method name = "move">
+                        <argument name = "v" type = "vector"/>
+                </method>
+                
+                <method name = "get-agent-space" type = "Space">
+                	<translation>
+                		@@object.getNode().getSpace()
+                	</translation>
+                </method>
+                
+                <method name = "move-to">
+                	<argument name = "p" type = "vector"/>
+                	<translation>
+                		@@object.jump(@p)
+                	</translation> 
+                </method>
+                
+                <method name = "get-position" type = "vector">
+                </method>
+                
+                <method name = "super">
+                	<argument name = "radius" type = "double"/>
+                	<argument name = "shape" type = "$integer"/>
+                	
+                	<translation>
+                		super(@radius, @shape)
+                	</translation>
+                </method>
+
+                <field name = "position" type = "vector">
+                 <get>@@object.getPosition()</get>
+                </field>
+                
+                <field name = "color" type = "vector">
+                	<set>@@object.setColor(@@value)</set>
+                	<get>@@object.getRGBColor()</get>
+                </field>
+                
+                <field name = "alpha" type = "double">
+                	<set>@@object.getNode().setAlpha(@@value)</set>
+                	<get>@@object.getNode().getAlpha()</get>
+                </field>
+
+                <field name = "radius" type = "double">
+                	<set>((CircleNode) @@object.getNode()).setRadius(@@value)</set>
+                	<get>@@object.getNode().getRelativeSize()</get>
+                </field>
+                
+                
+				<method name = "set-shape">
+					<argument name = "shape" type = "$integer"/>
+					<translation>
+						@@object.setShape(@shape)
+					</translation>
+				</method>
+
+                
+                <method name = "set-random-position">
+                </method>
+                
+                <method name = "hatch-one" type = "ArgumentType:type">
+                	<argument name = "type" type = "NameType"/>
+                	
+                	<translation>
+                		<prelude>
+                			@agent = new @type();
+                			@agent.moveToSpace(@@object.getSpace(), @@object.getPosition());
+                		</prelude>
+                		<temp name = "agent" type = "@type"/>
+                		<return>
+               		    	@agent
+               		    </return>
+                	</translation>
+                </method>
+                
+                <method name = "hatch" type = "Array" subtype = "ArgumentType:type">
+                	<argument name = "type" type = "NameType"/>
+                	<argument name = "number" type = "double"/>
+                	
+                	<translation>
+                		<temp name = "agents"/>
+                		<temp name = "nn"/>
+                		<temp name = "pos"/>
+                		<temp name = "space"/>
+                		<temp name = "i"/>
+                		<prelude>
+                			int @nn = (int)(@number);
+                			Vector @pos = @@object.getPosition();
+                			Space @space = @@object.getSpace();
+                			@type[] @agents = new @type[@nn];
+                			for (int @i = 0; @i &lt; @nn; @i++)
+                			{
+                				@agents[@i] = new @type();
+                				@agents[@i].moveToSpace(@space, @pos);
+                			}
+                		</prelude>
+                		<return>
+                			@agents
+                		</return>
+                	</translation>
+                </method>
+                
+                
+                <method name = "move-to-space">
+                	<argument name = "space" type = "Space"/>
+                	<argument name = "position" type = "vector"/>
+                	
+                	<translation>
+                		@@object.moveToSpace(@space, @position)
+                	</translation>
+                </method>
+                
+                
+                <method name = "apply-force">
+                	<argument name = "force" type = "vector"/>
+                	<translation>
+                		((PhysicalNode) @@object.getNode()).applyForce(@force)
+                	</translation>
+                </method>
+                
+                
+                <method name = "hide">
+                	<translation>
+                		/*@@object.setVisible(false)*/
+                	</translation>
+                </method>
+                
+                
+                <method name = "show">
+                	<translation>
+                		/*@@object.setVisible(true)*/
+                	</translation>
+                </method>
+                
+                
+                <method name = "uphill">
+                	<argument name = "data" type = "grid"/>
+                	<translation>
+                		<temp name = "v" type = "vector"/>
+                		@v = @data.getUphillDirection(@@object.getPosition());
+                		@@object.move(@v)
+                	</translation>
+                </method>
+        </type>
+
+
+
+		<type name = "$DataLayer" parent = "$Object">
+              <method name = "value-here" type = "double">
+                	<translation>
+                		@@object.getValue(@@self)
+                	</translation>
+              </method>
+                
+              <method name = "set-value-here">
+                	<argument name = "value" type = "double"/>
+                	<translation>
+                		@@object.setValue(@@self, @value)
+                	</translation>
+              </method>
+                
+               <method name = "add-value-here">
+                	<argument name = "value" type = "double"/>
+                	<translation>
+                		@@object.addValue(@@self, @value)
+                	</translation>
+              </method>
+                
+               <method name = "value-at" type = "double">
+                	<argument name = "p" type = "vector"/>
+                	<translation>
+                		@@object.getValue(@p)
+                	</translation>
+               </method>
+                
+               <method name = "set-value-at">
+                	<argument name = "p" type = "vector"/>
+                	<argument name = "value" type = "double"/>
+                	<translation>
+                		@@object.setValue(@p, @value)
+                	</translation>
+               </method>
+                
+               <method name = "add-value-at">
+                	<argument name = "p" type = "vector"/>
+                	<argument name = "value" type = "double"/>
+                	<translation>
+                		@@object.addValue(@p, @value)
+                	</translation>
+               </method>
+                
+               <method name = "set-value">
+                	<argument name = "value" type = "double"/>
+                	<translation>
+                		@@object.setValue(@value)
+                	</translation>
+               </method>
+                
+                
+               <method name = "multiply">
+                	<argument name = "value" type = "double"/>
+                	
+                	<translation>
+                		@@object.multiply(@value)
+                	</translation>
+               </method>
+
+
+               <method name = "evaporate">
+                	<argument name = "value" type = "double"/>
+                	
+                	<translation>
+                		@@object.multiply(@value)
+                	</translation>
+               </method>
+
+                
+                
+               <method name = "diffuse">
+                	<argument name = "value" type = "double"/>
+                	
+                	<translation>
+                		@@object.diffuse(@value)
+                	</translation>
+               </method>
+                
+                
+               <field name = "value" type = "double">
+                	<set>@@object.setValue(@@self, @@value)</set>
+                	<get>@@object.getValue(@@self)</get>
+               </field>
+                
+
+				<method name = "data-at" type = "double">
+					<argument name = "i" type = "double"/>
+					<argument name = "j" type = "double"/>
+					<translation>
+						@@object.getValue((int)(@i), (int)(@j))
+					</translation>
+				</method>                
+
+				<method name = "set-data-at">
+					<argument name = "i" type = "double"/>
+					<argument name = "j" type = "double"/>
+					<argument name = "val" type = "double"/>
+					<translation>
+						@@object.setValue((int)(@i), (int)(@j), @val)
+					</translation>
+				</method>                
+
+
+				<method name = "max">
+					<translation>
+						@@object.getMax()
+					</translation>
+				</method>
+				
+				
+				<method name = "min">
+					<translation>
+						@@object.getMin()
+					</translation>
+				</method>
+				
+				
+				<method name = "total-value">
+					<translation>
+						@@object.getTotalNumber()
+					</translation>
+				</method>
+				
+				
+				<method name = "total-value-in-region" type = "double">
+					<argument name = "x-min" type = "double"/>
+					<argument name = "x-max" type = "double"/>
+					<argument name = "y-min" type = "double"/>
+					<argument name = "y-max" type = "double"/>
+					<translation>
+						@@object.getTotalNumber(@x-min, @x-max, @y-min, @y-max)
+					</translation>
+				</method>
+		</type>
+
+
+		<!-- Grid -->
+        <type name = "grid" parent = "$DataLayer">
+                <javaname>Grid</javaname>
+
+                <declaration>
+                        Grid @@id = null;
+                </declaration>
+                
+                <set>
+                	@@id = @@value
+                </set>
+                
+                <get>
+                	@@id
+                </get>
+
+                <set-convert context = "agent" to = "double">
+                	@@object.setValue(@@self, @@value)
+                </set-convert>
+
+                <get-convert context = "agent" to = "double">
+                    @@this.getValue(@@self)
+                </get-convert>
+
+                <set context = "model">
+                        for (int i = 0; i &lt; xsize; i++)
+                                for (int j = 0; j &lt; ysize; j++) {
+                                        @@this.setValue(i, j, @value);
+                                }
+                </set>
+
+                <get context = "model">
+                        @@this.getValue(i, j)
+                </get>
+                
+                
+                <method name = "get-smooth-gradient" type = "vector">
+                	<argument name = "point" type = "vector"/>
+                </method>
+                
+                <!-- TODO: experimental feature (to be removed later) -->
+                <field name = "data" type = "double">
+                	<set>
+                		{
+                			double[][] _data = @@object.getData();
+                			
+                			for (int _i = 0; _i &lt; _data.length; _i++)
+                			{
+                				for (int _j = 0; _j &lt; _data[0].length; _j++)
+                				{
+                					_data[_i][_j] = @@value;
+                				}
+                			}   
+                		}
+                	</set>
+                	<get>
+                	    @@object.getValue(_i, _j)
+                	</get>
+                </field>
+        </type>
+        
+
+
+
+		<!-- Grid3d -->
+        <type name = "grid3d" parent = "$DataLayer">
+                <javaname>Grid3d</javaname>
+
+                <declaration>
+                        Grid3d @@id = null;
+                </declaration>
+                
+                <set>
+                	@@id = @@value
+                </set>
+                
+                <get>
+                	@@id
+                </get>
+
+                
+                <method name = "get-smooth-gradient" type = "vector">
+                	<argument name = "point" type = "vector"/>
+                </method>
+                
+                <!-- TODO: experimental feature (to be removed later) -->
+                <field name = "data" type = "double">
+                	<set>
+                		{
+                			double[][][] _data = @@object.getData();
+                			
+                			for (int _i = 0; _i &lt; _data.length; _i++)
+                			{
+                				for (int _j = 0; _j &lt; _data[0].length; _j++)
+                				{
+                					for (int _k = 0; _k &lt; _data[0][0].length; _k++)
+                						_data[_i][_j][_k] = @@value;
+                				}
+                			}   
+                		}
+                	</set>
+                	<get>
+                	    @@object.getValue(_i, _j, _k)
+                	</get>
+                </field>
+        </type>
+
+        
+        
+        
+        <type name = "DataLayerStep" interface = "true">
+        	<javaname>DataLayerStep</javaname>
+        
+        	<!-- interface method should be implemented in the subclass -->
+        	<method name = "step" type = "double" abstract = "true">
+        		<argument name = "tick" type = "$long"/>
+        		<argument name = "x" type = "$integer"/>
+        		<argument name = "y" type = "$integer"/>
+        		<argument name = "val" type = "double"/>
+        	</method>
+        </type>
+        
+        
+        <type name = "parallel-grid" parent = "$DataLayer">
+        	<javaname>ParallelGrid</javaname>
+        	
+        	<method name = "diffuse-one-element" type = "double">
+        		<argument name = "x" type = "$integer"/>
+        		<argument name = "y" type = "$integer"/>
+        		<argument name = "val" type = "double"/>
+        		
+        		<translation>
+        			@@object.DiffuseOneElement(@x, @y, @val)
+        		</translation>
+        	</method>
+        </type>
+        
+        
+        <type name = "diffuse-grid" parent = "parallel-grid">
+        	<javaname>Diffuse</javaname>
+        	
+        </type>
+
+</types>

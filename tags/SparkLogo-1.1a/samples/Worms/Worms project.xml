@@ -1,0 +1,13 @@
+<spark-project>
+	<name>Worms</name>
+	<project-directory>C:\Help\Alexey\My New Projects\Eclipse Projects\SparkLogo\samples\Worms</project-directory>
+	<output-directory>output</output-directory>
+
+	<files>
+		<file>Model.spark</file>
+		<file>PhysAgent.spark</file>
+		<file>Spring.spark</file>
+		<file>Worm.spark</file>
+		<file>Obstacle.spark</file>
+	</files>
+</spark-project>

@@ -1,0 +1,25 @@
+agent pmn-marrow : turtle
+
+to step
+	pmn-marrow-function
+end
+
+
+to pmn-marrow-function
+	repeat floor (1 + total-gcsf / 100)
+	[
+		if random 10 < 1
+		[
+			ask hatch-one pmn
+			[
+				color = white
+				wbc-roll = 1
+				wbc-stick = 0
+				wbc-migrate = 0
+				pmn-age = 50
+				pmn-pcd = 10
+				jump random 100
+			]
+		]
+	]
+end

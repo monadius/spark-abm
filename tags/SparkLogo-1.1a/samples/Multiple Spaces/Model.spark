@@ -1,0 +1,39 @@
+model MultipleSpaces
+
+
+space StandardSpace -10 10 -10 10 true true
+
+
+var space2 = add-standard3d-space "3d Space" -10 10 -10 10 -10 10 false false false
+
+global background = create-grid "background" 1 1
+
+
+@parameter(min = 1, max = 1000, default = 100)
+global init-agents-number
+
+
+to setup
+	ask create Hole 3
+	[
+		set-random-position
+		radius = random-in-interval 1 2
+		
+		init myself.space2 [0, 0, 0]
+	]
+	
+	
+	ask space2.create Hole 1
+	[
+		set-random-position
+		radius = 1.5
+		
+		init get-space "space" [0, 0, 0]
+	]
+	
+	
+	ask create SimpleAgent init-agents-number
+	[
+		set-random-position
+	]
+end 

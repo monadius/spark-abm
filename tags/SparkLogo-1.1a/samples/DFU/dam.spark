@@ -1,0 +1,31 @@
+agent dam : CellAgent
+
+
+to dam-function
+	if collagen-number.value > 0.01
+	[
+		if dam-number.value < 2
+		[
+			damage.value = 100
+		]
+		
+		;dam-number.value += -1
+		;collagen-number.value += -1
+		dam-number.add-value-here (-1)
+		collagen-number.add-value-here (-1)
+		die
+		exit
+	]
+	
+	if 1000 < random 1002
+	[
+		if dam-number.value < 2
+		[
+			damage.value = 100
+		]
+		
+		dam-number.add-value-here (-1)
+		die
+		exit
+	]
+end

@@ -1,0 +1,35 @@
+@step(priority = 1)
+agent Agent1 : SpaceAgent
+
+
+to create
+	color = red
+	radius = 0.2
+end
+
+
+to step
+	data.add-value-here -1
+end
+
+
+
+@step(priority = 2)
+agent Agent2 : SpaceAgent
+
+
+to create
+	color = yellow
+	radius = 0.5
+end
+
+
+to step [tick]
+	if data.value-here < 1
+	[
+		die
+		exit
+	]
+	
+	data.add-value-here 1
+end

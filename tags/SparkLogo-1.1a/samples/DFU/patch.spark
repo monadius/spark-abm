@@ -1,0 +1,27 @@
+agent patch : SpaceAgent
+
+
+to create
+	super 0.5 square
+end
+
+
+to cause-damage
+	if TNF.value > 0.25
+	[
+		ask hatch-one dam
+		[
+			hide
+			damage.value = 0
+			dam-number.add-value-here 1
+		]
+	]
+end
+
+
+to step
+	if position.length-squared < 55 * 55
+	[
+		color = create-vector 0 (damage.value / 100) 0
+	]
+end

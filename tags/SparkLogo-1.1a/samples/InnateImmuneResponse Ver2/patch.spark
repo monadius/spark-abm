@@ -1,0 +1,140 @@
+agent patch : SpaceAgent
+
+
+to create
+	super 0.5 square
+end
+
+
+to step
+	inj-function
+	ec-function
+
+	ifelse infection.value > 50
+	[
+		color = grey
+	]
+	[
+		color = create-vector (oxy.value / 100) 0 0
+	]
+end
+
+
+to inj-function
+	var rand-inj = 0
+	oxy.value = max 0 (oxy.value - infection.value)
+	endotoxin.add-value-here infection.value / 10
+	
+	if infection.value >= 100
+	[
+		ask agents-at patch (position + vector-in-direction 1 (random 360)) 0.5
+		[
+			infection.add-value-here 1
+		]
+		
+		infection.value = 100
+	]
+	
+	if infection.value > 0
+	[
+		infection.value = max 0 (infection.value - cytotox.value + 0.1)
+	]
+end
+
+
+to ec-function
+	if endotoxin.value >= 1 or oxy.value < 60
+	[ ec-activation.value = 1 ]
+	
+	if ec-activation.value == 1
+	[ ec-activate ]
+	
+	patch-inj-spread
+end
+
+
+to patch-inj-spread
+	oxy.add-value-here -cytotox.value
+	
+	ifelse oxy.value < 60 and oxy.value > 30
+	[
+		ec-roll.add-value-here 1
+		oxy.add-value-here -0.05
+		paf.add-value-here 1
+		
+		; instead write
+		; var p = position
+		; oxy.add-value-at (position + <0, 1, 0>) -0.05
+		var p = position   
+
+		ask agents-at patch (p + <0, 1, 0>) 0.5
+		[ oxy.add-value-here -0.05]
+
+		ask agents-at patch (p + <0, -1, 0>) 0.5
+		[ oxy.add-value-here -0.05]
+		
+		ask agents-at patch (p + <1, 0, 0>) 0.5
+		[ oxy.add-value-here -0.05]
+		
+		ask agents-at patch (p + <1, 1, 0>) 0.5
+		[ oxy.add-value-here -0.05]
+		
+		ask agents-at patch (p + <1, -1, 0>) 0.5
+		[ oxy.add-value-here -0.05]
+		
+		ask agents-at patch (p + < -1, 0, 0>) 0.5
+		[ oxy.add-value-here -0.05]
+		
+		ask agents-at patch (p + < -1, 1, 0>) 0.5
+		[ oxy.add-value-here -0.05]
+		
+		ask agents-at patch (p + < -1, -1, 0>) 0.5
+		[ oxy.add-value-here -0.05]
+		
+	]
+	[
+		if oxy.value <= 30
+		[
+			ec-stick.add-value-here 1
+			oxy.add-value-here -0.25
+			paf.add-value-here 1
+			
+			var p = position
+			
+			ask agents-at patch (p + <0, 1, 0>) 0.5
+			[ oxy.add-value-here -0.25]
+
+			ask agents-at patch (p + <0, -1, 0>) 0.5
+			[ oxy.add-value-here -0.25]
+		
+			ask agents-at patch (p + <1, 0, 0>) 0.5
+			[ oxy.add-value-here -0.25]
+		
+			ask agents-at patch (p + <1, 1, 0>) 0.5
+			[ oxy.add-value-here -0.25]
+		
+			ask agents-at patch (p + <1, -1, 0>) 0.5
+			[ oxy.add-value-here -0.25]
+		
+			ask agents-at patch (p + < -1, 0, 0>) 0.5
+			[ oxy.add-value-here -0.25]
+		
+			ask agents-at patch (p + < -1, 1, 0>) 0.5
+			[ oxy.add-value-here -0.25]
+		
+			ask agents-at patch (p + < -1, -1, 0>) 0.5
+			[ oxy.add-value-here -0.25]
+		]
+	]
+	
+	if oxy.value < 0
+		[ oxy.value = 0 ]
+end
+
+
+to ec-activate
+	ec-roll.add-value-here 1
+	ec-stick.add-value-here 1
+	paf.add-value-here 1
+	il-8.add-value-here 1
+end

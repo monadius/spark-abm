@@ -1,0 +1,2001 @@
+<!DOCTYPE spark-commands [
+<!ELEMENT spark-commands (command | reporter)*>
+<!ELEMENT command (argument*, block*, translation?)>
+<!ATTLIST command name CDATA #REQUIRED>
+<!ATTLIST command infix (false | true) #IMPLIED>
+<!ATTLIST command precedence CDATA #IMPLIED>
+<!ATTLIST command alias CDATA #IMPLIED>
+
+<!ELEMENT reporter (argument*, block*, translation?)>
+<!ATTLIST reporter name CDATA #REQUIRED>
+<!ATTLIST reporter type CDATA #REQUIRED>
+<!ATTLIST reporter subtype CDATA #IMPLIED>
+<!ATTLIST reporter infix (false | true) #IMPLIED>
+<!ATTLIST reporter precedence CDATA #IMPLIED>
+<!ATTLIST reporter alias CDATA #IMPLIED>
+
+<!ELEMENT argument EMPTY>
+<!ATTLIST argument name CDATA #REQUIRED>
+<!ATTLIST argument type CDATA #REQUIRED>
+<!ATTLIST argument subtype CDATA #IMPLIED>
+
+<!ELEMENT block EMPTY>
+<!ATTLIST block selftype CDATA #IMPLIED>
+<!ATTLIST block name CDATA #IMPLIED>
+
+
+<!ELEMENT temp EMPTY>
+<!ATTLIST temp name CDATA #REQUIRED>
+<!ATTLIST temp type CDATA #IMPLIED>
+<!ATTLIST temp readonly CDATA #IMPLIED>
+
+
+<!ELEMENT prelude (#PCDATA)>
+<!ELEMENT return (#PCDATA)>
+]>
+
+<spark-commands>
+        <!-- Constants -->
+        <reporter name = "pi" type = "double">
+                 <translation>
+                         Math.PI
+                 </translation>
+        </reporter>
+
+        <reporter name = "true" type = "boolean">
+                <translation>
+                        true
+                </translation>
+        </reporter>
+
+        <reporter name = "false" type = "boolean">
+                <translation>
+                        false
+                </translation>
+        </reporter>
+
+        <reporter name = "circle" type = "$integer">
+                <translation>
+                        SpaceAgent.CIRCLE
+                </translation>
+        </reporter>
+
+        <reporter name = "square" type = "$integer">
+                <translation>
+                        SpaceAgent.SQUARE
+                </translation>
+        </reporter>
+
+        <reporter name = "torus" type = "$integer">
+                <translation>
+                        SpaceAgent.TORUS
+                </translation>
+        </reporter>
+
+
+        <reporter name = "black" type = "vector">
+                <translation>
+                        SpaceAgent.BLACK
+                </translation>
+        </reporter>
+
+        <reporter name = "white" type = "vector">
+                <translation>
+                        SpaceAgent.WHITE
+                </translation>
+        </reporter>
+
+        <reporter name = "grey" type = "vector">
+                <translation>
+                        SpaceAgent.GREY
+                </translation>
+        </reporter>
+
+        <reporter name = "red" type = "vector">
+                <translation>
+                        SpaceAgent.RED
+                </translation>
+        </reporter>
+
+        <reporter name = "green" type = "vector">
+                <translation>
+                        SpaceAgent.GREEN
+                </translation>
+        </reporter>
+
+        <reporter name = "blue" type = "vector">
+                <translation>
+                        SpaceAgent.BLUE
+                </translation>
+        </reporter>
+
+        <reporter name = "cyan" type = "vector">
+                <translation>
+                        SpaceAgent.CYAN
+                </translation>
+        </reporter>
+
+        <reporter name = "magenta" type = "vector">
+                <translation>
+                        SpaceAgent.MAGENTA
+                </translation>
+        </reporter>
+
+        <reporter name = "yellow" type = "vector">
+                <translation>
+                        SpaceAgent.YELLOW
+                </translation>
+        </reporter>
+        
+        
+        <reporter name = "brown" type = "vector">
+                <translation>
+                        (new Vector(204.0/255.0, 102.0/255.0, 0))
+                </translation>
+        </reporter>
+
+
+        <reporter name = "orange" type = "vector">
+                <translation>
+                        (new Vector(1, 153.0/255.0, 0))
+                </translation>
+        </reporter>
+        
+        
+        <reporter name = "violet" type = "vector">
+                <translation>
+                        (new Vector(238.0/255.0, 130.0/255.0, 238.0/255.0))
+                </translation>
+        </reporter>
+        
+
+        <reporter name = "pink" type = "vector">
+                <translation>
+                        (new Vector(1, 0.75, 203.0/255.0))
+                </translation>
+        </reporter>
+
+
+        <!-- operators -->
+        <reporter name = "^" type = "double" infix = "true" precedence = "6">
+                <argument name = "left" type = "double" />
+                <argument name = "right" type = "double" />
+                <translation>
+                        Math.pow(@left, @right)
+                </translation>
+        </reporter>
+
+        <reporter name = "*" type = "double" infix = "true" precedence = "5">
+                <argument name = "left" type = "double" />
+                <argument name = "right" type = "double" />
+                <translation>
+                        (@left * @right)
+                </translation>
+        </reporter>
+        
+        
+        <reporter name = "*" type = "vector" infix = "true" precedence = "5">
+                <argument name = "left" type = "double" />
+                <argument name = "right" type = "vector" />
+                <translation>
+                        (new Vector(@right)).mul(@left)
+                </translation>
+        </reporter>
+
+
+        <reporter name = "*" type = "vector" infix = "true" precedence = "5">
+                <argument name = "left" type = "vector" />
+                <argument name = "right" type = "double" />
+                <translation>
+                        (new Vector(@left)).mul(@right)
+                </translation>
+        </reporter>
+
+
+        <reporter name = "*" type = "double" infix = "true" precedence = "5">
+                <argument name = "left" type = "vector" />
+                <argument name = "right" type = "vector" />
+                <translation>
+                        (@left.dot(@right))
+                </translation>
+        </reporter>
+
+
+        <reporter name = "*" type = "complex" infix = "true" precedence = "5">
+                <argument name = "left" type = "double" />
+                <argument name = "right" type = "complex" />
+                <translation>
+                        (@right.times(@left))
+                </translation>
+        </reporter>
+
+
+        <reporter name = "*" type = "complex" infix = "true" precedence = "5">
+                <argument name = "left" type = "complex" />
+                <argument name = "right" type = "double" />
+                <translation>
+                        (@left.times(@right))
+                </translation>
+        </reporter>
+
+
+        <reporter name = "*" type = "complex" infix = "true" precedence = "5">
+                <argument name = "left" type = "complex" />
+                <argument name = "right" type = "complex" />
+                <translation>
+                        (@left.times(@right))
+                </translation>
+        </reporter>
+
+
+        <reporter name = "/" type = "double" infix = "true" precedence = "5">
+                <argument name = "left" type = "double" />
+                <argument name = "right" type = "double" />
+                <translation>
+                        (@left / @right)
+                </translation>
+        </reporter>
+
+
+        <reporter name = "/" type = "vector" infix = "true" precedence = "5">
+                <argument name = "left" type = "vector" />
+                <argument name = "right" type = "double" />
+                <translation>
+                        (new Vector(@left)).div(@right)
+                </translation>
+        </reporter>
+
+
+        <reporter name = "/" type = "complex" infix = "true" precedence = "5">
+                <argument name = "left" type = "complex" />
+                <argument name = "right" type = "double" />
+                <translation>
+                        (@left.div(@right))
+                </translation>
+        </reporter>
+
+
+        <reporter name = "/" type = "complex" infix = "true" precedence = "5">
+                <argument name = "left" type = "complex" />
+                <argument name = "right" type = "complex" />
+                <translation>
+                        (@left.div(@right))
+                </translation>
+        </reporter>
+
+
+
+        <reporter name = "%" type = "double" infix = "true" precedence = "5" alias = "mod">
+                <argument name = "left" type = "double" />
+                <argument name = "right" type = "double" />
+                <translation>
+                        (@left % @right)
+                </translation>
+        </reporter>
+
+
+        <reporter name = "+" type = "double" infix = "true" precedence = "4">
+                <argument name = "left" type = "double" />
+                <argument name = "right" type = "double" />
+                <translation>
+                        (@left + @right)
+                </translation>
+        </reporter>
+
+        <reporter name = "+" type = "complex" infix = "true" precedence = "4">
+                <argument name = "left" type = "complex" />
+                <argument name = "right" type = "double" />
+                <translation>
+                        (@left.plus(@right))
+                </translation>
+        </reporter>
+
+        <reporter name = "+" type = "complex" infix = "true" precedence = "4">
+                <argument name = "left" type = "complex" />
+                <argument name = "right" type = "complex" />
+                <translation>
+                        (@left.plus(@right))
+                </translation>
+        </reporter>
+
+        <reporter name = "+" type = "complex" infix = "true" precedence = "4">
+                <argument name = "left" type = "double" />
+                <argument name = "right" type = "complex" />
+                <translation>
+                        (@right.plus(@left))
+                </translation>
+        </reporter>
+
+
+        <reporter name = "+" type = "vector" infix = "true" precedence = "4">
+                <argument name = "left" type = "vector" />
+                <argument name = "right" type = "vector" />
+                <translation>
+                        <temp name = "v" type = "vector" />
+                        <prelude>
+                                @v = new Vector(@left);
+                                @v.add(@right);
+                        </prelude>
+<!--                 (new Vector(@left)).add(@right) -->
+                        <return>
+                                @v
+                        </return>
+                </translation>
+        </reporter>
+
+
+        <reporter name = "+" type = "string" infix = "true" precedence = "4">
+                <argument name = "left" type = "string" />
+                <argument name = "right" type = "string" />
+                <translation>
+                        (@left + @right)
+                </translation>
+        </reporter>
+        
+        
+        <reporter name = "+" type = "string" infix = "true" precedence = "4">
+                <argument name = "left" type = "string" />
+                <argument name = "right" type = "double" />
+                <translation>
+                        (@left + String.valueOf(@right))
+                </translation>
+        </reporter>
+
+
+        <reporter name = "+" type = "string" infix = "true" precedence = "4">
+                <argument name = "left" type = "string" />
+                <argument name = "right" type = "$integer" />
+                <translation>
+                        (@left + String.valueOf(@right))
+                </translation>
+        </reporter>
+        
+        
+        <reporter name = "+" type = "string" infix = "true" precedence = "4">
+                <argument name = "left" type = "string" />
+                <argument name = "right" type = "vector" />
+                <translation>
+                        (@left + @right.toString())
+                </translation>
+        </reporter>
+
+
+        <reporter name = "-" type = "double" infix = "true" precedence = "4">
+                <argument name = "left" type = "double" />
+                <argument name = "right" type = "double" />
+                <translation>
+                        (@left - @right)
+                </translation>
+        </reporter>
+
+
+        <reporter name = "-" type = "complex" infix = "true" precedence = "4">
+                <argument name = "left" type = "complex" />
+                <argument name = "right" type = "double" />
+                <translation>
+                        (@left.minus(@right))
+                </translation>
+        </reporter>
+
+
+        <reporter name = "-" type = "complex" infix = "true" precedence = "4">
+                <argument name = "left" type = "double" />
+                <argument name = "right" type = "complex" />
+                <translation>
+                        (new Complex(left, 0).minus(@right))
+                </translation>
+        </reporter>
+
+
+        <reporter name = "-" type = "complex" infix = "true" precedence = "4">
+                <argument name = "left" type = "complex" />
+                <argument name = "right" type = "complex" />
+                <translation>
+                        (@left.minus(@right))
+                </translation>
+        </reporter>
+
+
+        <reporter name = "-" type = "vector" infix = "true" precedence = "4">
+                <argument name = "left" type = "vector" />
+                <argument name = "right" type = "vector" />
+                <translation>
+                        <temp name = "v" type = "vector" />
+                        <prelude>
+                                @v = new Vector(@left);
+                                @v.sub(@right);
+                        </prelude>
+                        <return>
+                                @v
+                        </return>
+                </translation>
+        </reporter>
+
+        <reporter name = "&lt;" type = "boolean" infix = "true" precedence = "3">
+                <argument name = "left" type = "double" />
+                <argument name = "right" type = "double" />
+                <translation>
+                        (@left &lt; @right)
+                </translation>
+        </reporter>
+
+        <reporter name = "&gt;" type = "boolean" infix = "true" precedence = "3">
+                <argument name = "left" type = "double" />
+                <argument name = "right" type = "double" />
+                <translation>
+                        (@left &gt; @right)
+                </translation>
+        </reporter>
+
+        <reporter name = "&lt;=" type = "boolean" infix = "true" precedence = "3">
+                <argument name = "left" type = "double" />
+                <argument name = "right" type = "double" />
+                <translation>
+                        (@left &lt;= @right)
+                </translation>
+
+        </reporter>
+
+        <reporter name = "&gt;=" type = "boolean" infix = "true" precedence = "3">
+                <argument name = "left" type = "double" />
+                <argument name = "right" type = "double" />
+                <translation>
+                        (@left &gt;= @right)
+                </translation>
+
+        </reporter>
+
+        <reporter name = "==" type = "boolean" infix = "true" precedence = "2">
+                <argument name = "left" type = "double" />
+                <argument name = "right" type = "double" />
+                <translation>
+                        (@left == @right)
+                </translation>
+        </reporter>
+
+
+        <reporter name = "==" type = "boolean" infix = "true" precedence = "2">
+                <argument name = "left" type = "$NullObject" />
+                <argument name = "right" type = "$NullObject" />
+                <translation>
+                		<temp name = "tmpLeft"/>
+                		<temp name = "tmpRight"/>
+                		<prelude>
+                			Object @tmpLeft = @left;
+                			Object @tmpRight = @right;
+                		</prelude>
+                		(@tmpLeft != null ? @tmpLeft.equals(@tmpRight) : @tmpRight == null)    
+                </translation>
+        </reporter>
+        
+        
+        <reporter name = "==" type = "boolean" infix = "true" precedence = "2">
+                <argument name = "left" type = "boolean" />
+                <argument name = "right" type = "boolean" />
+                <translation>
+                        (@left == @right)
+                </translation>
+        </reporter>
+        
+        
+        <reporter name = "!=" type = "boolean" infix = "true" precedence = "2">
+                <argument name = "left" type = "double" />
+                <argument name = "right" type = "double" />
+                <translation>
+                        (@left != @right)
+                </translation>
+        </reporter>
+
+        <reporter name = "!=" type = "boolean" infix = "true" precedence = "2">
+                <argument name = "left" type = "$NullObject" />
+                <argument name = "right" type = "$NullObject" />
+                <translation>
+                		<temp name = "tmpLeft"/>
+                		<temp name = "tmpRight"/>
+                		<prelude>
+                			Object @tmpLeft = @left;
+                			Object @tmpRight = @right;
+                		</prelude>
+                		(@tmpLeft != null ? !@tmpLeft.equals(@tmpRight) : @tmpRight != null)    
+                </translation>
+        </reporter>
+
+
+        <reporter name = "!=" type = "boolean" infix = "true" precedence = "2">
+                <argument name = "left" type = "boolean" />
+                <argument name = "right" type = "boolean" />
+                <translation>
+                        (@left != @right)
+                </translation>
+        </reporter>
+
+        <!-- Unary minus -->
+        <reporter name = "@-" type = "double">
+                <argument name = "number" type = "double" />
+                <translation>
+                        (-@number)
+                </translation>
+        </reporter>
+
+        <reporter name = "@-" type = "complex">
+                <argument name = "number" type = "complex" />
+                <translation>
+                        (@number.negate())
+                </translation>
+        </reporter>
+
+
+        <reporter name = "@-" type = "vector">
+                <argument name = "v" type = "vector" />
+                <translation>
+                        (new Vector(@v)).negate()
+                </translation>
+        </reporter>
+
+
+        <!-- Logical operators -->
+        <reporter name = "and" type = "boolean" infix = "true" precedence = "1">
+                <argument name = "a" type = "boolean"/>
+                <argument name = "b" type = "boolean"/>
+
+                <translation>
+                        (@a &amp;&amp; @b)
+                </translation>
+        </reporter>
+
+
+        <reporter name = "or" type = "boolean" infix = "true" precedence = "1">
+                <argument name = "a" type = "boolean"/>
+                <argument name = "b" type = "boolean"/>
+
+                <translation>
+                        (@a || @b)
+                </translation>
+        </reporter>
+
+
+        <reporter name = "not" type = "boolean" precedence = "8">
+                <argument name = "a" type = "boolean"/>
+
+                <translation>
+                        (!@a)
+                </translation>
+        </reporter>
+
+
+
+		<!-- Conversion operators -->
+		<reporter name = "is" infix = "true" precedence = "3" type = "boolean">
+			<argument name = "object" type = "$Object"/>
+			<argument name = "type" type = "NameType"/>
+			
+			<translation>
+				((@object) instanceof @type)
+			</translation>
+		</reporter>
+		
+		
+		<reporter name = "as" infix = "true" precedence = "3" type = "ArgumentType:type">
+			<argument name = "object" type = "$Object"/>
+			<argument name = "type" type = "NameType"/>
+			
+			<translation>
+				<temp name = "tmp" readonly = "true"/>
+				<temp name = "result"/>
+				<prelude>
+					Object @tmp = @object;
+					@type @result = null;
+					if (@tmp instanceof @type)
+					{
+						@result = (@type) @tmp;
+					}
+				</prelude>
+				<return>
+					@result
+				</return>
+			</translation>
+		</reporter>
+
+
+        <!-- Assignment operators -->
+        <command name = "=" infix = "true" precedence = "0">
+                <argument name = "lhs" type = "double" />
+                <argument name = "rhs" type = "double" />
+        </command>
+
+
+        <command name = "+=" infix = "true" precedence = "0">
+                <argument name = "lhs" type = "double" />
+                <argument name = "rhs" type = "double" />
+                
+                <translation>
+                	@lhs += @rhs
+                </translation>
+        </command>
+
+
+        <command name = "+=" infix = "true" precedence = "0">
+                <argument name = "lhs" type = "vector" />
+                <argument name = "rhs" type = "vector" />
+                
+                <translation>
+                	@lhs.add(@rhs)
+                </translation>
+        </command>
+
+
+
+        <command name = "-=" infix = "true" precedence = "0">
+                <argument name = "lhs" type = "double" />
+                <argument name = "rhs" type = "double" />
+                
+                <translation>
+                	@lhs -= @rhs
+                </translation>
+        </command>
+
+
+        <command name = "-=" infix = "true" precedence = "0">
+                <argument name = "lhs" type = "vector" />
+                <argument name = "rhs" type = "vector" />
+                
+                <translation>
+                	@lhs.sub(@rhs)
+                </translation>
+        </command>
+
+
+
+        <command name = "*=" infix = "true" precedence = "0">
+                <argument name = "lhs" type = "double" />
+                <argument name = "rhs" type = "double" />
+                
+                <translation>
+                	@lhs *= @rhs
+                </translation>
+        </command>
+
+
+        <command name = "*=" infix = "true" precedence = "0">
+                <argument name = "lhs" type = "vector" />
+                <argument name = "rhs" type = "double" />
+                
+                <translation>
+                	@lhs.mul(@rhs)
+                </translation>
+        </command>
+        
+        
+        <command name = "*=" infix = "true" precedence = "0">
+                <argument name = "lhs" type = "$DataLayer" />
+                <argument name = "rhs" type = "double" />
+                
+                <translation>
+                	@lhs.multiply(@rhs)
+                </translation>
+        </command>
+        
+
+
+
+        <command name = "/=" infix = "true" precedence = "0">
+                <argument name = "lhs" type = "double" />
+                <argument name = "rhs" type = "double" />
+                
+                <translation>
+                	@lhs /= @rhs
+                </translation>
+        </command>
+        
+        
+        <command name = "/=" infix = "true" precedence = "0">
+                <argument name = "lhs" type = "vector" />
+                <argument name = "rhs" type = "double" />
+                
+                <translation>
+                	@lhs.div(@rhs)
+                </translation>
+        </command>
+
+
+
+		<!-- Math commands -->
+        <reporter name = "abs" type = "double">
+                <argument name = "number" type = "double" />
+                <translation>
+                        Math.abs(@number)
+                </translation>
+        </reporter>
+
+        <reporter name = "abs" type = "double">
+                <argument name = "number" type = "complex" />
+                <translation>
+                        (@number.abs())
+                </translation>
+        </reporter>
+
+
+		<reporter name = "atan" type = "double">
+			<argument name = "number" type = "double" />
+			<translation>
+				Math.atan(@number)
+			</translation>
+		</reporter>
+
+		<reporter name = "acos" type = "double">
+			<argument name = "number" type = "double" />
+			<translation>
+				Math.acos(@number)
+			</translation>
+		</reporter>
+
+		<reporter name = "asin" type = "double">
+			<argument name = "number" type = "double" />
+			<translation>
+				Math.asin(@number)
+			</translation>
+		</reporter>
+
+		<reporter name = "atan2" type = "double">
+			<argument name = "x" type = "double" />
+			<argument name = "y" type = "double" />
+			<translation>
+				Math.atan2(@y, @x)
+			</translation>
+		</reporter>
+
+		<reporter name = "ceil" type = "double">
+			<argument name = "number" type = "double" />
+			<translation>
+				Math.ceil(@number)
+			</translation>
+		</reporter>
+
+		<reporter name = "cos" type = "double">
+			<argument name = "number" type = "double" />
+			<translation>
+				Math.cos(@number)
+			</translation>
+		</reporter>
+
+		<reporter name = "cos" type = "complex">
+			<argument name = "number" type = "complex" />
+			<translation>
+				(@number.cos())
+			</translation>
+		</reporter>
+
+
+		<reporter name = "exp" type = "double">
+			<argument name = "number" type = "double" />
+			<translation>
+				Math.exp(@number)
+			</translation>
+		</reporter>
+
+		<reporter name = "exp" type = "complex">
+			<argument name = "number" type = "complex" />
+			<translation>
+				(@number.exp())
+			</translation>
+		</reporter>
+
+
+		<reporter name = "floor" type = "double">
+			<argument name = "number" type = "double" />
+			<translation>
+				Math.floor(@number)
+			</translation>
+		</reporter>
+
+		<reporter name = "log" type = "double">
+			<argument name = "number" type = "double" />
+			<translation>
+				Math.log(@number)
+			</translation>
+		</reporter>
+
+		<reporter name = "round" type = "double">
+			<argument name = "number" type = "double" />
+			<translation>
+				Math.round(@number)
+			</translation>
+		</reporter>
+
+		<reporter name = "sin" type = "double">
+			<argument name = "number" type = "double" />
+			<translation>
+				Math.sin(@number)
+			</translation>
+		</reporter>
+
+		<reporter name = "sin" type = "complex">
+			<argument name = "number" type = "complex" />
+			<translation>
+				(@number.sin())
+			</translation>
+		</reporter>
+
+
+		<reporter name = "sqrt" type = "double">
+			<argument name = "number" type = "double" />
+			<translation>
+				Math.sqrt(@number)
+			</translation>
+		</reporter>
+
+		<reporter name = "tan" type = "double">
+			<argument name = "number" type = "double" />
+			<translation>
+				Math.tan(@number)
+			</translation>
+		</reporter>
+
+		<reporter name = "tan" type = "complex">
+			<argument name = "number" type = "complex" />
+			<translation>
+				(@number.tan())
+			</translation>
+		</reporter>
+
+
+        <!-- A -->
+        <reporter name = "add-standard-space" type = "Space">
+        	<argument name = "name" type = "string"/>
+			<argument name = "xMin" type = "double"/>
+			<argument name = "xMax" type = "double"/>
+			<argument name = "yMin" type = "double"/>
+			<argument name = "yMax" type = "double"/>
+			<argument name = "xWrap" type = "boolean"/>
+			<argument name = "yWrap" type = "boolean"/>
+			
+			<translation>
+				<temp name = "space"/>
+				<prelude>
+					Space @space = Observer.getInstance().addSpace(@name, new StandardSpace(@xMin, @xMax, @yMin, @yMax, @xWrap, @yWrap));
+				</prelude>
+				<return>
+					@space
+				</return>
+			</translation>
+        </reporter>
+        
+        
+        <reporter name = "add-standard3d-space" type = "Space">
+        	<argument name = "name" type = "string"/>
+			<argument name = "xMin" type = "double"/>
+			<argument name = "xMax" type = "double"/>
+			<argument name = "yMin" type = "double"/>
+			<argument name = "yMax" type = "double"/>
+			<argument name = "zMin" type = "double"/>
+			<argument name = "zMax" type = "double"/>
+			<argument name = "xWrap" type = "boolean"/>
+			<argument name = "yWrap" type = "boolean"/>
+			<argument name = "zWrap" type = "boolean"/>
+			
+			<translation>
+				<temp name = "space"/>
+				<prelude>
+					Space @space = Observer.getInstance().addSpace(@name, new StandardSpace3d(@xMin, @xMax, @yMin, @yMax, @zMin, @zMax, @xWrap, @yWrap, @zWrap));
+				</prelude>
+				<return>
+					@space
+				</return>
+			</translation>
+        </reporter>
+        
+        
+        <reporter name = "add-grid-space" type = "Space">
+        	<argument name = "name" type = "string"/>
+			<argument name = "xMin" type = "double"/>
+			<argument name = "xMax" type = "double"/>
+			<argument name = "yMin" type = "double"/>
+			<argument name = "yMax" type = "double"/>
+			<argument name = "xWrap" type = "boolean"/>
+			<argument name = "yWrap" type = "boolean"/>
+			
+			<translation>
+				<temp name = "space"/>
+				<prelude>
+					Space @space = Observer.getInstance().addSpace(@name, new GridSpace(@xMin, @xMax, @yMin, @yMax, @xWrap, @yWrap));
+				</prelude>
+				<return>
+					@space
+				</return>
+			</translation>
+        </reporter>
+        
+        
+        
+        <reporter name = "agents" type = "ArrayList" subtype = "ArgumentType:type">
+                <argument name = "type" type = "NameType"/>
+                <translation>
+                        <temp name = "result"/>
+                        <prelude>
+                                ArrayList&lt;@type&gt; @result = Observer.getInstance().getAgentsList(@type.class);
+                        </prelude>
+                        <return>
+                                @result
+                        </return>
+                </translation>
+        </reporter>
+
+
+        <reporter name = "agents-as" type = "ArrayList" subtype = "ArgumentType:type">
+                <argument name = "type" type = "NameType"/>
+                <translation>
+                        <temp name = "result"/>
+                        <prelude>
+                                ArrayList&lt;@type&gt; @result = Observer.getInstance().getAgentsListOfKind(@type.class);
+                        </prelude>
+                        <return>
+                                @result
+                        </return>
+                </translation>
+        </reporter>
+
+
+
+        <reporter name = "agents-at" type = "ArrayList" subtype = "ArgumentType:type">
+                <argument name = "type" type = "NameType"/>
+                <argument name = "point" type = "vector"/>
+                <argument name = "radius" type = "double"/>
+
+                <translation>
+                        <temp name = "result"/>
+                        <prelude>
+                                ArrayList&lt;@type&gt; @result = Observer.getDefaultSpace().getAgents(@point, @radius, @type.class);
+                        </prelude>
+                        <return>
+                                @result
+                        </return>
+                </translation>
+        </reporter>
+
+
+        <reporter name = "agents-at-as" type = "ArrayList" subtype = "ArgumentType:type">
+                <argument name = "type" type = "NameType"/>
+                <argument name = "point" type = "vector"/>
+                <argument name = "radius" type = "double"/>
+
+                <translation>
+                        <temp name = "result"/>
+                        <prelude>
+                                ArrayList&lt;@type&gt; @result = Observer.getDefaultSpace().getAgentsOfKind(@point, @radius, @type.class);
+                        </prelude>
+                        <return>
+                                @result
+                        </return>
+                </translation>
+        </reporter>
+
+
+
+        <reporter name = "agents-here" type = "ArrayList" subtype = "ArgumentType:type">
+                <argument name = "type" type = "NameType"/>
+
+                <translation>
+                        <temp name = "result"/>
+                        <prelude>
+                                ArrayList&lt;@type&gt; @result = @@self.getSpace().getAgents(@@self, @type.class);
+                        </prelude>
+                        <return>
+                                @result
+                        </return>
+                </translation>
+        </reporter>
+
+
+        <reporter name = "agents-here-as" type = "ArrayList" subtype = "ArgumentType:type">
+                <argument name = "type" type = "NameType"/>
+
+                <translation>
+                        <temp name = "result"/>
+                        <prelude>
+                                ArrayList&lt;@type&gt; @result = @@self.getSpace().getAgentsOfKind(@@self, @type.class);
+                        </prelude>
+                        <return>
+                                @result
+                        </return>
+                </translation>
+        </reporter>
+
+
+
+        <reporter name = "agents-number" type = "double">
+                <argument name = "type" type = "NameType"/>
+
+                <translation>
+                        Observer.getInstance().getAgentsNumber(@type.class)
+                </translation>
+        </reporter>
+
+
+        <reporter name = "agents-number-as" type = "double">
+                <argument name = "type" type = "NameType"/>
+
+                <translation>
+                        Observer.getInstance().getAgentsNumberOfKind(@type.class)
+                </translation>
+        </reporter>
+
+
+
+        <reporter name = "all-agents-at" type = "ArrayList" subtype = "SpaceAgent">
+                <argument name = "point" type = "vector"/>
+                <argument name = "radius" type = "double"/>
+
+                <translation>
+                        <temp name = "result"/>
+                        <prelude>
+                                ArrayList&lt;SpaceAgent&gt; @result = Observer.getDefaultSpace().getAgents(@point, @radius);
+                        </prelude>
+                        <return>
+                                @result
+                        </return>
+                </translation>
+        </reporter>
+
+
+        <reporter name = "all-agents-here" type = "ArrayList" subtype = "SpaceAgent">
+                <translation>
+                        <temp name = "result"/>
+                        <prelude>
+                                ArrayList&lt;SpaceAgent&gt; @result = @@self.getSpace().getAgents(@@self);
+                        </prelude>
+                        <return>
+                                @result
+                        </return>
+                </translation>
+        </reporter>
+
+
+
+        <command name = "ask">
+                <argument name = "list" type = "ArrayList"/>
+                <block selftype = "ArgumentType:list:subtype"/>
+
+                <translation>
+                        <temp name = "i"/>
+                        if (@list != null)
+                        {
+                        	for (int @i = 0; @i &lt; @list.size(); @i++)
+                        	{
+                                	@@declaration = @list.get(@i);
+                                	@block
+                        	}
+                        }
+                </translation>
+        </command>
+
+
+        <command name = "ask">
+                <argument name = "list" type = "Array"/>
+                <block selftype = "ArgumentType:list:subtype"/>
+
+                <translation>
+                        <temp name = "i"/>
+                        if (@list != null)
+                        {
+                        	for (int @i = 0; @i &lt; @list.length; @i++)
+                        	{
+                            	    @@declaration = @list[@i];
+                                	@block
+                        	}
+                        }
+                </translation>
+        </command>
+
+
+
+        <command name = "ask">
+                <argument name = "object" type = "$Object"/>
+                <block selftype = "ArgumentType:object"/>
+
+                <translation>
+                		if (@object != null)
+                        {
+                                @@declaration = @object;
+                                @block
+                        }
+                </translation>
+        </command>
+        
+        
+        <!-- B -->
+        <command name = "break">
+        	<translation>
+        		break
+        	</translation>
+        </command>
+
+
+        <!-- C -->
+        <reporter name = "complex" type = "complex">
+        	<argument name = "re" type = "double"/>
+        	<argument name = "im" type = "double"/>
+        	
+        	<translation>
+        		(new Complex(@re, @im))
+        	</translation>
+        </reporter>
+        
+        
+        <command name = "continue">
+                <translation>
+                        continue
+                </translation>
+        </command>
+
+
+        <reporter name = "count" type = "double">
+                <argument name = "list" type = "ArrayList"/>
+
+                <translation>
+                        @list.size()
+                </translation>
+        </reporter>
+
+        <reporter name = "count" type = "double">
+                <argument name = "list" type = "Array"/>
+
+                <translation>
+                        @list.length
+                </translation>
+        </reporter>
+
+
+        <reporter name = "create" type = "Array" subtype = "ArgumentType:type">
+                <argument name = "type" type = "NameType" />
+                <argument name = "number" type = "double" />
+
+                <translation>
+                        <temp name = "nn"/>
+                        <temp name = "objects"/>
+                        <temp name = "i"/>
+                        <prelude>
+                                int @nn = (int)(@number);
+                                @type[] @objects = new @type[@nn];
+                                for (int @i = 0; @i &lt; @nn; @i++)
+                                {
+                                        @objects[@i] = new @type();
+                                }
+                        </prelude>
+                        <return>
+                                @objects
+                        </return>
+                </translation>
+        </reporter>
+        
+        
+        <command name = "create-new-file">
+        	<argument name = "name" type = "string"/>
+        	<translation>
+        		FileUtils.createNew(@name)
+        	</translation>
+        </command>
+
+
+
+        <reporter name = "create-one" type = "ArgumentType:type">
+                <argument name = "type" type = "NameType" />
+
+                <translation>
+                        <temp name = "object"/>
+                        <prelude>
+                                @type @object = new @type();
+                        </prelude>
+                        <return>
+                                @object
+                        </return>
+                </translation>
+        </reporter>
+
+
+        <reporter name = "create-grid" type = "grid">
+                <argument name = "name" type = "string"/>
+                <argument name = "x-size" type = "double"/>
+                <argument name = "y-size" type = "double"/>
+
+                <translation>
+                        Observer.getDefaultSpace().addDataLayer(@name, GridFactory.createGrid((int)(@x-size), (int)(@y-size)))
+                </translation>
+        </reporter>
+        
+        
+        <reporter name = "create-grid3d" type = "grid3d">
+                <argument name = "name" type = "string"/>
+                <argument name = "x-size" type = "double"/>
+                <argument name = "y-size" type = "double"/>
+                <argument name = "z-size" type = "double"/>
+
+                <translation>
+                        Observer.getDefaultSpace().addDataLayer(@name, GridFactory.createGrid((int)(@x-size), (int)(@y-size), (int)(@z-size)))
+                </translation>
+        </reporter>
+
+
+        <reporter name = "create-grid-in-space" type = "grid">
+        		<argument name = "space" type = "Space"/>
+                <argument name = "name" type = "string"/>
+                <argument name = "x-size" type = "double"/>
+                <argument name = "y-size" type = "double"/>
+
+                <translation>
+                	<temp name = "tmpSpace"/>
+                	<prelude>
+                		Space @tmpSpace = @space; 
+                	</prelude>
+                    @tmpSpace.addDataLayer(@name, GridFactory.createGrid(@tmpSpace, (int)(@x-size), (int)(@y-size)))
+                </translation>
+        </reporter>
+
+
+        <reporter name = "create-grid-in-space" type = "grid">
+        		<argument name = "space-name" type = "string"/>
+                <argument name = "name" type = "string"/>
+                <argument name = "x-size" type = "double"/>
+                <argument name = "y-size" type = "double"/>
+
+                <translation>
+                	<temp name = "tmpSpace"/>
+                	<prelude>
+                		Space @tmpSpace = Observer.getSpace(@space-name) 
+                	</prelude>
+                    @tmpSpace.addDataLayer(@name, GridFactory.createGrid(@tmpSpace, (int)(@x-size), (int)(@y-size)))
+                </translation>
+        </reporter>
+
+        
+        
+        <reporter name = "create-list" type = "ArrayList" subtype = "ArgumentType:type">
+        	<argument name = "type" type = "NameType"/>
+        	
+        	<translation>
+        		<temp name = "result"/>
+        		<prelude>
+        			ArrayList&lt;@type&gt; @result = new ArrayList&lt;@type&gt;();
+        		</prelude>
+        		<return>
+        			@result
+        		</return>
+        	</translation>
+        </reporter>
+        
+
+        <reporter name = "create-parallel-grid" type = "parallel-grid">
+                <argument name = "name" type = "string"/>
+                <argument name = "x-size" type = "double"/>
+                <argument name = "y-size" type = "double"/>
+
+                <translation>
+                        Observer.getDefaultSpace().addDataLayer(@name, new ParallelGrid((int)(@x-size), (int)(@y-size)))
+                </translation>
+        </reporter>
+
+
+        <reporter name = "create-diffuse-grid" type = "diffuse-grid">
+        	<argument name = "name" type = "string"/>
+        	<argument name = "x-size" type = "double"/>
+        	<argument name = "y-size" type = "double"/>
+        	<argument name = "green-radius" type = "double"/>
+        	<argument name = "green-steps" type = "double"/>
+        	<argument name = "step" type = "DataLayerStep"/>
+        	<argument name = "diff-coef" type = "double"/>
+        	<argument name = "evaporation" type = "double"/>
+        	
+        	<translation>
+        		Observer.getDefaultSpace().addDataLayer(@name,
+        			new Diffuse((int)(@x-size), (int)(@y-size), (int)(@green-radius), @green-steps, @step, @diff-coef, @evaporation))
+        	</translation>
+        </reporter>
+
+
+        <reporter name = "create-diffuse-grid2" type = "diffuse-grid">
+        	<argument name = "name" type = "string"/>
+        	<argument name = "x-size" type = "double"/>
+        	<argument name = "y-size" type = "double"/>
+        	<argument name = "step" type = "DataLayerStep"/>
+        	<argument name = "diff-coef" type = "double"/>
+        	<argument name = "evaporation" type = "double"/>
+        	
+        	<translation>
+        		Observer.getInstance().addDataLayer(@name,
+        			new Diffuse((int)(@x-size), (int)(@y-size), @step, @diff-coef, @evaporation))
+        	</translation>
+        </reporter>
+
+
+        <reporter name = "create-vector" type = "vector">
+                <argument name = "x" type = "double"/>
+                <argument name = "y" type = "double"/>
+                <argument name = "z" type = "double"/>
+
+                <translation>
+                        (new Vector(@x, @y, @z))
+                </translation>
+        </reporter>
+        
+        
+        <reporter name = "current-time-millis" type = "double">
+        	<translation>
+        		System.currentTimeMillis()
+        	</translation>
+        </reporter>
+
+
+        <!-- D -->
+        <reporter name = "distance" type = "vector">
+                <argument name = "agent1" type = "SpaceAgent"/>
+                <argument name = "agent2" type = "SpaceAgent"/>
+
+                <translation>
+                        Observer.getDefaultSpace().getVector(@agent1, @agent2)
+                </translation>
+        </reporter>
+        
+        
+        <reporter name = "distance" type = "vector">
+                <argument name = "agent1" type = "vector"/>
+                <argument name = "agent2" type = "vector"/>
+
+                <translation>
+                        Observer.getDefaultSpace().getVector(@agent1, @agent2)
+                </translation>
+        </reporter>
+
+
+        <command name = "diffuse">
+                <argument name = "grid" type = "grid"/>
+                <argument name = "value" type = "double"/>
+
+                <translation>
+                        @grid.diffuse(@value)
+                </translation>
+        </command>
+        
+        
+        <command name = "diffuse">
+                <argument name = "grid" type = "grid3d"/>
+                <argument name = "value" type = "double"/>
+
+                <translation>
+                        @grid.diffuse(@value)
+                </translation>
+        </command>
+
+
+        <!-- E -->
+        <command name = "evaporate">
+        	<argument name = "grid" type = "grid"/>
+        	<argument name = "value" type = "double"/>
+        	
+        	<translation>
+        		@grid.multiply(@value)
+        	</translation>
+        </command>
+
+
+        <command name = "evaporate">
+        	<argument name = "grid" type = "grid3d"/>
+        	<argument name = "value" type = "double"/>
+        	
+        	<translation>
+        		@grid.multiply(@value)
+        	</translation>
+        </command>
+        
+        
+        <command name = "exit">
+                <translation>
+                        return
+                </translation>
+        </command>
+
+
+
+        <!-- F -->
+        <command name = "for">
+                <argument name = "from" type = "double"/>
+                <argument name = "to" type = "double"/>
+                <argument name = "step" type = "double"/>
+                <block/>
+
+                <translation>
+                        <temp name = "tmpto"/>
+                        <temp name = "tmpstep"/>
+                        double @tmpto = @to;
+                        double @tmpstep = @step;
+
+                        for (double @@counter = @from; @@counter &lt;= @tmpto; @@counter += @tmpstep)
+                        {
+                                @block
+                        }
+                </translation>
+        </command>
+        
+        
+        <command name = "fprint">
+        	<argument name = "file" type = "string"/>
+        	<argument name = "string" type = "string"/>
+        	<translation>
+        		<temp name = "writer"/>
+        		PrintStream @writer = FileUtils.getFileWriter(@file);
+        		if (@writer != null)
+        		{
+					@writer.println(@string);
+				}        		
+        	</translation>
+        </command>
+        
+        
+        <command name = "fprint">
+        	<argument name = "file" type = "string"/>
+        	<argument name = "number" type = "double"/>
+        	<translation>
+        		<temp name = "writer"/>
+        		PrintStream @writer = FileUtils.getFileWriter(@file);
+        		if (@writer != null)
+        		{
+					@writer.println(@number);
+				}        		
+        	</translation>
+        </command>
+
+
+        <command name = "fprint">
+        	<argument name = "file" type = "string"/>
+        	<argument name = "object" type = "$Object"/>
+        	<translation>
+        		<temp name = "writer"/>
+        		PrintStream @writer = FileUtils.getFileWriter(@file);
+        		if (@writer != null)
+        		{
+					@writer.println(@object);
+				}        		
+        	</translation>
+        </command>
+
+
+        <!-- G -->
+        <reporter name = "get" type = "ArgumentType:list:subtype">
+                <argument name = "list" type = "ArrayList"/>
+                <argument name = "index" type = "double"/>
+
+                <translation>
+                        @list.get((int)(@index))
+                </translation>
+        </reporter>
+
+
+        <reporter name = "get" type = "ArgumentType:list:subtype">
+                <argument name = "list" type = "Array"/>
+                <argument name = "index" type = "double"/>
+
+                <translation>
+                        @list[(int)(@index)]
+                </translation>
+        </reporter>
+        
+        
+        <reporter name = "get-grid" type = "$DataLayer">
+        	<argument name = "name" type = "string"/>
+        	
+        	<translation>
+        		Observer.getDefaultSpace().getDataLayer(@name)
+        	</translation>
+        </reporter>
+        
+        
+        <reporter name = "get-space" type = "Space">
+        	<argument name = "name" type = "string"/>
+        	
+        	<translation>
+        		Observer.getSpace(@name)
+        	</translation>
+        </reporter>
+
+
+        <!-- I -->
+        <command name = "if">
+                <argument name = "condition" type = "boolean" />
+                <block/>
+                <translation>
+                        if (@condition)
+                        {
+                                @block
+                        }
+                </translation>
+        </command>
+
+        <command name = "ifelse">
+                <argument name = "condition" type = "boolean" />
+                <block name = "then"/>
+                <block name = "else"/>
+                <translation>
+                        if (@condition)
+                        {
+                                @then
+                        }
+                        else
+                        {
+                                @else
+                        }
+                </translation>
+        </command>
+
+
+        <reporter name = "interpolate" type = "vector">
+                <argument name = "v1" type = "vector"/>
+                <argument name = "v2" type = "vector"/>
+                <argument name = "t" type = "double"/>
+
+                <translation>
+                        <temp name = "result"/>
+                        <temp name = "vv1"/>
+                        <temp name = "vv2"/>
+                        <prelude>
+                                Vector @result = new Vector();
+                                Vector @vv1 = new Vector(@v1);
+                                Vector @vv2 = new Vector(@v2);
+                                @result.x = @vv1.x * (1 - t) + @vv2.x * t;
+                                @result.y = @vv1.y * (1 - t) + @vv2.y * t;
+                                @result.z = @vv1.z * (1 - t) + @vv2.z * t;
+                        </prelude>
+                        <return>
+                                @result
+                        </return>
+                </translation>
+        </reporter>
+
+
+
+        <reporter name = "interpolate" type = "double">
+                <argument name = "v1" type = "double"/>
+                <argument name = "v2" type = "double"/>
+                <argument name = "t" type = "double"/>
+
+                <translation>
+                        <temp name = "vv1"/>
+                        <temp name = "vv2"/>
+                        <prelude>
+                                double @vv1 = @v1;
+                                double @vv2 = @v2;
+                        </prelude>
+                        <return>
+                        	(@vv1 + (@vv2 - @vv1) * t)
+                        </return>
+                </translation>
+        </reporter>
+
+
+        <!-- K -->
+        <command name = "kill">
+                <argument name = "agents" type = "ArrayList" subtype = "SpaceAgent"/>
+                <translation>
+                        <temp name = "i"/>
+                        <temp name = "tmp"/>
+
+                        ArrayList&lt;? extends SpaceAgent&gt; @tmp = @agents;
+
+                        for (int @i = 0; @i &lt; @tmp.size(); @i++)
+                        {
+                                @tmp.get(@i).die();
+                        }
+                </translation>
+        </command>
+
+
+        <command name = "kill">
+                <argument name = "agents" type = "Array" subtype = "SpaceAgent"/>
+                <translation>
+                        <temp name = "i"/>
+                        <temp name = "tmp"/>
+
+                        SpaceAgent[] @tmp = @agents;
+
+                        for (int @i = 0; @i &lt; @tmp.length; @i++)
+                        {
+                                @tmp[@i].die();
+                        }
+                </translation>
+        </command>
+        
+        
+        <command name = "kill">
+                <argument name = "agent" type = "Agent"/>
+                <translation>
+                        <temp name = "tmp"/>
+
+                        Agent @tmp = @agent;
+
+						if (@tmp != null)
+						{
+							@tmp.die();
+						}
+                </translation>
+        </command>
+
+
+        <!-- M -->
+        <reporter name = "max" type = "double">
+        	<argument name = "a" type = "double"/>
+        	<argument name = "b" type = "double"/>
+        	
+        	<translation>
+        		Math.max(@a, @b)
+        	</translation>
+        </reporter>
+
+
+        <reporter name = "min" type = "double">
+        	<argument name = "a" type = "double"/>
+        	<argument name = "b" type = "double"/>
+        	
+        	<translation>
+        		Math.min(@a, @b)
+        	</translation>
+        </reporter>
+
+        
+        
+        <reporter name = "myself" type = "MyselfType">
+                <translation>
+                        @@myself
+                </translation>
+        </reporter>
+        
+        
+        <!-- N -->
+        <reporter name = "neighbors" type = "ArrayList" subtype = "ArgumentType:type">
+        	<argument name = "type" type = "NameType"/>
+        	
+        	<translation>
+        		<temp name = "list"/>
+        		<temp name = "space"/>
+        		<temp name = "pos"/>
+        		<temp name = "i"/>
+        		<temp name = "j"/>
+        		<prelude>
+        			ArrayList&lt;@type&gt; @list = new ArrayList&lt;@type&gt;(8);
+        			Space @space = Observer.getDefaultSpace();
+        			
+        			for (int @i = -1; @i &lt; 2; @i++)
+        			{
+        				for (int @j = -1; @j &lt; 2; @j++)
+        				{
+        					if (@i == 0 &amp;&amp; @j == 0) continue;
+        					Vector @pos = @@self.getPosition().add(new Vector(@i, @j, 0));
+        					@list.addAll(@space.getAgents(@pos, 0, @type.class));        			
+        				}
+        			}
+        		</prelude>
+        		<return>
+        			@list
+        		</return>
+        	</translation>
+        </reporter>
+        
+        
+        <reporter name = "normal-random" type = "double">
+        	<argument name = "mean" type = "double"/>
+        	<argument name = "deviation" type = "double"/>
+        
+        	<translation>
+        		Random.getNormalDouble(@mean, @deviation)
+        	</translation>
+        </reporter>
+        
+        
+        <!-- O -->
+        <reporter name = "one-of" type = "ArgumentType:list:subtype">
+        	<argument name = "list" type = "Array"/>
+        	
+        	<translation>
+        		(@list.length > 0 ? @list[(int)RandomHelper.random(@list.length)] : null)        		
+        	</translation>
+        </reporter>
+        
+        
+        <reporter name = "one-of" type = "ArgumentType:list:subtype">
+        	<argument name = "list" type = "ArrayList"/>
+        	
+        	<translation>
+        		(@list.size() > 0 ? @list.get( (int)RandomHelper.random(@list.size()) ) : null)        		
+        	</translation>
+        </reporter>
+        
+        
+        <!-- N -->
+        <reporter name = "null" type = "$NullObject">
+        	<translation>
+        		null
+        	</translation>
+        </reporter>
+        
+        
+        <!-- P -->
+        <reporter name = "parent" type = "ParentType">
+        	<translation>
+        		super
+        	</translation>
+        </reporter>
+        
+        
+        <command name = "print">
+        	<argument name = "string" type = "string"/>
+        	<translation>
+        		System.out.println(@string)
+        	</translation>
+        </command>
+        
+        
+        <command name = "print">
+        	<argument name = "number" type = "double"/>
+        	<translation>
+        		System.out.println(@number)
+        	</translation>
+        </command>
+
+
+        <command name = "print">
+        	<argument name = "object" type = "$Object"/>
+        	<translation>
+        		System.out.println(@object)
+        	</translation>
+        </command>
+
+
+        <!-- R -->
+        <reporter name = "random-in-interval" type = "double">
+                <argument name = "a" type = "double" />
+                <argument name = "b" type = "double" />
+
+<!--                 <translation>
+                        Random.getUniformDoubleFromTo(@a, @b)
+                </translation> -->
+                <translation>
+                	RandomHelper.random(@a, @b)
+                </translation>
+        </reporter>
+
+
+        <reporter name = "random" type = "double">
+                <argument name = "number" type = "double" />
+
+                <translation>
+                        RandomHelper.random(@number)
+                </translation>
+        </reporter>
+
+
+        <reporter name = "random-vector" type = "vector">
+                <argument name = "a" type = "double" />
+                <argument name = "b" type = "double" />
+
+                <translation>
+                        Vector.randomVector2d(@a, @b)
+                </translation>
+        </reporter>
+        
+        
+        <reporter name = "random-vector-of-length" type = "vector">
+        	<argument name = "length" type = "double"/>
+        	<translation>
+        		Vector.randomVector2d(@length)
+        	</translation>
+        </reporter>
+
+
+        <reporter name = "random-vector3" type = "vector">
+                <argument name = "a" type = "double" />
+                <argument name = "b" type = "double" />
+
+                <translation>
+                        Vector.randomVector(@a, @b)
+                </translation>
+        </reporter>
+        
+        
+        <reporter name = "random-vector3-of-length" type = "vector">
+        	<argument name = "length" type = "double"/>
+        	<translation>
+        		Vector.randomVector(@length)
+        	</translation>
+        </reporter>
+        
+        
+        
+        <command name = "region">
+        	<argument name = "name" type = "string"/>
+        	<block/>
+        	
+        	<translation>
+        		<parameter name = "@name" type = "boolean" label = "par" group = "region"/>
+        		if (@par)
+        		{
+        			@block
+        		}
+        	</translation>
+        </command>
+
+
+        <command name = "repeat">
+                <argument name = "number" type = "double"/>
+                <block/>
+
+                <translation>
+                        <temp name = "i"/>
+                        for (double @i = 0; @i &lt; @number; @i++)
+                        {
+                                @block
+                        }
+                </translation>
+        </command>
+        
+        
+        <command name = "reset-rn-generators">
+        	<translation>
+        		Random.resetRNGenerators()
+        	</translation>
+        </command>
+
+
+        <command name = "return">
+                <argument name = "value" type = "MethodType"/>
+                <translation>
+                        return @value
+                </translation>
+        </command>
+
+
+        <!-- S -->
+        <reporter name = "self" type = "SelfType">
+                <translation>
+                        @@self
+                </translation>
+        </reporter>
+        
+        
+        <command name = "set">
+        	<argument name = "list" type = "Array"/>
+        	<argument name = "index" type = "double"/>
+        	<argument name = "value" type = "ArgumentType:list:subtype"/>
+        	
+        	<translation>
+        		@list[@index] = @value
+        	</translation>
+        </command>
+        
+<!-- 
+        <command name = "set-parallel-execution-mode">
+                <translation>
+                        Observer.getInstance().setExecutionMode(ExecutionMode.PARALLEL_MODE)
+                </translation>
+        </command>
+
+
+        <command name = "set-serial-execution-mode">
+                <translation>
+                        Observer.getInstance().setExecutionMode(ExecutionMode.SERIAL_MODE)
+                </translation>
+        </command>
+-->
+
+		<command name = "set-seed">
+			<argument name = "seed" type = "double"/>
+			<translation>
+				Random.setSeed((long)(@seed))
+			</translation>
+		</command>
+
+
+        <reporter name = "space-xmin" type = "double">
+                <translation>
+                        ((BoundedSpace) Observer.getDefaultSpace()).getXMin()
+                </translation>
+        </reporter>
+
+        <reporter name = "space-ymin" type = "double">
+                <translation>
+                        ((BoundedSpace) Observer.getDefaultSpace()).getYMin()
+                </translation>
+        </reporter>
+
+        <reporter name = "space-xmax" type = "double">
+                <translation>
+                        ((BoundedSpace) Observer.getDefaultSpace()).getXMax()
+                </translation>
+        </reporter>
+
+
+        <reporter name = "space-ymax" type = "double">
+                <translation>
+                        ((BoundedSpace) Observer.getDefaultSpace()).getYMax()
+                </translation>
+        </reporter>
+
+
+
+        <reporter name = "space-xsize" type = "double">
+                <translation>
+                        ((BoundedSpace) Observer.getDefaultSpace()).getXSize()
+                </translation>
+        </reporter>
+
+
+        <reporter name = "space-ysize" type = "double">
+                <translation>
+                        ((BoundedSpace) Observer.getDefaultSpace()).getYSize()
+                </translation>
+        </reporter>
+
+
+        <reporter name = "space-zsize" type = "double">
+                <translation>
+                        ((BoundedSpace3d) Observer.getDefaultSpace()).getZSize()
+                </translation>
+        </reporter>
+
+
+
+        <reporter name = "sum" type = "double">
+                <argument name = "grid" type = "grid"/>
+                <translation>
+                        @grid.getTotalNumber()
+                </translation>
+        </reporter>
+        
+        
+        <reporter name = "sum" type = "double">
+                <argument name = "grid" type = "grid3d"/>
+                <translation>
+                        @grid.getTotalNumber()
+                </translation>
+        </reporter>
+
+
+
+        <!-- T -->
+        <reporter name = "this" type = "ThisType">
+        	<translation>
+        		this
+        	</translation>
+        </reporter>
+        
+        <reporter name = "truncate" type = "vector">
+                <argument name = "v" type = "vector" />
+                <argument name = "min" type = "double" />
+                <argument name = "max" type = "double" />
+
+                <translation>
+                        (new Vector(@v).truncate(@min, @max))
+                </translation>
+        </reporter>
+
+        <!-- V -->
+        <reporter name = "vector-in-direction" type = "vector">
+                <argument name = "length" type = "double" />
+                <argument name = "angle" type = "double" />
+
+                <translation>
+                        Vector.getVector(@length, @angle)
+                </translation>
+        </reporter>
+
+
+        <!-- W -->
+        <command name = "while">
+                <argument name = "condition" type = "boolean"/>
+                <block/>
+
+                <translation>
+                        while (true)
+                        {
+                                if (!(@condition)) break;
+                                
+                                @block
+                        }
+                </translation>
+        </command>
+</spark-commands>

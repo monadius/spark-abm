@@ -1,0 +1,38 @@
+SPARK-PL (SPARK-Programming Language), is a toolkit for agent based modeling which includes a special programming language for implementing agent based models, and a translator of this language into executable machine code (Java byte code). SPARK-PL was written by Alexey Solovyev. The project leader is Qi Mi.
+
+
+LICENSE.
+SPARK-PL largely uses the MIT License. For details see LICENSE file.
+
+SPARK-PL distribution includes SPARK distribution (a runtime engine for running agent based models written in SPARK-PL). SPARK is distributed under the same license as SPARK-PL. For additional information see README file inside the 'lib' folder.
+
+SPARK-PL contains several third-party libraries. Information about
+these libraries and about their licenses can be found in the Licenses folder.
+
+
+HOW TO RUN
+
+You must have Java 1.5 or higher installed; You can download Java from http://java.sun.com/getjava/
+
+Windows: double click on 'SPARK Manager.jar' in Explorer
+
+Linux: double click on 'SPARK Manager.jar' in a file manager (Nautilus, Dolphin, etc.) or use the following commands:
+$ cd 'name-of-Spark-PL-directory'
+$ java -jar "SPARK Manager.jar"
+
+MacOS: double click on 'SPARK Manager.jar' in Finder.
+
+
+DOCUMENTATION
+Documentation is located in the docs folder.
+
+
+ADDITIONAL INFORMATION
+Additional information and new releases of SPARK-PL (and SPARK) can be obtained from the SPARK
+official web site
+http://www.pitt.edu/~cirm/spark
+
+
+SOURCE CODE
+The source code is available at the official SPARK repository at
+http://code.google.com/p/spark-abm

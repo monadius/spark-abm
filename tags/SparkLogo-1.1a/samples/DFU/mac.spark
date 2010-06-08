@@ -1,0 +1,35 @@
+agent mac : CellAgent
+
+
+to mac-function
+	wiggle 1
+	sniff platelet 0
+	
+	var activated = false
+	
+	if position.length < magnitude * 1 * p1
+	[
+		activated = true
+	]
+	
+	if TNF.value > 0.1
+	[
+		activated = true
+	]
+
+	if activated
+	[
+		ask hatch-one am
+		[
+			age = myself.age
+			color = cyan
+		]
+		
+		die
+		exit
+	]	
+	
+	age -= 1
+	if age < 0
+		[ die ]
+end

@@ -1,0 +1,7 @@
+@nostep
+agent Obstacle : SpaceAgent
+
+to create
+	radius = 1
+	color = red
+end
