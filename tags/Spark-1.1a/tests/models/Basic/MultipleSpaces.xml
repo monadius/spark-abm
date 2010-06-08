@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><spark version="1"><model><classpath path="/bin/"/><setup>org.spark.test.basictests.MultipleSpaces</setup><agents>
+    <agent name="InflamCell" priority="1">
+    org.spark.test.basictests.MultipleSpaces$InflamCell</agent>
+    <agent name="InfectAgent" priority="2">
+    org.spark.test.basictests.MultipleSpaces$InfectAgent</agent>
+    <agent name="AnotherAgent" priority="3">
+    org.spark.test.basictests.MultipleSpaces$AnotherAgent</agent>
+  </agents><variables/></model><interface><windows><window height="682" main="true" name="Main Window" width="593" x="1" y="3"/><window height="500" name="View" width="496" x="588" y="1"/></windows>
+  
+  
+  <mainframe height="682" location="Main Window" width="593" x="1" y="3"><spacestyle name="space" selected="true" swapXY="false"/><datalayerstyle name="tissue-life" selected="true"/><agentstyle alpha-function-value="0.0" border="true" name="AnotherAgent" position="0" texture-env="0" transparent="false" visible="true"/><agentstyle alpha-function-value="0.0" border="true" name="InfectAgent" position="1" texture-env="0" transparent="false" visible="true"/><agentstyle alpha-function-value="0.0" border="true" name="InflamCell" position="2" texture-env="0" transparent="false" visible="true"/></mainframe>
+  
+  <datalayer color1="0.0;1.0;0.0" color2="1.0;0.0;0.0" name="tissue-life" val1="100.0" val2="0.0"/>
+  <datalayer color1="0.6;1.0;1.0" color2="1.0;0.0;0.0" name="toxin" val1="0.0" val2="7.0"/>
+  <datalayer color1="1.0;1.0;1.0" color2="0.0;0.0;1.0" name="cidal-compound" val1="0.0" val2="7.0"/>
+  <datalayer color1="1.0;1.0;1.0" color2="0.0;0.0;1.0" name="new-layer" val1="0.0" val2="0.0"/>
+  <renderframe height="500" location="View" name="View" width="496" x="588" y="1"><spacestyle name="space2" selected="true" swapXY="false"/><agentstyle alpha-function-value="0.0" border="true" name="InflamCell" position="0" texture-env="0" transparent="false" visible="true"/><agentstyle alpha-function-value="0.0" border="true" name="InfectAgent" position="1" texture-env="0" transparent="false" visible="true"/><agentstyle alpha-function-value="0.0" border="true" name="AnotherAgent" position="2" texture-env="0" transparent="false" visible="true"/></renderframe>
+  
+</interface></spark>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?><model>
+  <classpath path="/bin/"/>
+  <setup>org.spark.test.basictests.ToyInfectionModel</setup>
+  <mainframe height="682" width="593" x="0" y="0"><spacestyle name="space" selected="true" swapXY="false"/><datalayerstyle name="tissue-life" selected="true"/><agentstyle alpha-function-value="0.0" border="true" name="InfectAgent" position="0" texture-env="0" transparent="false" visible="true"/><agentstyle alpha-function-value="0.0" border="true" name="InflamCell" position="1" texture-env="0" transparent="false" visible="true"/></mainframe>
+  <agents>
+	<agent name="InflamCell" priority="1">
+		org.spark.test.basictests.ToyInfectionModel$InflamCell
+	</agent>
+	<agent name="InfectAgent" priority="2">
+		org.spark.test.basictests.ToyInfectionModel$InfectAgent
+	</agent>
+  </agents>
+  <datalayer color1="0.0;1.0;0.0" color2="1.0;0.0;0.0" name="tissue-life" val1="100.0" val2="0.0"/>
+  <datalayer color1="0.6;1.0;1.0" color2="1.0;0.0;0.0" name="toxin" val1="0.0" val2="7.0"/>
+  <datalayer color1="1.0;1.0;1.0" color2="0.0;0.0;1.0" name="cidal-compound" val1="0.0" val2="7.0"/>
+  <renderframe height="300" name="View" width="300" x="730" y="75"><spacestyle name="space" selected="true" swapXY="false"/><datalayerstyle name="cidal-compound" selected="true"/><agentstyle alpha-function-value="0.0" border="true" name="InflamCell" position="0" texture-env="0" transparent="false" visible="false"/><agentstyle alpha-function-value="0.0" border="false" name="InfectAgent" position="1" texture-env="0" transparent="false" visible="true"/></renderframe>
+  <variables/>
+</model>

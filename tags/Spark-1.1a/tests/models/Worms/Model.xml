@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><model>
+<about path="readme.txt"/>
+<classpath path="."/>
+<setup>Worms.Model</setup>
+<mainframe height="627" width="528" x="0" y="0"><spacestyle name="space" selected="true" swapXY="false"/><datalayerstyle name="medium" selected="true"/><agentstyle alpha-function-value="0.0" border="false" name="PhysAgent" position="0" texture-env="0" transparent="false" visible="true"/><agentstyle alpha-function-value="0.0" border="true" name="Obstacle" position="1" texture-env="0" transparent="false" visible="true"/><agentstyle alpha-function-value="0.0" border="true" name="Spring" position="2" texture-env="0" transparent="false" visible="true"/><agentstyle alpha-function-value="0.0" border="true" name="Worm" position="3" texture-env="0" transparent="false" visible="true"/></mainframe>
+<parameterframe height="267" width="600" x="530" y="0">
+<parameter default="5.0" get="get_wormSpeed" max="30.0" min="0.0" name="Worm speed" set="set_wormSpeed" step="1.0" type="Double" variable="worm-speed" widget="Slider"/>
+<parameter default="10.0" get="get_wanderSpeed" max="90.0" min="0.0" name="Wandering speed" set="set_wanderSpeed" step="1.0" type="Double" variable="wander-speed" widget="Slider"/>
+<parameter default="20.0" get="get_wormsNumber" max="100.0" min="0.0" name="Worms number" set="set_wormsNumber" step="0.0" type="Double" variable="worms-number" widget="Slider"/>
+<parameter default="0.0" get="get_obstaclesNumber" max="50.0" min="0.0" name="Obstacles number" set="set_obstaclesNumber" step="0.0" type="Double" variable="obstacles-number" widget="Slider"/>
+<parameter default="0.6" get="get_velocityCoefficient" max="1.0" min="0.1" name="Velocity Decay" set="set_velocityCoefficient" step="0.1" type="Double" variable="velocity-coefficient" widget="Slider"/>
+<parameter default="0.0" get="get_separationCoefficient" max="10.0" min="0.0" name="Separation Coefficient" set="set_separationCoefficient" step="0.1" type="Double" variable="separation-coefficient" widget="Slider"/>
+<parameter default="50.0" get="get_collisionCoefficient" max="100.0" min="0.0" name="Collision Coefficient" set="set_collisionCoefficient" step="1.0" type="Double" variable="collision-coefficient" widget="Slider"/>
+<parameter default="0.06" get="get_dt" max="0.2" min="0.01" name="dt" set="set_dt" step="0.01" type="Double" variable="dt" widget="Slider"/>
+<parameter default="20.0" get="get_springCoefficient" max="50.0" min="1.0" name="spring-coefficient" set="set_springCoefficient" step="1.0" type="Double" variable="spring-coefficient" widget="Slider"/>
+</parameterframe>
+<dataset height="200" width="123" x="1230" y="0">
+<item get="get_wormSpeed" name="worm-speed"/>
+<item get="get_wanderSpeed" name="wander-speed"/>
+<item get="get_food" name="food"/>
+</dataset>
+<renderframe height="265" name="View" width="265" x="0" y="630"><spacestyle name="space" selected="true" swapXY="false"/><agentstyle alpha-function-value="0.0" border="true" name="Obstacle" position="0" texture-env="0" transparent="false" visible="true"/><agentstyle alpha-function-value="0.0" border="true" name="PhysAgent" position="1" texture-env="0" transparent="false" visible="true"/><agentstyle alpha-function-value="0.0" border="true" name="Spring" position="2" texture-env="0" transparent="false" visible="true"/><agentstyle alpha-function-value="0.0" border="true" name="Worm" position="3" texture-env="0" transparent="false" visible="true"/></renderframe>
+<methods height="200" width="123" x="1130" y="0">
+<method method="addWorm" name="add-worm"/>
+</methods>
+<variables>
+<variable get="get_wormSpeed" name="worm-speed" set="set_wormSpeed" type="Double"/>
+<variable get="get_wanderSpeed" name="wander-speed" set="set_wanderSpeed" type="Double"/>
+<variable get="get_wormsNumber" name="worms-number" set="set_wormsNumber" type="Double"/>
+<variable get="get_obstaclesNumber" name="obstacles-number" set="set_obstaclesNumber" type="Double"/>
+<variable get="get_velocityCoefficient" name="velocity-coefficient" set="set_velocityCoefficient" type="Double"/>
+<variable get="get_separationCoefficient" name="separation-coefficient" set="set_separationCoefficient" type="Double"/>
+<variable get="get_collisionCoefficient" name="collision-coefficient" set="set_collisionCoefficient" type="Double"/>
+<variable get="get_dt" name="dt" set="set_dt" type="Double"/>
+<variable get="get_springCoefficient" name="spring-coefficient" set="set_springCoefficient" type="Double"/>
+<variable get="get_food" name="food" set="set_food" type="Double"/>
+</variables>
+<variable-sets/>
+<agents>
+<agent name="Obstacle">Worms.Obstacle</agent>
+<agent name="PhysAgent">Worms.PhysAgent</agent>
+</agents>
+<data-layers>
+<datalayer color1="1.0;1.0;1.0" color2="0.6;0.6;0.0" name="medium" val1="0.0" val2="1.0"/>
+</data-layers>
+<charts>
+<chart height="200" interval="0" method="get_food" name="food" width="300" x="530" y="267"/>
+</charts>
+</model>

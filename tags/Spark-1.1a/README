@@ -1,0 +1,36 @@
+SPARK, or Simple Platform for Agent-based Representation of Knowledge, is an
+agent based modeling (ABM) framework which includes the Java library for implementing agent based models and the runtime engine for executing these models. SPARK was written by Alexey Solovyev with additional help from Maxim Mikheev. The project leader is Qi Mi.
+
+
+LICENSE.
+SPARK largely uses the MIT License. For details see LICENSE file.
+
+SPARK contains several third-party libraries. Information about
+these libraries and about their licenses can be found in the Licenses folder.
+
+
+HOW TO RUN
+
+You must have Java 1.5.0 or higher installed; 1.6.0 or higher is recommended.  You can download Java from http://java.sun.com/getjava/
+
+Windows: double click on spark.jar in Explorer
+
+Linux: double click on spark.jar in a file manager (Nautilus, Dolphin, etc.) or use the following commands:
+$ cd 'name-of-spark-directory'
+$ java -jar spark.jar
+
+MacOS X: double click on spark.jar in Finder.
+
+
+CLIENT-SERVER VERSION OF SPARK
+This version of SPARK includes a preliminary implementation of separate server and client applications. Use 'spark-server.bat' script in Windows to run SPARK as a server (you may specify one argument for the script: a SPARK server port number). Use 'spark-client.bat' to run a SPARK client.
+
+
+DOCUMENTATION
+Documentation is located in the docs folder.
+
+
+ADDITIONAL INFORMATION
+Additional information and new releases of SPARK can be obtained from the SPARK
+official web site
+http://www.pitt.edu/~cirm/spark

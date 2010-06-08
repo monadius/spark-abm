@@ -1,0 +1,7 @@
+<spark-tests>
+ <test model = "models/RSV bronchiole/RSV Bronchiole Model.xml">
+  <run seed = "3003" length = "1000" observer = "Observer1" save-all = "false"/>
+  <run seed = "3003" length = "1000" observer = "Observer2" save-all = "false"/>
+  <run seed = "30002300" length = "1000" observer = "Observer1"/>
+ </test>
+</spark-tests>
