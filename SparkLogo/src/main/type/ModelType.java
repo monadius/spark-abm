@@ -93,7 +93,7 @@ public class ModelType extends Type {
 	 * constructor for the model type
 	 */
 	@Override
-	protected void createConstructor() throws Exception {
+	protected void createConstructors() throws Exception {
 	}
 
 	/**

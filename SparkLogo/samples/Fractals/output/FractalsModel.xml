@@ -14,9 +14,9 @@
   <interface>
     <about path="readme.txt"/>
     <windows>
-      <window height="151" name="Parameters" visible="true" width="769" x="1045" y="97"/>
+      <window height="151" name="Parameters" visible="false" width="769" x="1045" y="97"/>
       <window height="313" name="number-of-agents" visible="false" width="364" x="1218" y="360"/>
-      <window height="789" main="true" name="Main Window" visible="true" width="725" x="229" y="45"/>
+      <window height="794" main="true" name="Main Window" visible="true" width="725" x="229" y="40"/>
     </windows>
     <mainframe location="Main Window">
       <spacestyle name="space" selected="true" swapXY="false"/>

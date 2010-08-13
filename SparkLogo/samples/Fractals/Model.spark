@@ -1,7 +1,7 @@
 model FractalsModel
 
 
-space GridSpace -150 50 -100 100 false false
+space GridSpace -50 50 -100 100 false false
 
 global data : grid
 
