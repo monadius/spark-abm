@@ -1,7 +1,7 @@
 model LinksDemoModel
 
 
-space StandardSpace -10 10 -10 10 false false
+space StandardSpace3d -10 10 -10 10 -10 10 false false false
 
 
 @parameter(default = 2, values = "1,2,3,4,10,20")

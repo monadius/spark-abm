@@ -196,6 +196,12 @@ public class Method {
 	 * Translates to java source code
 	 */
 	public void translateToJava(JavaEmitter java) throws Exception {
+		// Rename the "_create" method
+		if (id.name.equals("_create")) {
+			id = new Id("_create" + parentType.getId().toJavaName()); 
+		}
+
+		
 		java.clearTempVariables();
 		String typeName = returnType != null ? returnType.getTranslationString() : null;
 		if (constructorFlag)
@@ -206,6 +212,7 @@ public class Method {
 			Variable arg = arguments.get(i);
 			java.addArgument(arg.type, arg.id);
 		}
+		
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!		
 		// FIXME: remove this, find better solution
 		if (constructorFlag) {
@@ -230,6 +237,10 @@ public class Method {
 		if (constructorFlag) {
 			// FIXME: add _init call inside method source code or translated code
 			java.println("_init();");
+			
+			// For each user-defined type there is a "_create[TypeName]" method
+			String thisName = parentType.getId().toJavaName();
+			java.println("_create" + thisName + "();");
 		}
 		else if (parentType instanceof ModelType && id.name.equals("setup")) {
 			// FIXME: it is assumed that the first command is space creation
@@ -264,6 +275,8 @@ public class Method {
 		// Create a code block (block node) for method's body
 		methodCode = new BlockNode(null, parentCodeBlock);
 		SyntaxTreeBuilder.setCurrentBlock(methodCode.getCodeBlock());
+		
+		sourceCode.reset();
 		
 		// Parse all symbols
 		for (Symbol s = sourceCode.peek(); s.id != sym.END; s = sourceCode.peek()) {

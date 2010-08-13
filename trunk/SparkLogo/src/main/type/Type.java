@@ -54,7 +54,7 @@ public class Type {
 
 	/* Constructors */
 	// TODO: now we have only one constructors
-	protected final ArrayList<Method> constructors;
+//	protected final ArrayList<Method> constructors;
 
 	/**
 	 * Creates a new agent type
@@ -158,7 +158,7 @@ public class Type {
 
 		fields = new HashMap<Id, Variable>();
 		methods = new HashMap<Id, Method>();
-		constructors = new ArrayList<Method>();
+//		constructors = new ArrayList<Method>();
 		
 		fieldList = new ArrayList<Variable>();
 		methodList = new ArrayList<Method>();
@@ -248,12 +248,10 @@ public class Type {
 		// TODO: for built-in types 'create' should be available method name
 		AdhocImplementation.flag = true;
 		if (!id.name.equals("Space"))  {
-		
-			// Add a constructor
+			// Change name
 			AdhocImplementation.flag = true;
 			if (method.id.name.equals("create")) {
-				addConstructor(method);
-				return;
+				method.id = new Id("_create");
 			}
 		}
 		
@@ -272,23 +270,23 @@ public class Type {
 	}
 
 	/**
-	 * Adds a constructor
+	 * Marks a method as a constructor
 	 * 
 	 * @param method
 	 * @throws Exception
 	 */
-	protected final void addConstructor(Method method) throws Exception {
+	private final void addConstructor(Method method) throws Exception {
 		// TODO: only one constructor without arguments is allowed now
-		if (constructors.size() > 0)
-			throw new Exception("Only one constructor is currently allowed");
+//		if (constructors.size() > 0)
+//			throw new Exception("Only one constructor is currently allowed");
 
-		if (method.arguments.size() > 0)
-			throw new Exception("No arguments are allowed for a constructor");
+//		if (method.arguments.size() > 0)
+//			throw new Exception("No arguments are allowed for a constructor");
 
 		method.parentType = this;
 		method.constructorFlag = true;
 		method.id = new Id(getTranslationString());
-		constructors.add(method);
+//		constructors.add(method);
 		
 		// Add constructor right after _init method
 		// TODO: better implementation: without direct reference to _init
@@ -297,6 +295,79 @@ public class Type {
 		else
 			methodList.add(0, method);
 	}
+	
+	
+	/**
+	 * Adds a special constructor for a type derived from SpaceAgent
+	 */
+	private final void createSpaceAgentConstructor() throws Exception {
+		// Verify type
+		Type spaceAgent = SparkModel.getInstance().getType(new Id("SpaceAgent"));
+		if (!this.instanceOf(spaceAgent))
+			return;
+		
+		Type intType = SparkModel.getInstance().getType(new Id("$integer"));
+		Type numberType = SparkModel.getInstance().getType(new Id("number"));
+		
+		Method ctor = new Method(new Id("ctor"));
+		ctor.addArgument(new Variable(new Id("radius"), numberType));
+		ctor.addArgument(new Variable(new Id("shape"), intType));
+		
+		ctor.addSourceCodeSymbol(new Symbol("super", sym.IDENTIFIER, "super", -1, -1));
+		ctor.addSourceCodeSymbol(new Symbol("radius", sym.IDENTIFIER, "radius", -1, -1));
+		ctor.addSourceCodeSymbol(new Symbol("shape", sym.IDENTIFIER, "shape", -1, -1));
+
+		addConstructor(ctor);
+	}
+	
+	
+	
+	/**
+	 * Adds a default constructor
+	 * @throws Exception
+	 */
+	private final void createDefaultConstructor() throws Exception {
+		Method ctor = new Method(new Id("ctor"));
+		
+		// SpaceAgent type needs a special attention:
+		// if there is the "super" command in the "_create" method,
+		// then it should be moved to the default constructor
+		Type spaceAgent = SparkModel.getInstance().getType(new Id("SpaceAgent"));
+
+		Method _create = getMethod(new Id("_create"), false);
+		if (_create != null) {
+			if (this.instanceOf(spaceAgent)) {
+				//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!		
+				// FIXME: remove this, find better solution
+				AdhocImplementation.flag = true;
+				SymbolList src = _create.sourceCode;
+				src.reset();
+				Symbol symbol = src.peek();
+				
+				if (symbol.id == sym.IDENTIFIER && "super".equals(symbol.value)) {
+					ctor.addSourceCodeSymbol(src.next());
+					ctor.addSourceCodeSymbol(src.next());
+					ctor.addSourceCodeSymbol(src.next());
+					
+					src.RemoveFirstAndReset();
+					src.RemoveFirstAndReset();
+					src.RemoveFirstAndReset();
+				}
+				//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!			
+			}
+		}
+		else
+		{
+			// For each type we need to declare a "create" method
+			_create = new Method(new Id("_create"));
+			addMethod(_create);
+		}
+		
+		addConstructor(ctor);
+	}
+	
+	
+	
 
 	/**
 	 * Tries to resolve types of fields and methods
@@ -388,7 +459,7 @@ public class Type {
 	 */
 	public void parseMethods() throws Exception {
 		createFieldInitializationMethod();
-		createConstructor();
+		createConstructors();
 
 		createInterfaceMethods();
 
@@ -431,12 +502,15 @@ public class Type {
 	 * Creates default constructor or modifies the existing constructor(s) in
 	 * order to call field initialization method
 	 */
-	protected void createConstructor() throws Exception {
+	protected void createConstructors() throws Exception {
 		// TODO: find whether there is a default constructor (without arguments)
-		if (constructors.size() > 0)
-			return;
+//		if (constructors.size() > 0)
+//			return;
+		
+		createDefaultConstructor();
+		createSpaceAgentConstructor();
 
-		addMethod(new Method(new Id("create")));
+//		addMethod(new Method(new Id("create")));
 	}
 
 	/**

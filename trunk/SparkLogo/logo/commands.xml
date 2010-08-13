@@ -1132,7 +1132,13 @@
                 <argument name = "list" type = "ArrayList"/>
 
                 <translation>
-                        @list.size()
+                	<temp name = "n"/>
+                	<prelude>
+                		int @n = 0;
+                		if (@list != null)
+                        	@n = @list.size();
+                    </prelude>
+                    <return>@n</return>
                 </translation>
         </reporter>
 
@@ -1140,7 +1146,13 @@
                 <argument name = "list" type = "Array"/>
 
                 <translation>
-                        @list.length
+                	<temp name = "n"/>
+                	<prelude>
+                		int @n = 0;
+                		if (@list != null)
+                        	@n = @list.length;
+                    </prelude>
+                    <return>@n</return>
                 </translation>
         </reporter>
 

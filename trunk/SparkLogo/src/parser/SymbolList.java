@@ -50,4 +50,11 @@ public class SymbolList {
 		else
 			return new Symbol("END", sym.END);
 	}
+	
+	
+	public void RemoveFirstAndReset() {
+		if (list.size() > 0)
+			list.remove(0);
+		position = 0;
+	}
 }
