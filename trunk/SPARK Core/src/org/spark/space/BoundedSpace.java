@@ -9,8 +9,8 @@ package org.spark.space;
 import java.util.ArrayList;
 
 import org.spark.data.Grid;
-import org.spark.utils.RandomHelper;
-import org.spark.utils.Vector;
+import org.spark.math.RandomHelper;
+import org.spark.math.Vector;
 
 public abstract class BoundedSpace extends Space {
 	private static final long serialVersionUID = 9016717038171133599L;

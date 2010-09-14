@@ -3,7 +3,7 @@ package org.spark.data;
 import org.spark.space.Space;
 import org.spark.space.SpaceAgent;
 import org.spark.space.SpaceNode;
-import org.spark.utils.Vector;
+import org.spark.math.Vector;
 
 /**
  * Grid which respects the size of agents

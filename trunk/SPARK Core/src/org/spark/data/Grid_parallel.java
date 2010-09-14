@@ -2,7 +2,7 @@ package org.spark.data;
 
 import org.spark.math.Function;
 import org.spark.space.Space;
-import org.spark.utils.Vector;
+import org.spark.math.Vector;
 
 /**
  * Implementation of the grid for the parallel execution mode

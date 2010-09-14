@@ -6,7 +6,7 @@
 
 package org.spark.space;
 
-import org.spark.utils.Vector;
+import org.spark.math.Vector;
 
 
 /**

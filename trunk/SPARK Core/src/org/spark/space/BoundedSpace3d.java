@@ -7,8 +7,8 @@
 package org.spark.space;
 
 import org.spark.data.Grid3d;
-import org.spark.utils.RandomHelper;
-import org.spark.utils.Vector;
+import org.spark.math.RandomHelper;
+import org.spark.math.Vector;
 
 public abstract class BoundedSpace3d extends Space {
 	private static final long serialVersionUID = -1117772371480919688L;

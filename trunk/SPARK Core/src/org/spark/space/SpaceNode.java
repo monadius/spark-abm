@@ -8,8 +8,8 @@ package org.spark.space;
 
 import java.io.Serializable;
 
-import org.spark.utils.Vector;
-import org.spark.utils.Vector4d;
+import org.spark.math.Vector;
+import org.spark.math.Vector4d;
 
 
 /**

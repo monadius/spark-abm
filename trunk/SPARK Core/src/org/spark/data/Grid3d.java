@@ -7,19 +7,18 @@
 package org.spark.data;
 
 import org.spark.core.Observer;
-import org.spark.gui.render.DataLayerWithColors;
 import org.spark.math.Function;
 import org.spark.math.Matrix;
 import org.spark.space.BoundedSpace3d;
 import org.spark.space.Space;
 import org.spark.space.SpaceAgent;
-import org.spark.utils.Vector;
+import org.spark.math.Vector;
 
 /*
  * The basic implementation of the data layer interface
  * Values are stored inside cells of a grid of the given dimension 
  */
-public class Grid3d implements AdvancedDataLayer, DataLayerWithColors {
+public class Grid3d implements AdvancedDataLayer {
 	/**
 	 * Serial version UID
 	 */

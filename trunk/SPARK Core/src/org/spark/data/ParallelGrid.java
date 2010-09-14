@@ -8,13 +8,12 @@ import java.io.ObjectOutputStream;
 import java.util.LinkedList;
 import java.util.List;
 import org.spark.core.Observer;
-import org.spark.gui.render.DataLayerWithColors;
 import org.spark.math.Function;
 import org.spark.space.BoundedSpace;
 import org.spark.space.Space;
 import org.spark.space.SpaceAgent;
 import org.spark.utils.Parallel2dDoubleArray;
-import org.spark.utils.Vector;
+import org.spark.math.Vector;
 
 import extra166y.Ops;
 import extra166y.ParallelArray;
@@ -28,7 +27,7 @@ import extra166y.ParallelDoubleArray;
  * The basic implementation of the data layer interface Values are stored inside
  * cells of a grid of the given dimension
  */
-public class ParallelGrid implements AdvancedDataLayer, DataLayerWithColors {
+public class ParallelGrid implements AdvancedDataLayer {
 	private static final long serialVersionUID = 5864203993080064052L;
 
 	// Reference to the space object

@@ -4,19 +4,18 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import org.spark.gui.render.DataLayerWithColors;
 import org.spark.math.Function;
 import org.spark.math.Matrix;
 import org.spark.space.BoundedSpace;
 import org.spark.space.Space;
 import org.spark.space.SpaceAgent;
-import org.spark.utils.Vector;
+import org.spark.math.Vector;
 
 /*
  * The basic implementation of the data layer interface
  * Values are stored inside cells of a grid of the given dimension 
  */
-public class Grid implements AdvancedDataLayer, DataLayerWithColors {
+public class Grid implements AdvancedDataLayer {
 	private static final long serialVersionUID = -1581695024221018527L;
 	// Reference to the space object
 	protected transient Space	space;
