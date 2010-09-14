@@ -22,7 +22,7 @@ import java.util.PriorityQueue;
 import org.spark.data.DataLayer;
 import org.spark.math.RationalNumber;
 import org.spark.space.Space;
-import org.spark.utils.RandomHelper;
+import org.spark.math.RandomHelper;
 
 import com.spinn3r.log5j.Logger;
 

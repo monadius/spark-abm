@@ -18,7 +18,7 @@ import org.spark.core.Observer;
 import org.spark.data.DataLayer;
 import org.spark.data.Grid;
 import org.spark.data.ParallelGrid;
-import org.spark.utils.Vector;
+import org.spark.math.Vector;
 
 
 

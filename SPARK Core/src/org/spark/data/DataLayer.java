@@ -11,7 +11,7 @@ import java.io.Serializable;
 import org.spark.math.Function;
 import org.spark.space.Space;
 import org.spark.space.SpaceAgent;
-import org.spark.utils.Vector;
+import org.spark.math.Vector;
 
 /**
  * The basic interface for representing a data layer.

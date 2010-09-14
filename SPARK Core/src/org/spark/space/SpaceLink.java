@@ -2,8 +2,8 @@ package org.spark.space;
 
 import org.spark.core.Agent;
 import org.spark.core.Link;
-import org.spark.utils.Vector;
-import org.spark.utils.Vector4d;
+import org.spark.math.Vector;
+import org.spark.math.Vector4d;
 
 /**
  * Link for connecting space agents
