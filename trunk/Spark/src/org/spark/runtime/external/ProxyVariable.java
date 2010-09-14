@@ -1,8 +1,8 @@
 package org.spark.runtime.external;
 
-import org.spark.runtime.AbstractChangeEvent;
 import org.spark.runtime.data.DataRow;
 import org.spark.runtime.external.data.IDataConsumer;
+import org.spark.utils.AbstractChangeEvent;
 import org.spark.utils.XmlDocUtils;
 import org.w3c.dom.Node;
 

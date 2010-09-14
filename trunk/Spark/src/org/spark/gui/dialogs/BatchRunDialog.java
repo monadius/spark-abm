@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 import javax.swing.*;
 
+import org.spark.core.ModelVariable;
 import org.spark.core.SparkModel;
 import org.spark.gui.GUIModelManager;
 import org.spark.gui.Utils;
@@ -17,7 +18,6 @@ import org.spark.runtime.DataSet;
 import org.spark.runtime.ParameterFactory_Old;
 import org.spark.runtime.ParameterSweep;
 import org.spark.runtime.Parameter_Old;
-import org.spark.runtime.internal.ModelVariable;
 import org.spark.utils.SpringUtilities;
 
 /**

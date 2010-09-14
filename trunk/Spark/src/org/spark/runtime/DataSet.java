@@ -2,8 +2,8 @@ package org.spark.runtime;
 
 import java.util.ArrayList;
 
+import org.spark.core.ModelVariable;
 import org.spark.core.SparkModel;
-import org.spark.runtime.internal.ModelVariable;
 
 // TODO: create a data set factory
 // with static methods for creating data sets,

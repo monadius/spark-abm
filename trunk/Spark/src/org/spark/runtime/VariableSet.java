@@ -3,7 +3,7 @@ package org.spark.runtime;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.spark.runtime.internal.ModelVariable;
+import org.spark.core.ModelVariable;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
