@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.spark.math.RationalNumber;
-import org.spark.runtime.internal.ModelMethod;
-import org.spark.runtime.internal.ModelVariable;
 
 import com.spinn3r.log5j.Logger;
 

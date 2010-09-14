@@ -17,7 +17,6 @@ import org.spark.core.ExecutionMode;
 import org.spark.core.Observer;
 import org.spark.data.DataLayer;
 import org.spark.data.Grid;
-import org.spark.data.ParallelGrid;
 import org.spark.math.Vector;
 
 
@@ -574,8 +573,8 @@ public abstract class Space implements Serializable {
 			if (data instanceof Grid) {
 				((Grid) data).setSpace(this);
 			}
-			else if (data instanceof ParallelGrid) {
-				((ParallelGrid) data).setSpace(this);
+			else {
+				throw new Error("Unsupported data layer type");
 			}
 			
 			addDataLayer(name, data);
