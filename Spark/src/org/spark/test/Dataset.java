@@ -11,9 +11,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.spark.core.Agent;
+import org.spark.core.ModelVariable;
 import org.spark.core.Observer;
 import org.spark.data.DataLayer;
-import org.spark.runtime.internal.ModelVariable;
 import org.spark.space.Space;
 
 /**

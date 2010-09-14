@@ -6,8 +6,8 @@ import java.util.HashMap;
 
 import javax.swing.*;
 
+import org.spark.core.ModelMethod;
 import org.spark.core.SparkModel;
-import org.spark.runtime.internal.ModelMethod;
 import org.w3c.dom.Node;
 
 

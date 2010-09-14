@@ -2,8 +2,8 @@ package org.spark.runtime;
 
 import java.util.HashMap;
 
+import org.spark.core.ModelVariable;
 import org.spark.core.SparkModel;
-import org.spark.runtime.internal.ModelVariable;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;

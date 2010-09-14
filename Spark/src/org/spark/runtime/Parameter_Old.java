@@ -14,7 +14,7 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.spark.runtime.internal.ModelVariable;
+import org.spark.core.ModelVariable;
 
 /**
  * Model parameter
