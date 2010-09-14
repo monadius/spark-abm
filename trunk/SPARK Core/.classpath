@@ -7,5 +7,6 @@
 	<classpathentry kind="lib" path="/SPARK Math/bin" sourcepath="/SPARK Math/src"/>
 	<classpathentry kind="lib" path="/Spark/lib/jsr166y.jar"/>
 	<classpathentry kind="lib" path="/Spark/lib/extra166y.jar"/>
+	<classpathentry kind="lib" path="/SPARK Utils/bin"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
