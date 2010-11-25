@@ -20,7 +20,7 @@ import org.spark.runtime.data.DataObject;
 import org.spark.runtime.data.DataObject_Grid;
 import org.spark.runtime.external.Coordinator;
 import org.spark.runtime.external.render.DataLayerStyle;
-import org.spark.utils.Vector;
+import org.spark.math.Vector;
 
 
 /**

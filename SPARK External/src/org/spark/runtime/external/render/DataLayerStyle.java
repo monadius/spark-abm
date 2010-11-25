@@ -6,7 +6,7 @@ import static org.spark.utils.XmlDocUtils.getVectorValue;
 
 import java.util.HashMap;
 
-import org.spark.utils.Vector;
+import org.spark.math.Vector;
 import org.spark.utils.XmlDocUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;

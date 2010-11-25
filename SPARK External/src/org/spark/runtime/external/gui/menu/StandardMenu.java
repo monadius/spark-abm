@@ -33,7 +33,7 @@ public class StandardMenu {
 		SparkMenu file = createFileMenu(factory, manager);
 		SparkMenu model = createModelMenu(factory, manager);
 		SparkMenu window = createWindowMenu(factory, manager);
-		SparkMenu help = createHelpMenu(factory, manager);
+//		SparkMenu help = createHelpMenu(factory, manager);
 		
 		menu.addItem(file);
 		menu.addItem(model);
@@ -243,11 +243,11 @@ public class StandardMenu {
 	 * Creates 'File' menu
 	 * @return
 	 */
-	private static SparkMenu createHelpMenu(SparkMenuFactory factory, WindowManager manager) {
-		SparkMenu help = factory.createMenu("Help", 0);
-		
-		return help;
-	}
+//	private static SparkMenu createHelpMenu(SparkMenuFactory factory, WindowManager manager) {
+//		SparkMenu help = factory.createMenu("Help", 0);
+//		
+//		return help;
+//	}
 	
 	
 	

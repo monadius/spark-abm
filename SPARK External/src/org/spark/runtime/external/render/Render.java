@@ -11,10 +11,10 @@ import java.util.HashMap;
 
 import org.spark.runtime.data.DataCollectorDescription;
 import org.spark.runtime.data.DataObject_Spaces;
-import org.spark.runtime.data.DataReceiver;
 import org.spark.runtime.data.DataRow;
 import org.spark.runtime.external.Coordinator;
 import org.spark.runtime.external.data.DataFilter;
+import org.spark.runtime.external.data.DataReceiver;
 import org.spark.runtime.external.data.IDataConsumer;
 import org.spark.utils.XmlDocUtils;
 

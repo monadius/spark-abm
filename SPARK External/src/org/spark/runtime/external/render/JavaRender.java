@@ -19,9 +19,8 @@ import org.spark.runtime.data.DataObject_SpaceAgents;
 import org.spark.runtime.data.DataObject_SpaceLinks;
 import org.spark.runtime.data.DataObject_Spaces;
 import org.spark.runtime.data.DataRow;
-import org.spark.space.SpaceAgent;
-import org.spark.utils.Vector;
-import org.spark.utils.Vector4d;
+import org.spark.math.Vector;
+import org.spark.math.Vector4d;
 
 import com.spinn3r.log5j.Logger;
 
@@ -288,15 +287,18 @@ public class JavaRender extends Render {
 			Shape s = null;
 
 			switch (shapes[i]) {
-			case SpaceAgent.CIRCLE:
+//			case SpaceAgent.CIRCLE:
+			case 1:
 				s = new Ellipse2D.Double(x - r, y - r, r2, r2);
 				break;
 
-			case SpaceAgent.SQUARE:
+//			case SpaceAgent.SQUARE:
+			case 2:
 				s = new Rectangle2D.Double(x - r, y - r, r2, r2);
 				break;
 
-			case SpaceAgent.TORUS:
+//			case SpaceAgent.TORUS:
+			case 3:
 				s = new Ellipse2D.Double(x - r, y - r, r2, r2);
 				break;
 			}

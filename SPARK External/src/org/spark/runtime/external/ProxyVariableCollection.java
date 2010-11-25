@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.spark.runtime.data.DataCollectorDescription;
-import org.spark.runtime.data.DataReceiver;
+import org.spark.runtime.external.data.DataReceiver;
 import org.spark.runtime.external.data.DataFilter;
 import org.spark.utils.XmlDocUtils;
 import org.w3c.dom.Node;
