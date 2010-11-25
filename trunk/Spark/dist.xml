@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." default="universal-dist" name="Compiler">
+	<description>
+                This Ant dist.xml file is used to create the distributions of
+                the SPARK Framework
+        </description>
+
+	<!-- Paths to subprojects -->
+	<property location="../SPARK Math" name="spark-math"/>
+	<property location="../SPARK Utils" name="spark-utils"/>
+	<property location="../SPARK Core" name="spark-core"/>
+	<property location="../SPARK Internal" name="spark-internal"/>
+	<property location="../SPARK External" name="spark-external"/>
+	<property location="../SparkLogo" name="spark-pl"/>
+	
+	<!-- SPARK folder -->
+	<property name="spark" location="." />
+	<!-- SPARK docs release folder -->
+	<property name="spark-docs" location="../SPARK Docs/output" />
+
+	<!-- Distribution folder -->
+	<property location="${spark}/dist" name="dist" />
+	<!-- Archive of all distributions -->
+	<property location="${spark}/dist-archive" name="dist-archive" />
+	
+	<tstamp />
+
+	<!-- Version number -->
+	<property name="version" value="1.1a" />
+
+	<!-- Windows distribution name -->
+	<property name="win-name" value="SPARK_${version}_windows" />
+	<!-- MacOS distribution name -->
+	<property name="mac-name" value="SPARK_${version}_mac" />
+	<!-- Universal distribution name -->
+	<property name="universal-name" value="SPARK_${version}_universal" />
+
+
+	<!-- Source code, text files, and scripts -->
+	<fileset dir="${spark-pl}" id="basic-files">
+		<include name="LICENSE" />
+		<include name="README" />
+		<include name="Licenses/**/**" />
+		<include name="spark.log4j.properties" />
+
+		<include name="logo/commands.xml" />
+		<include name="logo/SparkTypes.xml" />
+	</fileset>
+
+	<!-- Samples -->
+	<fileset dir="${spark-pl}" id="samples">
+		<include name="samples/**/**" />
+		<include name="samples/**/output/*.xml" />
+		<include name="samples/**/output/*.png" />
+		<exclude name="samples/**/output/*/*" />
+	</fileset>
+
+	<!-- Libraries -->
+	<fileset dir="${spark-pl}" id="libs">
+		<include name="lib/*.jar" />
+	</fileset>
+
+	<!-- Documents -->
+	<zipfileset dir="${spark-docs}" id="docs" prefix="docs">
+		<include name="SPARK-PL*" />
+	</zipfileset>
+
+
+	<!-- Target: init -->
+	<target name="init" description="Creates output folders">
+		<mkdir dir="${dist}" />
+		<mkdir dir="${dist-archive}" />
+	</target>
+	
+
+	<!-- Target: Build all -->
+	<target name="Build all" description="Builds all subprojects" depends="init">
+		<ant antfile="${spark-math}/build.xml" dir="${spark-math}" target="jar"/>
+		<ant antfile="${spark-utils}/build.xml" dir="${spark-utils}" target="jar"/>
+		<ant antfile="${spark-core}/build.xml" dir="${spark-core}" target="jar"/>
+		<ant antfile="${spark-internal}/build.xml" dir="${spark-internal}" target="jar"/>
+		<ant antfile="${spark-external}/build.xml" dir="${spark-external}" target="jar"/>
+		<ant antfile="${spark-pl}/build.xml" dir="${spark-pl}" target="jar"/>
+	</target>
+
+
+	<!-- Target: universal-dist -->
+	<target name="universal-dist" depends="Build all" description="Creates Universal distribution">
+		<zip destfile="${dist}/${universal-name}.zip">
+			<fileset refid="basic-files" />
+			<zipfileset dir="${spark}/licenses" prefix="licenses">
+				<include name="**/**" />
+			</zipfileset>
+
+			<fileset refid="libs" />
+			<zipfileset dir="${spark}" prefix="lib">
+				<include name="README" />
+				<include name="LICENSE" />
+				<include name="BatchRunner.properties"/>
+			</zipfileset>
+
+			<zipfileset refid="docs" />
+
+			<zipfileset dir="${spark}/lib" prefix="lib">
+				<include name="*.jar" />
+			</zipfileset>
+
+			<zipfileset dir="${spark}/release" prefix="lib">
+				<include name="*.jar"/>
+				<include name="spark-server.bat" />
+				<include name="spark-client.bat" />
+				<include name="spark-batches.bat" />
+			</zipfileset>
+
+			<zipfileset dir="${spark-pl}/logo">
+				<include name="spark-config.xml" />
+				<include name="config.xml" />
+			</zipfileset>
+
+			<zipfileset dir="${spark}/lib">
+				<include name="logo.jpg" />
+			</zipfileset>
+
+			<zipfileset dir="${spark-pl}/release">
+				<include name="*.jar" />
+			</zipfileset>
+
+			<fileset refid="samples" />
+		</zip>
+
+		<copy tofile="${dist-archive}/${universal-name}-${DSTAMP}.zip">
+			<fileset dir="${dist}">
+				<include name="${universal-name}.zip" />
+			</fileset>
+		</copy>
+	</target>
+
+
+
+	<!-- Target: win-dist -->
+	<target name="win-dist" depends="Build all" description="Creates Windows distribution">
+		<zip destfile="${dist}/${win-name}.zip">
+			<fileset refid="basic-files" />
+			<zipfileset dir="${spark}/Licenses" prefix="licenses">
+				<include name="**/**" />
+			</zipfileset>
+
+			<fileset refid="libs" />
+			<zipfileset dir="${spark}" prefix="lib">
+				<include name="README" />
+				<include name="LICENSE" />
+				<include name="BatchRunner.properties"/>
+			</zipfileset>
+
+			<zipfileset refid="docs" />
+
+			<zipfileset dir="${spark-lib}" prefix="lib">
+				<include name="*.jar" />
+			</zipfileset>
+
+			<zipfileset dir="${spark-release}" prefix="lib">
+				<include name="*.jar" />
+				<include name="spark-server.bat" />
+				<include name="spark-client.bat" />
+				<include name="spark-batches.bat" />
+			</zipfileset>
+			
+			<zipfileset dir="${basedir}/logo">
+				<include name="spark-config.xml" />
+				<include name="config.xml" />
+			</zipfileset>
+
+			<zipfileset dir="${spark-lib}">
+				<include name="logo.jpg" />
+			</zipfileset>
+
+			<zipfileset dir="${release}">
+				<include name="*.jar" />
+				<include name="*.dll" />
+				<include name="*.bat" />
+			</zipfileset>
+
+
+			<zipfileset dir="${spark-release}" prefix="">
+				<include name="*.dll" />
+			</zipfileset>
+
+			<fileset refid="samples" />
+		</zip>
+
+
+		<copy tofile="${dist-archive}/${win-name}-${DSTAMP}.zip">
+			<fileset dir="${dist}">
+				<include name="${win-name}.zip" />
+			</fileset>
+		</copy>
+	</target>
+
+	
+	
+	<!-- Target: mac-dist -->
+	<target name="mac-dist" depends="Build all" description="Creates MacOS distribution">
+		<zip destfile="${dist}/${mac-name}.zip">
+			<fileset refid="basic-files" />
+			<zipfileset dir="${spark}/Licenses" prefix="licenses">
+				<include name="**/**" />
+			</zipfileset>
+
+			<fileset refid="libs" />
+			<zipfileset dir="${spark}" prefix="lib">
+				<include name="README" />
+				<include name="LICENSE" />
+				<include name="BatchRunner.properties"/>
+			</zipfileset>
+
+			<zipfileset refid="docs" />
+
+			<zipfileset dir="${spark-lib}" prefix="lib">
+				<include name="*.jar" />
+			</zipfileset>
+
+			<zipfileset dir="${spark-release}" prefix="lib">
+				<include name="*.jar" />
+			</zipfileset>
+			
+			<zipfileset dir="${basedir}/logo">
+				<include name="spark-config.xml" />
+				<include name="config.xml" />
+			</zipfileset>
+
+			<zipfileset dir="${spark-lib}">
+				<include name="logo.jpg" />
+			</zipfileset>
+
+			<zipfileset dir="${release}">
+				<include name="*.jar" />
+				<include name="*.jnilib" />
+			</zipfileset>
+
+
+			<zipfileset dir="${spark-release}" prefix="">
+				<include name="*.jnilib" />
+			</zipfileset>
+
+			<fileset refid="samples" />
+		</zip>
+
+
+		<copy tofile="${dist-archive}/${mac-name}-${DSTAMP}.zip">
+			<fileset dir="${dist}">
+				<include name="${mac-name}.zip" />
+			</fileset>
+		</copy>
+	</target>
+
+	
+
+	<target name="all" depends="universal-dist,win-dist,mac-dist">
+	</target>
+
+
+	<!-- Target: clean -->
+	<target name="clean" description="Removes all output files">
+		<delete dir="${dist}" />
+	</target>
+</project>
