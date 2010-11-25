@@ -3,7 +3,7 @@ package org.spark.runtime.external.batchrun;
 import java.io.File;
 import java.util.ArrayList;
 
-import org.spark.runtime.data.DataReceiver;
+import org.spark.runtime.external.data.DataReceiver;
 import org.spark.runtime.data.DataRow;
 import org.spark.runtime.external.Coordinator;
 import org.spark.runtime.external.data.DataFilter;

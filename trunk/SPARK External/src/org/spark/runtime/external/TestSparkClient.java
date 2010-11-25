@@ -12,7 +12,7 @@ import org.apache.log4j.PropertyConfigurator;
 import org.spark.runtime.commands.FileTransfer;
 import org.spark.runtime.commands.ModelManagerCommand;
 import org.spark.runtime.data.DataRow;
-import org.spark.runtime.data.LocalDataReceiver;
+import org.spark.runtime.external.data.DataReceiver;
 import org.spark.runtime.internal.manager.IModelManager;
 import org.w3c.dom.Node;
 
@@ -105,7 +105,7 @@ public class TestSparkClient {
 	 * @author Monad
 	 *
 	 */
-	private static class ClientDataReceiver extends LocalDataReceiver implements Runnable {
+	private static class ClientDataReceiver extends DataReceiver implements Runnable {
 		private ObjectInputStream ois;
 		private Socket socket;
 		

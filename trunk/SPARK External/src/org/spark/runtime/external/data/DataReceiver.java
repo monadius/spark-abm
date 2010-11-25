@@ -2,6 +2,7 @@ package org.spark.runtime.external.data;
 
 import java.util.ArrayList;
 
+import org.spark.runtime.data.AbstractDataReceiver;
 import org.spark.runtime.data.DataObject;
 import org.spark.runtime.data.DataObject_State;
 import org.spark.runtime.data.DataRow;
@@ -13,7 +14,7 @@ import com.spinn3r.log5j.Logger;
  * @author Monad
  *
  */
-public abstract class DataReceiver {
+public class DataReceiver extends AbstractDataReceiver {
 	private static final Logger logger = Logger.getLogger();
 	
 	/* List of all data consumers */
@@ -24,9 +25,9 @@ public abstract class DataReceiver {
 
 	
 	/**
-	 * Default protected constructor
+	 * Default constructor
 	 */
-	protected DataReceiver() {
+	public DataReceiver() {
 		consumers = new ArrayList<DataFilter>();
 	}
 	

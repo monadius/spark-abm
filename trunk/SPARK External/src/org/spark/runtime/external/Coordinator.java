@@ -15,8 +15,7 @@ import org.spark.runtime.commands.*;
 import org.spark.runtime.data.DataCollectorDescription;
 import org.spark.runtime.data.DataObject;
 import org.spark.runtime.data.DataObject_State;
-import org.spark.runtime.data.DataReceiver;
-import org.spark.runtime.data.LocalDataReceiver;
+import org.spark.runtime.external.data.DataReceiver;
 import org.spark.runtime.external.data.DataFilter;
 import org.spark.runtime.external.data.DataSetTmp;
 import org.spark.runtime.external.gui.*;
@@ -53,7 +52,7 @@ public class Coordinator {
 	/* Main model manager */
 	private IModelManager modelManager;
 	/* Main data receiver */
-	private LocalDataReceiver receiver;
+	private DataReceiver receiver;
 
 	/**************** Files **********************************/
 	/* Current directory */
@@ -120,7 +119,7 @@ public class Coordinator {
 	 * @param manager
 	 * @param receiver
 	 */
-	private Coordinator(IModelManager manager, LocalDataReceiver receiver, boolean noGUI) {
+	private Coordinator(IModelManager manager, DataReceiver receiver, boolean noGUI) {
 		this.modelManager = manager;
 		this.receiver = receiver;
 		this.currentDir = new File(".");
@@ -171,7 +170,7 @@ public class Coordinator {
 	 * @param receiver
 	 * @param noGUI
 	 */
-	public static void init(IModelManager manager, LocalDataReceiver receiver, boolean noGUI) {
+	public static void init(IModelManager manager, DataReceiver receiver, boolean noGUI) {
 		if (coordinator != null) {
 			logger.error("Coordinator is already created");
 			throw new Error("Illegal operation");
@@ -188,7 +187,7 @@ public class Coordinator {
 	 * @param manager
 	 * @param receiver
 	 */
-	public static void init(IModelManager manager, LocalDataReceiver receiver) {
+	public static void init(IModelManager manager, DataReceiver receiver) {
 		init(manager, receiver, false);
 	}
 	
@@ -487,7 +486,7 @@ public class Coordinator {
 
 			modelManager.sendCommand(new Command_LoadModel(modelFile,
 					modelManager));
-			modelManager.sendCommand(new Command_AddLocalDataSender(receiver));
+			modelManager.sendCommand(new Command_AddDataReceiver(receiver));
 
 			// Root node
 			Node root = xmlDoc.getFirstChild();
@@ -829,7 +828,7 @@ public class Coordinator {
 		}
 
 		ModelManager_Basic manager = new ModelManager_Basic();
-		LocalDataReceiver receiver = new LocalDataReceiver();
+		DataReceiver receiver = new DataReceiver();
 
 		new Thread(manager).start();
 

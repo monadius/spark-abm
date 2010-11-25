@@ -29,9 +29,8 @@ import org.spark.runtime.data.DataObject_SpaceAgents;
 import org.spark.runtime.data.DataObject_SpaceLinks;
 import org.spark.runtime.data.DataObject_Spaces;
 import org.spark.runtime.data.DataRow;
-import org.spark.space.SpaceAgent;
-import org.spark.utils.Vector;
-import org.spark.utils.Vector4d;
+import org.spark.math.Vector;
+import org.spark.math.Vector4d;
 
 import com.spinn3r.log5j.Logger;
 import com.sun.opengl.util.Screenshot;
@@ -738,13 +737,16 @@ public class JOGLRender extends Render implements GLEventListener,
 				else
 					gl.glColor3d(color.x, color.y, color.z);
 				switch (shapes[i]) {
-				case SpaceAgent.CIRCLE:
+//				case SpaceAgent.CIRCLE:
+				case 1:
 					gl.glCallList(circle);
 					break;
-				case SpaceAgent.SQUARE:
+//				case SpaceAgent.SQUARE:
+				case 2:
 					gl.glCallList(square);
 					break;
-				case SpaceAgent.TORUS:
+//				case SpaceAgent.TORUS:
+				case 3:
 					gl.glCallList(donnut);
 					break;
 				}
@@ -816,13 +818,16 @@ public class JOGLRender extends Render implements GLEventListener,
 				gl.glColor3d(color.x, color.y, color.z);
 			
 			switch (shapes[i]) {
-				case SpaceAgent.CIRCLE:
+//				case SpaceAgent.CIRCLE:
+				case 1:
 					glu.gluSphere(ball, 1, 8, 8);
 					break;
-				case SpaceAgent.SQUARE:
+//				case SpaceAgent.SQUARE:
+				case 2:
 					glu.gluSphere(cube, 1, 4, 4);
 					break;
-				case SpaceAgent.TORUS:
+//				case SpaceAgent.TORUS:
+				case 3:
 					// TODO: not supported
 					// gl.glCallList(donnut);
 					break;
@@ -936,13 +941,16 @@ public class JOGLRender extends Render implements GLEventListener,
 				else
 					gl.glColor3d(color.x, color.y, color.z);
 				switch (shapes[i]) {
-				case SpaceAgent.CIRCLE:
+//				case SpaceAgent.CIRCLE:
+				case 1:
 					gl.glCallList(circle);
 					break;
-				case SpaceAgent.SQUARE:
+//				case SpaceAgent.SQUARE:
+				case 2:
 					gl.glCallList(square);
 					break;
-				case SpaceAgent.TORUS:
+//				case SpaceAgent.TORUS:
+				case 3:
 					gl.glCallList(donnut);
 					break;
 				}

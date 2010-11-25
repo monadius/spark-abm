@@ -11,6 +11,7 @@ import org.spark.runtime.external.Parameter;
 import org.spark.runtime.external.batchrun.BatchRunController;
 import org.spark.runtime.external.batchrun.BatchRunManager;
 import org.spark.runtime.external.batchrun.ParameterSweep;
+import org.spark.runtime.external.data.DataReceiver;
 import org.spark.runtime.internal.manager.ModelManager_Basic;
 import org.spark.utils.XmlDocUtils;
 
@@ -267,7 +268,7 @@ public class BatchRunner {
 
 		// Initialize main objects
 		ModelManager_Basic manager = new ModelManager_Basic();
-		LocalDataReceiver receiver = new LocalDataReceiver();
+		DataReceiver receiver = new DataReceiver();
 
 		new Thread(manager).start();
 
