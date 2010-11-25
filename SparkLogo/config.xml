@@ -1,15 +1,8 @@
 <config>
-	<spark-path>C:\Work\My Projects\Eclipse\Spark\release\spark.jar</spark-path>
+	<spark-core-path>C:\Work\My Projects\SPARK\Spark\release\spark-core.jar</spark-core-path>
+	<spark-external-path>C:\Work\My Projects\SPARK\Spark\release\spark-external.jar</spark-external-path>
 	<recent-projects>
-		<file>C:\Work\My Projects\Eclipse\SparkLogo\samples\DFU\DFU project.xml</file>
-		<file>C:\Work\My Projects\Eclipse\SparkLogo\samples\InnateImmuneResponse Ver1\Innate Immune Response.xml</file>
-		<file>C:\Work\My Projects\Eclipse\SparkLogo\Models\StemCells3d\StemCells 3d.xml</file>
-		<file>C:\Work\My Projects\Eclipse\SparkLogo\Models\HCC\HCC Project.xml</file>
-		<file>C:\Work\My Projects\Eclipse\SparkLogo\Models\BMS\BMS Model.xml</file>
-		<file>C:\Work\My Projects\Eclipse\SparkLogo\Models\OpenSteer2\OpenSteer2 Project.xml</file>
-		<file>C:\Work\My Projects\Eclipse\SparkLogo\Models\RSV multiple spaces\RSV multiple spaces.xml</file>
-		<file>C:\Work\My Projects\Eclipse\SparkLogo\Models\UTI\UTI.xml</file>
-		<file>C:\Work\My Projects\Eclipse\SparkLogo\Models\NewPhysicalModel\NewPhysModel.xml</file>
-		<file>C:\Work\My Projects\Eclipse\SparkLogo\Models\SCI3\SCI3 Project.xml</file>
+		<file>C:\Work\My Projects\SPARK\SparkLogo\samples\Fractals\Fractals.xml</file>
+		<file>C:\Work\My Projects\SPARK\SparkLogo\samples\PhysModel2\Spark PhysModel2.xml</file>
 	</recent-projects>
 </config>

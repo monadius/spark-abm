@@ -17,7 +17,7 @@
 		<pathelement path="${java.class.path}" />
 	</path>
 
-	<!-- Here, the runtime libraries are stored -->
+	<!-- runtime libraries -->
 	<path id="libraries">
 		<pathelement location="${lib}" />
 		<fileset dir="${lib}">
@@ -66,9 +66,6 @@
 
 
 	<target name="clean">
-<!--
-		<delete dir="${classes}" />
-		<delete dir="${dist}" />
--->
+		<delete dir="${classes}"/>
 	</target>
 </project>

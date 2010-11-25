@@ -313,16 +313,16 @@ public class Project {
 	 * Compiles java files into byte code inside the output directory
 	 * 
 	 * @param rtPath
-	 * @param sparkPath
+	 * @param sparkCorePath
 	 */
-	public void compile(File sparkPath) throws Exception {
+	public void compile(File sparkCorePath) throws Exception {
 		/*
 		 * if (rtPath == null || !rtPath.exists()) { throw new Exception(
 		 * "Path to rt.jar is invalid: use options menu to set up this path"); }
 		 */
-		if (sparkPath == null || !sparkPath.exists()) {
+		if (sparkCorePath == null || !sparkCorePath.exists()) {
 			throw new Exception(
-					"Path to spark.jar is invalid: use options menu to set up this path");
+					"Path to spark-core.jar is invalid: use options menu to set up this path");
 		}
 
 		// Arguments of the compiler
@@ -367,7 +367,7 @@ public class Project {
 		compilerArgs.add("1.5");
 
 		compilerArgs.add("-classpath");
-		compilerArgs.add(sparkPath.getPath());
+		compilerArgs.add(sparkCorePath.getPath());
 
 		for (int i = 0; i < javaFiles.size(); i++) {
 			compilerArgs.add(javaFiles.get(i).getPath());
@@ -435,10 +435,10 @@ public class Project {
 	/**
 	 * Runs the project in SPARK
 	 */
-	public void runInSpark(File sparkPath) throws Exception {
-		if (sparkPath == null || !sparkPath.exists()) {
+	public void runInSpark(File sparkExternalPath) throws Exception {
+		if (sparkExternalPath == null || !sparkExternalPath.exists()) {
 			throw new Exception(
-					"Path to spark.jar is invalid: use options menu to set up this path");
+					"Path to spark-external.jar is invalid: use options menu to set up this path");
 		}
 
 		// Set up output directory
@@ -478,7 +478,7 @@ public class Project {
 		StringBuilder cmd = new StringBuilder(
 				"java -Xmx512m -Xms128m -Dsun.java2d.d3d=false -jar ");
 		cmd.append('\"');
-		cmd.append(sparkPath.getPath());
+		cmd.append(sparkExternalPath.getPath());
 		cmd.append('\"');
 
 		cmd.append(" \"");
@@ -489,7 +489,7 @@ public class Project {
 
 		Process proc = Runtime.getRuntime().exec(
 				new String[] { "java", "-Xmx512m", "-Xms128m",
-						"-Dsun.java2d.d3d=false", "-jar", sparkPath.getPath(),
+						"-Dsun.java2d.d3d=false", "-jar", sparkExternalPath.getPath(),
 						xmlFiles.get(0).getPath() });
 
 		InputStream inputStream = proc.getInputStream();
