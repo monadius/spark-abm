@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V5.0//EN" "../DocBook/docbook-5.0/dtd/docbook.dtd">
+<article>
+	<info>
+		<title>Installation Guide</title>
+		<author>
+			<personname>Alexey Solovyev</personname>
+		</author>
+	</info>
+	<section>
+		<title>Binary distribution</title>
+		<para>
+			To run SPARK you need to have Java Runtime Environment (JRE) to be
+			installed on your machine. It is already installed on almost all
+			operation systems.
+			You can test whether you have Java or not by
+			visiting the Web page
+			<link xlink:href="http://java.com/en/download/help/testvm.xml">
+				http://java.com/en/download/help/testvm.xml
+			</link>
+			If you don't have Java on your computer, then follow instructions on
+			the page to get it.
+		</para>
+
+		<para>
+			To install SPARK. 
+			first thing to do is to get the
+			binary distribution of SPARK. You
+			can download it from the SPARK
+			official site:
+			<link xlink:href="http://www.pitt.edu/~cirm/spark/download.html">
+				http://www.pitt.edu/~cirm/spark/download.html
+			</link>
+			Choose the distribution for your operation system and download it.
+			Extract the content of the archive into the folder on your computer
+			(name it as you wish but it will be assumed that SPARK is extracted
+			into the folder named 'spark'). You should get the following files
+			and folders:
+			<itemizedlist>
+				<listitem>
+					<para>bin compiled binary files of SPARK</para>
+				</listitem>
+
+				<listitem>
+					<para>lib libraries used by SPARK</para>
+				</listitem>
+
+				<listitem>
+					<para>docs documentation</para>
+				</listitem>
+
+				<listitem>
+					<para>src source code of SPARK</para>
+				</listitem>
+
+				<listitem>
+					<para>Licenses information about libraries used by SPARK
+					</para>
+				</listitem>
+
+				<listitem>
+					<para>build.xml script for building SPARK from source code
+					</para>
+				</listitem>
+
+				<listitem>
+					<para>README read this file before using SPARK</para>
+				</listitem>
+
+				<listitem>
+					<para>LICENSE license file</para>
+				</listitem>
+			</itemizedlist>
+		</para>
+		<para>
+			Now you can run SPARK. Go into the bin folder and depending on your
+			operation system, you may execute the command script to run SPARK:
+			<itemizedlist>
+				<listitem>
+					<para>Windows: execute spark.bat or double click spark.jar</para>
+				</listitem>
+				<listitem>
+				  <para>Linux: 	<code>java -Dsun.java2d.d3d=false -jar spark.jar</code></para>
+				</listitem>
+				<listitem>
+					<para>MacOS: double click spark.jar</para>
+				</listitem>
+			</itemizedlist>
+			
+		 Alternatively, you may use the following command to start SPARK GUI:
+			<code>java -Dsun.java2d.d3d=false -jar spark.jar</code>
+
+			<note>
+				<para>
+					You may omit the parameter
+					<code>-Dsun.java2d.d3d=false</code>
+					but then there will be some minor graphical problems.
+				</para>
+			</note>
+
+		
+			Alternatively, depending on your operation system, you may execute
+			the
+			command script to run SPARK:
+			<itemizedlist>
+				<listitem>
+					<para>Windows: execute spark.bat or double clcik spark.jar</para>
+				</listitem>
+<!--				<listitem>
+					<para>Linux: execute ???</para>
+				</listitem>
+				-->
+				<listitem>
+					<para>MacOS: double click spark.jar</para>
+				</listitem>
+			</itemizedlist>
+		</para>
+
+	</section>
+
+	<section>
+		<title>Source code distribution</title>
+		<para>
+			Download the source code distribution from the SPARK web site:
+			<link xlink:href="http://www.pitt.edu/~cirm/spark/download.html">
+				http://www.pitt.edu/~cirm/spark/download.html
+			</link>
+			Extract the archive into the folder where you want to install SPARK.
+			You get the following files in the SPARK folder:
+			<itemizedlist>
+				<listitem>
+					<para>lib libraries used by SPARK (this folder is empty now)
+					</para>
+				</listitem>
+
+				<listitem>
+					<para>
+						docs documentation (only this installation guide is
+						included; other
+						documents can be found in any binary distributions
+						or on the SPARK
+						web site
+						<link xlink:href="http://www.pitt.edu/~cirm/spark">
+							http://www.pitt.edu/~cirm/spark
+						</link>
+					</para>
+				</listitem>
+
+				<listitem>
+					<para>src source code of SPARK</para>
+				</listitem>
+
+				<listitem>
+					<para>Licenses information about libraries used by SPARK
+					</para>
+				</listitem>
+
+				<listitem>
+					<para>build.xml script for building SPARK from source code
+					</para>
+				</listitem>
+
+				<listitem>
+					<para>README read this file before using SPARK</para>
+				</listitem>
+
+				<listitem>
+					<para>LICENSE license file</para>
+				</listitem>
+			</itemizedlist>
+		</para>
+
+		<para>
+			To compile the source code you need to have Java Development Kit
+			(JDK) and
+			Apache Ant. JDK can be obtained at
+			<link xlink:href="http://java.sun.com/javase/downloads/index.jsp">
+				http://java.sun.com/javase/downloads/index.jsp
+			</link>
+			,
+			Apache Ant can be downloaded from
+			<link xlink:href="http://ant.apache.org/">
+				http://ant.apache.org/
+			</link>
+		</para>
+		<para>
+			Additionally, you need to get two libraries for building SPARK. One
+			library
+			is called JOGL (Java OpenGL) and can be obtained at the site
+			<link xlink:href="https://jogl.dev.java.net">
+				https://jogl.dev.java.net
+			</link>
+			Another library is JFreeChart
+			<link xlink:href="http://www.jfree.org/jfreechart">
+				http://www.jfree.org/jfreechart
+			</link>
+			Please choose the right distrubations according to your computer architecture.
+		</para>
+		<para>
+			Extract the JOGL distribution into some folder. Go to lib folder of JOGL distributation. And then copy
+			files jogl.jar and gluegen-rt.jar into the SPARK lib folder. Also
+			copy all dll-files (jnilib-files for MacOS, so-files for Linux) into
+			the lib folder or directly into the SPARK bin folder (if it is
+			already created).
+			Next extract the following files from the JFreeChart
+			distribution lib folder:
+			jfreechart-x.x.x.jar and jcommon-x.x.x.jar (x.x.x stands
+			for the version).Rename these files as jfreechart.jar and jcommon.jar and put them into the SPARK lib folder.
+		</para>
+		<para>
+			The last step is simple: go to the SPARK root folder and type
+			<code>ant install</code>
+			in the command line. After that the source code will be compiled and
+			the folder bin will be created with SPARK binary files. Now you can
+			run spark with the command
+			<code>java -Dsun.java2d.d3d=false -jar spark.jar</code>
+		</para>
+	</section>
+
+
+	<section>
+		<title>Running and Compiling SPARK models</title>
+		<para>
+			You can get several SPARK models from the SPARK web site. All models
+			contain both the source code and precompiled binary files. For example, 
+			to run Gary An's Toy Infection Model, first start SPARK,
+			from "Main Frame", click "File", select "ToyInfectionModel.xml", then the model should be fired up.
+		</para>
+		<para>
+			To compile the model source code, you need first to modify the model
+			build.xml file. Open it and modify the 'lib' property. You need to specify
+			the path to the spark.jar file (that is, to the spark/bin folder). After
+			that just type <code>ant</code> without any
+			parameters in the command line in the root folder of the model. 
+			The binary model files will be created and you will be able to load model
+			in the SPARK GUI.
+		</para>
+	</section>
+
+</article>

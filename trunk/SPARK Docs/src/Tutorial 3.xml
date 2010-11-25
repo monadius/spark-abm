@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V5.0//EN" "../DocBook/docbook-5.0/dtd/docbook.dtd">
+<article>
+	<info>
+		<title>SPARK: The First Model</title>
+		<author>
+			<personname>Alexey Solovyev</personname>
+		</author>
+		<abstract>
+			<para>
+				In this tutorial I'll show how to create the minimal working
+				SPARK model in Eclipse.
+			</para>
+		</abstract>
+	</info>
+
+	<section>
+		
+	</section>
+</article>

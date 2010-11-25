@@ -1,0 +1,9 @@
+Get text from the doc-file
+
+Important:
+Description of the framework as a whole
+Individual description of all components (only interfaces)
+How a typical model looks like (what classes and files should be defined and
+implemented)
+xml-model file
+

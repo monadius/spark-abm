@@ -1,0 +1,411 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V5.0//EN" "../DocBook/docbook-5.0/dtd/docbook.dtd">
+<article>
+	<info>
+		<title>SPARK: The Introduction</title>
+		<author>
+			<personname>Alexey Solovyev</personname>
+		</author>
+		<abstract>
+			<para>
+				In this tutorial I'll introduce SPARK graphical user interface
+				and present some basic concepts of SPARK.
+			</para>
+		</abstract>
+	</info>
+
+	<section>
+		<title>Where to get additional information</title>
+		<para>
+			Additional information can be
+			found on the official SPARK site:
+			<link xlink:href="http://www.pitt.edu/~cirm/spark">
+				http://www.pitt.edu/~cirm/spark
+			</link>
+			Another source of knowledge is the Reference Manual. It is more
+			advanced then
+			tutorials and it is suggested first read tutorials and
+			then read Reference Manual for
+			deeper understanding of SPARK. If you
+			are going to develop your own models, then the
+			Reference Manual is the
+			most important document to read because it contains all
+			information
+			about internal structure of the SPARK.
+		</para>
+	</section>
+
+	<section>
+		<title>How to install and start</title>
+		<para>
+			All information about SPARK installation process can be found in
+			the Installation Guide. There are two main options: installing
+			binary
+			distribution of the SPARK framework or building the framework
+			from the
+			source code. If you are not going to modify the SPARK source
+			code then
+			the first option is the reasonable choice.  		
+		</para>
+		<para>
+			After installation you get the folder containing all files of the
+			SPARK framework. To run the SPARK GUI go to the bin subfolder and
+			type in the command line
+			<code>java -Dsun.java2d.d3d=false -jar spark.jar</code>
+			or execute the spark.bat script for starting SPARK.
+		</para>
+	</section>
+
+	<section>
+		<title>GUI Description</title>
+		<para>
+			After starting SPARK you will see the following
+			window:
+			<figure>
+				<title>Main Window</title>
+				<mediaobject>
+					<imageobject>
+						<imagedata align="left" width="4in" format="PNG"
+							fileref="images/MainWindow.png" />
+					</imageobject>
+				</mediaobject>
+			</figure>
+			What you see is the main window of the SPARK GUI.
+			There are several
+			buttons on the top panel,
+			but right now they are not working because
+			no model is
+			loaded. So let's explore the menu first. Traditionally,
+			the first menu is
+			called File. The most important functions are in
+			this menu, for
+			example, Exit. The next important function is Open: its
+			purpose is to
+			open model file and load the model.
+		</para>
+		<para>
+			The next menu is called Options. It contains two items: Batch
+			Run Parameters
+			and Data Layer Parameters. Later, the purpose of this
+			menu will be clear.
+			The last menu is called Window. In this menu you
+			will be able to see
+			the list of all other windows which are used in
+			the model. Clicking on the
+			window names it is possible to close/open
+			the windows.
+		</para>
+		<para>
+			Without any delays, let's load some model.
+		</para>
+	</section>
+
+	<section>
+		<title>Loading the model</title>
+		<para>
+			Click Open from the menu File.
+			The standard dialog of file selection
+			should
+			appear.
+			It looks as in the picture:
+			<figure>
+				<title>Open Dialog</title>
+				<mediaobject>
+					<imageobject>
+						<imagedata align="left" width="4in" format="PNG"
+							fileref="images/OpenDialog.png" />
+					</imageobject>
+				</mediaobject>
+			</figure>
+			What you need to find is
+			the model file. SPARK model files are regular
+			xml-files with the specific content. Go to the folder
+			containing the
+			Toy Infection Model (if you have not got this
+			model yet then look in
+			the Installation Guide how to get this
+			model).
+			You will see a file named
+			'ToyInfectionModel.xml', select it and press
+			open button. After short delay model
+			will be loaded and many new
+			windows appear.
+			<figure>
+				<title>Toy Infection Model</title>
+				<mediaobject>
+					<imageobject>
+						<imagedata align="left" width="6in" format="PNG"
+							fileref="images/ToyInfectionModel.png" />
+					</imageobject>
+				</mediaobject>
+			</figure>
+			It looks much more complicated then
+			before. In the next section I'll
+			describe everything what you see now.
+		</para>
+	</section>
+
+	<section>
+		<title>GUI Windows</title>
+		<para>
+			The window below the main window has title Model Parameters.
+			Indeed, what you see in this window are the parameters related to
+			the
+			model. You may change this parameters even when the model is
+			running
+			and all changes take effect immediately.
+		</para>
+
+		<para>
+			Another window below the main window is called Methods. It
+			contains
+			all methods that can be invoked during the model execution.
+			The Toy Infection
+			Model has only one such a method called Infect. If
+			you click on the
+			Infect button then the number of grey circles in the
+			main window will
+			increase (these grey circles are, in fact, the
+			infection agents).  
+		</para>
+
+		<para>
+			To the left you see four chart windows. In these windows charts
+			of different variables associated with the model will be plotted.
+			If
+			you right click on any chart window, then the menu appear where
+			you
+			can change the properties of the given chart window or export
+			the
+			chart as a picture.
+		</para>
+
+		<para>
+			Windows below the charts are displays (or renders). They are
+			used
+			to show different views of the model. 
+		</para>
+		
+		<para>
+			Now look closer inside the main window and displays.
+			In the main window you now see the visual representation of the Toy
+			Infection Model. Small white circles are
+			the inflammatory cells, bigger grey circles
+			are the infection agents. You will learn more
+			about this model and how it	was created in the next tutorials.
+			Very rough description is the following: grey circles are bad guys and
+			white circles are good ones. White circles move around meanwhile
+			grey circles stay still. Each 100 steps new grey circles are created
+			near exiting grey circles (infection is propogating). White circles
+			can kill grey circles if they are close to them. In order to do so they
+			secrete a so called cidal compound which not only kills grey circles but
+			also attracts another white circles. The amount of the cidal compound
+			secreted by the inflammatory cell is regulated by the parameter 'Cidal
+			Compound Production'. The infection agent also secrete a toxin. Both
+			toxin and cidal compound destroy the tissue. 
+		</para>
+		
+		<para>
+			Inflammatory cells (white circles) and infection agents (grey circles)
+			are agents in the terms of the SPARK framework. They are surrounded by
+			the space where they move or propagate. Note that the space
+			in this model has the topology of the torus. It means that the space
+			has no boundary: if agent move to the upper edge of the space (as it appear
+			in the window) then it reappear at the bottom of the window, and the same
+			is true for the left-right edges. The tissue life, the concentrations
+			of cidal compound and toxin are modeled as data layers. You may think
+			about the data layer as about numerical values assigned to each point of
+			the space. For example, we assume that space is covered by tissue everywhere
+			and therefore we can ask what is the tissue life at each point. 
+		</para>
+		
+		<para>
+			Data layers can be visualized. Right click on the main window or on
+			any render window and select Properties from the pop-up menu.
+			<figure>
+				<title>Render Properties</title>
+				<mediaobject>
+					<imageobject>
+						<imagedata align="left" width="4in" format="PNG"
+							fileref="images/RenderProperties.png" />
+					</imageobject>
+				</mediaobject>
+			</figure>
+			At the bottom part of the properties window you can choose which
+			data layer should be visualized in the window. In the upper part
+			there are options of agents visualization: they can be transparent,
+			without border, or invisible.
+		</para>
+		
+		<para>
+			Moreover, it is possible to change the colors of the data layer visualization.
+			Go to the menu Options and choose Data Layer Parameters.
+		</para>
+	</section>
+
+	<section>
+		<title>Running the model</title>
+		<para>
+			It is time to run the model. In the main window there are two buttons
+			Setup and Start, one slider, and Synchronized checkbox. Click Setup button
+			first. You will see that new arrangement of agents was created. Setup button
+			initialize the model and resets the previous simulation. Now click Start button.
+			Agents begin to move. At any time you may click the Pause button and then resume
+			the simulation clicking the Start button. If you click the Setup button,
+			then everything will be reseted. During the model execution to the right
+			from the buttons the number appear showing how many steps (ticks) passed
+			since the model start. You can change the simulation speed using the
+			slider. If you want the model to run as fast as possible then uncheck the
+			Synchronized checkbox. After that the model execution process will not wait
+			the display updates. As the result the visualization will be inaccurate
+			but the simulation process will run much faster.
+			<warning><para>If your computer has no multiple core processor, then
+			unchecking the Synchronized checkbox may result in the monopolization
+			of model execution process of all CPU time. It will be possible to
+			close the model or turning on the synchronization again but it will
+			require patience.</para></warning>
+		</para>
+	</section>
+
+	<section>
+		<title>Saving simulation results and batch runs</title>
+		<para>
+			It is possible to save the data collected during the simulation. Just
+			click the Save button in the Dataset frame.
+			<figure>
+				<title>Dataset frame</title>
+				<mediaobject>
+					<imageobject>
+						<imagedata align="left" width="124px" format="PNG"
+							fileref="images/DatasetFrame.png" />
+					</imageobject>
+				</mediaobject>
+			</figure>
+			The standard dialog will appear where you can specify the name of a 
+			data file. All data will be saved as a plain text file which can be
+			easily opened in Microsoft Excel (or in more serious statistical programs
+			like S-Plus).			
+		</para>
+		<para>
+			Sometime it is required to run model several times and save the
+			results after each run. To simplify this procedure, you can use
+			batch run feature of SPARK. Go to Options menu and click Batch Run Parameters.
+			<figure>
+				<title>Render Properties</title>
+				<mediaobject>
+					<imageobject>
+						<imagedata align="left" width="123px" format="PNG"
+							fileref="images/BatchrunDialog.png" />
+					</imageobject>
+				</mediaobject>
+			</figure>
+			The first line in the batch run dialog is the number of steps (ticks)
+			in each run. The second line is the number of runs. And the third line
+			is the [name of file] where results will be saved. Batch run works as follows:
+			first you specify all parameters and click OK. Then you click Setup button
+			and Start button (you may also turn off synchronization and close some windows
+			for increasing simulation speed). After that the simulation will run exactly
+			specified number of steps. When the maximal number of steps is reached, the
+			results are automatically saved in the file named [name of file][#run].txt, where
+			[name of file] is the name specified in the batch run parameters and [#run] is
+			the number of the current run. After the results are saved, model is reseted
+			and new simulation starts. 
+		</para>
+	</section>
+
+	<section>
+		<title>Model xml-file</title>
+		<para>
+			In order to open a model in the SPARK GUI, you need to open model's
+			xml-file. This file contains the description of main model components
+			and all windows: charts, renders, parameters. When you close the model,
+			all changes are written in this xml-file. Changes include: resizing or
+			moving model windows, changing the data layer visualization parameters.
+			Even if you are not going to develop your own SPARK models, the basic
+			knowledge about structure of the model xml-file will be useful. Look
+			at the ToyInfectionModel.xml.
+			
+			<programlisting language="xml">
+			<![CDATA[
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<model>
+	<classpath path="/bin/ToyInfectionModel.jar" />
+	<setup>ToyInfectionModel.Model</setup>
+	<mainframe height="591" width="575" x="-2" y="2" />
+	<parameterframe height="185" width="662" x="576" y="0">
+		<parameter get="getYesToxin" name="Toxin?" set="setYesToxin"
+			type="Boolean" widget="OnOff" />
+		<parameter get="getInitialInfectionNumber" max="2000" min="0"
+			name="Initial Infection Number" set="setInitialInfectionNumber" 
+			type="Integer" widget="Slider" />
+		<parameter get="getChemotaxisThreshold" max="2" min="0"
+			name="Chemotaxis Threshold" set="setChemotaxisThreshold" step="0.1"
+			type="Double" widget="Slider" />
+		<parameter get="getCidalCompoundProduction" max="100" min="0"
+			name="Cidal Compound Production" set="setCidalCompoundProduction"
+			step="0.5" type="Double" widget="Slider" />
+	</parameterframe>
+
+	<invokeframe height="115" width="123" x="644" y="595">
+		<method method="infect" name="Infect" />
+	</invokeframe>
+
+	<renderframe height="290" width="325" x="-3" y="582">
+		<datalayerstyle name="toxin" selected="true" />
+	</renderframe>
+	<renderframe height="300" name="Cidal Compound" width="322"
+		x="322" y="580">
+		<datalayerstyle name="cidal-compound" selected="true" />
+	</renderframe>
+
+	<agent>ToyInfectionModel.InflamCell</agent>
+	<agent>ToyInfectionModel.InfectAgent</agent>
+
+	<datalayer color1="0.0;1.0;0.0" color2="1.0;0.0;0.0" name="tissue-life"
+		val1="100.0" val2="0.0" />
+	<datalayer color1="0.6;1.0;1.0" color2="1.0;0.0;0.0" name="toxin"
+		val1="0.0" val2="7.0" />
+	<datalayer color1="0.6;1.0;1.0" color2="0.0;0.0;1.0" name="cidal-compound"
+		val1="0.0" val2="7.0" />
+
+	<chart height="196" interval="4" method="getInfectAgentsNumber"
+		name="Infect agents" width="329" x="568" y="401" />
+	<chart height="229" interval="4" method="getTissueDamage" 
+		name="Total tissue damage" width="320" x="573" y="179" />
+	<chart height="223" interval="4" method="getCidalCompound" 
+		name="Total cidal compound"	width="350" x="892" y="180" />
+	<chart height="199" interval="4" method="getToxin" 
+		name="Toxin" width="346" x="896" y="398" />
+
+	<dataset height="162" interval="2" name="Dataset" width="124" x="768" y="596">
+		<item get="getInfectAgentsNumber" name="Infect Agents" />
+		<item get="getTissueDamage" name="Tissue Damage" />
+		<item get="getCidalCompound" name="Cidal Compound" />
+		<item get="getToxin" name="Toxin" />
+	</dataset>
+
+</model>			]]>
+			</programlisting>
+			This file is quite self-explanatory (if you know a little of xml). The root
+			element is the model element. Next two lines defines the path to the
+			binary files of the model and the model main class which is used
+			for model initialization (setup method). Next the parameter frame
+			is described. The specification of the method (invokation) frame and
+			two render frames follow. Agents and datalayers are described next. Last
+			four lines are descriptions of the chart frames (windows).
+		</para>
+	</section>
+
+	<section>
+		<title>What's next?</title>
+		<para>
+			In the next tutorial I'll describe how to create
+			models in the SPARK. The first model will be just the simplest
+			possible model in the SPARK. You will see that it is not required
+			to write many lines of code to prepare working SPARK model. Our aim
+			is to present the detailed description of the Toy Infection Model and
+			we will do this in the following tutorials after learning all basic
+			concepts of the SPARK framework.
+		</para>
+	</section>
+</article>

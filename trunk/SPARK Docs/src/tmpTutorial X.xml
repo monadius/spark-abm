@@ -1,0 +1,461 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V5.0//EN" "../DocBook/docbook-5.0/dtd/docbook.dtd">
+<article>
+	<info>
+		<title> SPARK: creating the first model with Eclipse (Gary An's Toy
+			Infection Model)
+	</title>
+		<author>
+			<personname>
+				Alexey Solovyev
+	</personname>
+		</author>
+	</info>
+
+	<section>
+		<title>Installing Eclipse</title>
+		<para>Before you start the development of the first model using
+			SPARK you need to
+			obtain good tools. All SPARK models are written in
+			Java programming language. So
+			the first step before doing anything in
+			SPARK is to learn this programming
+			language. Probably, this is the
+			main drawback of SPARK (especially compared to
+			NetLogo) since the
+			process of learning Java is not the simplest one. But if you are
+			already familiar with this language or know other object oriented
+			languages
+			such as C++ or C#, then studying basics of Java will be very
+			easy (I think that among
+			triple C++, Java, C#, the Java language is
+			the easiest one to learn, though not the
+			easiest one to program on).
+			All Java-related information can be found on the
+			site:
+			[url/]
+			Particullary easy and basic tutorials on Java are:
+			[url/] [Here is one
+			good news: I will try to present everything in the manner which
+			will
+			not involve any knowledge in Java or OOP. I shall cover the creationg
+			of the
+			model in SPARK step by step with detailed explanations. If you
+			just repeat all my
+			steps then at least you will create the SPARK model
+			and also along the way you learn
+			some basic concepts of Java.] 
+		</para>
+		<para> It is possible to write any Java program just using the Notepad
+			in Windows. But
+			nobody will do this. Instead it is much more
+			convenient to work with specially
+			designated tools for writing Java
+			programs. One of the most popular tools, or
+			IDE, for Java is called
+			Eclipse which is developed by the IBM corporation. The
+			main advantage
+			of this IDE is that it is completely free. So let's download and
+			install it. Go to the site
+			[url/], choose the following Eclipse
+			version: [eclipse], download it. Now
+			follow installation instructions
+			to complete Eclipse setup process. It worth
+			to mention that you don't
+			need Java to be installed on your computer to be able to
+			run Eclipse
+			and write Java programs in it: everything is already included in the
+			Eclipse distributive [verify this] 
+		</para>
+
+	</section>
+
+	<section>
+		<title>General description of the biological model</title>
+		<para> Before we continue with programming let's first decide what we
+			want to
+			program. Of course, we want to create a biological model in
+			the SPARK. Moreover,
+			we already have in mind one particular model: Toy
+			Infection Model by Dr. Gary An
+			[reference]. So let study this model
+			closer. This model is a model of
+			inflammation, the response of the
+			immune system on the infection.
+			[blah-blah-blah] 
+			</para>
+	</section>
+
+	<section>
+		<title>Main components: agents, space, data layers
+		</title>
+		<para> Let me introduce the main concepts of SPARK. They are agents,
+			spaces, and data
+			layers. First of all agents. The simplest way to
+			think about an agent is that it is
+			something that can move around and
+			do some work. The key word here is 'do'.
+			Actually, agents can be
+			immobile of they even can be invisible entities. But the
+			main thing
+			about agents is that they can do something. What they can do exactly
+			is
+			determined by the rules and by the modeler. The main purpose of ABM
+			is to use simple
+			rules for individual agents which result in complex
+			global system behavior. In
+			SPARK are by default should do some work
+			each simulation step. There are two main
+			types of agents in SPARK:
+			those who can be visualized, or, more precisely, are
+			allowed to
+			'physically' interact with other agents (the meaning of this will be
+			clear later when I describe what is the space), and those who are
+			'invisible' and
+			do some supplementary work. To make the concept of
+			agent interaction more clear
+			let's consider an example. Human beings
+			can be treated as completely isolated
+			entities, things in themselves,
+			if we consider someone's mind. We cannot say
+			what other people are
+			thinking and what they want if they do not tell us it
+			directly.
+			Moreover, people cannot share thoughts without some mediators like
+			speech (hearing), gestures (sight), etc. The same can be said about
+			agents in
+			SPARK: other agents are not aware about the internal state
+			of the given agent. But
+			as humans, agents can communicate with each
+			other and share information. And
+			again as humans they do not
+			communicate absolutely directly but use some
+			mediators. In SPARK the
+			main 'mediator' is the space, the space where agents
+			exist and where
+			they can 'meet' other agents and 'talk' with them. We see another
+			aspect of the space: not just a mediator, but also a place where
+			agents exist (not
+			very accurately, because one can argue that agents
+			exist in the computer
+			memory). And it makes sense that the mediator
+			related to the place of existence.
+			Indeed, consider you want to be
+			heard by everyone on the Earth. What can you do?
+			Shout as loud as you
+			can will not be successful since people in Australia will for
+			sure not
+			hear you if you are in Russia. Of course, you can use some modern
+			communication devices but still there will be people who will not
+			hear you in
+			spite of all your efforts. Why? Because they are too far
+			away from you. The same is
+			true for agents in the space: they cannot
+			communicate directly with all other
+			agents at once because distinct
+			agents occupy different space positions and
+			some agents can be too far
+			away from each other to be involved in any sort of
+			interaction. </para>
+		<para> To sun up, I just repeat: agents are entities that can do some
+			work according to
+			well defined (by the modeler) rules. The space is
+			the place where agents exist and
+			through which they can interact with
+			other agents. In biology the analogue of an
+			agent is a cell and the
+			analogue of the space is the space surrounding cells.
+			</para>
+		<para> The third concept is the data layers. To introduce it, I think
+			the biological
+			interpretation will be good. Besides cells (agents)
+			each biological system
+			involve many chemical compounds, consisting of
+			different types of molecules.
+			It is possible to think (and model)
+			molecules (and therefore chemical
+			compounds) as agents. But let's
+			think about this. In one mole there are
+			approximately [Avogadro]
+			molecules. It's a huge number. Even if in the modeled
+			system you are
+			dealing with smaller amounts of chemicals, still the number of
+			molecules is overwhelming, and it is physically impossible for modern
+			computers to work with such large number of idependent entites,
+			agents. So
+			somehow we need to represent all chemistry in other way.
+			And the simplest way is to
+			work not with individual molecules but with
+			many of them at once. We can achieve
+			this by defining the
+			concentration of a chemical compound at each point of the
+			space. So
+			the problem now is how to define this concentration. From
+			mathematical
+			point of view the concentration is just a number which is
+			assigned to each point in
+			the space, so it is a function which takes
+			as arguments coordinates of a space
+			point and returns one number: a
+			concentration of a chemical compound. And in
+			SPARK such functions are
+			called data layers. The simplest way to implement a data
+			layer is the
+			following. Assume that we have a continuous space and want to define
+			a
+			data layer for it. Divide the bounded region of the space into cells
+			and assign to
+			each point inside the same cell the same value. Then we
+			get a grid atop the space
+			which associate some numerical values to
+			each point of the space. This is so
+			called grid data layer. </para>
+	</section>
+
+	<section>
+		<title>Creating the model project in Eclipse</title>
+		<para>
+			Start Eclipse first. Now
+			choose Java perspective. [how to do
+			this?] Now we may return to pure
+			programming
+			things. To create our
+			model in Eclipse we first need to create a Java
+			project in
+			Eclipse.
+			Here are the steps of this procedure: [steps] Now your screen should
+			look
+			like the following.
+			[picture/] But this new project is just a
+			general Java application not related
+			in any
+			sense to the SPARK. To
+			provide such a relation you need to specify that
+			your project
+			works
+			with the SPARK. Right click on the project name and choose
+			[configure
+			building
+			path, etc.] Click save icon [to save project?] Now we create
+			the run
+			configuration to
+			be able to run and test our model directly
+			from Eclipse. [choose run
+			as... and
+			configure all including working
+			directory [should be Release\] and main class,
+			TODO:work with SPARK to
+			make it understand command line and
+			immediately open models]
+			In command
+			line arguments we specified file called model.xml. Right now
+			this file
+			does not exist in our project but shortly we will create it. This
+			file
+			describes
+			everything contained in our model and it is used by
+			SPARK GUI to find the
+			actual files of
+			our model components. [package
+			creation]
+		</para>
+	</section>
+
+	<section>
+		<title>Creating agent classes</title>
+		<para> First of all let's create all agents for our Toy Infection
+			Model. Right now, we
+			will not write any code but just create classes.
+			Right click on the name of the
+			project in the Navigator panel on the
+			src folder. Choose New -> Class. [etc.]
+			</para>
+		<para> We need to create three agents: Basic Agent (BasicAgent class),
+			Infection
+			Agent (InfectAgent class), Iflammatory Cell (IflamCell
+			class). First create
+			BasicAgent class. After the file is created, open
+			it (if it is not open yet) and add
+			the following lines right after the
+			package definition: import static
+			org.spark.utils.RandomHelper.nextDoubleFromTo; import
+			org.spark.space.SpaceAgent; import org.spark.utils.Vector; These
+			lines
+			just tell to import some functions from other packages. Next
+			modify the class
+			declaration line: add the following words: after
+			public class BasicAgents add
+			extends SpaceAgent This means that
+			BasicAgent class inherits all
+			functionality from the SpaceAgent class.
+			The Space agent is the most common type
+			of agents: all agents which
+			can be visualized and are able to interact with other
+			agents should be
+			defined as Space agents. Space agents can be mobile or static.
+			The
+			last thing to do with the BasicAgent class is to add the following
+			lines inside
+			class itself: [code, insert here, not later since it is a
+			supplementary class]
+			[in two other classes insert dummy step method,
+			the code will be provided in the
+			later sections] [Step method is
+			called every tick, or every step of the model
+			execution process.]
+		</para>
+
+		<para> The role of each agent will be clear later. Now I just mention
+			that there are
+			actually only two types of agents: inflammatory cells
+			and infection agents. The
+			purpose of the Basic Agent is just to
+			provide the functionality shared by both
+			types of agents. In terms of
+			OOP it is just the common parent of two main agent
+			classes. </para>
+	</section>
+
+	<section>
+		<title>Creating the model setup class</title>
+		<para> Now we create another class called Model. This class includes
+			the defintions
+			of various things of the model. It includes definition
+			of global variables and
+			model parameters as well as the model setup
+			method. The setup method is called
+			every time before model can be
+			executed. The main purpose of this method is to
+			create all objects of
+			the model and initialize all variables. We will write the
+			setup code
+			later. </para>
+		<para> Another important thing implemented in the Model class is the
+			definition of
+			model parameters. [etc] </para>
+		<para> The last thing to mention are two methods called begin() and
+			end(). The first
+			method is invoked each step before processing agent's
+			step() methods, and the
+			end() method is invoked after all agents were
+			processed. This methods are
+			convenient for implementing collection of
+			statistical data and for performing
+			global operations on data layers
+			like diffusion. </para>
+	</section>
+
+	<section>
+		<title> Writing xml-model file
+		</title>
+		<para> It is not sufficient to have Java files created above to create
+			a SPARK model.
+			The last required file is a file which puts everything
+			together. It is not a Java
+			file but it is an xml-file. You can call
+			this file as you wish but exactly this file
+			can be opened from SPARK
+			GUI and in this sense the name of this file should be
+			associated with
+			the name of the model itself. So let's create an xml-file called
+			ToyInfectionModel.xml. Right click on the root project folder
+			(project name)
+			and choose new [etc].
+			</para>
+		<para>
+			Add the following lines in the file:
+
+			<programlisting language="xml">			
+	   <![CDATA[
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<model>
+	<classpath path="/bin/"/>
+	<setup>ToyInfectionModel.Model</setup>
+	<mainframe height="675" width="650" x="0" y="0"/>
+			
+	<agent>ToyInfectionModel.InflamCell</agent>
+	<agent>ToyInfectionModel.InfectAgent</agent>
+			
+</model>
+		]]>
+			</programlisting>
+			This is a minimal working description of the model. The first line is
+			just a
+			specification of some xml-related stuff. The root element of
+			the xml-file is
+			called model. Then we define a path to the compiled
+			binary files of our model. Next
+			we say how the main Model class of our
+			model is called and in which package it can be
+			found. Then we specify
+			parameters of the main window and at two last lines declare
+			two agent
+			types (classes) in our model [strictly speaking these two lines are
+			not
+			necessary?]
+		</para>
+	</section>
+	<section>
+		<title> Implementing the agent's code</title>
+		<para>
+			It's time to begin writing the main model code. We have already
+			done all
+			supporting
+			job and can concentrate on the model and its rules.
+			First of all let's
+			implement
+			all rules of agents. We start from the
+			Infection Agents.
+
+			[etc]
+			[Code and the complete description of it]
+		</para>
+	</section>
+
+	<section>
+		<title>Implementing setup code</title>
+		<para>
+			We still need to create agents before they will be able to do
+			anything.
+			All initialization is done inside the setup() method of the
+			Model class.
+			Here is the code of this method:
+
+			[code]
+
+			Several first lines
+			are particularly important and should be present in
+			every Spark model.
+			What we are doing there is the creation of the
+			space.
+			The space is not
+			created automatically because there are
+			different kinds
+			of spaces and
+			you need to choose which space is the
+			best for your model.
+
+			[Standard
+			space and NetLogo space]
+
+			[Some words about Observer and its role]
+
+			[end() method code and explanation] 
+		</para>
+	</section>
+
+	<section>
+		<title>Adding new render and charts</title>
+		<para></para>
+	</section>
+
+	<section>
+		<title>Adding parameters</title>
+		<para></para>
+	</section>
+
+	<section>
+		<title>Adding data sets</title>
+		<para></para>
+	</section>
+</article>

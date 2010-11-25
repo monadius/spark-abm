@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V5.0//EN" "../DocBook/docbook-5.0/dtd/docbook.dtd">
+<article>
+	<info>
+		<title>SPARK: The First Model</title>
+		<author>
+			<personname>Alexey Solovyev</personname>
+		</author>
+		<abstract>
+			<para>
+				In this tutorial I'll show how to create the minimal working
+				SPARK model in Eclipse.
+			</para>
+		</abstract>
+	</info>
+
+	<section>
+		<title>Eclipse</title>
+		<para>
+			Before you start the development of the first model using
+			SPARK you need to obtain good tools. All SPARK models are written in
+			the Java programming language. So the first step before doing anything in
+			SPARK is to learn this programming language. Probably, this is the
+			main drawback of SPARK (especially compared to
+			NetLogo) since the process of learning Java is
+			not the simplest one. But if you are already familiar with this
+			language or know other object oriented languages
+			such as C++ or C#, then studying basics of Java will be very
+			easy (I think that among triple C++, Java, C#, the Java language is
+			the easiest one to learn, though not the easiest one to program on).
+			All Java-related information can be found on the site:
+			<link xlink:href="http://java.sun.com/">
+			http://java.sun.com/
+			</link>
+		</para>
+		<para> It is possible to write any Java program just using the Notepad
+			in Windows. But nobody will do this. Instead it is much more
+			convenient to work with specially designated tools for writing Java
+			programs. One of the most popular tools, or
+			IDE, for Java is called Eclipse which is developed by the IBM corporation. 
+			The main advantage of this IDE is that it is completely free. 
+			So let's download and install it. Go to the site
+			<link xlink:href="http://www.eclipse.org/downloads/">
+			http://www.eclipse.org/downloads/
+			</link>, choose the following Eclipse
+			version: Eclipse IDE for Java EE Developers, or Eclipse IDE for Java Developers, 
+			and download it. Now extract the archive into the Eclipse folder on your
+			computer (on Windows, it can be, for example 'C:\program files\program files\eclipse\'). 
+			It worth to mention that you don't
+			need Java Development Kit to be installed on your computer to be able to
+			run Eclipse	and write Java programs in it: everything is already included in the
+			Eclipse distribution. 
+		</para>
+	</section>
+	
+	<section>
+		<title>Creating the model project in Eclipse</title>
+		<para>	See Qi Mi's <link xlink:href="www.pitt.edu/~cirm/spark/download.html">presentation</link> on creating a SPARK model in Eclipse.
+<!-- 			Start Eclipse. First you need to specify the workspace: the folder
+			where all Eclipse projects will be stored. Choose any folder you want. 
+			After Eclipse start select Java perspective. To create our
+			model in Eclipse we first need to create a Java
+			project. Here are the steps of this procedure: [steps] 
+			Now your screen should look	like the following.
+			[picture/] But this new project is just a
+			general Java application not related in any
+			sense to the SPARK. To provide such a relation you need to specify that
+			your project works with the SPARK. Right click on the project name and choose
+			[configure
+			building
+			path, etc.] Click save icon [to save project?] Now we create
+			the run
+			configuration to
+			be able to run and test our model directly
+			from Eclipse. [choose run
+			as... and
+			configure all including working
+			directory In command line arguments we specified file called model.xml. Right now
+			this file does not exist in our project but shortly we will create it. This
+			file describes everything contained in our model and it is used by
+			SPARK GUI to find the actual files of
+			our model components. [package
+			creation]-->
+		</para>
+	</section>
+	
+	<section>
+		<title>The Simplest Model</title>
+		<para>
+			It is time to create the simplest working SPARK model. It will work but
+			will do nothing.
+		</para>
+		<para>
+			To write the working SPARK model you need to create two files.
+			The first file will be Java class file. Right click on the model package
+			in Eclipse, then choose New -> Class. In the field 'name' enter
+			'Model'. Click Finish. Edit the file and add the following code:
+			<programlisting language="java">
+package model;
+
+public class Model implements org.spark.startup.ABMModel{
+	public boolean begin(long tick) {
+		return false;
+	}
+
+	public boolean end(long tick) {
+		return false;
+	}
+
+	public void setup() {
+	}
+}
+			</programlisting>
+			<note>
+			<para>
+				One nice feature of the Eclipse is that you can easily obtain
+				the code above just adding the line <code>implements org.spark.startup.ABMModel</code>
+				after <code>Model</code>. When you do this, the red cross appear
+				at the left margin. Click it and select 'Add unimplemented methods'.
+			</para>
+			</note> 
+			In the real models you need to write some code inside the <code>setup</code>
+			method. But for the simplest minimal model it is not required. Just don't
+			forget to save the file.
+		</para>
+		<para>
+			Now create the second file. Right click on the project name and choose
+			New -> Other, Type XML and choose XML. In the field name type 'Tutorial 2'.
+			Click finish. The xml-file of our model will be created. Add the following
+			lines into this file:
+			<programlisting language="xml">
+<![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<model>
+	<classpath path="/bin/" />
+	<setup>model.Model</setup>
+</model>
+]]>
+			</programlisting>
+			Save changes. That's it. Now our simplest model complete. 
+			Thanks to Eclipse it is already compiled (Eclipse automatically
+			compiles the source code when you save changes). What is left is to
+			open this model from the SPARK GUI. To run the GUI simply click
+			on the green play button (we have configured everything already). 
+			Follow the steps from the previous tutorial and open our 'Tutorial 2.xml' 
+			file from the GUI. 
+		</para>
+		<para>
+			Actually, the simplest model is not interesting at all. You can click
+			Start button but nothing will happen (only the ticks number will be
+			increasing). Also you can click Setup button, but this only will reset
+			the tick counter.
+		</para>
+		<para>
+			To make this model much more interesting we need to add agents into it.
+			Besides agents we also need to add the space (agents need some environment
+			to live in). But before this, let look closer at our simplest model
+			and understand every line of the code that we have written.
+		</para>
+		<para>
+			Look at the Model class. It is the main class of our model.
+			Each model should have one main class. This class implements 
+			the interface <code>ABMModel</code>. As a consequence, you need
+			to implement three methods in the main class: <code>begin</code>,
+			<code>end</code>, and <code>setup</code>. Right now we are interested
+			only in the method <code>setup</code>. This method is the first method
+			which is called when the model is loaded. Also it is called when you click
+			the Setup button. The purpose of this method is to initialize everything:
+			create the space, agents, data layers, set up the initial values of
+			parameters and variables, etc.
+		</para>
+		<para>
+			Now consider the xml-file. The first line is not interesting: it
+			is just specification of some parameters of the xml-file itself.
+			The next line is the root element called 'model'. Each xml-file should
+			have one and only one root element. On the next line we specified
+			the path to compiled version of our model classes. When you load the
+			model from the SPARK GUI, it should know where to find the binary files
+			of the model, and this line tells exactly where these files are located.
+			<note>
+				<para>
+					The path attribute should contain path relative to the xml-file
+					and the path should begin with '/'. Instead of the path to compiled
+					java classes it is possible to give the location of the jar-archive. 
+				</para>
+			</note>
+			The last line specifies the main class of the model. The name of this
+			class should be fully qualified, that is, it should contain all package
+			names.
+		</para>
+	</section>
+	
+	<section>
+		<title>Next step</title>
+		<para>
+			To make our model more interesting, add some agents. Few words about agents.
+			In SPARK agents are simply java-classes extending the SPARK Agent class.
+			The main purpose of agents is to perform some action, do some work.
+			All agents have <code>step</code> method which is called every simulation
+			step (tick). The simulation process is very simple: each step the 
+			<code>begin</code> method of the main class is called. Then method <code>
+			step</code> is called for each agent. At the end the method <code>end</code>
+			of the main class is called. All these three methods have one parameter
+			<code>tick</code> which is just the number of ticks (steps) passed since
+			the simulation start. Methods <code>begin</code> and <code>end</code> could
+			return a boolean value. If they return the true value, then the simulation
+			stops. More about agents and other SPARK components you can read in the
+			next tutorials and also in the Reference Manual.
+		</para>
+		<para>
+			Create a new class in the model package and call it <code>SimpleAgent</code>.
+			Write the following code:
+			<programlisting language="java">
+package model;
+
+import org.spark.space.*;
+import org.spark.utils.Vector;
+import static org.spark.utils.RandomHelper.nextDoubleFromTo;
+
+public class SimpleAgent extends SpaceAgent {
+	public void step(long tick) {
+
+	}
+}
+			</programlisting>
+			Import lines are not mandatory but they allows not to write full names
+			for each class used in the agent code. Our agent extends the <code>SpaceAgnet</code>
+			class. It is the special type of agents which exist in the space and
+			which can interact with each other. Our agents do nothing (the <code>step</code>
+			method is empty) but at least we can create them.
+		</para>
+		<para>
+			Add the following code into the <code>setup</code> method of the main class
+			<code>Model</code>:
+			<programlisting language="java">
+package model;
+
+import org.spark.core.Observer;
+import org.spark.space.*;
+
+public class Model implements org.spark.startup.ABMModel{
+	public boolean begin(long arg0) {
+		return false;
+	}
+
+	public boolean end(long arg0) {
+		return false;
+	}
+
+	public void setup() {
+		Observer observer = Observer.getInstance();
+		observer.setSpace(new StandardSpace(-20, 20, -20, 20, true, true));
+		
+		for (int i = 0; i &lt; 10; i++) {
+			SimpleAgent agent = new SimpleAgent();
+			agent.setRandomPosition();
+		}
+	}
+}
+			</programlisting>
+			In the first line of the <code>setup</code> method we get the instance
+			of the <code>Observer</code> class. This class is the main object of
+			the SPARK framework and it contains references to other components.
+			In particular, it contains information about all created agents and
+			about the model space. Next lines creates the space for our model.
+			It is important to create the space before any space agents are created,
+			so it is a good practice to put this line at the beginning of the
+			<code>setup</code> method. More information about the space and different
+			types of spaces can be found in the Reference Manual. Now we create
+			the standard continuous 2d space with the torus topology and with xy-coordinates
+			varying between -20 and 20.
+		</para>
+		<para>
+			Next we create agents. We create 10 agents using the <code>for</code> cycle.
+			To create an agent, we just call the constructor of the agent class.
+			Note that you don't need to explicitly add the agent into the Observer
+			since it will be automatically added there during the construction process.
+			By default, agents are created at the center of our space. To make their
+			appearance more interesting, we put them in the random position of the
+			space using the <code>SpaceAgent</code>'s method <code>setRandomPosition</code>.
+		</para>
+		<para>
+			Now it is possible to run the model, but you will not see agents. First
+			you need to specify the agent class in the model xml-file. Open 'Tutorial 2.xml'
+			and add the following code:
+			<programlisting language="xml">
+<![CDATA[
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<model>
+	<classpath path="/bin/"/>
+	<setup>model.Model</setup>
+	
+	<agent>model.SimpleAgent</agent>
+</model>
+]]>
+			</programlisting>
+			The new line gives the path to the agent class. Run the SPARK GUI and
+			open the model. You will see the following picture
+			<figure>
+				<title>Model with agents</title>
+				<mediaobject>
+					<imageobject>
+						<imagedata align="left" width="4in" format="PNG"
+							fileref="images/Tutorial2Agents.png" />
+					</imageobject>
+				</mediaobject>
+			</figure>
+			If you click the Setup button, then agents will change their positions.
+		</para>
+		<para>
+			Still, if you click the Start button, then nothing interesting will happen.
+			We need to add some agent's action. Let's make our agents move randomly.
+			Edit the agent class as follows:
+			<programlisting language="java">
+package model;
+
+import org.spark.space.*;
+import org.spark.utils.Vector;
+import static org.spark.utils.RandomHelper.nextDoubleFromTo;
+
+public class SimpleAgent extends SpaceAgent {
+	public SimpleAgent() {
+		setColor(SpaceAgent.RED);
+	}
+	
+	public void step(long tick) {
+		double dx = nextDoubleFromTo(-1, 1);
+		double dy = nextDoubleFromTo(-1, 1);
+		move(new Vector(dx, dy, 0));
+	}
+}			
+			</programlisting>
+			The function <code>nextDoubleFromTo</code> returns the uniformly distributed
+			random number from the interval specified by its arguments. The method
+			<code>move</code> of the <code>SpaceAgent</code> moves the agent by
+			the given vector. Since we are writing 2d model, we create the vector
+			with zero z-coordinate. Also we added the constructor to change the
+			color of our agents. Now they are red.
+		</para>
+		<para>
+			Open the modified model in the GUI and click the Start button. At last
+			we can see some action.
+		</para>
+	</section>
+	
+<!--
+	<section>
+		<title>What's next?</title>
+		<para>
+			In the next tutorial we consider the basic concepts of the SPARK
+			framework in more depth. We will discuss the role of agents, spaces, and
+			data layers. Also we will continue the developing of our simple model
+			and add data layers.
+		</para>
+		</section>
+-->	
+</article>
