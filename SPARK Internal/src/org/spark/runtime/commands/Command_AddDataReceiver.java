@@ -1,7 +1,7 @@
 package org.spark.runtime.commands;
 
 import org.spark.core.SparkModel;
-import org.spark.runtime.external.data.LocalDataReceiver;
+import org.spark.runtime.data.AbstractDataReceiver;
 import org.spark.runtime.internal.data.LocalDataSender;
 import org.spark.runtime.internal.engine.AbstractSimulationEngine;
 
@@ -11,11 +11,11 @@ import org.spark.runtime.internal.engine.AbstractSimulationEngine;
  *
  */
 @SuppressWarnings("serial")
-public class Command_AddLocalDataSender extends LocalCommand {
+public class Command_AddDataReceiver extends LocalCommand {
 	// Data receiver is never serialized
-	private transient LocalDataReceiver receiver;
+	private transient AbstractDataReceiver receiver;
 	
-	public Command_AddLocalDataSender(LocalDataReceiver receiver) {
+	public Command_AddDataReceiver(AbstractDataReceiver receiver) {
 		this.receiver = receiver;
 	}
 	

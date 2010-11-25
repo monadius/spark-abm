@@ -1,7 +1,7 @@
 package org.spark.runtime.internal.data;
 
+import org.spark.runtime.data.AbstractDataReceiver;
 import org.spark.runtime.data.DataRow;
-import org.spark.runtime.external.data.LocalDataReceiver;
 
 /**
  * Sends data to a data receiver
@@ -9,13 +9,13 @@ import org.spark.runtime.external.data.LocalDataReceiver;
  *
  */
 public class LocalDataSender extends DataProcessor {
-	private LocalDataReceiver receiver;
+	private AbstractDataReceiver receiver;
 
 	/**
 	 * Creates a local data sender for the given local data receiver
 	 * @param receiver
 	 */
-	public LocalDataSender(LocalDataReceiver receiver) {
+	public LocalDataSender(AbstractDataReceiver receiver) {
 		this.receiver = receiver;
 	}
 	
