@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project basedir="." default="jar" name="Compiler">
+<!--  Copyright (c) 2008-2009 by Alexey Solovyev, Maxim Mikheev, Qi Mi.
+          Licensed under the MIT License
+          See files "README" and "LICENSE" for more information
+        -->
+        <description>
+                This Ant build.xml file is used to build
+                the SPARK Core library
+        </description>
+
+        <!-- Location of the source code folder -->
+        <property location="src" name="src"/>
+        <!-- Temporary folder for compiled java classes -->
+        <property location="classes" name="classes"/>
+        <!-- Output folder -->
+        <property location="../Spark/release" name="output"/>
+        <!-- Library folder -->
+        <property location="../Spark/lib" name="lib"/>
+
+
+        <!-- runtime libraries -->
+        <path id="libraries">
+                <pathelement location="${lib}"/>
+                <fileset dir="${lib}">
+                        <include name="**/*.jar"/>
+                        <include name="**/*.zip"/>
+                </fileset>
+        		<fileset dir="${output}">
+        				<include name="spark-math.jar"/>
+        				<include name="spark-utils.jar"/>
+        		</fileset>
+                <pathelement path="${java.class.path}"/>
+        </path>
+
+        <!-- Target: init -->
+        <target name="init" description="Creates output folders">
+                <mkdir dir="${classes}"/>
+                <mkdir dir="${output}"/>
+        </target>
+
+        <!-- Target: compile -->
+        <target name="compile" depends="init" description="Compiles java source files">
+                <javac destdir="${classes}" srcdir="${src}"  target="1.5">
+                        <!-- <exclude name="**/ClusterGrid.java"/> -->
+                        <classpath refid="libraries"/>
+                </javac>
+        </target>
+
+        <!-- Target: jar -->
+        <target name="jar" depends="compile" description="Creates jar-archive">
+                <jar basedir="${classes}" jarfile="${output}/spark-core.jar">
+                        <manifest>
+                                <attribute name="Class-Path" value= "spark-math.jar spark-utils.jar ../extra166y.jar ../jsr166y.jar ../lib/log4j.jar ../lib/log5j-1.2.jar ../lib/colt.jar"/>
+                        </manifest>
+                </jar>
+
+        </target>
+
+
+        <!-- Target: clean -->
+        <target name="clean" description="Removes all output files">
+                <delete dir="${classes}"/>
+        </target>
+</project>
