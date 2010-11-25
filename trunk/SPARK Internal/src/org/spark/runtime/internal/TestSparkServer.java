@@ -7,7 +7,7 @@ import java.net.Socket;
 
 import org.apache.log4j.BasicConfigurator;
 import org.spark.runtime.commands.Command_AddDataProcessor;
-import org.spark.runtime.commands.Command_AddLocalDataSender;
+import org.spark.runtime.commands.Command_AddDataReceiver;
 import org.spark.runtime.commands.Command_Exit;
 import org.spark.runtime.commands.ModelManagerCommand;
 import org.spark.runtime.data.DataRow;
@@ -65,7 +65,7 @@ public class TestSparkServer implements Runnable {
 
 			while ((data = ois.readObject()) != null) {
 				if (data instanceof ModelManagerCommand) {
-					if (data instanceof Command_AddLocalDataSender) {
+					if (data instanceof Command_AddDataReceiver) {
 						DataProcessor dp = new MyDataSender(oos);
 						data = new Command_AddDataProcessor(dp);
 					}
