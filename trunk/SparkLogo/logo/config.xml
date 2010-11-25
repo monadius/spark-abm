@@ -1,5 +1,6 @@
 <config>
-        <spark-path>lib/spark.jar</spark-path>
+        <spark-core-path>lib/spark-core.jar</spark-core-path>
+        <spark-external-path>lib/spark-external.jar</spark-external-path>
         <recent-projects>
         </recent-projects>
 </config>

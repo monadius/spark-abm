@@ -49,7 +49,8 @@
      </target>
 
 
-	<target depends="compile" name="jar">
+	<!-- Target: jar -->
+	<target name="jar" depends="compile" >
 		<jar basedir="${class}" jarfile="${dist}/SPARK Manager.jar">
 			<include name="**/*.class" />
 			<manifest>
