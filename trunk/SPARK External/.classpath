@@ -11,7 +11,6 @@
 	<classpathentry kind="lib" path="/Spark/lib/gluegen-rt.jar"/>
 	<classpathentry kind="lib" path="/Spark/lib/jcommon.jar"/>
 	<classpathentry kind="lib" path="/Spark/lib/jfreechart.jar"/>
-	<classpathentry kind="lib" path="/SPARK Core/bin"/>
 	<classpathentry kind="lib" path="/Spark/lib/colt.jar" sourcepath="C:/Help/Alexey/My New Projects/Java Libraries/colt/src"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
