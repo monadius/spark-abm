@@ -1,0 +1,211 @@
+<?xml version="1.0"?>
+
+<!--
+
+  - Author:  Lars Vogel
+  - Modified: Alexey Solovyev
+
+  -->
+
+
+<project name="docbook-src" default="usage">
+	<description>
+            This Ant buildhtml.xml file is used to transform DocBook XML to html output
+    </description>
+	<!--
+      - Configure basic properties that will be used in the file.
+      -->
+
+	<property name="base" value="DocBook" />
+	<property name="docbook.xsl.dir" value="${base}/docbook-xsl-1.74.0" />
+	<property name="output.dir" value="output" />
+	<property name="src" value="src" />
+	<property name="xalan.lib.dir" value="${base}/xalan-j_2_7_1" />
+	<property name="saxon.lib.dir" value="${base}/saxon9" />
+	<property name="xslthl.lib.dir" value="${base}/xslthl-2.0.0" />
+	<property name="output.tmp" value="output.tmp" />
+	<property name="eclipse.stylesheet" value="${docbook.xsl.dir}/eclipse/eclipse.xsl" />
+	<property name="html.stylesheet" value="${docbook.xsl.dir}/html/docbook.xsl" />
+	<property name="fo.stylesheet" value="${docbook.xsl.dir}/fo/docbook.xsl" />
+	<property name="javahelp.stylesheet" value="${docbook.xsl.dir}/javahelp/javahelp.xsl" />
+	<property name="chunk-html.stylesheet" value="${docbook.xsl.dir}/html/chunk.xsl" />
+
+	<property name="configfile" value="file:///${basedir}/${base}/xslthl-2.0.0/highlighters/xslthl-config.xml" />
+
+	<property name="fop.home" value="${base}/fop-0.95" />
+
+	<taskdef name="fop" classname="org.apache.fop.tools.anttasks.Fop">
+		<classpath>
+			<fileset dir="${fop.home}/lib">
+				<include name="*.jar" />
+			</fileset>
+			<fileset dir="${fop.home}/build">
+				<include name="fop.jar" />
+				<include name="fop-hyph.jar" />
+			</fileset>
+		</classpath>
+	</taskdef>
+
+	<!-- XML files -->
+	<fileset dir = "${src}" id="docs-files">
+		<include name="*.xml" />
+	</fileset>
+
+	<!--
+      - Sets up the classpath for the Xalan and Xerces implementations
+      - that are to be used in this script, since the versions that ship
+      - with Ant may be out of date.
+      -->
+
+	<path id="xalan.classpath">
+		<fileset dir="${xalan.lib.dir}" id="xalan.fileset">
+			<include name="xalan.jar" />
+			<include name="xercesImpl.jar" />
+			<include name="serializer.jar" />
+		</fileset>
+	</path>
+
+	<path id="saxon.classpath">
+		<fileset dir="${saxon.lib.dir}" id="saxon.fileset">
+			<include name="saxon9.jar" />
+		</fileset>
+	</path>
+
+
+	<!--
+      - target:  usage
+      -->
+	<target name="usage" description="Prints the Ant build.xml usage">
+		<echo message="Use -projecthelp to get a list of the available targets." />
+	</target>
+
+
+	<!--
+      - target:  clean
+      -->
+	<target name="clean" description="Cleans up generated files.">
+		<delete dir="${output.dir}" />
+		<delete dir="${output.tmp}" />
+	</target>
+
+
+	<!--
+      - target:  depends
+      -->
+	<target name="depends">
+		<mkdir dir="${output.dir}" />
+		<mkdir dir="${output.tmp}" />
+	</target>
+
+
+
+	<!--
+      - target:  build-html
+      - description:  Iterates through a directory and transforms
+      -     .xml files into .html files using the DocBook XSL.
+      -->
+	<target name="build-html" depends="depends" description="Generates HTML files from DocBook XML">
+		<xslt style="${html.stylesheet}" extension=".html" basedir="${src}" destdir="${output.dir}" force="true">
+			<include name="*.xml" />
+			<exclude name="tmp*" />
+			<classpath refid="xalan.classpath" />
+			<classpath>
+				<fileset dir="${xslthl.lib.dir}">
+					<include name="xslthl-2.0.0.jar" />
+				</fileset>
+			</classpath>
+
+			<param name="html.stylesheet" expression="style.css" />
+			<param name="html.cleanup" expression="1" />
+			<param name="use.extensions" expression="1" />
+			<param name="highlight.source" expression="1" />
+			<param name="highlight.xslthl.config" expression="${configfile}" />
+		</xslt>
+
+
+		<!-- Copy the stylesheet to the same directory as the HTML files -->
+		<copy todir="${output.dir}">
+			<fileset dir="${src}">
+				<include name="style.css" />
+				<include name="images/**/*" />
+			</fileset>
+		</copy>
+
+	</target>
+
+	<!--
+		- target:  chunks-html
+		- description:  Iterates through a directory and transforms
+		-     .xml files into seperate .html files using the DocBook XSL.
+	-->
+	<target name="build-chunks" depends="depends" description="Generates chunk HTML files from DocBook XML">
+		<xslt style="${html.stylesheet}" extension=".html" basedir="${src}" destdir="${output.dir}">
+			<classpath refid="xalan.classpath" />
+
+			<include name="*.xml" />
+			<exclude name="tmp*" />
+
+			<param name="html.stylesheet" expression="styles.css" />
+			<param name="section.autolabel" expression="1" />
+			<param name="html.cleanup" expression="1" />
+			<param name="chunk.first.selection" expression="1" />
+		</xslt>
+
+		<!-- Copy the stylesheet to the same directory as the HTML files -->
+
+		<copy todir="${output.dir}">
+			<fileset dir="src">
+				<include name="styles.css" />
+				<include name="images/*.*" />
+			</fileset>
+		</copy>
+
+	</target>
+
+
+	<!-- Transformation into pdf
+		- Two steps
+		- 1.) First create the FO files 
+		- 2.) Then transform the FO files into pdf files
+	-->
+
+	<!--
+		- target:  build-pdf
+		- description:  Iterates through a directory and transforms
+		-     .xml files into .fo files using the DocBook XSL.
+	-->
+	<target name="build-pdf" depends="depends" description="Generates PDF files from DocBook XML">
+
+		<!-- Convert DocBook Files into FO -->
+		<xslt style="${fo.stylesheet}" extension=".fo" basedir="${src}" destdir="${output.tmp}">
+			<classpath refid="xalan.classpath" />
+			<classpath>
+				<fileset dir="${xslthl.lib.dir}">
+					<include name="xslthl-2.0.0.jar" />
+				</fileset>
+			</classpath>
+			<include name="*.xml" />
+			<exclude name="tmp*" />
+			<param name="section.autolabel" expression="1" />
+			<param name="highlight.source" expression="1" />
+			<param name="highlight.xslthl.config" expression="${configfile}" />
+		</xslt>
+
+		<!-- Convert FO Files into pdf -->
+		<fop format="application/pdf" outdir="${output.dir}" relativebase="true">
+			<fileset dir="${output.tmp}">
+				<include name="**/*.fo" />
+			</fileset>
+		</fop>
+		<!-- Create also plain text version -->
+		<!--
+		<fop format="text/plain" outdir="${output.dir}">
+			<fileset dir="${output.tmp}">
+				<include name="**/*.fo" />
+			</fileset>
+		</fop>
+		-->
+	</target>
+
+
+</project>

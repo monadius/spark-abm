@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V5.0//EN" "../DocBook/docbook-5.0/dtd/docbook.dtd">
+<article>
+	<info>
+		<title>The SPARK Language: Toy Infection Model</title>
+		<author>
+			<personname>Alexey Solovyev</personname>
+		</author>
+		<abstract>
+			<para>
+				In this tutorial I'll show how to implement Gary An's
+				Toy
+				Infection Model in the SPARK Language.
+			</para>
+		</abstract>
+	</info>
+
+	<section>
+		<title>Preliminaries</title>
+		<para>
+			There  are two ways of creating models in SPARK.
+			One way is to write models directly in Java using SPARK library
+			for dealing with basic ABM operations.
+			In order to develop models in this way, users need also to install JDK
+			or (better) IDE for working with Java source code.
+			One of the best Java IDE is Eclipse which is a free environment for
+			developing powerful Java application.
+			But for those who don't know Java or know Java very well (I mean who is
+			already tired of somewhat long Java construction and permanent
+			shift-dancing) the better
+			way is to use a special language for implementing SPARK models.
+		</para>
+		<para>
+			In this tutorial, look at the concrete example of a SPARK model.
+			Consider a simple infection model (An, 2007) initially implemented
+			in NetLogo [ref].
+
+			The process of creating a SPARK model consists of two steps:
+			writing model code and translating this code into Java byte code
+			which then can be executed by Java Virtual Machine.
+			There is, in fact, one intermediate step: first SPARK language code
+			is translated into Java source code which is then compiled
+			(translated into Java byte code) by a Java compiler (we use Sun’s javac). SPARK
+			source code files can be created in any text editor (for example,
+			NotePad++ in Windows). Then users add all source files into SPARK
+			project manager (see figure with explanation of all buttons and their
+			actions).
+		</para>
+
+		<para>
+			Through out the tutorial some terminology of object-oriented programming
+			will be used. I do not pretend to be an expert in this programming
+			paradigm, so I'm going to use the terminology which is convenient for
+			myself. The central role in OOP play objects and classes which are so
+			fundamental that
+			I don't dare to define them (I just say that they can be though as
+			possible types of objects and define what data objects contain and
+			which methods objects use to work with that data). Every variable
+			declared inside a class is called a field. Every procedure (or
+			function)
+			inside a class is called a method. There are can be many objects of the
+			same type (of the same class) but each object has one and only one
+			class.
+			Inheritance is the way of building new classes based on existing ones:
+			fields and methods of a class can be inherited by another class
+			which in some sense can be thought as an extension of the existing class.
+			A class from which other classes inherit their functionality is
+			called
+			a parent class (or a superclass).
+		</para>
+
+	</section>
+
+	<section>
+		<title>Basics of the SPRAK Language</title>
+		<para>
+			Look at the SPARK language itself. It is Logo-like language
+			with additional features and syntax borrowed from modern
+			objected oriented languages like Java.
+			Before considering the simple infection model, look at
+			the simplest SPARK model implemented in the SPARK Language. This model
+			consists of only two lines of code
+
+			<programlisting language="SPARK">
+		<![CDATA[
+		model TestModel
+		space StandardSpace -10 10 -10 10 false false
+		]]>
+		</programlisting>
+			The first line begins a model declaration.
+			In the next line a space of the model is declared:
+			in this case the standard continuous bounded space is used
+			of dimension (-10, 10) x (-10, 10).
+			The last two parameters in the space declaration specify
+			the topology of the space: whether x and y coordinates wrap
+			around the border.
+			In the example above both parameters are false which means
+			that the space has topology of a rectangle.
+			If one parameter is true and another is false,
+			then the topology is cylindrical.
+			If both parameters are true then the space is homeomorphic to torus.
+			In fact, each project may include several source code files.
+			In each file one or more SPARK objects can be described
+			(agents, models, supporting classes, see below for explanation).
+			But it is also possible to put all code into one file.
+		</para>
+
+	</section>
+	<section>
+		<title>Toy Infection Model source code</title>
+		<para>
+			In this section I give a full listing of the simple (toy in other
+			words) infection model. In the next sections the code will be
+			explained
+			in details. As it was mentioned before, it is possible to organize
+			the source code in several files. But it is also possible to put all
+			code inside one file (it makes sense for small models). The only
+			requirement
+			is that all code related to the same class should be in one file.
+			(Right now it is not possible to split class declaration into several
+			files, but in later versions of the SPARK language it will be
+			possible.)
+
+			<programlisting language="SPARK">
+		<![CDATA[
+agent BasicAgent : SpaceAgent
+
+var heading
+
+to create
+   radius = 0.5
+   heading = random 360
+end
+
+to jump [n]
+  move vector-in-direction n heading
+end
+
+to wiggle
+  heading += random-in-interval -45 45
+  jump 1
+end
+
+agent InfectAgent : BasicAgent
+
+to create
+  color = grey
+  radius = 0.8
+end
+
+to step [tick]
+  if cidal-compound.value > 10
+  [die 
+   exit ]
+
+  var life = tissue-life.value-here - 1.0
+  if life < 0 [ life = 0 ]
+
+  tissue-life.set-value-here life
+
+  if tick % 100 == 0 [
+   if count agents-here InfectAgent < 3 [
+    ask hatch-one InfectAgent [ jump 1.0 ]
+   ]
+
+   jump 1.0
+  ]
+end
+
+agent InflamCell : BasicAgent
+
+to create
+  color = white
+  radius = 0.3
+end
+
+
+to step [tick]
+  ifelse count agents-here InfectAgent > 0
+  [
+   cidal-compound.add-value-here cidal-compound-production
+  ]
+  [
+   ifelse cidal-compound.value-here > chemotaxis-threshold
+   [
+    uphill cidal-compound
+   ]
+   [
+    wiggle
+   ]
+  ]
+End
+
+model Model
+
+space NetLogoSpace -40 40 -40 40 true true
+
+global cidal-compound : grid
+global tissue-life : grid
+
+@chart(name = "Total Tissue Damage")
+global total-tissue-damage : double
+
+@parameter(name = "Initial infection", min = 0, max = 1000, step = 1)
+global initial-infection-number = 500
+
+@parameter(name = "Cidal compound production", min = 0, max = 30, step = 0.1)
+global cidal-compound-production = 4
+
+@parameter(name = "Chemotaxis threshold", min = 0, max = 1, step = 0.1)
+global chemotaxis-threshold = 0.5 : double
+
+to end-step [tick]
+  tissue-life.data = tissue-life.data - cidal-compound.data
+
+  cidal-compound *= 0.9
+
+  diffuse cidal-compound 0.9
+
+  total-tissue-damage = space-xsize * space-ysize * 100 - sum tissue-life
+end
+
+
+to setup
+  tissue-life.set-value 100
+
+  ask create InflamCell 500
+  [
+   jump random 100
+  ]
+
+  infect
+end
+
+
+to infect
+  ask create InfectAgent initial-infection-number
+  [
+   jump random sqrt initial-infection-number
+  ]
+end
+		]]>
+		</programlisting>
+		</para>
+	</section>
+
+	<section>
+		<title>BasicAgent</title>
+		<para>
+			On the first line we declare a new agent called BasicAgent. 
+			After a colon we specify its parent class from which 
+			it inherits functionality.
+			There are three choices for agent’s parent class: SpaceAgent
+			(a standard choice), Agent, and another user defined agent.
+			After, the description of agent’s variables (fields) and functions
+			(methods) follows. To declare a variable we use ‘var’ keyword. We
+			need to supply the name of a new variable and its type after a colon.
+			In fact, it is not necessary to specify type of each variable because
+			SPARK language can infer a type of a variable in many situations. 
+			But it is a good practice to give an explicit type for all global 
+			(in some sense) variables. Available basic types are: number, string, Boolean,
+			vector. One distinct feature of the SPARK language is a basic 
+			vector type	with all usual arithmetic operation associated with it. 
+			The SPARK language is a strongly and statically typed language. 
+			It means that all variables	and methods have specific type which 
+			cannot be changed in runtime. It is a mistake to write the following 
+			code
+			
+			<programlisting language="SPARK">
+			var y
+			y = 2
+			x = "abc"
+			</programlisting>
+			
+			Though it seems that the type of y is not known, 
+			it is actually a numeric type: this type will be associated 
+			with y automatically after parsing the second line, since 
+			the right hand side of the assignment
+			expression has numerical type. 
+			After that line it is not possible to
+			work with y as with a variable without specific type.
+			There can be global variables declared with 'global' keyword 
+			instead of var.
+			Such variables are visible everywhere in the model and can be
+			accessed by names without any prefixes. Though it is possible
+			to use the 'global' keyword only inside model classes (declared
+			with the 'model' keyword). It is done in order to prevent uncontrolled
+			use of global variables which mostly represent model-wide variables.
+		</para>
+		<para>
+			The keyword ‘to’ is used to declare methods. 
+			The name of method is given
+			after ‘to’ keyword and arguments are supplied in the brackets 
+			(there could be no arguments at all in which case brackets 
+			may be omitted
+			completely). Also it is possible to assign a return type 
+			to a method by putting a colon after argument declaration 
+			and specifying method’s
+			type. By default methods do not return any value.
+			The method declaration ends with ‘end’ keyword. Inside method’s body
+			SPARK commands (which can be thought as globally defined methods) are
+			used to manipulate data and call other methods. Special types of
+			commands are assignment commands: =, +=, -=, etc. The first command
+			is a usual assignment operation, that is, x = 2, a = b. Next
+			operations are convenient shortcuts for expressions x = x + a, x = x
+			– b, etc. The last thing available inside method is local variable
+			declaration. Local variables are declared in the same way as fields:
+			<programlisting language="SPARK">
+			var x = 2
+			</programlisting>
+			There is a special method for agents: to create. This is a constructor
+			which is called each time a new agent of this type is created. There
+			are several global commands in SPARK language, like
+			random-in-interval a b in the example above (this command returns a
+			uniformly distributed random number in the interval (a,b)). Besides
+			commands, there are methods defined by users or defined in parent
+			classes of a given class. For example, move v in the jump method of
+			BasicAgent is a method of SpaceAgent class which moves the current
+			agent by adding to its position the value of the argument which is a
+			vector.
+			New agents are created by create command or by create-one command. With
+			this commands, new agents are created at the origin of the space.
+			Also new agents can be created by other agents in which case it is
+			useful to call hatch (hatch-one) method which creates new agents at
+			the same position as the current agent.
+			Command agents-here returns all agents of the specific type at the location
+			of the current (calling) agent.
+			Each model should contain a class which initializes the model.
+			Declaration of such a class starts with model keyword. This class
+			should provide a setup method which initializes the model. There are
+			also begin-step and end-step methods which are called before and
+			after each simulation step respectively.
+			Data layers are created by declaring global variables of type grid.
+			global tissue-life : grid
+			To change the value of this data layer at the same position as a given
+			agent, it is sufficient to write
+			tissue-life.value = new-value
+			inside agent’s step method (or any other method which is called by step).
+			There is a long form of the same command
+			Tissue-life.set-value-here new-value
+			As shown in the example, there are several other methods for working
+			with data layers, like diffusion, multiplication of all values by a
+			number, etc.
+			Another feature of SPARK language are annotations. Annotations start with @
+			symbol and they specify a role of a given global variable in user
+			interface. In this way it is easy to specify which global variables
+			should be parameters and which should be plotted.
+			[I just listed main ideas which come to mind. I don’t think that we
+			need step by step explanation: it is better to write a couple of
+			tutorials.]
+			
+		</para>
+
+	</section>
+</article>

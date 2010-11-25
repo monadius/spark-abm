@@ -1,0 +1,2834 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V5.0//EN" "../DocBook/docbook-5.0/dtd/docbook.dtd">
+<article>
+	<info>
+		<title>SPARK-PL Dictionary</title>
+		<author>
+			<personname>Alexey Solovyev</personname>
+		</author>
+		<abstract>
+			<para>
+				A short description of all SPARK-PL commands. 
+			</para>
+		</abstract>
+	</info>
+
+	<sect1>
+		<title>Constants</title>
+		<sect2>
+			<title>pi</title>
+			<para>
+				Mathematical pi constant, 3.1415926…
+</para>
+		</sect2>
+
+		<sect2>
+			<title>
+				true
+</title>
+			<para>
+				Logical true value. Can be assigned only to a Boolean variable
+			</para>
+		</sect2>
+
+		<sect2>
+			<title>
+				false
+</title>
+			<para>
+				Logical false value.
+</para>
+		</sect2>
+
+		<sect2>
+			<title>
+				circle
+</title>
+			<para>
+				A circle shape.
+</para>
+		</sect2>
+
+		<sect2>
+			<title>
+				square
+</title>
+			<para>
+				A square shape.
+</para>
+		</sect2>
+
+		<sect2>
+			<title>
+				torus
+</title>
+			<para>
+				A torus shape.
+
+				Note: right now shapes can be used only in the
+				following context:
+				agent SomeAgent : SomeAgentDerivedFromSpaceAgent
+				to create
+				super 0.5
+				circle
+				end
+				That is, shapes are available only for agents
+				derived from
+				SpaceAgent, and shapes should be assigned using super
+				command (which
+				can be used without errors also only for SpaceAgent)
+				with two
+				arguments: radius and shape.
+</para>
+		</sect2>
+
+		<sect2>
+			<title>
+				Colors
+</title>
+			<para>
+				black
+				white
+				grey
+				red
+				green
+				blue
+				cyan
+				magenta
+				yellow
+				Note: all colors are
+				treated as vectors. So, instead of colors it is
+				possible to use
+				vectors in the RGB format where each component is
+				between 0 and 1
+				(smaller and bigger values are ignored).
+</para>
+		</sect2>
+
+		<sect2>
+			<title>
+				agents-number
+</title>
+			<para>
+				<programlisting>
+agents-number type : number
+type : $type
+</programlisting>
+				Returns the number of all agents of a specific type.
+			</para>
+		</sect2>
+
+	</sect1>
+
+	<sect1>
+		<title>
+			Operations
+</title>
+		<para>
+			Note: all operations (with few obvious exceptions) require two
+			arguments.
+			All operations are infix which means that the arguments are
+			written
+			from left and right sides from the operation symbol (e.g. 2 *
+			3).
+		</para>
+		<para>
+			Note: infix operations have precedence, that is, the order in
+			which they
+			are applied. The precedence is usual so no problems should
+			occur but
+			in any case it is possible to use parenthesis to change the
+			precedence.
+</para>
+		<para>
+			Note: ignore type expressions after colons if you are not
+			familiar with
+			them, instead read description.
+</para>
+
+		<sect2>
+			<title>
+				^
+</title>
+			<para>
+				<programlisting>
+^ : double->double->double
+</programlisting>
+				Power. Works only for numbers.
+			</para>
+			<para>
+				Example:
+				<programlisting> 
+a^b, 2^3.14, pi^pi
+</programlisting>
+			</para>
+		</sect2>
+
+		<sect2>
+			<title>
+				*, /
+</title>
+			<para>
+				<programlisting>
+*,/ : double -> double -> double, double -> vector -> vector, vector -> double -> vector
+</programlisting>
+				Multiplication, division. Works with numbers and with a vector one
+				side and a number on another side.
+			</para>
+			<para>
+				Example:
+				<programlisting>
+var x : double
+var v : vector
+x = x * 3
+v = v / 4
+v = v * 2
+x = 2 * 2
+</programlisting>
+			</para>
+		</sect2>
+
+
+<sect2>
+<title>* (dot)</title>
+<para>
+<programlisting>
+* : vector -> vector -> number
+</programlisting>
+A dot product of two vectors.
+</para>
+</sect2>
+
+
+		<sect2>
+			<title>
+%
+</title>
+<para>
+<programlisting>
+% : double -> double -> double
+</programlisting>
+Returns the residual of a division
+</para>
+<para>
+Example:
+<programlisting>
+if tick % 10 == 0 [ print “True if the tick is a multiple of ten” ]
+</programlisting>
+</para>
+</sect2>
+
+<sect2>
+<title>
++, -
+</title>
+<para>
+<programlisting>
++, - : double -> double -> double, vector -> vector -> vector, string->string->string
+</programlisting>
+Addition, subtraction: work both for numbers and vectors.
+Also + can be used for string concatenation.
+</para>
+</sect2>
+
+<sect2>
+<title>
+&lt;, > , >=, &lt;=
+</title>
+<para>
+<programlisting>
+&lt;, > , >=, &lt;=: double -> double -> Boolean
+</programlisting>
+Comparison operations. Work for numbers only.
+</para>
+</sect2>
+
+<sect2>
+<title>
+==, !=
+</title>
+<para>
+<programlisting>
+==, != : double -> double -> boolean, vector -> vector -> Boolean
+</programlisting>
+Equality, inequality. Work for any types. The only condition is that the types are compatible (that is, do not compare a vector and a number, etc.)
+Advanced note: actually, it is possible to compare, for instance, a vector and a grid but they are always not equal.
+</para>
+</sect2>
+
+<sect2>
+<title>
+- (unary)
+</title>
+<para>
+<programlisting>
+- (unary) : double -> double, vector -> vector
+</programlisting>
+Unary minus. Also works as a negation operation for vectors.
+</para>
+</sect2>
+
+<sect2>
+<title>
+and, or
+</title>
+<para>
+<programlisting>
+and, or : boolean ->boolean -> Boolean
+</programlisting>
+Logical operators AND and OR. Can be applied only to Boolean arguments.
+</para>
+</sect2>
+
+<sect2>
+<title>
+not
+</title>
+<para>
+<programlisting>
+not : boolean -> Boolean
+</programlisting>
+Logical negation.
+</para>
+<para>
+Example:
+<programlisting>
+If not true == false [ print “OK” ]
+</programlisting>
+</para>
+</sect2>
+
+<sect2>
+<title>
+=, +=, *=, -=, /=
+</title>
+<para>
+<programlisting>
+=, +=, *=, -=, /=
+</programlisting>
+Usual assignment operations from such programming languages as C++, Java, C#.
+</para>
+<para>
++=, -= work with both numbers and vectors.
+</para>
+<para>
+*=, /= work with numbers and with a vector on LHS (the left hand side)  and a number on RHS.
+</para>
+<para>
+*= works with a grid on LHS and a number on RHS.
+</para>
+</sect2>
+
+
+<sect2>
+<title>
+is
+</title>
+<para>
+<programlisting>
+variable is type : boolean
+
+variable : $Object
+type : $type
+</programlisting>
+Operation that checks whether an object on LHS is of type on RHS. Returns a Boolean value.
+</para>
+<para>
+Example:
+<programlisting>
+var v : vector
+if v is vector [ print “A vector is a vector”]
+if v is grid [print “A vector is a grid”]
+</programlisting>
+In this example only the first sentence will be printed out.
+</para>
+</sect2>
+
+<sect2>
+<title>
+as
+</title>
+<para>
+<programlisting>
+variable as type : extends $Object
+
+variable : $Object
+type : $type
+</programlisting>
+Converts a given variable to a given type and returns a conversion result. If the conversion is not possible then the special null value is returned.
+</para>
+<para>
+Example:
+<programlisting>
+var agent-list = all-agents-here
+ask agent-list
+[
+	var good-agent = self as GoodAgent
+	if good-agent == null [ continue ]
+	; do something with good-agent
+]
+</programlisting>
+In this example a list of all agents at the position of a calling (current) agent is obtained. By default, the type of each agent in this list is SpaceAgent. Then all agents in the list are processed (by ask command). New variable ‘good-agent’ is created with the value of the currently processed agent converted to GoodAgent type. If the conversion was unsuccessful then continue with the next agent in the list.
+</para>
+</sect2>
+
+
+</sect1>
+
+
+
+<!-- Math commands -->
+<sect1>
+<title>
+Math commands
+</title>
+
+<sect2>
+<title>
+abs
+</title>
+<para>
+<programlisting>
+abs value : number
+value : number
+</programlisting>
+Returns the absolute value of a given number.
+</para>
+</sect2>
+
+<sect2>
+<title>
+acos
+</title>
+<para>
+<programlisting>
+acos value : number
+value : number
+</programlisting>
+Returns the arc cosine of an angle.
+</para>
+</sect2>
+
+<sect2>
+<title>
+asin
+</title>
+<para>
+<programlisting>
+asin value : number
+value : number
+</programlisting>
+Returns the arc sine of an angle.
+</para>
+</sect2>
+
+<sect2>
+<title>
+atan
+</title>
+<para>
+<programlisting>
+atan value : number
+value : number
+</programlisting>
+Returns the arc tangent of an angle.
+</para>
+</sect2>
+
+<sect2>
+<title>
+atan2
+</title>
+<para>
+<programlisting>
+atan2 x y : number
+x : number
+y : number
+</programlisting>
+Converts rectangular coordinates (x,y) to polar (r, theta) and returns theta.
+</para>
+</sect2>
+
+<sect2>
+<title>
+ceil
+</title>
+<para>
+<programlisting>
+ceil value : number
+value : number
+</programlisting>
+Returns the smallest value that is not less than the argument and is equal to an integer.
+</para>
+</sect2>
+
+<sect2>
+<title>
+cos
+</title>
+<para>
+<programlisting>
+cos value : number
+value : number
+</programlisting>
+Returns the cosine of an angle.
+</para>
+</sect2>
+
+<sect2>
+<title>
+exp
+</title>
+<para>
+<programlisting>
+exp value : number
+value : number
+</programlisting>
+Returns the exponent of an argument.
+</para>
+</sect2>
+
+<sect2>
+<title>
+floor
+</title>
+<para>
+<programlisting>
+floor number : number
+number : number
+</programlisting>
+Rounds number towards zero.
+</para>
+</sect2>
+
+<sect2>
+<title>
+log
+</title>
+<para>
+<programlisting>
+log value : number
+value : number
+</programlisting>
+Returns the natural logarithm of an argument.
+</para>
+</sect2>
+
+<sect2>
+<title>
+round
+</title>
+<para>
+<programlisting>
+round number : number
+number : number
+</programlisting>
+Rounds a number.
+</para>
+</sect2>
+
+<sect2>
+<title>
+sin
+</title>
+<para>
+<programlisting>
+sin value : number
+value : number
+</programlisting>
+Returns the sine of an angle.
+</para>
+</sect2>
+
+
+<sect2>
+<title>
+sqrt
+</title>
+<para>
+<programlisting>
+sqrt number : number
+number : number
+</programlisting>
+Returns the square root of a number.
+</para>
+</sect2>
+
+<sect2>
+<title>
+tan
+</title>
+<para>
+<programlisting>
+tan number : number
+number : number
+</programlisting>
+Returns the tangent root of a number.
+</para>
+</sect2>
+
+
+</sect1>
+
+
+
+<!-- Commands -->
+<sect1>
+<title>
+Commands
+</title>
+<para>
+Note: command descriptions are in the following format:
+Command name followed by arguments separated by whitespaces. If the command has a return value then after a colon the type of the return value is given. On the next lines arguments listed with their types after colons.
+</para>
+<para>
+Note: special types (types which cannot be declared explicitly) are started with $ sign.
+</para>
+<para>
+List of special types:
+<variablelist>
+<varlistentry>
+<term>
+$type
+</term>
+<listitem>
+<para>
+A name of any type (except number/double).
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>
+$ArrayList&lt;type> 
+</term>
+<listitem>
+<para>
+list of objects of type ‘type’
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>
+$Array&lt;type>
+</term>
+<listitem>
+<para>
+array of objects of type ‘type’, array and list are different types
+</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</para>
+
+
+
+<sect2>
+<title>
+add-netlogo-space
+</title>
+<para>
+<programlisting>
+add-netlogo-space name x-min x-max y-min y-max wrap-x wrap-y : Space
+name : string
+x-min : number
+y-min : number
+x-max : number
+y-max : number
+wrap-x : boolean
+wrap-y : boolean
+</programlisting>
+Adds a new NetLogo space into a model. Call it in the model setup
+method. 'name' is a name of a new space. It can be used for getting
+a reference to this space with 'get-space' command.
+</para>
+<para>
+Note: it is required to have one space declared with 'space' keyword.
+That space is considered to be default space and is always used when
+no explicit reference to a space is given. Also, that default space has
+name 'space' so it is prohibited to use name 'space' for additional spaces.
+</para>
+<para>
+Example: see 'add-standard-space'
+</para>
+</sect2>
+
+
+
+<sect2>
+<title>
+add-standard-space
+</title>
+<para>
+<programlisting>
+add-standard-space name x-min x-max y-min y-max wrap-x wrap-y : Space
+name : string
+x-min : number
+y-min : number
+x-max : number
+y-max : number
+wrap-x : boolean
+wrap-y : boolean
+</programlisting>
+Adds a new standard space into a model. Call it in the model setup
+method. 'name' is a name of a new space. It can be used for getting
+a reference to this space with 'get-space' command.
+</para>
+<para>
+Note: it is required to have one space declared with 'space' keyword.
+That space is considered to be default space and is always used when
+no explicit reference to a space is given. Also, that default space has
+name 'space' so it is prohibited to use name 'space' for additional spaces.
+</para>
+<para>
+Example:
+<programlisting>
+; Default space
+space NetLogoSpace -20 20 -20 20 true true
+
+global another-space : Space
+
+to setup
+	another-space = add-standard-space "One more space" 
+                                       (-10) 10 (-10) 10
+                                       true false
+
+ 	; Agents will be created in default space
+	create SomeAgent 2
+         
+	; Agents will be created in another-space                              
+	ask another-space
+	[
+		create SomeAgent 20
+		ask create-one AnotherAgent
+ 		[
+			set-random-position
+ 		]
+	]
+end
+</programlisting>
+In this example a new space is created inside setup method.
+In this case grids cannot be created inside that new space.
+See 'create-grid-in-space' command to resolve this issue.
+</para>
+</sect2>
+
+
+
+
+
+
+
+<sect2>
+<title>
+agents
+</title>
+<para>
+<programlisting>
+agents type : $ArrayList&lt;type>
+type : $type
+</programlisting>
+Returns a list of all agents of a specific type.
+</para>
+<para>
+Example:
+<programlisting>
+var all-good-agents = agents GoodAgent
+var number-of-macrophages = count agents Macrophage
+</programlisting>
+There is a better way to get the number of specific agents, that is, use agents-number command
+</para>
+<para>
+Note: only the agents which have precisely the requested type are returned.
+<programlisting>
+agent Agent1 : Agent
+
+agent Agent2 : Agent1
+
+to get-agents1
+	; Only agents of type 'Agent1' will be returned.
+	; No agents of type Agent2 will be in the returned agent list.
+	var agents1 = agents Agent1
+end
+</programlisting>
+</para>
+</sect2>
+
+
+<sect2>
+<title>
+agents-at
+</title>
+<para>
+<programlisting>
+agents-at type point radius : $ArrayList&lt;type>
+type : $type
+point : vector
+radius : number
+</programlisting>
+Returns all agents in the default space of a specific type at the specific circular region (given by its center ‘point’ and radius ‘radius’). Radius cannot be negative. Zero radius means that the agents at a point are requested.
+</para>
+<para>
+Example:
+<programlisting>
+var good-agents-at-the-origin = agents-at GoodAgent [0,0,0] 0
+</programlisting>
+</para>
+</sect2>
+
+
+<sect2>
+<title>
+agents-at-as
+</title>
+<para>
+<programlisting>
+agents-at-as type point radius : $ArrayList&lt;type>
+type : $type
+point : vector
+radius : number
+</programlisting>
+Returns all agents in the default space derived from a specific type at the specific circular region (given by its center ‘point’ and radius ‘radius’). Radius cannot be negative. Zero radius means that the agents at a point are requested.
+</para>
+</sect2>
+
+<sect2>
+<title>
+agents-here
+</title>
+<para>
+<programlisting>
+agents-here type : $ArrayList&lt;type>
+type : $type
+</programlisting>
+Returns all agents of a specific type intersecting with the current active agent.
+</para>
+<para>
+Note: only agents can call this function.
+</para>
+<para>
+Note: agents in the same space as a calling agent are returned.
+</para>
+<para>
+Note: calling agent may also be returned if its type is the same as requested one.
+</para>
+</sect2>
+
+
+<sect2>
+<title>
+agents-here-as
+</title>
+<para>
+<programlisting>
+agents-here-as type : $ArrayList&lt;type>
+type : $type
+</programlisting>
+Returns all agents derived from a specific type intersecting with the current active agent.
+</para>
+<para>
+Note: only agents can call this function.
+</para>
+<para>
+Note: agents in the same space as a calling agent are returned.
+</para>
+<para>
+Note: calling agent may also be returned if its type is derived form requested one.
+</para>
+</sect2>
+
+
+<sect2>
+<title>
+agents-number
+</title>
+<para>
+<programlisting>
+agents-number type : number
+type : $type
+</programlisting>
+Returns the number of agents of a specific type.
+</para>
+</sect2>
+
+
+<sect2>
+<title>
+agents-number-as
+</title>
+<para>
+<programlisting>
+agents-number-as type : number
+type : $type
+</programlisting>
+Returns the number of agents derived from a specific type.
+</para>
+</sect2>
+
+
+<sect2>
+<title>
+agents-as
+</title>
+<para>
+<programlisting>
+agents-as type : $ArrayList&lt;type>
+type : $type
+</programlisting>
+Returns all agents which are derived from a given type.
+</para>
+</sect2>
+
+
+<sect2>
+<title>
+all-agents-at
+</title>
+<para>
+<programlisting>
+all-agents-at point radius : $ArrayList&lt;SpaceAgent>
+point : vector
+radius : number
+</programlisting>
+Returns all agents in the default space at a given circular region. Type of all returned agents is SpaceAgent. Look at ‘as’ operation example to see how to convert this type to other types.
+</para>
+</sect2>
+
+<sect2>
+<title>
+all-agents-here
+</title>
+<para>
+<programlisting>
+all-agents-here : $ArrayList&lt;SpaceAgent>
+</programlisting>
+Returns all agents at the position of a calling agent.
+</para>
+<para>
+Note: agents in the same space as a calling agent are returned.
+</para>
+</sect2>
+
+
+<sect2>
+<title>
+ask
+</title>
+<para>
+<programlisting>
+ask list [commands]
+list : $ArrayList (or $Array, or a single object)
+</programlisting>
+Iterates through all objects in the list and performs commands for each object. Commands are given in brackets. ‘self’ inside command block refers to the currently processed object from the list. ‘myself’ inside command block refers to the object which called ‘ask’ command.
+</para>
+<para>
+Note: if list == null, then no commands will be executed.
+</para>
+<para>
+Example:
+<programlisting>
+ask all-agents-here
+[
+	var good-agent = self as GoodAgent
+	ask good-agent
+	[
+		; the same as self.color = blue
+		color = blue
+		; actually, the previous command do the same
+		; thing as	
+		; myself.color = blue
+		; because good-agent variable equals (in some sense) 
+		; to self variable from the outer ask command block.
+	]
+]
+</programlisting>
+Note: in the example above ‘as’ command could return null value, but it is not a problem since ‘ask’ command correctly works with null list argument.
+</para>
+</sect2>
+
+
+
+<sect2>
+<title>
+break
+</title>
+<para>
+<programlisting>
+break
+</programlisting>
+This command is equivalent to ‘break’ keyword in C, C++, Java, C#. It can be used only inside commands which iterate over some values. 
+This command tells to stop the current iterative process like
+'while', 'for', or 'repeat' and continue executing commands
+after that process.
+</para>
+<para>
+Example:
+<programlisting>
+repeat 100
+[
+	if true [ break ]
+]
+var y = 0
+for x = 1:100
+[
+	if x == 50 [ break ]
+	y += x
+]
+</programlisting>
+</para>
+</sect2>
+
+
+<sect2>
+<title>
+continue
+</title>
+<para>
+<programlisting>
+continue
+</programlisting>
+This command is equivalent to ‘continue’ keyword in C, C++, Java, C#. It can be used only inside commands which iterate over some values. This command tells to start the next iteration immediately.
+</para>
+<para>
+Example:
+<programlisting>
+repeat 100
+[
+	if true [ continue ]
+]
+var y = 0
+for x = 1:100
+[
+	if x == 50 [ continue ]
+	y += x
+]
+</programlisting>
+</para>
+</sect2>
+
+
+<sect2>
+<title>
+count
+</title>
+<para>
+<programlisting>
+count list : number
+list : $ArrayList (or $Array)
+</programlisting>
+Returns the number of elements in a list.
+</para>
+</sect2>
+
+
+<sect2>
+<title>
+create
+</title>
+<para>
+<programlisting>
+create type number : $Array&lt;type>
+type : $type
+number : number
+</programlisting>
+Creates ‘number’ of objects of type ‘type’. Cannot be used with type ‘number’. Commonly used for creating new agents.
+</para>
+<para>
+Example:
+<programlisting>
+create GoodAgent 1000
+create BadAgent 1
+var vectors = create vector 100 ; creates an array of vectors
+ask create SomeAgent 20
+[
+	set-random-position
+]
+</programlisting>
+</para>
+</sect2>
+
+
+
+<sect2>
+<title>
+create-new-file
+</title>
+<para>
+<programlisting>
+create-new-file file-name
+file-name : string
+</programlisting>
+Creates a new file with the given name. If a file with the given name exists, then it will be deleted and a new file with the same name will be created.
+Note: files are created in the folder from which SPARK was started. 
+</para>
+<para>
+Example
+<programlisting>
+create-new-file "test.log"
+</programlisting>
+</para>
+</sect2>
+
+
+
+<sect2>
+<title>
+create-one
+</title>
+<para>
+<programlisting>
+create-one type : Type of this command equals to ‘type’
+type : $type
+</programlisting>
+Creates one object of a specific type. The main difference form the previous command with number = 1 is that the type of this command is different.
+</para>
+<para>
+Example
+<programlisting>
+(create-one GoodAgent).color = red
+; it is not possible to write the following
+; (create GoodAgent 1).color = red
+; because the command in parentheses has type $Array
+</programlisting>
+</para>
+</sect2>
+
+
+<sect2>
+<title>
+create-grid
+</title>
+<para>
+<programlisting>
+create-grid name x-size y-size : grid
+name : string
+x-size : number
+y-size : number
+</programlisting>
+Creates a grid with a given name and of a given dimension in default space. This command can be used during grid declaration inside model class.
+</para>
+<para>
+Note: if no grid initialization is given for a grid, 
+then the default initialization will be created with the name 
+equals to the variable name and with the dimension of the default space.
+So the only use of this command is to create grids of different resolution.
+</para>
+<para>
+Note: in current implementation 'name' should be the same as variable's name.
+</para>
+<para>
+Example:
+<programlisting>
+model Model
+global data = create-grid “data” 10 10
+</programlisting>
+</para>
+</sect2>
+
+
+<sect2>
+<title>
+create-grid-in-space
+</title>
+<para>
+<programlisting>
+create-grid space name x-size y-size : grid
+space : Space (or string)
+name : string
+x-size : number
+y-size : number
+</programlisting>
+Creates a grid with a given name and of a given dimension in a given space. This command can be used during grid declaration inside model class.
+</para>
+<para>
+Note: space should be initialized before this command.
+</para>
+<para>
+Note: in current implementation 'name' should be the same as variable's name.
+</para>
+<para>
+Example:
+<programlisting>
+model Model
+
+; Default space
+space NetLogoSpace -20 20 -20 20 true true
+
+; Additional space
+global space2 = add-standard-space "space2" (-10) 10 (-10) 10 true false
+
+; Grid will be created in default space
+global data = create-grid “data” 10 10
+
+; Grid will be created in space2
+global data2 = create-grid-in-space space2 "data2" 
+                                    space2.x-size space2.y-size
+
+; Grid will be created in default space with default size
+global data3 : grid                                  
+</programlisting>
+</para>
+</sect2>
+
+
+<sect2>
+<title>
+create-vector
+</title>
+<para>
+<programlisting>
+create-vector x y z : vector
+x : number
+y : number
+z : number
+</programlisting>
+Creates a new vector with the given components
+</para>
+</sect2>
+
+
+<sect2>
+<title>
+distance
+</title>
+<para>
+<programlisting>
+distance agent1 agent2 : vector
+agent1 : SpaceAgent
+agent2 : SpaceAgent
+</programlisting>
+<programlisting>
+distance pos1 pos2 : vector
+pos1 : vector
+pos2 : vector
+</programlisting>
+Returns the vector v equals to agent2.position – agent1.position (pos2 - pos1). It does more: in the torus topology the shortest vector-distance is returned.
+</para>
+<para>
+Example:
+<programlisting>
+; get the vector-distance between agents and then compute the length of this vector
+var distance-between-agents = (distance agent1 agent2).length
+</programlisting>
+</para>
+</sect2>
+
+
+
+
+<sect2>
+<title>
+diffuse
+</title>
+<para>
+<programlisting>
+diffuse grid value
+grid : grid (DataLayer)
+value : number
+</programlisting>
+Performs a diffusion operation on a given grid. ‘value’ is a diffusion coefficient.
+</para>
+<para>
+	The diffusion operation is performed as follows. Each data layer cell gives
+	equal shares of (coefficient * 100) percent of its value to its eight neighbors.
+	Coefficient should be between 0 and 1 for well-defined behavior. 
+</para>
+</sect2>
+
+<sect2>
+<title>
+evaporate
+</title>
+<para>
+<programlisting>
+evaporate grid value
+grid : grid (DataLayer)
+value : number
+</programlisting>
+Performs evaporation on a given grid. ‘value’ is an evaporation coefficient.
+</para>
+<para>
+Evaporation simply means multiplication of all data layer values by the given value.
+</para>
+</sect2>
+
+<sect2>
+<title>
+exit
+</title>
+<para>
+<programlisting>
+exit
+</programlisting> 
+This command ends the current method. Only methods that do not return any value can use this command. Other methods should call ‘return’.
+</para>
+</sect2>
+
+
+<sect2>
+<title>
+fprint
+</title>
+<para>
+<programlisting>
+fprint file-name object
+file-name : string
+object : $Object, string, number
+</programlisting>
+Prints a text representation of the given object into the given file.
+If a file with the given name doesn't exist, then a new file will be created.
+If a file with the given name exists, then a new line of text will be appended to the end of the file.
+</para>
+<para>
+Example
+<programlisting>
+fprint "test.log" "2 + 2 = "
+fprint "test.log" (2 + 2)
+; The following two lines will be added to the file "test.log":
+; 2 + 2 =
+; 4
+</programlisting>
+</para>
+</sect2>
+
+
+
+<sect2>
+<title>
+get
+</title>
+<para>
+<programlisting>
+get list index
+list : $ArrayList (or $Array)
+index : number
+</programlisting>
+Returns an element from a list at the position specified by index.
+</para>
+</sect2>
+
+
+<sect2>
+<title>
+get-space
+</title>
+<para>
+<programlisting>
+get-space name
+name : string
+</programlisting>
+Returns a space with a given name. Default space has name 'space'.
+</para>
+</sect2>
+
+
+<sect2>
+<title>
+if
+</title>
+<para>
+<programlisting>
+if condition [commands]
+condition : boolean
+</programlisting>
+Standard if control statement. If condition is true, then commands are executed.
+</para>
+</sect2>
+
+<sect2>
+<title>
+ifelse
+</title>
+<para>
+<programlisting>
+ifelse condition [commands1][command2]
+condition : boolean
+</programlisting>
+Standard if-else control statement. If condition is true, then commands from the first block are executed, otherwise commands from the second block are performed.
+</para>
+</sect2>
+
+
+<sect2>
+<title>
+interpolate
+</title>
+<para>
+<programlisting>
+interpolate v1 v2 t  : vector (number)
+v1 : vector (number)
+v2 : vector (number)
+t : number
+</programlisting>
+This command is an optimized version of v1 * (1 - t) + t * v2
+</para>
+</sect2>
+
+
+<sect2>
+<title>
+kill
+</title>
+<para>
+<programlisting>
+kill agent-list
+agent-list : $ArrayList (or $Array)
+</programlisting>
+Kills all agents in the list, that is, calls ‘die’ method for each agent in the list. This command is a shortcut for
+<programlisting>
+ask agent-list
+[
+	die
+]
+</programlisting>
+</para>
+</sect2>
+
+
+
+
+<sect2>
+<title>
+max
+</title>
+<para>
+<programlisting>
+max a b : number
+a : number
+b : number
+</programlisting>
+Returns the maximum of two numbers.
+</para>
+</sect2>
+
+
+<sect2>
+<title>
+min
+</title>
+<para>
+<programlisting>
+min a b : number
+a : number
+b : number
+</programlisting>
+Returns the minimum of two numbers.
+</para>
+</sect2>
+
+
+<sect2>
+<title>
+myself
+</title>
+<para>
+<programlisting>
+myself : $Object
+</programlisting>
+Returns a reference to the calling agent.
+</para>
+</sect2>
+
+
+<sect2>
+<title>
+null
+</title>
+<para>
+<programlisting>
+null
+</programlisting>
+A null object. Can be used for testing results of some operations.
+</para>
+<para>
+Example
+<programlisting>
+	var a = self as GoodAgent
+	if a != null
+	[
+		do-something
+	]
+</programlisting>
+</para>
+</sect2>
+
+
+<sect2>
+<title>
+parent
+</title>
+<para>
+<programlisting>
+parent : $Object
+</programlisting>
+Returns a reference to the parent class of the current class.
+</para>
+</sect2>
+
+
+<sect2>
+<title>
+print
+</title>
+<para>
+<programlisting>
+print str
+str : string
+</programlisting>
+Prints out a string
+</para>
+</sect2>
+
+
+<sect2>
+<title>
+random-in-interval
+</title>
+<para>
+<programlisting>
+random-in-interval a b : number
+a : number
+b : number
+</programlisting>
+Returns a uniformly distributed random number in the interval [a,b).
+</para>
+</sect2>
+
+
+<sect2>
+<title>
+random
+</title>
+<para>
+<programlisting>
+random a : number
+a : number
+</programlisting>
+Returns a uniformly distributed random number in the interval [0, a)
+</para>
+</sect2>
+
+
+<sect2>
+<title>
+random-vector
+</title>
+<para>
+<programlisting>
+random-vector a b : vector
+a : number
+b : number
+</programlisting>
+Returns a random vector with components in the interval [a, b).
+</para>
+<para>
+Note: now this function returns a random 2-d vector with the third component 0.
+</para>
+</sect2>
+
+
+<sect2>
+<title>
+random-vector-of-length
+</title>
+<para>
+<programlisting>
+random-vector-of-length length : vector
+length : number
+</programlisting>
+Returns a random vector of the given length.
+</para>
+<para>
+Note: now this function returns a random 2-d vector with the third component 0.
+</para>
+</sect2>
+
+
+<sect2>
+<title>
+repeat
+</title>
+<para>
+<programlisting>
+repeat number [commands]
+number : number
+</programlisting>
+Repeats commands the given number of times.
+</para>
+</sect2>
+
+<sect2>
+<title>
+return
+</title>
+<para>
+<programlisting>
+return value
+</programlisting>
+Returns the given ‘value’ as method’s value.
+</para>
+<para>
+Note: the type of ‘value’ should be compatible with method’s return type.
+</para>
+</sect2>
+
+
+
+<sect2>
+<title>
+self
+</title>
+<para>
+<programlisting>
+self : $Object
+</programlisting>
+Returns a reference to the active object (agent).
+</para>
+</sect2>
+
+
+<sect2>
+<title>
+space-xmin
+</title>
+<para>
+<programlisting>
+space-xmin : number
+</programlisting>
+Returns the minimum x coordinate of space.
+</para>
+</sect2>
+
+
+<sect2>
+<title>
+space-xmax
+</title>
+<para>
+<programlisting>
+space-xmax : number
+</programlisting>
+Returns the maximum x coordinate of the default space.
+</para>
+</sect2>
+
+
+<sect2>
+<title>
+space-ymin
+</title>
+<para>
+<programlisting>
+space-ymin : number
+</programlisting>
+Returns the minimum y coordinate of the default space.
+</para>
+</sect2>
+
+
+<sect2>
+<title>
+space-ymax
+</title>
+<para>
+<programlisting>
+space-ymax : number
+</programlisting>
+Returns the maximum y coordinate of the default space.
+</para>
+</sect2>
+
+
+<sect2>
+<title>
+space-xsize
+</title>
+<para>
+<programlisting>
+space-xsize : number
+</programlisting>
+Returns the size of the default space along x-axis. That is, space-xmax – space-xmin.
+</para>
+</sect2>
+
+<sect2>
+<title>
+space-ysize
+</title>
+<para>
+<programlisting>
+space-ysize : number
+</programlisting>
+Returns the size of the default space along y-axis. That is, space-ymax – space-ymin.
+</para>
+</sect2>
+
+
+<sect2>
+<title>
+sum
+</title>
+<para>
+<programlisting>
+sum list : number
+list : grid
+</programlisting>
+Returns a sum of all data stored in a grid.
+</para>
+</sect2>
+
+
+<sect2>
+<title>
+this
+</title>
+<para>
+<programlisting>
+this : $Object
+</programlisting>
+Returns a reference to the current object.
+</para>
+</sect2>
+
+
+
+<sect2>
+<title>
+truncate
+</title>
+<para>
+<programlisting>
+truncate v min max : vector
+v : vector
+min : number
+max : number
+</programlisting>
+Truncates all components of a given vector.
+</para>
+</sect2>
+
+
+<sect2>
+<title>
+vector-in-direction
+</title>
+<para>
+<programlisting>
+vector-in-direction length angle : vector
+length : number
+angle : number
+</programlisting>
+Returns a vector of length ‘length’ in the direction specified by ‘angle’.
+</para>
+<para>
+Note: angle should be in degrees.
+</para>
+<para>
+Note: a 2-d vector is returned.
+</para>
+</sect2>
+
+
+<sect2>
+<title>
+while
+</title>
+<para>
+<programlisting>
+while condition [commands]
+</programlisting>
+Commands in the block are executed while condition is true.
+</para>
+</sect2> 
+
+</sect1>
+
+
+<sect1>
+<title>vector</title>
+
+<para>
+	Methods and fields of the 'vector' are described in this section. 
+</para>
+
+<sect2>
+	<title>
+	x
+	</title>
+	
+	<para>
+	<programlisting>
+	x : number
+	</programlisting>
+	Field 'x' is the first component of a vector.
+	</para>
+</sect2>
+
+
+<sect2>
+	<title>
+	y
+	</title>
+	
+	<para>
+	<programlisting>
+	y : number
+	</programlisting>
+	Field 'y' is the second component of a vector.
+	</para>
+</sect2>
+
+
+<sect2>
+	<title>
+	z
+	</title>
+	
+	<para>
+	<programlisting>
+	z : number
+	</programlisting>
+	Field 'z' is the third component of a vector.
+	</para>
+</sect2>
+
+
+<sect2>
+	<title>
+	length
+	</title>
+	
+	<para>
+	<programlisting>
+	length : number
+	</programlisting>
+	Returns an absolute value of a vector, its length.
+	</para>
+</sect2>
+
+
+<sect2>
+	<title>
+	length-squared
+	</title>
+	
+	<para>
+	<programlisting>
+	length-squared : number
+	</programlisting>
+	Returns a squared absolute value of a vector.
+	</para>
+</sect2>
+
+
+<sect2>
+	<title>
+	normalize
+	</title>
+	
+	<para>
+	<programlisting>
+	normalize : vector
+	</programlisting>
+	Normalizes a vector and returns a reference to itself.
+	</para>
+</sect2>
+
+
+<sect2>
+	<title>
+	truncate-length
+	</title>
+	
+	<para>
+	<programlisting>
+	truncate-length max-length : vector
+	max-length : number
+	</programlisting>
+	If the length of a vector is higher than 'max-length' then
+	its length is truncated to 'max-length'. Otherwise, no changes.
+	A reference to itself is returned.
+	</para>
+</sect2>
+
+
+
+<sect2>
+	<title>
+	copy
+	</title>
+	
+	<para>
+	<programlisting>
+	copy : vector
+	</programlisting>
+	Returns a copy of a vector.
+	</para>
+</sect2>
+
+
+<sect2>
+	<title>
+	dot
+	</title>
+	
+	<para>
+	<programlisting>
+	dot v : number
+	v : vector
+	</programlisting>
+	Computes the dot product with a given vector.
+	</para>
+</sect2>
+
+
+<sect2>
+	<title>
+	cross
+	</title>
+	
+	<para>
+	<programlisting>
+	cross v : vector
+	v : vector
+	</programlisting>
+	Computes the cross product with a given vector.
+	The result overrides the current vector's value. 
+	</para>
+</sect2>
+
+
+
+<sect2>
+	<title>
+	parallel-component
+	</title>
+	
+	<para>
+	<programlisting>
+	parallel-component unit-vector : vector
+	unit-vector : vector
+	</programlisting>
+	Returns component of a vector parallel to a given
+	unit vector.
+	</para>
+	<para>
+	Note: the argument vector should be of unit length
+	for this method to yield a correct result.
+	</para>
+</sect2>
+
+
+<sect2>
+	<title>
+	perpendicular-component
+	</title>
+	
+	<para>
+	<programlisting>
+	perpendicular-component unit-vector : vector
+	unit-vector : vector
+	</programlisting>
+	Returns component of a vector perpendicular to a given
+	unit vector.
+	</para>
+	<para>
+	Note: the argument vector should be of unit length
+	for this method to yield a correct result.
+	</para>
+</sect2>
+
+
+</sect1>
+
+
+
+<sect1>
+<title>
+Space
+</title>
+
+
+<sect2>
+<title>
+create
+</title>
+<para>
+<programlisting>
+create type number : $Array&lt;type>
+type : $type (derived from SpaceAgent)
+number : number
+</programlisting>
+Creates ‘number’ of agents of type ‘type’ in a specific space.
+</para>
+<para>
+Example:
+<programlisting>
+; Create 1000 GoodAgent in the space "Space2".
+ask get-space "Space2"
+[
+	create GoodAgent 1000
+]
+</programlisting>
+</para>
+</sect2>
+
+
+<sect2>
+<title>
+create-one
+</title>
+<para>
+<programlisting>
+create-one type : Type of this command equals to ‘type’
+type : $type (derived from SpaceAgent)
+</programlisting>
+Creates one agent of a specific type in a given space. 
+The main difference form the previous command with number = 1 
+is that the type of this command is different.
+</para>
+<para>
+Example
+<programlisting>
+var space1 = add-standard-space (-10) 10 (-20) 20 true false
+(space1.create-one GoodAgent).color = red
+; it is not possible to write the following
+; (space1.create GoodAgent 1).color = red
+; because the command in parentheses has type $Array
+</programlisting>
+</para>
+</sect2>
+
+
+<sect2>
+<title>
+x-min
+</title>
+<para>
+<programlisting>
+x-min : number
+</programlisting>
+Returns the minimum x coordinate of a space.
+</para>
+</sect2>
+
+
+<sect2>
+<title>
+x-max
+</title>
+<para>
+<programlisting>
+x-max : number
+</programlisting>
+Returns the maximum x coordinate of a space.
+</para>
+</sect2>
+
+
+<sect2>
+<title>
+y-min
+</title>
+<para>
+<programlisting>
+y-min : number
+</programlisting>
+Returns the minimum y coordinate of a space.
+</para>
+</sect2>
+
+
+<sect2>
+<title>
+y-max
+</title>
+<para>
+<programlisting>
+y-max : number
+</programlisting>
+Returns the maximum y coordinate of a space.
+</para>
+</sect2>
+
+
+<sect2>
+<title>
+x-size
+</title>
+<para>
+<programlisting>
+x-size : number
+</programlisting>
+Returns the size of a space along the x-axis. That is, x-max – x-min.
+</para>
+</sect2>
+
+<sect2>
+<title>
+y-size
+</title>
+<para>
+<programlisting>
+y-size : number
+</programlisting>
+Returns the size of a space along the y-axis. That is, y-max – y-min.
+</para>
+</sect2>
+
+
+<sect2>
+<title>
+agents-at
+</title>
+<para>
+<programlisting>
+agents-at type point radius : $ArrayList&lt;type>
+type : $type
+point : vector
+radius : number
+</programlisting>
+Returns all agents in a given space of a specific type 
+at the specific circular region 
+(given by its center ‘point’ and radius ‘radius’). 
+Radius cannot be negative. 
+Zero radius means that the agents at a point are requested.
+</para>
+</sect2>
+
+<sect2>
+<title>
+agents-at-as
+</title>
+<para>
+<programlisting>
+agents-at-as type point radius : $ArrayList&lt;type>
+type : $type
+point : vector
+radius : number
+</programlisting>
+Returns all agents in a given space derived from a specific type 
+at the specific circular region 
+(given by its center ‘point’ and radius ‘radius’). 
+Radius cannot be negative. 
+Zero radius means that the agents at a point are requested.
+</para>
+</sect2>
+
+<sect2>
+<title>
+all-agents-at
+</title>
+<para>
+<programlisting>
+all-agents-at point radius : $ArrayList&lt;SpaceAgent>
+point : vector
+radius : number
+</programlisting>
+Returns all agents in a given space
+at a given circular region. 
+Type of all returned agents is SpaceAgent. 
+</para>
+</sect2>
+
+
+<sect2>
+<title>
+agents-here
+</title>
+<para>
+<programlisting>
+agents-here type : $ArrayList&lt;type>
+type : $type
+</programlisting>
+Returns all agents of a specific type intersecting with the current active agent.
+</para>
+<para>
+Note: only agents can call this function.
+</para>
+<para>
+Note: agents in a given space are returned.
+</para>
+<para>
+Note: calling agent may also be returned if its type is the same as requested one.
+</para>
+</sect2>
+
+
+<sect2>
+<title>
+agents-here-as
+</title>
+<para>
+<programlisting>
+agents-here-as type : $ArrayList&lt;type>
+type : $type
+</programlisting>
+Returns all agents derived from a specific type intersecting with the current active agent.
+</para>
+<para>
+Note: only agents can call this function.
+</para>
+<para>
+Note: agents in a given space are returned.
+</para>
+<para>
+Note: calling agent may also be returned if its type is derived from requested one.
+</para>
+</sect2>
+
+<sect2>
+<title>
+all-agents-here
+</title>
+<para>
+<programlisting>
+all-agents-here : $ArrayList&lt;SpaceAgent>
+</programlisting>
+Returns all agents at the position of a calling agent.
+</para>
+<para>
+Note: agents in a given space are returned.
+</para>
+</sect2>
+
+
+
+</sect1>
+
+
+
+<sect1>
+<title>
+Agent
+</title>
+
+<sect2>
+	<title>
+	die
+	</title>
+	
+	<para>
+	<programlisting>
+	die
+	</programlisting>
+	Destroys an agent.
+	</para>
+</sect2>
+
+
+<sect2>
+<title>
+link
+</title>
+<para>
+<programlisting>
+link agent : Link
+agent : Agent
+</programlisting>
+'link a' returns a link if the active agent is connected to 'a', or 'null' if there is no link between
+the active agent and 'a'.
+</para>
+</sect2>
+
+
+
+<sect2>
+<title>
+link-of-type
+</title>
+<para>
+<programlisting>
+link-of-type link-type
+link-type : Link
+</programlisting>
+Return a link of the specific type connected to the current agent.
+</para>
+</sect2>
+
+
+
+<sect2>
+<title>
+links-of-type
+</title>
+<para>
+<programlisting>
+links-of-type link-type
+link-type : $Array&lt;link-type>
+</programlisting>
+Returns all links of the given type connected to the current agent.
+</para>
+</sect2>
+
+
+</sect1>
+
+
+
+<sect1>
+<title>
+SpaceAgent : Agent
+</title>
+
+
+
+
+
+<sect2>
+	<title>
+	move
+	</title>
+	
+	<para>
+	<programlisting>
+	move v
+	v : vector
+	</programlisting>
+	Adds to the current position 'v' and a space agent is moved to that new position.
+	</para>
+</sect2>
+
+
+<sect2>
+	<title>
+	get-agent-space
+	</title>
+	
+	<para>
+	<programlisting>
+	get-agent-space : Space
+	</programlisting>
+	Returns the space in which a space agent is located.
+	</para>
+</sect2>
+
+
+<sect2>
+	<title>
+	move-to
+	</title>
+	
+	<para>
+	<programlisting>
+	move-to pos
+	pos : vector
+	</programlisting>
+	Moves an agent to a new position.
+	</para>
+</sect2>
+
+
+
+<sect2>
+	<title>
+	move-to-space
+	</title>
+	
+	<para>
+	<programlisting>
+	move-to-space new-space new-position
+	new-space : Space
+	new-position : vector
+	</programlisting>
+	Moves an agent to a given space at a specific position inside that space.
+	</para>
+</sect2>
+
+
+<sect2>
+	<title>
+	set-random-position
+	</title>
+	
+	<para>
+	<programlisting>
+	set-random-position
+	</programlisting>
+	Moves an agent to a random position inside a space.
+	</para>
+</sect2>
+
+
+
+<sect2>
+	<title>
+	hatch
+	</title>
+	
+	<para>
+	<programlisting>
+	hatch type number : $Array&lt;type>
+	type : $type (derived from SpaceAgent)
+	number : number
+	</programlisting>
+	Creates ‘number’ of agents of type ‘type’ in the same space as a calling agent
+	and at the same position as a calling agent.
+	</para>
+</sect2>
+
+
+<sect2>
+	<title>
+	hatch-one
+	</title>
+	<para>
+	<programlisting>
+	hatch-one type : Type of this command equals to ‘type’
+	type : $type (derived from SpaceAgent)
+	</programlisting>
+	Creates one agent of a specific type in the same space as a calling agent
+	and at the same position as a calling agent.
+	The main difference form the previous command with number = 1 
+	is that the type of this command is different.
+</para>
+</sect2>
+
+
+
+<sect2>
+	<title>
+	position
+	</title>
+	
+	<para>
+	<programlisting>
+	position : vector
+	</programlisting>
+	Field 'position' is the position of an agent inside a space. This is
+	a read only field. To assign a value to the position use 'move-to' or 'move'
+	methods.
+	</para>
+</sect2>
+
+
+
+<sect2>
+	<title>
+	color
+	</title>
+	
+	<para>
+	<programlisting>
+	color : vector
+	</programlisting>
+	Field 'color' is the color of a space agent.
+	</para>
+</sect2>
+
+
+<sect2>
+	<title>
+	radius
+	</title>
+	
+	<para>
+	<programlisting>
+	radius : number
+	</programlisting>
+	Field 'radius' is the size of a space agent.
+	</para>
+</sect2>
+
+
+
+</sect1>
+
+
+<!-- Links  -->
+<sect1>
+<title>
+Link
+</title>
+	
+
+<sect2>
+	<title>
+	connect
+	</title>
+	
+	<para>
+	<programlisting>
+	connect end1 end2
+	end1 : SpaceAgent
+	end2 : SpaceAgent
+	</programlisting>
+	Connects two agents by the link. 
+	</para>
+</sect2>
+
+
+<sect2>
+	<title>
+	color
+	</title>
+	
+	<para>
+	<programlisting>
+	color : vector
+	</programlisting>
+	Field 'color' is the color of a link.
+	</para>
+</sect2>
+
+
+<sect2>
+	<title>
+	distance
+	</title>
+	
+	<para>
+	<programlisting>
+	distance : vector
+	</programlisting>
+	Computes a vector-distance between two ends of the link (between two agents
+	which are connected by the link)
+	</para>
+</sect2>
+
+
+
+<sect2>
+	<title>
+	end1
+	</title>
+	
+	<para>
+	<programlisting>
+	end1 : SpaceAgent
+	</programlisting>
+	Returns an agent associated with the first end of the link
+	</para>
+</sect2>
+
+
+<sect2>
+	<title>
+	end2
+	</title>
+	
+	<para>
+	<programlisting>
+	end2 : SpaceAgent
+	</programlisting>
+	Returns an agent associated with the second end of the link
+	</para>
+</sect2>
+
+
+
+<sect2>
+	<title>
+	width
+	</title>
+	
+	<para>
+	<programlisting>
+	width : number
+	</programlisting>
+	Field 'radius' is the width of a link.
+	</para>
+</sect2>
+
+
+<sect2>
+	<title>
+	width
+	</title>
+	
+	<para>
+	<programlisting>
+	width : number
+	</programlisting>
+	Field 'radius' is the width of a link.
+	</para>
+</sect2>
+
+
+
+</sect1>
+
+
+
+<!--  Grid  -->
+<sect1>
+<title>
+grid
+</title>
+
+<sect2>
+	<title>
+	max
+	</title>
+	
+	<para>
+	<programlisting>
+	max : number
+	</programlisting>
+	Returns the maximum value stored in a grid.
+	</para>
+</sect2>
+
+
+<sect2>
+	<title>
+	min
+	</title>
+	
+	<para>
+	<programlisting>
+	min : number
+	</programlisting>
+	Returns the minimum value stored in a grid.
+	</para>
+</sect2>
+
+
+<sect2>
+	<title>
+	total-value
+	</title>
+	
+	<para>
+	<programlisting>
+	total-value : number
+	</programlisting>
+	Returns the sum of all values stored in a grid.
+	</para>
+</sect2>
+
+
+<sect2>
+	<title>
+	total-value-in-region
+	</title>
+	
+	<para>
+	<programlisting>
+	total-value-in-region x-min x-max y-min y-max : number
+	x-min : number
+	x-max : number
+	y-min : number
+	y-max : number
+	</programlisting>
+	Returns the sum of all values stored in a grid in a specific region.
+	</para>
+</sect2>
+
+
+
+<sect2>
+	<title>
+	multiply
+	</title>
+	
+	<para>
+	<programlisting>
+	multiple coefficient
+	coefficient : number
+	</programlisting>
+	Multiplies all values in a grid by a coefficient.
+	</para>
+</sect2>
+
+
+<sect2>
+	<title>
+	evaporate
+	</title>
+	
+	<para>
+	<programlisting>
+	evaporate coefficient
+	coefficient : number
+	</programlisting>
+	Multiplies all values in a grid by a coefficient (this is an alias
+	for the 'multiply' method). 
+	</para>
+</sect2>
+
+
+<sect2>
+	<title>
+	diffuse
+	</title>
+	
+	<para>
+	<programlisting>
+	diffuse coefficient
+	coefficient : number
+	</programlisting>
+	Performs a diffusion operation on a grid with a given diffusion
+	coefficient.
+	</para>
+	<para>
+	The diffusion operation is performed as follows. Each data layer cell gives
+	equal shares of (coefficient * 100) percent of its value to its eight neighbors.
+	Coefficient should be between 0 and 1 for well-defined behavior. 
+	</para>
+</sect2>
+
+
+
+<sect2>
+	<title>
+	set-value
+	</title>
+	
+	<para>
+	<programlisting>
+	set-value value
+	value : number
+	</programlisting>
+	Sets all values in a grid to a given value.
+	</para>
+</sect2>
+
+
+
+<sect2>
+	<title>
+	data-at
+	</title>
+	
+	<para>
+	<programlisting>
+	data-at i j : number
+	i : number
+	j : number
+	</programlisting>
+	Returns a value in a cell (i, j).
+	</para>
+</sect2>
+
+
+
+<sect2>
+	<title>
+	set-data-at
+	</title>
+	
+	<para>
+	<programlisting>
+	set-data-at i j new-value
+	i : number
+	j : number
+	new-value : number
+	</programlisting>
+	Sets the value of a cell (i, j) to a new value.
+	</para>
+</sect2>
+
+
+<sect2>
+	<title>
+	value-at
+	</title>
+	
+	<para>
+	<programlisting>
+	value-at pos : number
+	pos : vector
+	</programlisting>
+	Returns a value corresponding to a given position.
+	</para>
+</sect2>
+
+
+<sect2>
+	<title>
+	set-value-at
+	</title>
+	
+	<para>
+	<programlisting>
+	set-value-at pos new-value
+	pos : vector
+	new-value : number
+	</programlisting>
+	Sets the value of a cell corresponding to a given position.
+	</para>
+</sect2>
+
+
+<sect2>
+	<title>
+	add-value-at
+	</title>
+	
+	<para>
+	<programlisting>
+	add-value-at pos num
+	pos : vector
+	num : number
+	</programlisting>
+	Adds a given number to the value of a cell corresponding to a given position.
+	</para>
+</sect2>
+
+
+
+<sect2>
+	<title>
+	value-here
+	</title>
+	
+	<para>
+	<programlisting>
+	value-here : number
+	</programlisting>
+	Returns a value corresponding to the position of a calling space agent.
+	</para>
+</sect2>
+
+
+<sect2>
+	<title>
+	set-value-here
+	</title>
+	
+	<para>
+	<programlisting>
+	set-value-here new-value
+	new-value : number
+	</programlisting>
+	Sets the value of a cell corresponding to the position 
+	of a calling space agent.
+	</para>
+</sect2>
+
+
+<sect2>
+	<title>
+	add-value-here
+	</title>
+	
+	<para>
+	<programlisting>
+	add-value-here num
+	num : number
+	</programlisting>
+	Adds a given number to the value of a cell corresponding to 
+	the position of a calling space agent.
+	</para>
+</sect2>
+
+
+<sect2>
+	<title>
+	value
+	</title>
+	
+	<para>
+	<programlisting>
+	value : number
+	</programlisting>
+	The field 'value' is the value of a cell corresponding to
+	the position of a calling space agent.
+	</para>
+</sect2>
+
+
+
+</sect1>
+
+</article>
