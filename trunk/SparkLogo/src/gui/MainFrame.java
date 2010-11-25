@@ -260,11 +260,18 @@ public class MainFrame extends JFrame implements ActionListener {
 		}
 
 
-		NodeList list = doc.getElementsByTagName("spark-path");
+		NodeList list = doc.getElementsByTagName("spark-core-path");
 		if (list != null && list.getLength() > 0) {
 			String sparkPath = list.item(0).getTextContent();
-			options.setSparkPath(new File(sparkPath));
+			options.setSparkCorePath(new File(sparkPath));
 		}
+		
+		list = doc.getElementsByTagName("spark-external-path");
+		if (list != null && list.getLength() > 0) {
+			String sparkPath = list.item(0).getTextContent();
+			options.setSparkExternalPath(new File(sparkPath));
+		}
+
 
 		
 		list = doc.getElementsByTagName("file");
@@ -293,13 +300,22 @@ public class MainFrame extends JFrame implements ActionListener {
 //			out.println();
 //		}
 		
-		File sparkPath = options.getSparkPath();
+		File sparkPath = options.getSparkCorePath();
 		if (sparkPath != null) {
-			out.print("\t<spark-path>");
+			out.print("\t<spark-core-path>");
 			out.print(sparkPath.getPath());
-			out.print("</spark-path>");
+			out.print("</spark-core-path>");
 			out.println();
 		}
+		
+		sparkPath = options.getSparkExternalPath();
+		if (sparkPath != null) {
+			out.print("\t<spark-external-path>");
+			out.print(sparkPath.getPath());
+			out.print("</spark-external-path>");
+			out.println();
+		}
+
 		
 		out.println("\t<recent-projects>");
 		for (int i = recentProjects.size() - 1; i >= 0; i--) {
@@ -590,14 +606,14 @@ public class MainFrame extends JFrame implements ActionListener {
 			/* Compile button */
 			if (src == compileButton) {
 				console.clearText();
-				project.compile(options.getSparkPath());
+				project.compile(options.getSparkCorePath());
 				return;
 			}
 			
 			/* Run in SPARK button */
 			if (src == runInSparkButton) {
 				console.clearText();
-				project.runInSpark(options.getSparkPath());
+				project.runInSpark(options.getSparkExternalPath());
 				return;
 			}
 			
@@ -605,8 +621,8 @@ public class MainFrame extends JFrame implements ActionListener {
 			if (src == startButton) {
 				console.clearText();
 				project.translate();
-				project.compile(options.getSparkPath());
-				project.runInSpark(options.getSparkPath());
+				project.compile(options.getSparkCorePath());
+				project.runInSpark(options.getSparkExternalPath());
 				return;
 			}
 
