@@ -1,6 +1,6 @@
 package org.spark.runtime.internal.data;
 
-import org.spark.core.SimulationTime;
+import org.spark.math.SimulationTime;
 import org.spark.core.SparkModel;
 import org.spark.runtime.data.DataObject;
 import org.spark.runtime.data.DataRow;
