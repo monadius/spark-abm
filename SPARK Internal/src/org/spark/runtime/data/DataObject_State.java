@@ -1,7 +1,7 @@
 package org.spark.runtime.data;
 
-import org.spark.core.SimulationTime;
 import org.spark.math.RationalNumber;
+import org.spark.math.SimulationTime;
 
 /**
  * Data object for the simulation state

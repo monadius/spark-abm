@@ -5,8 +5,8 @@ import java.util.HashMap;
 
 import static org.spark.runtime.data.DataCollectorDescription.*;
 
-import org.spark.core.SimulationTime;
 import org.spark.math.RandomHelper;
+import org.spark.math.SimulationTime;
 
 
 /**

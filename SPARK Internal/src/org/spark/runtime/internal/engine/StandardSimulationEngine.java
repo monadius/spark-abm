@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import org.spark.core.ExecutionMode;
 import org.spark.core.Observer;
 import org.spark.core.ObserverFactory;
-import org.spark.core.SimulationTime;
+import org.spark.math.SimulationTime;
 import org.spark.core.SparkModel;
 import org.spark.math.RationalNumber;
 import org.spark.runtime.commands.*;
