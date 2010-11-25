@@ -21,6 +21,7 @@ import java.util.PriorityQueue;
 
 import org.spark.data.DataLayer;
 import org.spark.math.RationalNumber;
+import org.spark.math.SimulationTime;
 import org.spark.space.Space;
 import org.spark.math.RandomHelper;
 
@@ -47,6 +48,31 @@ public final class Observer {
 	// Instance
 	// TODO: should be removed later
 	static volatile Observer instance;
+
+	
+	// Simulation time class
+	private static class ModelSimulationTime extends SimulationTime {
+		private static final long serialVersionUID = 6151289661321800193L;
+
+		ModelSimulationTime(ModelSimulationTime time) {
+			super(time);
+		}
+		
+		ModelSimulationTime() {
+		}
+		
+		protected void advanceTick() {
+			super.advanceTick();
+		}
+		
+		protected void setTime(RationalNumber t) {
+			super.setTime(t);		
+		}
+		
+		protected void reset() {
+			super.reset();
+		}
+	}
 	
 	
 	// Implementation of main methods
@@ -155,7 +181,7 @@ public final class Observer {
 	private final PriorityQueue<AgentTime> actionQueue;
 	
 	// Simulation time
-	private final SimulationTime time;
+	private final ModelSimulationTime time;
 
 	/* List of all spaces */
 	private final ArrayList<Space> spacesList;
@@ -182,7 +208,7 @@ public final class Observer {
 	 * @return
 	 */
 	public SimulationTime getSimulationTime() {
-		return new SimulationTime(time);
+		return new ModelSimulationTime(time);
 	}
 	
 	
@@ -242,7 +268,7 @@ public final class Observer {
 		removedQueue = new ArrayList<Agent>(100);
 		
 		actionQueue = new PriorityQueue<AgentTime>(20);
-		time = new SimulationTime();
+		time = new ModelSimulationTime();
 		
 		agentTypes = new HashMap<Class<? extends Agent>, AgentType>();
 

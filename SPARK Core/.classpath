@@ -4,9 +4,9 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="lib" path="/Spark/lib/log4j.jar"/>
 	<classpathentry kind="lib" path="/Spark/lib/log5j-1.2.jar"/>
-	<classpathentry kind="lib" path="/SPARK Math/bin" sourcepath="/SPARK Math/src"/>
 	<classpathentry kind="lib" path="/Spark/lib/jsr166y.jar"/>
 	<classpathentry kind="lib" path="/Spark/lib/extra166y.jar"/>
 	<classpathentry kind="lib" path="/SPARK Utils/bin"/>
+	<classpathentry kind="lib" path="/SPARK Math/bin" sourcepath="/SPARK Math/src"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
