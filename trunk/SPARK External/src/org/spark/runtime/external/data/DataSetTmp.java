@@ -156,25 +156,25 @@ public class DataSetTmp implements IDataConsumer {
 
 	
 	/**
-	 * Saves data in the given file
+	 * Saves data in the given file using specific time points
 	 * @param fname
 	 */
-	public void saveData(String fname) {
+	public void saveData(String fname, int interval) {
 		File file = new File(Coordinator.getInstance().getCurrentDir(), fname);
-		saveData(file);
+		saveData(file, interval);
 	}
 	
 	
 	/**
-	 * Saves data in the given file
+	 * Saves data in the given file using specific time points
 	 * @param file
 	 */
-	public void saveData(File file) {
+	public void saveData(File file, int interval) {
 		PrintStream out = null;
 		
 		try {
 			out = new PrintStream(file);
-			saveData(out);
+			saveData(out, interval);
 		}
 		catch (Exception e) {
 			logger.error(e);
@@ -191,7 +191,7 @@ public class DataSetTmp implements IDataConsumer {
 	 * Saves all data into the given output stream
 	 * @param out
 	 */
-	public synchronized void saveData(PrintStream out) {
+	public synchronized void saveData(PrintStream out, int interval) {
 		Coordinator c = Coordinator.getInstance();
 		out.println("Random seed");
 		out.println(c.getInitialState().getSeed());
@@ -219,7 +219,7 @@ public class DataSetTmp implements IDataConsumer {
 			out.println();
 
 			int l = ticks.size();
-			for (int k = 0; k < l; k++) {
+			for (int k = 0; k < l; k += interval) {
 				out.print(ticks.get(k));
 				if (n > 0)
 					out.print(',');

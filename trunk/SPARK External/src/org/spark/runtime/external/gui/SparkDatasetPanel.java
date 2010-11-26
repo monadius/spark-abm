@@ -105,7 +105,7 @@ public class SparkDatasetPanel extends JPanel implements ISparkPanel, ActionList
 				}
             
 				out = new PrintStream(file);
-				data.saveData(out);
+				data.saveData(out, 1);
 			}
 			catch (Exception e) {
 				logger.error(e);
@@ -125,7 +125,7 @@ public class SparkDatasetPanel extends JPanel implements ISparkPanel, ActionList
 	 */
 	public void saveData(String fname) {
 		if (data != null)
-			data.saveData(fname);
+			data.saveData(fname, 1);
 	}
 	
 	
@@ -135,7 +135,7 @@ public class SparkDatasetPanel extends JPanel implements ISparkPanel, ActionList
 	 */
 	public void saveData(File file) {
 		if (data != null)
-			data.saveData(file);
+			data.saveData(file, 1);
 	}
 	
 	

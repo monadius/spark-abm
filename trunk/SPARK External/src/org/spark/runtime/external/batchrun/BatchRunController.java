@@ -36,6 +36,9 @@ public class BatchRunController {
 	/* Indicates whether to save the data after each run or not */
 	private boolean saveDataFlag = true;
 	
+	/* Specifies points for which the data is saved */
+	private int saveDataInterval = 1;
+	
 	/* Indicates if the final snapshots should be saved */
 	private boolean saveFinalSnapshots = false;
 	
@@ -119,6 +122,18 @@ public class BatchRunController {
 	 */
 	public void setSaveDataFlag(boolean saveData) {
 		this.saveDataFlag = saveData;
+	}
+	
+	
+	/**
+	 * Sets the interval for data points
+	 * @param interval
+	 */
+	public void setSaveDataInterval(int interval) {
+		if (interval < 1)
+			interval = 1;
+		
+		this.saveDataInterval = interval;
 	}
 	
 	
@@ -225,7 +240,7 @@ public class BatchRunController {
 		DataSetTmp dataset = Coordinator.getInstance().getDataSet();
 		
 		if (dataset != null) {
-			dataset.saveData(new File(dataFolder, fname));
+			dataset.saveData(new File(dataFolder, fname), saveDataInterval);
 		}
 	}
 	
