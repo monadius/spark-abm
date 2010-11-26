@@ -628,15 +628,15 @@ public class JOGLRender extends Render implements GLEventListener,
 
 			Vector4d color = colors[i];
 
-			double x1 = end1.x, y1 = end1.y;
-			double x2 = end2.x, y2 = end2.y;
+			double x1 = end1.x, y1 = end1.y, z1 = end1.z;
+			double x2 = end2.x, y2 = end2.y, z2 = end2.z;
 
 			float w = (float) width[i];
 			gl.glLineWidth(w);
 			gl.glColor3d(color.x, color.y, color.z);
 
-			gl.glVertex2d(x1, y1);
-			gl.glVertex2d(x2, y2);
+			gl.glVertex3d(x1, y1, z1);
+			gl.glVertex3d(x2, y2, z2);
 		}
 		gl.glEnd();
 	}
