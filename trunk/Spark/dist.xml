@@ -73,19 +73,37 @@
 	</target>
 	
 
-	<!-- Target: Build all -->
+	<!-- Target: Rebuild all -->
+	<target name="Rebuild all" description="Rebuilds all subprojects" depends="init">
+		<ant dir="${spark-math}" target="clean" inheritall="false"/>
+		<ant dir="${spark-utils}" target="clean" inheritall="false"/>
+		<ant dir="${spark-core}" target="clean" inheritall="false"/>
+		<ant dir="${spark-internal}" target="clean" inheritall="false"/>
+		<ant dir="${spark-external}" target="clean" inheritall="false"/>
+		<ant dir="${spark-pl}" target="clean" inheritall="false"/>
+		
+		<ant dir="${spark-math}" target="jar" inheritall="false"/>
+		<ant dir="${spark-utils}" target="jar" inheritall="false"/>
+		<ant dir="${spark-core}" target="jar" inheritall="false"/>
+		<ant dir="${spark-internal}" target="jar" inheritall="false"/>
+		<ant dir="${spark-external}" target="jar" inheritall="false"/>
+		<ant dir="${spark-pl}" target="jar" inheritall="false"/>
+	</target>
+	
+	<!-- Target: Build all --> 
 	<target name="Build all" description="Builds all subprojects" depends="init">
-		<ant antfile="${spark-math}/build.xml" dir="${spark-math}" target="jar"/>
-		<ant antfile="${spark-utils}/build.xml" dir="${spark-utils}" target="jar"/>
-		<ant antfile="${spark-core}/build.xml" dir="${spark-core}" target="jar"/>
-		<ant antfile="${spark-internal}/build.xml" dir="${spark-internal}" target="jar"/>
-		<ant antfile="${spark-external}/build.xml" dir="${spark-external}" target="jar"/>
-		<ant antfile="${spark-pl}/build.xml" dir="${spark-pl}" target="jar"/>
+		<ant dir="${spark-math}" target="jar" inheritall="false"/>
+		<ant dir="${spark-utils}" target="jar" inheritall="false"/>
+		<ant dir="${spark-core}" target="jar" inheritall="false"/>
+		<ant dir="${spark-internal}" target="jar" inheritall="false"/>
+		<ant dir="${spark-external}" target="jar" inheritall="false"/>
+		<ant dir="${spark-pl}" target="jar" inheritall="false"/>
 	</target>
 
 
+
 	<!-- Target: universal-dist -->
-	<target name="universal-dist" depends="Build all" description="Creates Universal distribution">
+	<target name="universal-dist" depends="Rebuild all" description="Creates Universal distribution">
 		<zip destfile="${dist}/${universal-name}.zip">
 			<fileset refid="basic-files" />
 			<zipfileset dir="${spark}/licenses" prefix="licenses">
@@ -138,7 +156,7 @@
 
 
 	<!-- Target: win-dist -->
-	<target name="win-dist" depends="Build all" description="Creates Windows distribution">
+	<target name="win-dist" depends="Rebuild all" description="Creates Windows distribution">
 		<zip destfile="${dist}/${win-name}.zip">
 			<fileset refid="basic-files" />
 			<zipfileset dir="${spark}/Licenses" prefix="licenses">
@@ -199,7 +217,7 @@
 	
 	
 	<!-- Target: mac-dist -->
-	<target name="mac-dist" depends="Build all" description="Creates MacOS distribution">
+	<target name="mac-dist" depends="Rebuild all" description="Creates MacOS distribution">
 		<zip destfile="${dist}/${mac-name}.zip">
 			<fileset refid="basic-files" />
 			<zipfileset dir="${spark}/Licenses" prefix="licenses">
