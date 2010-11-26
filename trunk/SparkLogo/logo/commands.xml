@@ -1186,6 +1186,14 @@
         		FileUtils.createNew(@name)
         	</translation>
         </command>
+        
+        
+        <reporter name = "create-unique-file" type = "string">
+        	<argument name = "name" type = "string"/>
+        	<translation>
+        		FileUtils.createUniqueNew(@name)
+        	</translation>
+        </reporter>
 
 
 
