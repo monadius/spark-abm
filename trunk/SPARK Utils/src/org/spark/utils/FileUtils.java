@@ -21,6 +21,22 @@ public class FileUtils {
 	/* Collection of all file writers */
 	private static final HashMap<String, PrintStream> writers = new HashMap<String, PrintStream>();
 	
+	/* Base directory for file operations */
+	private static File baseDir = null;
+	
+	
+	/**
+	 * Sets the base directory for file operations
+	 * @param baseDir
+	 */
+	public static void setBaseDir(File baseDir) {
+		if (!baseDir.exists()) {
+			logger.info("The directory: " + baseDir + " does not exists");
+			return;
+		}
+		
+		FileUtils.baseDir = baseDir;
+	}
 	
 	/**
 	 * Returns an existing file writer or opens a new file
@@ -34,7 +50,13 @@ public class FileUtils {
 			return writer;
 		
 		try {
-			writer = new PrintStream(new FileOutputStream(name, true));
+			File file = new File(name);
+			if (baseDir != null) {
+				if (!file.isAbsolute()) {
+					file = new File(baseDir, name);
+				}
+			}
+			writer = new PrintStream(new FileOutputStream(file, true));
 		}
 		catch (IOException e) {
 			logger.error(e);
@@ -52,6 +74,11 @@ public class FileUtils {
 	 */
 	public static void createNew(String name) {
 		File file = new File(name);
+		if (baseDir != null) {
+			if (!file.isAbsolute()) {
+				file = new File(baseDir, name);
+			}
+		}
 		
 		try {
 			if (!file.exists()) {
@@ -68,6 +95,45 @@ public class FileUtils {
 		catch (IOException e) {
 			logger.error(e);
 		}
+	}
+	
+	
+	/**
+	 * Creates a new file with a unique name and with the given prefix
+	 * @param name
+	 */
+	public static String createUniqueNew(String prefix) {
+		String name = prefix;
+		int counter = 2;
+
+		File output;
+		if (baseDir != null) {
+			output = baseDir;
+		}
+		else {
+			output = new File(".");
+		}
+		
+		try	{
+			while (true) {
+				File file = new File(output, name);
+			
+				if (file.exists()) {
+					name = prefix + counter;
+					counter++;
+				}
+				else {
+					file.createNewFile();
+					break;
+				}
+			}
+		}
+		catch (IOException e) {
+			logger.error(e);
+			return null;
+		}
+		
+		return name;
 	}
 	
 	
