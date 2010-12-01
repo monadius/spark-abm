@@ -5,6 +5,8 @@ import java.util.HashMap;
 
 import org.spark.runtime.data.DataCollectorDescription;
 
+import com.spinn3r.log5j.Logger;
+
 
 /**
  * Manages data collectors
@@ -12,6 +14,8 @@ import org.spark.runtime.data.DataCollectorDescription;
  *
  */
 public class DataCollectorManager {
+	private static final Logger logger = Logger.getLogger();
+	
 	/**
 	 * Adds a reference counter for each data collector
 	 * @author Monad
@@ -60,23 +64,37 @@ public class DataCollectorManager {
 		DataCollector dc = null;
 		
 		switch (dcd.getType()) {
+		// Variable
 		case DataCollectorDescription.VARIABLE:
 			dc = new DCVariable(dcd.getDataName());
 			break;
 			
+		// Data layer
 		case DataCollectorDescription.DATA_LAYER:
 			dc = new DCDataLayer(dcd.getDataName());
 			break;
-			
+		
+		// Space agents
 		case DataCollectorDescription.SPACE_AGENTS:
 			dc = new DCSpaceAgents(dcd.getDataName());
 			break;
-			
+
+		// Spaces
 		case DataCollectorDescription.SPACES:
 			dc = new DCSpaces();
 			break;
+			
+		// Number of agents
+		case DataCollectorDescription.NUMBER_OF_AGENTS:
+			dc = new DCNumberOfAgents(dcd.getDataName());
+			break;
 		}
 
+		if (dc == null) {
+			logger.error("Unresolved data type: " + dcd);
+			return;
+		}
+		
 		dc.setCollectionInterval(dcd.getInterval());
 		
 		// Add the created data collector to the table and to the list

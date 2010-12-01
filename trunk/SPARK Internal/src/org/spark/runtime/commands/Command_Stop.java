@@ -19,5 +19,9 @@ public class Command_Stop extends ModelManagerCommand {
 		// TODO Auto-generated method stub
 		
 	}
-
+	
+	@Override
+	public String toString() {
+		return "Stop";
+	}
 }

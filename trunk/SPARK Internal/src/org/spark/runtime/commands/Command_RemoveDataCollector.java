@@ -24,4 +24,9 @@ public class Command_RemoveDataCollector extends ModelManagerCommand {
 			throws Exception {
 		engine.removeDataCollector(dcd);
 	}
+	
+	@Override
+	public String toString() {
+		return "RemoveDataCollector: " + dcd.toString();
+	}
 }

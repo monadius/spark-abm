@@ -27,8 +27,12 @@ import com.spinn3r.log5j.Logger;
 public class StandardSimulationEngine extends AbstractSimulationEngine {
 	private static final Logger logger = Logger.getLogger();
 	
+	/* Simulation flags */
 	private boolean pausedFlag = false;
 	private boolean stopFlag = false;
+	
+	/* Time when a simulation was started */
+	private long startSimulationTime;
 	
 	/**
 	 * Default constructor
@@ -128,7 +132,7 @@ public class StandardSimulationEngine extends AbstractSimulationEngine {
 			flags |= DataObject_State.PAUSED_FLAG;
 		
 		// Create a data row
-		DataRow row = new DataRow(time, flags);
+		DataRow row = new DataRow(time, flags, startSimulationTime);
 		ArrayList<DataCollector> collectors = dataCollectors.getActiveCollectors();
 		
 		// Collect all data
@@ -258,6 +262,7 @@ public class StandardSimulationEngine extends AbstractSimulationEngine {
 			throw new Exception("Model is not loaded");
 		
 		this.pausedFlag = pausedFlag;
+		this.startSimulationTime = System.currentTimeMillis();
 		long tick = model.getObserver().getSimulationTick();
 		long length = this.simulationTime;
 		RationalNumber tickTime = model.getTickTime();
