@@ -237,7 +237,8 @@ class ModelTest implements IDataConsumer {
 					}
 				}
 
-				data = new TestEngineData((int)length, c.getAgentTypesAndNames(), varNames);
+				data = new TestEngineData((int)length, saveAllData, c.getAgentTypesAndNames(), varNames);
+				
 				c.getDataReceiver().addDataConsumer(data.getDataFilter());
 			}
 			

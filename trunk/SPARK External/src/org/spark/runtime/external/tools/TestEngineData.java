@@ -306,8 +306,12 @@ class TestEngineData implements IDataConsumer {
 	/**
 	 * Default constructor
 	 */
-	public TestEngineData(int simulationLength, HashMap<String, String> agentTypesAndNames, String[] varNames) {
+	public TestEngineData(int simulationLength, boolean saveAllData, HashMap<String, String> agentTypesAndNames, String[] varNames) {
 		dataFilter = new DataFilter(this, "data");
+		dataFilter.setSynchronizedFlag(true);
+		if (!saveAllData) {
+			dataFilter.setInterval(simulationLength);
+		}
 		
 		try {
 			// Add the tick data column
