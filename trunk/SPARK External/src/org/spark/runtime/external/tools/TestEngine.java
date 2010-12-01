@@ -13,6 +13,8 @@ import org.apache.log4j.PropertyConfigurator;
 
 import org.spark.runtime.data.DataRow;
 import org.spark.runtime.external.Coordinator;
+import org.spark.runtime.external.ProxyVariable;
+import org.spark.runtime.external.ProxyVariableCollection;
 import org.spark.runtime.external.data.DataFilter;
 import org.spark.runtime.external.data.DataReceiver;
 import org.spark.runtime.external.data.IDataConsumer;
@@ -60,16 +62,18 @@ class MyStream extends OutputStream {
 class ModelTest implements IDataConsumer {
 	// The model description file
 	private final File modelFile;
+	
 	// List of all tests for this model
 	private final ArrayList<TestCase> testCases;
-	// Index of the current test
-	private int currentTest;
-	
+
 	// Data filter for controlling the simulation process
 	private final DataFilter dataFilter;
 	
 	// Synchronization lock
 	private final Object lock = new Object();
+	
+	// Final data row for each test
+	private DataRow finalRow;
 	
 
 	/**
@@ -94,7 +98,7 @@ class ModelTest implements IDataConsumer {
 
 		for (Node n : list) {
 			// Create a test case
-			TestCase testCase = new TestCase(n);
+			TestCase testCase = new TestCase(n, basePath);
 			testCases.add(testCase);
 		}
 		
@@ -110,43 +114,41 @@ class ModelTest implements IDataConsumer {
 		Coordinator c = Coordinator.getInstance();
 		c.loadModel(modelFile);
 		
-		c.getDataReceiver().addDataConsumer(dataFilter);
-		currentTest = 0;
-		
 		if (testCases.size() == 0 || !c.isModelLoaded()) {
-			stop();
 			return;
 		}
+
+		// Register the control filter
+		c.getDataReceiver().addDataConsumer(dataFilter);
 		
 		TestEngine.getLog().println();
 		TestEngine.getLog().println("MODEL: " + modelFile.getName());
 
-		
-		synchronized (lock) {
-			testCases.get(currentTest).start();
-		
-			// Wait until all simulations end
-			lock.wait();
+		try {
+			// Run all test cases
+			for (TestCase test : testCases) {
+				finalRow = null;
+				
+				synchronized (lock) {
+					test.start();
+					// Wait until the simulation ends
+					lock.wait();
+				}
+				
+				if (finalRow == null)
+					throw new Exception("finalRow == null");
+				
+				test.analyzeResults(finalRow);
+			}
+		}
+		finally {
+			// Finalize
+			c.getDataReceiver().removeDataConsumer(dataFilter);
+			c.unloadModel();
 		}
 	}
 	
 	
-	/**
-	 * Stops the testing process
-	 */
-	private void stop() {
-		Coordinator c = Coordinator.getInstance();
-		c.getDataReceiver().removeDataConsumer(dataFilter);
-		c.unloadModel();
-		
-		synchronized (lock) {
-			lock.notifyAll();
-		}
-	}
-		
-	
-
-
 	@Override
 	/**
 	 * Method for controlling the simulation process
@@ -154,20 +156,12 @@ class ModelTest implements IDataConsumer {
 	public void consume(DataRow row) {
 		// We are interested in final states only
 		if (row.getState().isFinalState()) {
+			this.finalRow = row;
+			
 			// Proceed to the next test
-			
-			long elapsedTime = row.getState().getElapsedTime();
-			TestEngine.getLog().println("END: time = " + elapsedTime);
-			
-			currentTest++;
-			if (currentTest >= testCases.size()) {
-				// Stop the testing process
-				stop();
-				return;
+			synchronized (lock) {
+				lock.notifyAll();
 			}
-
-			// Begin a new simulation
-			testCases.get(currentTest).start();
 		}
 	}
 	
@@ -184,18 +178,26 @@ class ModelTest implements IDataConsumer {
 		private final boolean saveAllData;
 		private final boolean timeTestOnly;
 		private final String observerName;
+		
+		// Data
+		private TestEngineData data;
+		
+		// Base path to the directory with tests
+		private File basePath;
 
 		/**
 		 * Constructs a test case from the given xml node
 		 * 
 		 * @param node
 		 */
-		public TestCase(Node node) {
+		public TestCase(Node node, File basePath) {
+			this.basePath = basePath;
+			
 			// Load attributes with default values
 			this.length = XmlDocUtils.getLongValue(node, "length", 1000);
 			this.seed = XmlDocUtils.getLongValue(node, "seed", 0);
 			this.mode = XmlDocUtils.getValue(node, "mode", "serial");
-			this.observerName = XmlDocUtils.getValue(node, "observerName", "Observer1");
+			this.observerName = XmlDocUtils.getValue(node, "observer", "Observer1");
 			String saveData = XmlDocUtils.getValue(node, "save-all", "true");
 
 			if (saveData.equals("time"))
@@ -221,6 +223,24 @@ class ModelTest implements IDataConsumer {
 					+ "; seed = " + seed + "; mode = " + mode
 					+ "; all data = " + saveAllData);			
 			
+			if (!timeTestOnly) {
+				// Prepare the data set
+				String[] varNames = new String[0];
+				
+				ProxyVariableCollection varCollection = c.getVariables();
+				if (varCollection != null) {
+					ProxyVariable[] vars = varCollection.getVariables();
+					varNames = new String[vars.length];
+
+					for (int i = 0; i < vars.length; i++) {
+						varNames[i] = vars[i].getName();
+					}
+				}
+
+				data = new TestEngineData((int)length, c.getAgentTypesAndNames(), varNames);
+				c.getDataReceiver().addDataConsumer(data.getDataFilter());
+			}
+			
 			// Send initialization commands
 			c.setRandomSeed(seed, false);
 			c.setObserver(observerName, mode);
@@ -229,11 +249,78 @@ class ModelTest implements IDataConsumer {
 		
 		
 		/**
+		 * Saves the collected data in text and binary files
+		 * @param fname
+		 */
+		void saveData(String fname) {
+			if (data == null)
+				return;
+			
+			File text = new File(basePath, fname + ".csv");
+			File bin = new File(basePath, fname + ".dat");
+			
+			try {
+				data.saveAsText(text);
+				data.saveAsBinary(bin);
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		
+		/**
 		 * Analyzes the test results (compares the existing data with obtained data)
 		 */
-		void analyzeResults() {
+		void analyzeResults(DataRow finalRow) {
+			long elapsedTime = finalRow.getState().getElapsedTime();
+			TestEngine.getLog().println("END: time = " + elapsedTime);
+
 			if (timeTestOnly)
 				return;
+			
+			// Remove data consumer
+			Coordinator c = Coordinator.getInstance();
+			c.getDataReceiver().removeDataConsumer(data.getDataFilter());
+			
+			// Analyze data
+			String fname = modelFile.getName();
+			fname += "_" + length;
+			fname += "_" + seed;
+			fname += "_" + observerName;
+			fname += "_" + mode;
+			fname += saveAllData ? "_all" : "";
+
+			fname = "data/" + fname;
+
+			try {
+				File file = new File(basePath, fname + ".dat");
+				if (file.exists()) {
+					// Compare new data with the previous one
+					TestEngineData data = TestEngineData.readData(file);
+					TestEngineData.CompareResult cmp = TestEngineData.compare(this.data, data);
+				
+					StringBuilder str = new StringBuilder("DATA: ");
+					if (cmp.isConflict()) {
+						str.append("FAILURE; ");
+					}
+					else {
+						str.append("OK; ");
+					}
+					str.append(cmp);
+					TestEngine.getLog().println(str);
+
+					if (cmp.isConflict()) {
+						System.err.println(str);
+						saveData(fname + "_failure.txt");
+					}
+				} else {
+					saveData(fname);
+				}
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		
 		/**

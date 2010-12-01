@@ -315,6 +315,15 @@ public class Coordinator {
 		return dataLayerStyles;
 	}
 	
+	
+	/**
+	 * Returns types and names of agents in the loaded model
+	 * @return
+	 */
+	public HashMap<String, String> getAgentTypesAndNames() {
+		return agentTypesAndNames;
+	}
+	
 
 	/**
 	 * Sets parameters of the observer (for the next run)
