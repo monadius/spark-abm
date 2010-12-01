@@ -1,0 +1,9 @@
+<spark-project>
+	<name>EvaporationAndDiffusion</name>
+	<project-directory>C:\Work\My Projects\SPARK\Spark\tests\models\Basic\EvaporationAndDiffusion</project-directory>
+	<output-directory>output</output-directory>
+
+	<files>
+		<file>EvaporationAndDiffusion.spark</file>
+	</files>
+</spark-project>

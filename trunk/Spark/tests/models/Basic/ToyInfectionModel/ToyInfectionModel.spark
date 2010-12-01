@@ -1,0 +1,157 @@
+model ToyInfectionModel
+
+space GridSpace -40 40 -40 40 true true
+
+global cidal-compound : grid
+global toxin : grid
+global tissue-life : grid
+
+@parameter
+global yes-toxin : boolean
+
+@parameter(min = 0, max = 1000, default = 500)
+global initial-infection-number : number
+
+@parameter(min = 0, max = 10, step = 0.1, default = 0.5)
+global chemotaxis-threshold : number
+
+@parameter(min = 0, max = 10, step = 0.1, default = 4.0)
+global cidal-compound-production : number
+
+@chart
+global total-tissue-damage
+
+
+to end-step
+	var x-size = tissue-life.get-xsize
+	var y-size = tissue-life.get-ysize
+	
+	var damage = 0
+	
+	for i = 0 : x-size - 1
+	[
+		for j = 0 : y-size - 1
+		[
+			var x = max (tissue-life.data-at i j - cidal-compound.data-at i j - toxin.data-at i j) 0
+			tissue-life.set-data-at i j x
+			damage += 100 - x
+		]
+	]
+	
+	cidal-compound.multiply 0.9
+	toxin.multiply 0.9
+	cidal-compound.diffuse 0.9
+	toxin.diffuse 0.9
+	
+	total-tissue-damage = damage
+end
+	
+
+to setup
+	tissue-life.set-value 100
+	total-tissue-damage = 0
+	
+	var k = 1
+	
+	ask create InflamCell ((k + 1) * 1000)
+	[
+		jump (random 100)
+	]
+	
+	var n = initial-infection-number * (k + 1)
+	ask create InfectAgent n
+	[
+		jump (random (sqrt n))
+	]
+end
+
+
+; Basic agent
+agent BasicAgent : SpaceAgent
+
+var heading : number	
+
+to jump [n]
+	move vector-in-direction n heading
+end		
+
+
+to create
+	super 0.5 circle
+	; Missing in the original code: possible data discrepancies
+	heading = random 360
+end		
+
+
+to wiggle
+	heading += random 45
+	heading -= random 45
+	jump 1
+end		
+
+	
+; Inflammatory cell
+agent InflamCell : BasicAgent
+
+to create
+	color = white
+end		
+
+
+to step
+	var infect-agents = agents-here InfectAgent
+	
+	ifelse count infect-agents > 0
+	[
+		cidal-compound.add-value-here cidal-compound-production
+	]
+	[
+		ifelse cidal-compound.value > chemotaxis-threshold
+			[ uphill cidal-compound ]
+			[ wiggle ]
+	]
+	
+end
+
+
+; Infection agent
+agent InfectAgent : BasicAgent
+
+
+to create
+	super 0.8 circle
+	color = grey
+end
+
+
+to step [time]
+	if cidal-compound.value > 10
+	[
+		die
+		exit
+	]
+	
+	var life = max 0 (tissue-life.value - 1)
+	tissue-life.value = life
+	
+	if yes-toxin
+	[
+		toxin.add-value-here 1
+	]
+	
+	if (time % 100 == 0)
+	[
+		var a = agents-here InfectAgent
+		if count a < 3
+		[
+			ask create-one InfectAgent
+			[
+				move-to myself.position
+				jump 1
+			]
+			
+			jump 1
+		]
+	]
+	
+end

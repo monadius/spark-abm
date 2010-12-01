@@ -1,0 +1,9 @@
+<spark-project>
+	<name>ToyInfectionModel</name>
+	<project-directory>C:\Work\My Projects\SPARK\Spark\tests\models\Basic\ToyInfectionModel</project-directory>
+	<output-directory>output</output-directory>
+
+	<files>
+		<file>ToyInfectionModel.spark</file>
+	</files>
+</spark-project>
