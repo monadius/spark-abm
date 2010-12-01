@@ -1,0 +1,21 @@
+model MovingAgentsB
+
+space StandardSpace -20 20 -20 20 true true
+
+to setup
+	var n = 10 * 1000
+	create TestAgent n
+end
+
+
+agent TestAgent : SpaceAgent
+
+to create
+	radius = 0.3
+	set-random-position
+end
+
+to step
+	var v = random-vector-of-length 0.5
+	move v
+end

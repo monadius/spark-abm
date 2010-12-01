@@ -1,0 +1,9 @@
+<spark-project>
+	<name>MovingAgentsB</name>
+	<project-directory>C:\Work\My Projects\SPARK\Spark\tests\models\Basic\MovingAgentsB</project-directory>
+	<output-directory>output</output-directory>
+
+	<files>
+		<file>MovingAgentsB.spark</file>
+	</files>
+</spark-project>

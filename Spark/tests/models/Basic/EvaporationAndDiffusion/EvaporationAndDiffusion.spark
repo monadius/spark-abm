@@ -1,0 +1,37 @@
+model EvaporationAndDiffusion
+
+space StandardSpace -40 40 -40 40 true true
+
+global data : grid
+
+global total-data : number
+
+to end-step
+	data.diffuse 1
+	data.multiply 0.9
+	
+	total-data = sum data
+end
+
+
+to setup
+	var n = 20
+	create TestAgent n
+end
+
+
+agent TestAgent : SpaceAgent
+
+var production-rate : number
+
+to create
+	radius = 0.3
+	set-random-position
+	production-rate = random 1 + 0.1
+	color = blue
+end
+
+
+to step
+	data.set-value-here production-rate
+end		

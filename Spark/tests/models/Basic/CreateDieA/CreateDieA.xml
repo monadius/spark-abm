@@ -1,0 +1,9 @@
+<spark-project>
+	<name>CreateDieA</name>
+	<project-directory>C:\Work\My Projects\SPARK\Spark\tests\models\Basic\CreateDieA</project-directory>
+	<output-directory>output</output-directory>
+
+	<files>
+		<file>CreateDieA.spark</file>
+	</files>
+</spark-project>

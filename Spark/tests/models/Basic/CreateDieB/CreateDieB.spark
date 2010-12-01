@@ -1,0 +1,49 @@
+model CreateDieB
+
+space StandardSpace -20 20 -20 20 true true
+
+to setup
+	var n = 10 * 1000
+	for i = 0 : n
+	[
+		ask create-one TestAgent
+		[
+			set-index i
+		]
+	]
+end
+
+
+agent TestAgent : SpaceAgent
+
+var life : number
+var index : number
+
+
+to create
+	radius = 0.3
+	color = red
+	set-random-position
+end
+
+to set-index [i]
+	index = i
+	life = i % 100 + 20
+end
+
+
+to step
+	if life == 1
+	[
+		ask create-one TestAgent
+		[
+			set-index index
+		]
+	]
+	
+	life -= 1
+	if life < 0
+	[
+		die
+	]
+end
