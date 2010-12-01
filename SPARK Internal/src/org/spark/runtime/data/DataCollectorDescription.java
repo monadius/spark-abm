@@ -18,11 +18,13 @@ public class DataCollectorDescription implements Serializable {
 	public static final int DATA_LAYER = 2;
 	public static final int SPACE_AGENTS = 3;
 	public static final int SPACES = 4;
+	public static final int NUMBER_OF_AGENTS = 5;
 	
 	public static final String STR_VARIABLE = "$variable:";
 	public static final String STR_DATA_LAYER = "$data-layer:";
 	public static final String STR_SPACE_AGENTS = "$space-agents:";
-	public static final String STR_SPACES = "$spaces";
+	public static final String STR_SPACES = "$spaces:";
+	public static final String STR_NUMBER_OF_AGENTS = "$number:";
 	
 	
 	/* Specifies the type of the data collector */
@@ -47,8 +49,8 @@ public class DataCollectorDescription implements Serializable {
 		
 		if (type < VARIABLE)
 			type = VARIABLE;
-		else if (type > SPACES)
-			type = SPACES;
+		else if (type > NUMBER_OF_AGENTS)
+			type = NUMBER_OF_AGENTS;
 		
 		this.type = type;
 		this.dataName = dataName;
@@ -74,6 +76,9 @@ public class DataCollectorDescription implements Serializable {
 			
 		case SPACES:
 			return STR_SPACES;
+			
+		case NUMBER_OF_AGENTS:
+			return STR_NUMBER_OF_AGENTS;
 		}
 		
 		// Undefined data collector

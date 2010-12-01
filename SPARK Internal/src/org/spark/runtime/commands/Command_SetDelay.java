@@ -27,4 +27,10 @@ public class Command_SetDelay extends ModelManagerCommand {
 			throws Exception {
 		engine.setDelay(time);
 	}
+	
+	@Override
+	public String toString() {
+		return "SetDelay: " + time;
+	}
+
 }

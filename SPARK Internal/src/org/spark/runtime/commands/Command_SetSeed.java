@@ -29,4 +29,9 @@ public class Command_SetSeed extends ModelManagerCommand {
 		else
 			RandomHelper.setSeed((int) seed);
 	}
+	
+	@Override
+	public String toString() {
+		return "SetSeed: " + seed;
+	}
 }

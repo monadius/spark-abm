@@ -45,4 +45,15 @@ public class Command_Start extends ModelManagerCommand {
 	public boolean getPausedFlag() {
 		return paused;
 	}
+	
+	
+	@Override
+	public String toString() {
+		return "Start[time = " + simulationTime + 
+			"; paused = " + paused + 
+			"; observer = " + observerName + 
+			"; mode = " + executionMode +
+			"]";
+	}
+
 }

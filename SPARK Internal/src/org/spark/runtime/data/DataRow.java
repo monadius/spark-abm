@@ -25,11 +25,10 @@ public final class DataRow implements Serializable {
 	
 	/**
 	 * Creates a data row for the given simulation time value
-	 * @param time
 	 */
-	public DataRow(SimulationTime time, int flags) {
+	public DataRow(SimulationTime time, int flags, long startTime) {
 		data = new HashMap<String, DataObject>();
-		state = new DataObject_State(time, RandomHelper.getSeed(), flags);
+		state = new DataObject_State(time, RandomHelper.getSeed(), flags, startTime);
 	}
 	
 	
@@ -158,6 +157,21 @@ public final class DataRow implements Serializable {
 			return null;
 		else
 			return (DataObject_SpaceAgents) obj;
+	}
+	
+	
+	/**
+	 * Returns the number of the given agents
+	 * @param typeName
+	 * @return
+	 */
+	public Integer getNumberOfAgents(String typeName) {
+		String name = STR_NUMBER_OF_AGENTS + typeName;
+		DataObject obj = data.get(name);
+		if (obj == null)
+			return null;
+		else
+			return ((DataObject_Integer) obj).getValue();
 	}
 	
 	
