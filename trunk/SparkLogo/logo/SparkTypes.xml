@@ -1022,6 +1022,21 @@
                 	<argument name = "point" type = "vector"/>
                 </method>
                 
+                <!-- The next two methods are for debugging purposes only -->
+                <method name = "get-xsize" type = "double">
+                	<translation>
+                		@@object.getData().length
+                	</translation>
+                </method>
+                
+                <method name = "get-ysize" type = "double">
+                	<translation>
+                		@@object.getData()[0].length
+                	</translation>
+                </method>
+                
+                
+                
                 <!-- TODO: experimental feature (to be removed later) -->
                 <field name = "data" type = "double">
                 	<set>
