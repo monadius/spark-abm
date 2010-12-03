@@ -693,6 +693,7 @@ public class Coordinator {
 
 		// Clear variables
 		dataSet = null;
+		variables = null;
 		modelXmlDoc = null;
 		modelXmlFile = null;
 
