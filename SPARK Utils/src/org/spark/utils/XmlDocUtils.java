@@ -1,5 +1,6 @@
 package org.spark.utils;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -23,6 +24,25 @@ public class XmlDocUtils {
 		try {
 			Document doc = DocumentBuilderFactory.newInstance()
 								.newDocumentBuilder().parse(fname);
+		
+			return doc;
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * Loads an xml file
+	 * @param fname
+	 * @return
+	 */
+	public static Document loadXmlFile(File file) {
+		try {
+			Document doc = DocumentBuilderFactory.newInstance()
+								.newDocumentBuilder().parse(file);
 		
 			return doc;
 		}
@@ -163,7 +183,7 @@ public class XmlDocUtils {
 	 */
 	public static int getIntegerValue(Node node, String attrName, int defaultValue) {
 		String value = getValue(node, attrName, null);
-				
+		
 		if (value == null)
 			return defaultValue;
 		
@@ -171,10 +191,32 @@ public class XmlDocUtils {
 			return Integer.valueOf(value);
 		}
 		catch (NumberFormatException e) {
-			return defaultValue;
+			return defaultValue; 
 		}
 	}
 
+	/**
+	 * Gets a long value of the given attribute
+	 * @param node
+	 * @param attrName
+	 * @param defaultValue
+	 * @return
+	 */
+	public static long getLongValue(Node node, String attrName, long defaultValue) {
+		String value = getValue(node, attrName, null);
+		
+		if (value == null)
+			return defaultValue;
+		
+		try {
+			return Long.valueOf(value);
+		}
+		catch (NumberFormatException e) {
+			return defaultValue; 
+		}
+	}
+
+	
 
 	/**
 	 * Gets a float value of the given attribute
