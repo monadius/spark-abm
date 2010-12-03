@@ -100,6 +100,9 @@ class TestEngineData implements IDataConsumer {
 			}
 			
 			lastTick = tick;
+			if (row.getState().isInitialState()) {
+				lastTick = -1;
+			}
 		}
 
 
@@ -180,6 +183,9 @@ class TestEngineData implements IDataConsumer {
 		@Override
 		public void consume(DataRow row) {
 			long tick = row.getState().getTick();
+			if (row.getState().isInitialState())
+				tick = -1;
+			
 			update(tick, row);
 		}
 
