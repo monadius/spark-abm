@@ -1,0 +1,94 @@
+model RSVModel
+
+;space NetLogoSpace -40 40 -40 40 true true
+space StandardSpace -20 20 -20 20 true true
+
+global total-mac = 1: double
+@parameter(min = 0, max = 1000, default = 100)
+global init-virus : double
+global total-neu = 1 : double
+
+@parameter(default = 0.55, min = 0, max = 1, step = 0.05)
+global proliferation-rate : double
+global neutrophil-il8-production = 1 : double
+global neutrophil-il9-production = 1 : double
+global virus-engulf-prob = 0.5 : double
+global macrophage-pro-production = 1 : double
+global macrophage-anti-production = 1 : double
+
+@parameter(default = 10, min = 0, max = 100, values = "1, 2, 10, 50, 30")
+global healing-threshold : double
+global macrophage-activation-prob = 0.1 : double
+
+@dataset(name = "Viruses")
+@chart()
+global virus-number = 0
+
+@chart(name = "Macrophages")
+@dataset(name = "Macrophages")
+global macrophage-number = 0
+
+@dataset(name = "Neutrophils")
+global neutrophil-number = 0
+
+global chemokine : grid
+global il8 : grid
+global il9 : grid
+global pro : grid
+global anti : grid
+
+
+
+to end-step [tick]
+        pro.multiply 0.95
+        anti.diffuse 0.95
+        anti.multiply 0.95
+        chemokine.diffuse 0.95
+        chemokine.multiply 0.95
+        il8.diffuse 0.95
+        il8.multiply 0.95
+
+        virus-number = agents-number Virus
+        macrophage-number = agents-number Macrophage
+        neutrophil-number = agents-number Neutrophil
+end
+
+
+to setup
+;                ask space1
+;                [
+;                         ask create Macrophage total-mac
+;                         [
+;                         ]
+;                ]
+        ask create Virus init-virus
+        [
+                set-random-position
+        ]
+
+        for x = space-xmin + 0.5 : space-xmax
+        [
+                for y = space-ymin + 0.5 : space-ymax
+                [
+                        ask create-one Epithelial
+                        [
+                                move-to create-vector x y 0
+                        ]
+                ]
+        ]
+
+        ask create Neutrophil total-neu
+        [
+           set-random-position
+        ]
+
+        ask create Macrophage total-mac
+        [
+                set-random-position
+;                move-to-space space1
+        ]
+
+end
+
+
+

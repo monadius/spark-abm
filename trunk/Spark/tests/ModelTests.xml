@@ -1,0 +1,27 @@
+<spark-tests>
+ <!-- Worms -->
+  <test model = "models/Worms/output/WormsModel.xml">
+    <run seed = "300000" length = "5000" observer = "Observer1" save-all = "true"/>
+    <run seed = "1" length = "1000" observer = "Observer1" save-all = "false"/>
+  </test>
+
+  <!-- Simple 3d Model -->
+  <test model = "models/Simple3dModel/output/Simple3dModel.xml">
+    <run seed = "300000" length = "100" observer = "Observer1" save-all = "true"/>
+  </test>
+
+  <!-- Game of Life -->
+  <test model = "models/GameOfLife/output/GameOfLifeModel.xml">
+    <run seed = "33340" length = "100" observer="Observer1" mode="concurrent" save-all = "true"/>
+    <run seed = "1111" length = "1000" observer="Observer1" mode="concurrent" save-all = "false"/>
+  </test>
+
+  <!-- RSV -->
+  <test model = "models/RSV/output/RSVModel.xml">
+    <run seed = "30" length = "100" observer = "Observer1" save-all = "true"/>
+    <run seed = "30" length = "100" observer = "Observer1" mode="concurrent" save-all = "true"/>
+    <run seed = "100" length = "1000" observer = "Observer1" save-all = "false"/>
+  </test>
+
+
+ </spark-tests>

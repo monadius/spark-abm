@@ -1,0 +1,24 @@
+@observer(mode = "concurrent")
+model GameOfLifeModel
+
+
+space StandardSpace -20.5 20.5 -20.5 20.5 true true
+
+@parameter(default = 0.3, min = 0, max = 1, step = 0.01)
+global density
+
+
+to setup
+	for i = -20 : 20
+	[
+		for j = -20 : 20
+		[
+			var cell : SpaceAgent
+			ifelse random 1 < density
+				[ cell = create-one Cell ]
+				[ cell = create-one DeadCell ]
+				
+			cell.move-to create-vector i j 0
+		]
+	]
+end

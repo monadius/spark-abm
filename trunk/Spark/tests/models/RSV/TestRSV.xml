@@ -1,0 +1,14 @@
+<spark-project>
+	<name>RSV</name>
+	<project-directory>C:\Work\My Projects\SPARK\Spark\tests\models\RSV</project-directory>
+	<output-directory>output</output-directory>
+
+	<files>
+		<file>CellAgent.spark</file>
+		<file>Epithelial.spark</file>
+		<file>Macrophage.spark</file>
+		<file>ModelSetup.spark</file>
+		<file>Neutrophil.spark</file>
+		<file>Virus.spark</file>
+	</files>
+</spark-project>

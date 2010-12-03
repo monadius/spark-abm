@@ -1,0 +1,19 @@
+agent Cell : SpaceAgent
+
+
+to create
+	super 0.5 square
+	color = green
+end
+
+
+to step
+	;var n = count neighbors Cell
+	var n = count (agents-at Cell position 1.5) - 1
+	
+	if n < 2 or n > 3
+	[
+		hatch-one DeadCell
+		die
+	]
+end

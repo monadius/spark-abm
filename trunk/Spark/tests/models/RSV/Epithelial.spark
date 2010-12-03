@@ -1,0 +1,92 @@
+@step(priority = 2)
+agent Epithelial : SpaceAgent
+
+
+var life : double
+var activation : boolean
+
+
+to create
+        super 0.5 square
+;        radius = 0.5
+;        shape = square
+        life = 100
+        color = green
+end
+
+
+
+to step [tick]
+        if tick % 10 == 0
+        [
+                mac-create
+        ]
+
+        var virus-num = count agents-here Virus
+        life -= virus-num
+
+        if life < 100
+        [
+                activation = true
+                life += random 0.5
+
+                if anti.value > healing-threshold
+                [
+                        life += random 1 + 1
+                        if life > 100
+                        [
+                                activation = false
+                                life = 100
+                        ]
+                ]
+        ]
+
+        if activation
+        [
+                chemokine.add-value-here 1
+                il8.add-value-here 1
+                if life < -200
+                [
+                        die
+                        exit
+                ]
+        ]
+
+        ifelse life > 0
+        [
+                color = create-vector 0 (life / 100.0) 0
+        ]
+        [
+                ifelse life > - 200
+                [ color = create-vector (-life / 100) 0 0 ]
+                [ color = <1, 1, 1> ]
+        ]
+end
+
+
+
+to mac-create
+        var mac-num
+
+        ifelse life > -200
+        [ mac-num = floor ((100 - life) / 100) ]
+        [ mac-num = 2 ]
+
+        var neu-num = mac-num * 3
+
+        for i = 1 : neu-num
+        [
+                if random 1 < 0.1
+                [
+                        hatch-one Neutrophil
+                ]
+        ]
+
+        for i = 1 : mac-num
+        [
+                if macrophage-activation-prob / 10 > random 1
+                [
+                        hatch-one Macrophage
+                ]
+        ]
+end
