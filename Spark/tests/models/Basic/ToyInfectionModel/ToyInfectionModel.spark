@@ -78,7 +78,6 @@ end
 
 to create
 	super 0.5 circle
-	; Missing in the original code: possible data discrepancies
 	heading = random 360
 end		
 
@@ -91,6 +90,7 @@ end
 
 	
 ; Inflammatory cell
+@step(priority = 1)
 agent InflamCell : BasicAgent
 
 to create
@@ -98,7 +98,7 @@ to create
 end		
 
 
-to step
+to step [time]
 	var infect-agents = agents-here InfectAgent
 	
 	ifelse count infect-agents > 0
@@ -115,6 +115,7 @@ end
 
 
 ; Infection agent
+@step(priority = 2)
 agent InfectAgent : BasicAgent
 
 
@@ -149,9 +150,9 @@ to step [time]
 				move-to myself.position
 				jump 1
 			]
-			
-			jump 1
 		]
+					
+		jump 1
 	]
 	
 end

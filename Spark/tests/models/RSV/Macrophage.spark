@@ -1,0 +1,31 @@
+@step(priority = 4)
+agent Macrophage : CellAgent
+
+
+to create
+        radius = 6.0 / 15.0
+        age = random-in-interval 50 90
+        color = blue
+end
+
+
+
+to step
+        wiggle 0.05
+
+        var anti-val = anti.value
+        pro.add-value-here macrophage-pro-production / (1 + 10 * anti-val)^2
+        anti.add-value-here macrophage-anti-production
+
+        sniff chemokine 0.1
+        ask agents-here Virus
+        [
+                if random 1 < virus-engulf-prob
+                [
+                        die
+                ]
+        ]
+
+        age -= 1
+        if age < 0 [ die ]
+end

@@ -1,0 +1,55 @@
+agent CellAgent : SpaceAgent
+
+var age : double
+var heading : double
+
+to set-age [age : double]
+	self.age = age
+end
+
+to set-heading [heading : double]
+	self.heading = heading
+end
+
+
+to jump [number]
+	move vector-in-direction number heading
+end
+
+
+to create
+	heading = random 360
+	color = black
+end	
+
+
+
+to wiggle [size]
+	heading += random-in-interval -45 45
+	jump size
+end	
+	
+
+
+to sniff [data:grid jump-size]
+	var p = position
+	
+	var v = vector-in-direction 1.0 heading + p
+	var ahead = data.value-at v
+	
+	v = vector-in-direction 1.0 (heading - 90) + p
+	var right = data.value-at v
+	
+	v = vector-in-direction 1.0 (heading + 90) + p
+	var left = data.value-at v
+	
+	ifelse right >= ahead and right >= left
+	[
+		heading -= 90
+	]
+	[
+		if left >= ahead [ heading += 90 ]
+	]
+	
+	jump jump-size
+end	

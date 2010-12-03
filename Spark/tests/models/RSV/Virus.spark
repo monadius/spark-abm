@@ -1,0 +1,57 @@
+@step(priority = 1)
+agent Virus : CellAgent
+
+
+shared var virus-color = <1, 1, 0> : vector
+
+
+to create
+        radius = 4.0 / 15.0
+        age = random-in-interval 40 50
+        color = virus-color
+end
+
+
+to step [tick]
+        wiggle-virus 0.05
+
+        var epil-num = count agents-here Epithelial
+        if epil-num == 0
+        [
+                die
+                exit
+        ]
+
+        age -= 1
+        if age < 0
+        [
+                die
+                exit
+        ]
+
+        if tick % 20 == 0
+        [
+                proliferate
+        ]
+end
+
+
+to proliferate
+        if proliferation-rate > random 1
+        [
+                hatch-one Virus
+        ]
+end
+
+
+
+to wiggle-virus [step-size]
+        var old-position = position
+
+        wiggle step-size
+
+        if count agents-here Epithelial == 0
+        [
+                move-to old-position
+        ]
+end

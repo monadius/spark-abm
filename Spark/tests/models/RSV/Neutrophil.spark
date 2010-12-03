@@ -1,0 +1,19 @@
+@step(priority = 3)
+agent Neutrophil : CellAgent
+
+to create
+        radius = 5.0 / 15.0
+        color = cyan
+        age = random-in-interval 10 20
+end
+
+
+to step [tick]
+        wiggle 0.05
+        sniff il8 0.1
+        il8.add-value-here neutrophil-il8-production
+        il9.add-value-here neutrophil-il9-production
+
+        age -= 1
+        if age < 0 [ die ]
+end

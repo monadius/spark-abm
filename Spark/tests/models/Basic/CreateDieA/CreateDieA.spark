@@ -16,10 +16,10 @@ var red-flag : boolean
 
 to create
 	radius = 0.3
+	set-random-position
 	color = red
 	red-flag = true
 	life = random 100 + 20
-	set-random-position
 end
 
 

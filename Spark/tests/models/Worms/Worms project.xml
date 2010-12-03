@@ -1,0 +1,12 @@
+<spark-project>
+        <name>Worms</name>
+        <output-directory>output</output-directory>
+
+        <files>
+                <file>WormsModel.spark</file>
+                <file>PhysAgent.spark</file>
+                <file>Spring.spark</file>
+                <file>Worm.spark</file>
+                <file>Obstacle.spark</file>
+        </files>
+</spark-project>

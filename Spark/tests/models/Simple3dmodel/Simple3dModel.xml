@@ -1,0 +1,10 @@
+<spark-project>
+	<name>Simple 3d model</name>
+	<project-directory>C:\Help\Alexey\My New Projects\Eclipse Projects\SparkLogo\samples\Simple 3d model</project-directory>
+	<output-directory>output</output-directory>
+
+	<files>
+		<file>Agent3d.spark</file>
+		<file>Model.spark</file>
+	</files>
+</spark-project>

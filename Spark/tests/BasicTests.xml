@@ -42,7 +42,7 @@
 
  <test model = "models/Basic/ToyInfectionModel/output/ToyInfectionModel.xml">
   <run seed = "10" length = "1000" observer = "Observer1" save-all = "false"/>
-  <run seed = "100" length = "1000" observer = "Observer1" save-all = "false"/>
+  <run seed = "10" length = "1000" observer = "Observer1" mode="concurrent" save-all = "true"/>
   <run seed = "3" length = "1000" observer = "Observer1"/>
  </test>
 </spark-tests>
