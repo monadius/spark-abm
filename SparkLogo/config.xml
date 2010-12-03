@@ -2,8 +2,15 @@
 	<spark-core-path>C:\Work\My Projects\SPARK\Spark\release\spark-core.jar</spark-core-path>
 	<spark-external-path>C:\Work\My Projects\SPARK\Spark\release\spark-external.jar</spark-external-path>
 	<recent-projects>
-		<file>C:\Work\My Projects\SPARK\SparkLogo\samples\Fractals\Fractals.xml</file>
-		<file>C:\Work\My Projects\SPARK\SparkLogo\samples\PhysModel2\Spark PhysModel2.xml</file>
-		<file>C:\Work\My Projects\SPARK\SparkLogo\samples\GameOfLife\Game of Life.xml</file>
+		<file>C:\Work\My Projects\SPARK\Spark\tests\models\Basic\MovingAgentsA\MovingAgentsA.xml</file>
+		<file>C:\Work\My Projects\SPARK\Spark\tests\models\Basic\EvaporationAndDiffusion\EvaporationAndDiffusion.xml</file>
+		<file>C:\Work\My Projects\SPARK\Spark\tests\models\Basic\CreateDieA\CreateDieA.xml</file>
+		<file>C:\Work\My Projects\SPARK\Spark\tests\models\Basic\CreateDieB\CreateDieB.xml</file>
+		<file>C:\Work\My Projects\SPARK\Spark\tests\models\GameOfLife\Game of Life.xml</file>
+		<file>C:\Work\My Projects\SPARK\Spark\tests\models\Basic\MovingAgentsB\MovingAgentsB.xml</file>
+		<file>C:\Work\My Projects\SPARK\Spark\tests\models\Worms\Worms project.xml</file>
+		<file>C:\Work\My Projects\SPARK\Spark\tests\models\Simple3dmodel\Simple3dModel.xml</file>
+		<file>C:\Work\My Projects\SPARK\Spark\tests\models\RSV\TestRSV.xml</file>
+		<file>C:\Work\My Projects\SPARK\Spark\tests\models\Basic\ToyInfectionModel\TestToyInfectionModel.xml</file>
 	</recent-projects>
 </config>
