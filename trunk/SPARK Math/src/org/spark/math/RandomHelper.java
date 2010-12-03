@@ -6,6 +6,7 @@
 
 package org.spark.math;
 
+import com.spinn3r.log5j.Logger;
 import cern.jet.random.engine.RandomEngine;
 
 /**
@@ -13,13 +14,17 @@ import cern.jet.random.engine.RandomEngine;
  */
 // TODO: good random generator implementation
 public class RandomHelper {
+	private static final Logger logger = Logger.getLogger();
+	
 	private static long rngSeed;
 	private static boolean timeSeed = true;
 	
 	private static RandomEngine generator; 
 	
+	
     static
     {
+    	logger.debug("Initializing RandomHelper class");
     	rngSeed = System.currentTimeMillis();
         generator = new cern.jet.random.engine.MersenneTwister((int) rngSeed);
     }
