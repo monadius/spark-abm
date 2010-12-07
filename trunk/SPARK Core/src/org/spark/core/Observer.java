@@ -17,7 +17,9 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.PriorityQueue;
+import java.util.Queue;
 
 import org.spark.data.DataLayer;
 import org.spark.math.RationalNumber;
@@ -201,6 +203,9 @@ public final class Observer {
 
 	// for some internal statistics
 	private long statTime;
+	
+	// List of user commands (experimental)
+	private final Queue<String> controlCommands;
 
 	
 	/**
@@ -275,6 +280,8 @@ public final class Observer {
 		spacesList = new ArrayList<Space>();
 		spacesMap = new HashMap<String, Space>();
 
+		controlCommands = new LinkedList<String>();
+
 		if (ExecutionMode.isMode(executionMode)) {
 			this.executionMode = executionMode;
 		}
@@ -331,6 +338,24 @@ public final class Observer {
 		return null;
 	}
 
+	
+	/**
+	 * Adds a command to the command queue
+	 * @param cmd
+	 */
+	public void addCommand(String cmd) {
+		controlCommands.offer(cmd);
+	}
+	
+	/**
+	 * Returns the next command 
+	 * @return
+	 */
+	public String nextCommand() {
+		return controlCommands.poll();
+	}
+	
+	
 	/**
 	 * Clears the context by removing all agents, data layers, etc.
 	 */
@@ -366,6 +391,8 @@ public final class Observer {
 		
 		actionQueue.clear();
 		time.reset();
+		
+		controlCommands.clear();
 		
 		impl.clear();
 		

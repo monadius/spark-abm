@@ -228,8 +228,11 @@ class Observer1 extends ObserverImpl {
 	
 	@SuppressWarnings("unchecked")
 	public synchronized <T extends Agent> ArrayList<T> getAgentsList(Class<T> type) {
-		if (agents.containsKey(type))
-			return (ArrayList<T>) agents.get(type);
+		if (agents.containsKey(type)) {
+			// Create a copy
+			ArrayList<T> result = new ArrayList(agents.get(type)); 
+			return result;
+		}
 		else
 			return null;
 	}
