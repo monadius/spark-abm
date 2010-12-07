@@ -20,7 +20,7 @@
                 </get>
         </type>
         
-        <type name = "string">
+        <type name = "string" parent = "$Object">
         	<javaname>String</javaname>
 
 			<declaration>
@@ -137,6 +137,13 @@
                 	<argument name = "list" type = "ArrayList"/>
                 	<translation>
                 		@@object.addAll(@list)
+                	</translation>
+                </method>
+                
+                <method name = "remove-at">
+                	<argument name = "i" type = "number"/>
+                	<translation>
+                		@@object.remove((int)@i)
                 	</translation>
                 </method>
         </type>
@@ -739,6 +746,11 @@
                 <field name = "alpha" type = "double">
                 	<set>@@object.getNode().setAlpha(@@value)</set>
                 	<get>@@object.getNode().getAlpha()</get>
+                </field>
+                
+                <field name = "rotation" type = "double">
+                	<set>@@object.getNode().setRotation(@@value)</set>
+                	<get>@@object.getNode().getRotation()</get>
                 </field>
 
                 <field name = "radius" type = "double">
