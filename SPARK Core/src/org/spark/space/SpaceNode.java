@@ -36,6 +36,7 @@ public abstract class SpaceNode implements Serializable {
 	// Vector for changing the position
 	protected Vector		newPosition;
 	
+	
 	// Which action to perform on this node
 	protected int			state;
 
@@ -177,8 +178,13 @@ public abstract class SpaceNode implements Serializable {
 	//*********************
 	// Rendering interface
 	//*********************
-	
+
+	// Node's color
 	protected Vector4d color = new Vector4d();
+	
+	// Rotation parameter
+	protected double rotation;
+	
 	
 	public void setColor(Vector color) {
 		this.color.set(color);
@@ -214,6 +220,19 @@ public abstract class SpaceNode implements Serializable {
 	
 	public Vector getRGBColor() {
 		return new Vector(color.x, color.y, color.z);
+	}
+	
+	
+	public void setRotation(double theta) {
+		this.rotation = theta;
+	}
+	
+	public void addRotation(double dtheta) {
+		this.rotation += dtheta;
+	}
+	
+	public double getRotation() {
+		return rotation;
 	}
 	
 	

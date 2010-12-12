@@ -181,11 +181,11 @@ public abstract class Space implements Serializable {
 	 * @param r
 	 * @return
 	 */
-	protected final CircleNode createCircleNode(double r, SpaceAgent agent) {
+	protected final CircleNode createCircleNode(double r, SpaceAgent agent, int type) {
 		if (r > maximumNodeRadius)
 			maximumNodeRadius = r;
 		
-		CircleNode node = createCircleNode0(r);
+		CircleNode node = createCircleNode0(r, type);
 		node.agent = agent;
 		node.next = node.prev = node;
 		
@@ -227,7 +227,7 @@ public abstract class Space implements Serializable {
 	 * @param r
 	 * @param agent
 	 */
-	protected CircleNode createCircleNode0(double r) {
+	protected CircleNode createCircleNode0(double r, int type) {
 		CircleNode node = new CircleNode(this, r);
 		return node;
 	}
