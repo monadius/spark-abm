@@ -13,6 +13,7 @@ public class DataObject_SpaceAgents extends DataObject {
 	private Vector[] positions;
 	private double[] radii;
 	private Vector4d[] colors;
+	private double[] rotations;
 	private int[] shapes;
 	private int[] spaceIndices;
 	
@@ -32,6 +33,7 @@ public class DataObject_SpaceAgents extends DataObject {
 			positions = new Vector[agentsNumber];
 			radii = new double[agentsNumber];
 			colors = new Vector4d[agentsNumber];
+			rotations = new double[agentsNumber];
 			shapes = new int[agentsNumber];
 			spaceIndices = new int[agentsNumber];
 		}
@@ -56,7 +58,7 @@ public class DataObject_SpaceAgents extends DataObject {
 	 * @param color
 	 * @param shape
 	 */
-	public void addAgent(Vector position, double r, Vector4d color, int shape, int spaceIndex) {
+	public void addAgent(Vector position, double r, Vector4d color, double rotation, int shape, int spaceIndex) {
 		// Cannot hold any more agents
 		if (counter >= n)
 			return;
@@ -64,6 +66,7 @@ public class DataObject_SpaceAgents extends DataObject {
 		positions[counter] = position;
 		radii[counter] = r;
 		colors[counter] = color;
+		rotations[counter] = rotation;
 		shapes[counter] = shape;
 		spaceIndices[counter] = spaceIndex;
 		
@@ -90,6 +93,10 @@ public class DataObject_SpaceAgents extends DataObject {
 	
 	public Vector4d[] getColors() {
 		return colors;
+	}
+	
+	public double[] getRotations() {
+		return rotations;
 	}
 	
 	public int[] getShapes() {

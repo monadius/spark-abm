@@ -161,6 +161,22 @@ public final class DataRow implements Serializable {
 	
 	
 	/**
+	 * Returns special data of the given agent type 
+	 * @param typeName
+	 * @return
+	 */
+	public DataObject_AgentData getAgentData(String typeName) {
+		String name = STR_AGENT_DATA + typeName;
+		
+		DataObject obj = data.get(name);
+		if (obj == null)
+			return null;
+		else
+			return (DataObject_AgentData) obj;
+	}
+	
+	
+	/**
 	 * Returns the number of the given agents
 	 * @param typeName
 	 * @return
