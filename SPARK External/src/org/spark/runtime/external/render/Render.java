@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
+import org.spark.runtime.commands.Command_KeyPressed;
 import org.spark.runtime.data.DataCollectorDescription;
 import org.spark.runtime.data.DataObject_Spaces;
 import org.spark.runtime.data.DataRow;
@@ -725,6 +726,10 @@ public abstract class Render implements KeyListener, IDataConsumer {
 		if (flag) {
 			// Update
 			update();
+		}
+		else {
+			String key = String.valueOf(symbol);
+			Coordinator.getInstance().sendCommand(new Command_KeyPressed(key));
 		}
 	}
 
