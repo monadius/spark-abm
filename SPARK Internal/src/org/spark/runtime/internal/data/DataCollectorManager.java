@@ -78,6 +78,11 @@ public class DataCollectorManager {
 		case DataCollectorDescription.SPACE_AGENTS:
 			dc = new DCSpaceAgents(dcd.getDataName());
 			break;
+			
+		// Agent data
+		case DataCollectorDescription.AGENT_DATA:
+			dc = new DCAgentData(dcd.getDataName());
+			break;
 
 		// Spaces
 		case DataCollectorDescription.SPACES:

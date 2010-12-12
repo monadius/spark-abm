@@ -17,12 +17,14 @@ public class DataCollectorDescription implements Serializable {
 	public static final int VARIABLE = 1;
 	public static final int DATA_LAYER = 2;
 	public static final int SPACE_AGENTS = 3;
-	public static final int SPACES = 4;
-	public static final int NUMBER_OF_AGENTS = 5;
+	public static final int AGENT_DATA = 4;
+	public static final int SPACES = 5;
+	public static final int NUMBER_OF_AGENTS = 6;
 	
 	public static final String STR_VARIABLE = "$variable:";
 	public static final String STR_DATA_LAYER = "$data-layer:";
 	public static final String STR_SPACE_AGENTS = "$space-agents:";
+	public static final String STR_AGENT_DATA = "$agent-data";
 	public static final String STR_SPACES = "$spaces:";
 	public static final String STR_NUMBER_OF_AGENTS = "$number:";
 	
@@ -73,6 +75,9 @@ public class DataCollectorDescription implements Serializable {
 		
 		case SPACE_AGENTS:
 			return STR_SPACE_AGENTS;
+			
+		case AGENT_DATA:
+			return STR_AGENT_DATA;
 			
 		case SPACES:
 			return STR_SPACES;
