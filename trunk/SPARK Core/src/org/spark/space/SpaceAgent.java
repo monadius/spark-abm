@@ -32,6 +32,9 @@ public class SpaceAgent extends Agent {
 	public static final int CIRCLE = 1;
 	public static final int SQUARE = 2;
 	public static final int TORUS = 3;
+	// Experimental flags for physical nodes
+	public static final int DYNAMIC_CIRCLE = 4;
+	public static final int STATIC_CIRCLE = 5;
 	
 	public static final Vector BLACK = new Vector(0, 0, 0);
 	public static final Vector WHITE = new Vector(1.0, 1.0, 1.0);
@@ -63,12 +66,13 @@ public class SpaceAgent extends Agent {
 			this.type = SQUARE;
 			break;
 		case TORUS:
-			node = space.createCircleNode(r, this);
+			node = space.createCircleNode(r, this, type);
 			this.type = TORUS;
 			break;
 		default: 
-			node = space.createCircleNode(r, this);
-			this.type = CIRCLE;
+			// Circle, dynamic, static nodes
+			node = space.createCircleNode(r, this, type);
+			this.type = type;
 			break;
 		}
 	}
@@ -174,10 +178,10 @@ public class SpaceAgent extends Agent {
 				node = space.createSquareNode(r, this);
 				break;
 			case TORUS:
-				node = space.createCircleNode(r, this);
+				node = space.createCircleNode(r, this, type);
 				break;
 			default: 
-				node = space.createCircleNode(r, this);
+				node = space.createCircleNode(r, this, type);
 				break;
 			}
 			

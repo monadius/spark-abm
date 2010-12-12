@@ -8,5 +8,6 @@
 	<classpathentry kind="lib" path="/Spark/lib/extra166y.jar"/>
 	<classpathentry kind="lib" path="/SPARK Utils/bin"/>
 	<classpathentry kind="lib" path="/SPARK Math/bin" sourcepath="/SPARK Math/src"/>
+	<classpathentry kind="lib" path="/Spark/lib/jbox2d-2.0.1.jar" sourcepath="C:/Work/Projects/PhysEngines/JBox2d-2.0.1/JBox2D 05-08-2008/src"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

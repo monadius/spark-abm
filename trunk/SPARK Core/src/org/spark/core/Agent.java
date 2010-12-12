@@ -223,6 +223,15 @@ public abstract class Agent implements Serializable {
 		
 	}
 	
+
+	/**
+	 * Returns special data for this agent
+	 * @return null if no special data is available 
+	 */
+	public AgentData getData() {
+		return null;
+	}
+	
 	
 	/**
 	 * Gives some information about agent. Specifically, the class of the agent

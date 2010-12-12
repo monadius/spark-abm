@@ -51,7 +51,7 @@
         <target name="jar" depends="compile" description="Creates jar-archive">
                 <jar basedir="${classes}" jarfile="${output}/spark-core.jar">
                         <manifest>
-                                <attribute name="Class-Path" value= "spark-math.jar spark-utils.jar ../extra166y.jar ../jsr166y.jar ../lib/log4j.jar ../lib/log5j-1.2.jar ../lib/colt.jar"/>
+                                <attribute name="Class-Path" value= "spark-math.jar spark-utils.jar ../extra166y.jar ../jsr166y.jar ../lib/log4j.jar ../lib/log5j-1.2.jar ../lib/colt.jar ../lib/jbox2d-2.0.1.jar"/>
                         </manifest>
                 </jar>
 
