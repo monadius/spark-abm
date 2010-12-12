@@ -75,6 +75,24 @@ public class XmlDocUtils {
 	
 	
 	/**
+	 * Returns a list of all child nodes
+	 * @param node
+	 * @return
+	 */
+	public static ArrayList<Node> getAllChildren(Node node) {
+		ArrayList<Node> list = new ArrayList<Node>();
+		if (node == null)
+			return list;
+		
+		for (Node child = node.getFirstChild(); child != null; child = child.getNextSibling()) {
+			list.add(child);
+		}
+		
+		return list;
+	}
+	
+	
+	/**
 	 * Returns the first child node with the given name
 	 * @param node
 	 * @param name
