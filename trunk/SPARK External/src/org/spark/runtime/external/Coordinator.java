@@ -248,6 +248,15 @@ public class Coordinator {
 	
 	
 	/**
+	 * Sends a command to the model manager
+	 * @param cmd
+	 */
+	public void sendCommand(ModelManagerCommand cmd) {
+		modelManager.sendCommand(cmd);
+	}
+	
+	
+	/**
 	 * Returns true if a model is loaded
 	 * @return
 	 */

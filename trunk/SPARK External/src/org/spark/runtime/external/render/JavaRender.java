@@ -1,9 +1,12 @@
 package org.spark.runtime.external.render;
 
+import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Canvas;
 import java.awt.Color;
+import java.awt.Composite;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
@@ -264,8 +267,22 @@ public class JavaRender extends Render {
 		Vector[] positions = agents.getPositions();
 		double[] radii = agents.getRadii();
 		Vector4d[] colors = agents.getColors();
+		double[] rotations = agents.getRotations();
 		int[] shapes = agents.getShapes();
 		int[] spaceIndices = agents.getSpaceIndices();
+		
+		// Special composite
+		Composite originalComposite = null;
+		Image image = null;
+		
+		/* Transparent agents */
+		if (agentStyle.transparent) {
+			originalComposite = g.getComposite(); 
+			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
+		}
+		
+		/* Agents with image */
+		image = agentStyle.getImage();
 
 		for (int i = 0; i < n; i++) {
 			if (spaceIndices[i] != spaceIndex)
@@ -284,30 +301,53 @@ public class JavaRender extends Render {
 
 			g.setColor(color.toAWTColor());
 
-			Shape s = null;
+			if (image == null) {
+				Shape s = null;
 
-			switch (shapes[i]) {
-//			case SpaceAgent.CIRCLE:
-			case 1:
-				s = new Ellipse2D.Double(x - r, y - r, r2, r2);
-				break;
+				switch (shapes[i]) {
+				//			case SpaceAgent.CIRCLE:
+				case 1:
+					s = new Ellipse2D.Double(x - r, y - r, r2, r2);
+					break;
 
-//			case SpaceAgent.SQUARE:
-			case 2:
-				s = new Rectangle2D.Double(x - r, y - r, r2, r2);
-				break;
+					//			case SpaceAgent.SQUARE:
+				case 2:
+					s = new Rectangle2D.Double(x - r, y - r, r2, r2);
+					break;
 
-//			case SpaceAgent.TORUS:
-			case 3:
-				s = new Ellipse2D.Double(x - r, y - r, r2, r2);
-				break;
+					//			case SpaceAgent.TORUS:
+				case 3:
+					s = new Ellipse2D.Double(x - r, y - r, r2, r2);
+					break;
+				}
+
+				g.fill(s);
+				if (agentStyle.border) {
+					g.setColor(Color.black);
+					g.draw(s);
+				}
 			}
+			else {
+				// Draw agent's image
+				int w = image.getWidth(null);
+				int h = image.getHeight(null);
+				AffineTransform tr = new AffineTransform();
+				tr.translate(x, y);
+				tr.scale(2 * r / w, 2 * r / h);
+				
+				double theta = rotations[i];
+				if (theta != 0) {
+					tr.rotate(theta);
+				}
 
-			g.fill(s);
-			if (agentStyle.border) {
-				g.setColor(Color.black);
-				g.draw(s);
+				tr.scale(1, -1);
+				tr.translate(-w / 2.0, -h / 2.0);
+				g.drawImage(image, tr, null);
 			}
+		}
+		
+		if (originalComposite != null) {
+			g.setComposite(originalComposite);
 		}
 	}
 
