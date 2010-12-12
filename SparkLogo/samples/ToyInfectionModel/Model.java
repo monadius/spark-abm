@@ -1,5 +1,6 @@
 model Model
 
+;space GridSpace -40 40 -40 40 true true
 space GridSpace -40 40 -40 40 true true
 
 @datalayer(color = "blue", min = 0, max = 5)

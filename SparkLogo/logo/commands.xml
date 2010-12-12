@@ -71,6 +71,18 @@
                         SpaceAgent.TORUS
                 </translation>
         </reporter>
+        
+        <reporter name = "dynamic-circle" type = "$integer">
+                <translation>
+                        SpaceAgent.DYNAMIC_CIRCLE
+                </translation>
+        </reporter>
+        
+        <reporter name = "static-circle" type = "$integer">
+                <translation>
+                        SpaceAgent.STATIC_CIRCLE
+                </translation>
+        </reporter>
 
 
         <reporter name = "black" type = "vector">

@@ -2,9 +2,6 @@
 	<spark-core-path>C:\Work\My Projects\SPARK\Spark\release\spark-core.jar</spark-core-path>
 	<spark-external-path>C:\Work\My Projects\SPARK\Spark\release\spark-external.jar</spark-external-path>
 	<recent-projects>
-		<file>C:\Work\My Projects\SPARK\Spark\tests\models\Basic\MovingAgentsB\MovingAgentsB.xml</file>
-		<file>C:\Work\My Projects\SPARK\Spark\tests\models\Worms\Worms project.xml</file>
-		<file>C:\Work\My Projects\SPARK\Spark\tests\models\Simple3dmodel\Simple3dModel.xml</file>
 		<file>C:\Work\My Projects\SPARK\Spark\tests\models\RSV\TestRSV.xml</file>
 		<file>C:\Work\My Projects\SPARK\Spark\tests\models\Basic\ToyInfectionModel\TestToyInfectionModel.xml</file>
 		<file>C:\Work\My Projects\SPARK\SparkLogo\samples\LinksDemo\LinksDemo.xml</file>
@@ -12,5 +9,8 @@
 		<file>C:\Work\My Projects\SPARK\SparkLogo\samples\PhysModel2-2\PhysModel2-2.xml</file>
 		<file>C:\Work\My Projects\SPARK\SparkLogo\samples\Fire\FireModel.xml</file>
 		<file>C:\Work\My Projects\SPARK\SparkLogo\Models\DROD\DROD.xml</file>
+		<file>C:\Work\My Projects\SPARK\SparkLogo\Models\BloodVessel\BloodVessel.xml</file>
+		<file>C:\Work\My Projects\SPARK\SparkLogo\samples\ToyInfectionModel\ToyInfectionModel Project.xml</file>
+		<file>C:\Work\My Projects\SPARK\SparkLogo\samples\PhysSpace\PhysSpace.xml</file>
 	</recent-projects>
 </config>
