@@ -20,7 +20,6 @@ import org.spark.runtime.external.data.IDataConsumer;
 import org.spark.utils.XmlDocUtils;
 
 import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -220,8 +219,11 @@ public abstract class Render implements KeyListener, IDataConsumer {
 			dataFilter.addData(DataCollectorDescription.DATA_LAYER, selectedDataLayer.getName());
 		
 		for (AgentStyle agentStyle : agentStyles) {
-			if (agentStyle.visible)
+			if (agentStyle.visible) {
 				dataFilter.addData(DataCollectorDescription.SPACE_AGENTS, agentStyle.typeName);
+				// TODO: this should be selected by a special checkbox
+				dataFilter.addData(DataCollectorDescription.AGENT_DATA, agentStyle.typeName);
+			}
 		}
 		
 		snapshotDataFilter.copyDataParameters(dataFilter);
@@ -523,6 +525,7 @@ public abstract class Render implements KeyListener, IDataConsumer {
 			render = new JavaRender(interval);
 		}
 
+		// Create agent styles for this renderer
 		ArrayList<AgentStyle> agentStyles = new ArrayList<AgentStyle>();
 		HashMap<String, AgentStyle> agentMap = new HashMap<String, AgentStyle>();
 
@@ -541,35 +544,33 @@ public abstract class Render implements KeyListener, IDataConsumer {
 		String selectedDataLayer = null;
 		SpaceStyle selectedSpace = null;
 
+		// Load attributes for each components (agents, data layers, spaces)
 		if (node != null) {
 			NodeList nodes = node.getChildNodes();
-			NamedNodeMap attributes;
-			Node tmp;
 
+			// Iterate over all components
 			for (int i = 0; i < nodes.getLength(); i++) {
 				node = nodes.item(i);
-				attributes = node.getAttributes();
-				if (attributes == null)
-					continue;
+				String nodeName = node.getNodeName().intern();
+				
+				String name = XmlDocUtils.getValue(node, "name", null);
 
-				String name = (tmp = attributes.getNamedItem("name")) != null ? tmp
-						.getNodeValue()
-						: null;
-
-				if (node.getNodeName().equals("spacestyle")) {
+				// space style
+				if (nodeName == "spacestyle") {
 					SpaceStyle spaceStyle = SpaceStyle.load(node);
 							
 					if (spaceStyle.selected)
 						selectedSpace = spaceStyle;
 					
-				} else if (node.getNodeName().equals("datalayerstyle")) {
-					String selected = (tmp = attributes
-							.getNamedItem("selected")) != null ? tmp
-							.getNodeValue() : "false";
-
-					if (selected.equals("true"))
+				} 
+				// data layer style
+				else if (nodeName == "datalayerstyle") {
+					boolean selected = XmlDocUtils.getBooleanValue(node, "selected", false);
+					if (selected)
 						selectedDataLayer = name;
-				} else if (node.getNodeName().equals("agentstyle")
+				} 
+				// agent style
+				else if (node.getNodeName().equals("agentstyle")
 						&& name != null) {
 					AgentStyle agentStyle = agentMap.get(name);
 

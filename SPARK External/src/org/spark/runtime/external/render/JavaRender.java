@@ -17,6 +17,7 @@ import java.io.File;
 
 import javax.imageio.ImageIO;
 
+import org.spark.runtime.data.DataObject_AgentData;
 import org.spark.runtime.data.DataObject_Grid;
 import org.spark.runtime.data.DataObject_SpaceAgents;
 import org.spark.runtime.data.DataObject_SpaceLinks;
@@ -245,16 +246,54 @@ public class JavaRender extends Render {
 
 	}
 
+	
+	/**
+	 * Renders a tile
+	 * @return true if successful
+	 */
+	protected boolean drawTile(Graphics2D g, TileManager tiles, DataObject_AgentData agentData, int index,
+				double x, double y, double r) {
+		if (agentData == null)
+			return false;
+		
+		// Get parameters
+		String tileSet = agentData.getStringVal(index, "tile-set");
+		if (tileSet == null)
+			return false;
+		String tileName = agentData.getStringVal(index, "tile-name");
+		if (tileName == null)
+			return false;
+		
+		// Get an image
+		Image image = tiles.getImage(tileSet, tileName);
+		if (image == null)
+			return false;
+		
+		// Draw the image
+		int w = image.getWidth(null);
+		int h = image.getHeight(null);
+		AffineTransform tr = new AffineTransform();
+		tr.translate(x, y);
+		tr.scale(2 * r / w, 2 * r / h);
+		
+//		double theta = rotations[i];
+//		if (theta != 0) {
+//			tr.rotate(theta);
+//		}
+
+		tr.scale(1, -1);
+		tr.translate(-w / 2.0, -h / 2.0);
+		g.drawImage(image, tr, null);
+		
+		return true;
+	}
+	
 
 	/**
 	 * Renders agents
-	 * 
-	 * @param g
-	 * @param agents
-	 * @param spaceIndex
-	 * @param agentStyle
 	 */
 	protected void renderAgents(Graphics2D g, DataObject_SpaceAgents agents,
+			DataObject_AgentData agentData,
 			int spaceIndex, AgentStyle agentStyle) {
 		if (!agentStyle.visible)
 			return;
@@ -283,6 +322,11 @@ public class JavaRender extends Render {
 		
 		/* Agents with image */
 		image = agentStyle.getImage();
+		
+		/* Tile manager */
+		TileManager tiles = agentStyle.getTileManager();
+		if (agentData == null)
+			tiles = null;
 
 		for (int i = 0; i < n; i++) {
 			if (spaceIndices[i] != spaceIndex)
@@ -300,6 +344,11 @@ public class JavaRender extends Render {
 			double y = pos.y;
 
 			g.setColor(color.toAWTColor());
+			
+			if (tiles != null) {
+				if (drawTile(g, tiles, agentData, i, x, y, r))
+					continue;
+			}
 
 			if (image == null) {
 				Shape s = null;
@@ -408,8 +457,10 @@ public class JavaRender extends Render {
 			
 			if (agentsData instanceof DataObject_SpaceLinks)
 				renderLinks(g, (DataObject_SpaceLinks) agentsData, spaceIndex, agentStyle);
-			else
-				renderAgents(g, agentsData, spaceIndex, agentStyle);
+			else {
+				DataObject_AgentData additionalData = data.getAgentData(agentStyle.typeName);
+				renderAgents(g, agentsData, additionalData, spaceIndex, agentStyle);
+			}
 		}
 
 	}
