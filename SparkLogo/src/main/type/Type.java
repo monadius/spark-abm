@@ -53,7 +53,7 @@ public class Type {
 	protected final ArrayList<Method> methodList;
 
 	/* Constructors */
-	// TODO: now we have only one constructors
+	// TODO: now we have only one (explicit) constructor
 //	protected final ArrayList<Method> constructors;
 
 	/**
@@ -411,7 +411,7 @@ public class Type {
 				|| !((BuiltinType) parentType).isInterface())
 			return;
 
-		// TODO: get all methods recursively from parent of parent, etc.
+		// TODO: get all methods recursively from parent, etc.
 		for (Method method : parentType.methodList) {
 			if (!method.abstractFlag)
 				continue;
@@ -419,7 +419,7 @@ public class Type {
 			Id id = method.id;
 			Method myMethod = getMethod(id, false);
 
-			// Instead of throwing an exception create an empty method
+			// TODO: Instead of throwing an exception create an empty method
 			if (myMethod == null)
 				throw new Exception("Abstract method " + id
 						+ " is not implemented in " + this.id);

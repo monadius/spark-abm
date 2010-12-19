@@ -585,11 +585,25 @@
 		</type>
 
 
+		<!-- Agent Data -->
+		<type name = "AgentData" parent = "$Object">
+			<javaname>AgentData</javaname>
+			
+			<method name = "add">
+				<argument name = "name" type = "string"/>
+				<argument name = "value" type = "string"/>
+			</method>
+		</type>
 
+		<!-- Agent -->
 		<type name = "Agent" parent = "$Object">
 			<javaname>Agent</javaname>
 
             <method name = "die">
+            </method>
+            
+            
+            <method name = "get-data" type = "AgentData">
             </method>
             
             

@@ -78,6 +78,9 @@ public abstract class InterfaceAnnotation {
 		if (name.equals("dataset"))
 			return new DatasetAnnotation();
 		
+		if (name.equals("data"))
+			return new DataAnnotation();
+		
 		if (name.equals("nostep"))
 			return new NoStepAnnotation();
 		
