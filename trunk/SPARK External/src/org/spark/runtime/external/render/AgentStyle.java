@@ -13,10 +13,13 @@ import static org.spark.utils.XmlDocUtils.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
+import com.spinn3r.log5j.Logger;
 import com.sun.opengl.util.texture.Texture;
 import com.sun.opengl.util.texture.TextureIO;
 
 public class AgentStyle implements Comparable<AgentStyle> {
+	private static final Logger logger = Logger.getLogger();
+	
 	/* Agent's type name */
 	public String typeName;
 	
@@ -33,7 +36,7 @@ public class AgentStyle implements Comparable<AgentStyle> {
 	
 	String textureFileName;
 	InputStream textureStream;
-	
+		
 	private Texture texture;
 	private Image image;
 	
@@ -41,6 +44,10 @@ public class AgentStyle implements Comparable<AgentStyle> {
 	private int alphaFunc;
 	public float alphaFuncValue;
 	private int textureEnv;
+	
+	/* TileManager */
+	private File tileFile;
+	private TileManager tileManager;
 	
 	
 	public static class RenderProperty {
@@ -271,6 +278,27 @@ public class AgentStyle implements Comparable<AgentStyle> {
 
 		this.textureFileName = textureFileName;
 	}
+	
+	
+	/**
+	 * Returns the tile manager for this agent style
+	 * @return null if no tile manager is defined
+	 */
+	public TileManager getTileManager() {
+		if (tileManager != null)
+			return tileManager;
+		
+		if (tileFile != null) {
+			try {
+				tileManager = TileManager.loadFromXml(tileFile);
+			}
+			catch (Exception e) {
+				logger.error("File loading problem: " + tileFile);
+			}
+		}
+		
+		return tileManager;
+	}
 
 
 	public int compareTo(AgentStyle o) {
@@ -301,6 +329,12 @@ public class AgentStyle implements Comparable<AgentStyle> {
 			addAttr(doc, agentNode, "texture", 
 					FileUtils.getRelativePath(modelPath,
 							new File(this.textureFileName)));
+		}
+		
+		if (this.tileFile != null) {
+			// Tile file
+			addAttr(doc, agentNode, "tile-manager", 
+					FileUtils.getRelativePath(modelPath, tileFile));
 		}
 		
 		if (alphaFunc > 0) {
@@ -342,7 +376,18 @@ public class AgentStyle implements Comparable<AgentStyle> {
 		alphaFuncValue = getFloatValue(node, "alpha-function-value", 0.0f);
 		
 		String texture = getValue(node, "texture", null);
+		String tileFileName = getValue(node, "tile-manager", null);
 
+		if (tileFileName != null) {
+			tileFile = new File(tileFileName);
+			if (!tileFile.exists()) {
+				// Try relative path
+				tileFile = new File(modelPath, tileFileName);
+				if (!tileFile.exists())
+					tileFile = null;
+			}
+		}
+		
 		if (texture != null) {
 			// TODO: find better solution. Another argument?
 			// modelPath == null means loading from the jar-file
