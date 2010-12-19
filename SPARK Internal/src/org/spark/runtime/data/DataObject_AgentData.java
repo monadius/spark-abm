@@ -82,7 +82,7 @@ public class DataObject_AgentData extends DataObject {
 	
 
 	/**
-	 * Returns the values of the variable called name of the agent
+	 * Returns the value of the variable "name" for the agent
 	 * defined by the given index
 	 * @param index
 	 * @param name
