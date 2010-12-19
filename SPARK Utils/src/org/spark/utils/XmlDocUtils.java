@@ -7,6 +7,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.spark.math.Vector;
 import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
 /**
@@ -164,7 +165,11 @@ public class XmlDocUtils {
 		if (node == null)
 			return defaultValue;
 		
-		String value = (tmp = node.getAttributes().getNamedItem(attrName)) != null ? 
+		NamedNodeMap attrs = node.getAttributes();
+		if (attrs == null)
+			return defaultValue;
+		
+		String value = (tmp = attrs.getNamedItem(attrName)) != null ? 
 				tmp.getNodeValue()
 				: null;
 				
