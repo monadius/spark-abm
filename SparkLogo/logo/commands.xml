@@ -634,6 +634,16 @@
                 	@lhs.add(@rhs)
                 </translation>
         </command>
+        
+        
+        <command name = "+=" infix = "true" precedence = "0">
+                <argument name = "lhs" type = "string" />
+                <argument name = "rhs" type = "string" />
+                
+                <translation>
+                	@lhs += @rhs
+                </translation>
+        </command>
 
 
 
