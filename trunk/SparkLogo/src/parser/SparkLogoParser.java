@@ -199,8 +199,12 @@ public class SparkLogoParser {
 			case sym.VAR:
 				fields = parseField();
 				for (Variable var : fields) {
+					for (InterfaceAnnotation annotation : annotations) {
+						var.addAnnotation(annotation);
+					}
 					type.addField(var);
 				}
+				annotations.clear();
 				break;
 
 			case sym.TO:
