@@ -1,5 +1,9 @@
 package org.spark.runtime.external.render;
 
+import java.awt.AlphaComposite;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -8,6 +12,7 @@ import java.util.HashMap;
 
 import javax.imageio.ImageIO;
 
+import org.spark.math.Vector;
 import org.w3c.dom.Node;
 
 import com.spinn3r.log5j.Logger;
@@ -229,12 +234,15 @@ public class TileManager {
 		String id = getValue(fileNode, "id", fname);
 		
 		// Key color
-//		Vector keyColor = getVectorValue(fileNode, "key-color", ";", new Vector());
+		Vector keyColor = getVectorValue(fileNode, "key-color", ";", null);
 		
 		// Create the top level image source
 		ImageSrc top = null;
 		try {
-			top = new FileSrc(id, file);
+			if (keyColor == null)
+				top = new FileSrc(id, file);
+			else
+				top = new FileSrc(id, file, keyColor.toAWTColorInt());
 		}
 		catch (IOException e) {
 			logger.error(e);
@@ -313,6 +321,32 @@ abstract class ImageSrc {
 	public String getId() {
 		return id;
 	}
+
+	/**
+	 * Makes all pixels of the image with the given color transparent
+	 */
+	public static BufferedImage makeTransparent(Image img, Color keyColor) {
+		BufferedImage alpha = new BufferedImage(img.getWidth(null), img.getHeight(null), 
+				BufferedImage.TYPE_4BYTE_ABGR); 
+	
+		Graphics2D g = alpha.createGraphics();
+		g.setComposite(AlphaComposite.Src);
+		g.drawImage(img, 0, 0, null);
+		g.dispose();
+	
+		for (int y = 0; y < alpha.getHeight(); y++) {
+			for (int x = 0; x < alpha.getWidth(); x++) {
+				int col = alpha.getRGB(x, y);
+				if (col == keyColor.getRGB()) {
+					// make transparent
+					alpha.setRGB(x, y, col & 0x00ffffff);
+				}
+			}
+		}
+	
+		return alpha;
+	}
+
 	
 	/**
 	 * Returns image with the given name
@@ -340,7 +374,16 @@ class FileSrc extends ImageSrc {
 		super(id);
 		this.image = ImageIO.read(file);
 	}
-
+	
+	
+	/**
+	 * Reads an image from the given file with the given transparent color
+	 */
+	public FileSrc(String id, File file, Color keyColor) throws IOException {
+		this(id, file);
+		image = makeTransparent(image, keyColor);
+	}
+	
 	
 	public BufferedImage getImage(String name) {
 		// Ignore the argument
