@@ -264,6 +264,11 @@ public class Vector implements Serializable {
 	}
 	
 	
+	public java.awt.Color toAWTColorInt() {
+		return new java.awt.Color((int)x, (int)y, (int)z);
+	}
+	
+	
 	public static Vector getVector(double length, double dir) {
 		dir *= Math.PI / 180;
 		return new Vector(length * Math.cos(dir), length * Math.sin(dir), 0);
