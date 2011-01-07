@@ -265,9 +265,11 @@ public class JavaRender extends Render {
 			return false;
 		
 		// Get an image
-		Image image = tiles.getImage(tileSet, tileName);
-		if (image == null)
+		TileManager.TileImage tile = tiles.getImage(tileSet, tileName);
+		if (tile == null)
 			return false;
+		
+		Image image = tile.image;
 		
 		// Draw the image
 		int w = image.getWidth(null);
@@ -282,6 +284,13 @@ public class JavaRender extends Render {
 //		}
 
 		tr.scale(1, -1);
+		
+		// Reflections
+		if (tile.xReflect)
+			tr.scale(-1, 1);
+		if (tile.yReflect)
+			tr.scale(1, -1);
+		
 		tr.translate(-w / 2.0, -h / 2.0);
 		g.drawImage(image, tr, null);
 		

@@ -92,6 +92,9 @@ public class Coordinator {
 	/* Initial delay time */
 	private int delayTime;
 	
+	/* Initial frequency */
+	private int frequency;
+	
 	/* Data set */
 	private DataSetTmp dataSet;
 
@@ -397,20 +400,35 @@ public class Coordinator {
 	 * Sets a delay time for a simulation
 	 * @param time
 	 */
-	public synchronized void setSimulationDelayTime(int time) {
-		this.delayTime = time;
+	public synchronized void setSimulationDelay(int delay) {
+		this.delayTime = delay;
 		
-		if (modelXmlFile != null && time >= 0) {
-			modelManager.sendCommand(new Command_SetDelay(time));
+		if (modelXmlFile != null && delay >= 0) {
+			modelManager.sendCommand(new Command_SetDelay(delay));
 			receiver.setCollectionInterval("render", 1);
 		}
 		
-		if (time < 0) {
-			receiver.setCollectionInterval("render", -time);
+		if (delay < 0) {
+			receiver.setCollectionInterval("render", -delay);
 			if (modelXmlFile != null)
 				modelManager.sendCommand(new Command_SetDelay(0));
 		}
 	}
+
+	
+	/**
+	 * Sets a frequency for a simulation
+	 * @param time
+	 */
+	public synchronized void setSimulationFrequency(int freq) {
+		this.frequency = freq;
+		
+		if (modelXmlFile != null) {
+			modelManager.sendCommand(new Command_SetFrequency(freq));
+//			receiver.setCollectionInterval("render", 1);
+		}
+	}
+
 	
 
 	/**
@@ -669,7 +687,8 @@ public class Coordinator {
 		if (modelXmlDoc == null)
 			return;
 
-		setSimulationDelayTime(delayTime);
+		setSimulationDelay(delayTime);
+		setSimulationFrequency(frequency);
 		modelManager.sendCommand(new Command_SetSeed(randomSeed, useTimeSeed));
 		modelManager.sendCommand(new Command_Start(simulationTime, paused,
 				observerName, executionMode));
