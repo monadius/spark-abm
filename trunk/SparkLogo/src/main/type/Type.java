@@ -176,6 +176,17 @@ public class Type {
 	 * @return
 	 */
 	public boolean instanceOf(Type type) {
+		// NullType is an instance of any Object type
+		Type nullType = SparkModel.getInstance().getType(new Id("$NullObject"));
+		Type objType = SparkModel.getInstance().getType(new Id("$Object"));
+
+		if (this == nullType) {
+			if (type == nullType || type == objType)
+				return true;
+			
+			return type.instanceOf(objType);		
+		}
+		
 		// FIXME: there can be copies of the same type
 		for (Type currentType = this; currentType != null; currentType = currentType.parentType) {
 			if (currentType == type)

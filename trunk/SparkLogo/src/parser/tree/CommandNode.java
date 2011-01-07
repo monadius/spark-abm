@@ -189,7 +189,6 @@ public class CommandNode extends MultiNode {
 			if (myType instanceof UnknownType) {
 				myType = expectedType;
 			}
-	
 			
 			if (!myType.instanceOf(expectedType))
 				throw new Exception("Types mismatch: myType = " + myType + "; expectedType = " + expectedType + " for command " + cmd.getName() + ": " + symbol);
