@@ -26,6 +26,21 @@ import static org.spark.utils.XmlDocUtils.*;
 public class TileManager {
 	private final static Logger logger = Logger.getLogger();
 	
+	/**
+	 * Describes a tile image
+	 */
+	static public class TileImage {
+		public final BufferedImage image;
+		public final boolean xReflect;
+		public final boolean yReflect;
+		
+		protected TileImage(BufferedImage image, boolean xReflect, boolean yReflect) {
+			this.image = image;
+			this.xReflect = xReflect;
+			this.yReflect = yReflect;
+		}
+	}
+	
 	// Collection of all tile managers
 	private static final HashMap<File, TileManager> tileManagers = new HashMap<File, TileManager>();
 	
@@ -33,7 +48,7 @@ public class TileManager {
 	private String name;
 	
 	// All images
-	private final HashMap<String, BufferedImage> images;
+	private final HashMap<String, TileImage> images;
 	
 	/**
 	 * Default constructor
@@ -41,7 +56,7 @@ public class TileManager {
 	 */
 	public TileManager(String name) {
 		this.name = name;
-		this.images = new HashMap<String, BufferedImage>();
+		this.images = new HashMap<String, TileImage>();
 	}
 	
 	/**
@@ -69,14 +84,14 @@ public class TileManager {
 	 * @param tileName
 	 * @param image
 	 */
-	public void addImage(String tileSet, String tileName, BufferedImage image) {
+	public void addImage(String tileSet, String tileName, BufferedImage image, boolean xReflect, boolean yReflect) {
 		if (image == null) {
 			logger.error("Image cannot be null");
 			return;
 		}
 		
 		String name = tileSet + "$" + tileName;
-		images.put(name, image);
+		images.put(name, new TileImage(image, xReflect, yReflect));
 	}
 	
 	
@@ -86,7 +101,7 @@ public class TileManager {
 	 * @param tileName
 	 * @return null if no image found
 	 */
-	public BufferedImage getImage(String tileSet, String tileName) {
+	public TileImage getImage(String tileSet, String tileName) {
 		String name = tileSet + "$" + tileName;
 		return images.get(name);
 	}
@@ -96,8 +111,8 @@ public class TileManager {
 	 * Returns all images
 	 * @return
 	 */
-	public BufferedImage[] getAllImages() {
-		BufferedImage[] tmp = new BufferedImage[images.size()];
+	public TileImage[] getAllImages() {
+		TileImage[] tmp = new TileImage[images.size()];
 		return images.values().toArray(tmp);
 	}
 	
@@ -169,6 +184,10 @@ public class TileManager {
 			// Reference within data source
 			String ref = getValue(node, "ref", "");
 			
+			// Reflections
+			boolean xReflect = getBooleanValue(node, "x-reflect", false);
+			boolean yReflect = getBooleanValue(node, "y-reflect", false);
+			
 			ImageSrc src = dataSrcMap.get(dataSrc);
 			if (src == null) {
 				logger.error("Data source " + dataSrc + " is not defined for " + tileSet + "$" + name);
@@ -181,9 +200,9 @@ public class TileManager {
 				logger.error("Image haven't been loaded: " + tileSet + "$" + name);
 				continue;
 			}
-
+			
 			// Add the loaded image
-			manager.addImage(tileSet, name, img);
+			manager.addImage(tileSet, name, img, xReflect, yReflect);
 		}
 	}
 	
@@ -479,6 +498,7 @@ class TileSrc extends ImageSrc {
 		if (y >= yTiles)
 			y = yTiles - 1;
 		
-		return image.getSubimage(x * xSize, y * ySize, xSize, ySize);
+		image = image.getSubimage(x * xSize, y * ySize, xSize, ySize);
+		return image;
 	}
 }

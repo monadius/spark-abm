@@ -36,10 +36,15 @@ public class SparkControlPanel extends JPanel implements ISparkPanel, IDataConsu
 	
 	/* Tick label */
 	private JLabel tickLabel;
+	private JSlider delaySlider;
 	
 	/* Delay sizes for the speed slider */
 	private static final int[] delaySize = new int[] { -100, -50, -20, -10, -5,
 			-4, -3, -2, 0, 10, 20, 50, 100, 200, 500 };
+	
+	/* Frequency values */
+	private static final int[] freqSize = new int[] { 0, 10, 20, 30, 60 };
+	private JSlider freqSlider;
 
 
 	public SparkControlPanel() {
@@ -59,22 +64,42 @@ public class SparkControlPanel extends JPanel implements ISparkPanel, IDataConsu
 		startButton.addActionListener(this);
 		setupButton.addActionListener(this);
 
-		JSlider framesPerSecond = new JSlider(JSlider.HORIZONTAL, 0, 14, 0);
-		framesPerSecond.addChangeListener(this);
+		// Sliders
+		delaySlider = new JSlider(JSlider.HORIZONTAL, 0, delaySize.length - 1, 0);
+		delaySlider.addChangeListener(this);
+		
+		freqSlider = new JSlider(JSlider.HORIZONTAL, 0, freqSize.length - 1, 0);
+		freqSlider.addChangeListener(this);
+		
+		delaySlider.setMajorTickSpacing(2);
+		delaySlider.setMinorTickSpacing(1);
+		delaySlider.setPaintTicks(true);
+		delaySlider.setPaintLabels(true);
+		delaySlider.setValue(8);
 
-		framesPerSecond.setMajorTickSpacing(2);
-		framesPerSecond.setMinorTickSpacing(1);
-		framesPerSecond.setPaintTicks(true);
-		framesPerSecond.setPaintLabels(true);
-		framesPerSecond.setValue(8);
+		freqSlider.setMajorTickSpacing(2);
+		freqSlider.setMinorTickSpacing(1);
+		freqSlider.setPaintTicks(true);
+		freqSlider.setPaintLabels(true);
+		freqSlider.setValue(8);
 
+		// Slider labels
 		Hashtable<Integer, JLabel> labelTable = new Hashtable<Integer, JLabel>();
 		labelTable.put(new Integer(0), new JLabel("Fast"));
 		labelTable.put(new Integer(8), new JLabel("Normal"));
 		labelTable.put(new Integer(14), new JLabel("Slow"));
-		framesPerSecond.setLabelTable(labelTable);
+		delaySlider.setLabelTable(labelTable);
+		
+		labelTable = new Hashtable<Integer, JLabel>();
+		labelTable.put(0, new JLabel("0"));
+		labelTable.put(1, new JLabel("10"));
+		labelTable.put(2, new JLabel("20"));
+		labelTable.put(3, new JLabel("30"));
+		labelTable.put(4, new JLabel("60"));
+		freqSlider.setLabelTable(labelTable);
 
-		this.add(framesPerSecond);
+		this.add(freqSlider);
+		this.add(delaySlider);
 //		this.add(synchButton);
 		this.add(setupButton);
 		this.add(startButton);
@@ -116,12 +141,25 @@ public class SparkControlPanel extends JPanel implements ISparkPanel, IDataConsu
 	 */
 	public void stateChanged(ChangeEvent e) {
 		JSlider source = (JSlider) e.getSource();
-		int n = source.getValue();
-		if (n < 0 || n >= delaySize.length)
-			n = 8;
 
-		int delay = delaySize[n];
-		Coordinator.getInstance().setSimulationDelayTime(delay);
+		// Delay
+		if (source == delaySlider) {
+			int n = source.getValue();
+			if (n < 0 || n >= delaySize.length)
+				n = 8;
+
+			int delay = delaySize[n];
+			Coordinator.getInstance().setSimulationDelay(delay);
+		}
+		// Frequency
+		else if (source == freqSlider) {
+			int n = source.getValue();
+			if (n < 0 || n >= freqSize.length)
+				n = 0;
+			
+			int freq = freqSize[n];
+			Coordinator.getInstance().setSimulationFrequency(freq);
+		}
 	}
 	
 	
