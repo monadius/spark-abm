@@ -9,27 +9,27 @@ import org.spark.runtime.internal.engine.AbstractSimulationEngine;
  *
  */
 @SuppressWarnings("serial")
-public class Command_SetDelay extends ModelManagerCommand {
-	/* Delay time in ms */
-	private int delay;
+public class Command_SetFrequency extends ModelManagerCommand {
+	/* The number of updates per second */
+	private int frequency;
 	
-	public Command_SetDelay(int delay) {
-		if (delay < 0)
-			delay = 0;
+	public Command_SetFrequency(int freq) {
+		if (freq < 0)
+			freq = 0;
 		
-		this.delay = delay;
+		this.frequency = freq;
 	}
 	
 	
 	@Override
 	public void execute(SparkModel model, AbstractSimulationEngine engine)
 			throws Exception {
-		engine.setDelay(delay);
+		engine.setFrequency(frequency);
 	}
 	
 	@Override
 	public String toString() {
-		return "SetDelay: " + delay;
+		return "SetFrequency: " + frequency;
 	}
 
 }

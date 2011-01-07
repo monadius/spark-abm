@@ -26,6 +26,9 @@ public abstract class AbstractSimulationEngine {
 	/* Delay time in ms */
 	protected int delayTime;
 	
+	/* Frequency specifies the desired number of updates each second */
+	protected int frequency;
+	
 	/* Manager for data collectors */
 	protected final DataCollectorManager dataCollectors;
 	
@@ -62,8 +65,17 @@ public abstract class AbstractSimulationEngine {
 	 * Sets the delay time
 	 * @param time
 	 */
-	public void setDelay(int time) {
-		this.delayTime = time;
+	public void setDelay(int delay) {
+		this.delayTime = delay;
+	}
+	
+	
+	/**
+	 * Sets the frequency
+	 * @param frequency
+	 */
+	public void setFrequency(int frequency) {
+		this.frequency = frequency;
 	}
 	
 	
