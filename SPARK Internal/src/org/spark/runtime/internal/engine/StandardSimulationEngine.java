@@ -280,13 +280,16 @@ public class StandardSimulationEngine extends AbstractSimulationEngine {
 				if (stopFlag)
 					break;
 
+				// Get the time at the start of the next tick
+				long tickStartTime = System.currentTimeMillis();
+				
 				// Make one simulation step
 				if (mainStep(tickTime, tick))
 					break;
 
 				// Process data
 				processData(false, false, 0);
-				
+
 				// Make a delay
 				if (delayTime > 0) {
 					try {
@@ -296,6 +299,26 @@ public class StandardSimulationEngine extends AbstractSimulationEngine {
 						stopFlag = true;
 					}
 				}
+
+				// The length of the tick (including the above delay)
+				long tickTotalTime = System.currentTimeMillis() - tickStartTime;
+
+				// Try to follow the given frequency
+				if (frequency > 0) {
+					// TODO: use floating point to compute the delay more accurately,
+					// accumulate errors for ticks in some variable
+					long delay = 1000 / frequency;
+					if (tickTotalTime < delay) {
+						try {
+							Thread.sleep(delay - tickTotalTime);
+						}
+						catch (InterruptedException e) {
+							logger.error(e);
+							stopFlag = true;
+						}
+					}
+				}
+				
 
 				// Advance simulation time
 				model.getObserver().advanceSimulationTick();
