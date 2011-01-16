@@ -81,7 +81,8 @@ public class GridGraphics {
 
 		return colors;
 	}
-
+	
+	
 	/**
 	 * Computes vertex data from the given grid data
 	 * 

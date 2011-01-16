@@ -10,6 +10,7 @@ import java.util.HashMap;
 
 import javax.swing.*;
 
+import org.spark.runtime.external.render.DataLayerGraphics;
 import org.spark.runtime.external.render.SpaceStyle;
 import org.spark.runtime.external.render.DataLayerStyle;
 import org.spark.runtime.external.render.AgentStyle;
@@ -115,7 +116,7 @@ public class RenderProperties extends JDialog implements ActionListener {
 		HashMap<String, DataLayerStyle> dataLayerStyles = render.getDataLayerStyles();
 		if (dataLayerStyles == null) return;
 		
-		DataLayerStyle activeLayer = render.getCurrentDataLayerStyle();
+		DataLayerGraphics activeLayer = render.getCurrentDataLayerGraphics();
 
 		ButtonGroup group = new ButtonGroup();
 		
@@ -127,9 +128,20 @@ public class RenderProperties extends JDialog implements ActionListener {
 		group.add(button);
 		dataPanel.add(button);
 		
+		// Find the selected data layer (if unique)
+		DataLayerStyle selectedStyle = null;
+		if (activeLayer != null && !activeLayer.isSpecial()) {
+			ArrayList<DataLayerStyle> styles = activeLayer.getStyles();
+			if (styles.size() == 1)
+				selectedStyle = styles.get(0);
+			else
+				button.setSelected(true);
+		}
+		
+		
 		for (DataLayerStyle dataLayer : dataLayerStyles.values()) {
 			button = new JRadioButton(dataLayer.getName());
-			if (dataLayer == activeLayer)
+			if (dataLayer == selectedStyle)
 				button.setSelected(true);
 			
 			button.setActionCommand("data" + dataLayer.getName());
@@ -343,7 +355,8 @@ public class RenderProperties extends JDialog implements ActionListener {
 		if (cmd.startsWith("data")) {
 			String name = cmd.substring("data".length());
 			
-			render.setDataLayer(name);
+			DataLayerStyle style = render.getDataLayerStyles().get(name);
+			render.setDataLayer(new DataLayerGraphics(style));
 			render.updateDataFilter();
 			return;
 		}

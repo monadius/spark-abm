@@ -54,7 +54,7 @@ public abstract class Render implements KeyListener, IDataConsumer {
 	/* Active (selected) space to be rendered */
 	protected SpaceStyle selectedSpace;
 	/* Active data layers to be rendered */
-	protected DataLayerStyle selectedDataLayer;
+	protected DataLayerGraphics selectedDataLayer;
 
 	/* Styles of all agents of this renderer */
 	protected final ArrayList<AgentStyle> agentStyles;
@@ -216,7 +216,7 @@ public abstract class Render implements KeyListener, IDataConsumer {
 		
 		dataFilter.addData(DataCollectorDescription.SPACES, null);
 		if (selectedDataLayer != null)
-			dataFilter.addData(DataCollectorDescription.DATA_LAYER, selectedDataLayer.getName());
+			selectedDataLayer.updateDataFilter(dataFilter);
 		
 		for (AgentStyle agentStyle : agentStyles) {
 			if (agentStyle.visible) {
@@ -336,7 +336,7 @@ public abstract class Render implements KeyListener, IDataConsumer {
 	 * Returns selected data layer
 	 * @return
 	 */
-	public DataLayerStyle getCurrentDataLayerStyle() {
+	public DataLayerGraphics getCurrentDataLayerGraphics() {
 		return selectedDataLayer;
 	}
 
@@ -398,18 +398,8 @@ public abstract class Render implements KeyListener, IDataConsumer {
 	 * Sets an active data layer
 	 * @param name
 	 */
-	public void setDataLayer(String name) {
-		synchronized(this) {
-			if (name == null) {
-				this.selectedDataLayer = null;
-				return;
-			}
-			
-			DataLayerStyle dataLayer = dataLayerStyles.get(name);
-			if (dataLayer == null) return;
-			
-			this.selectedDataLayer = dataLayer;
-		}
+	public void setDataLayer(DataLayerGraphics dataLayerGraphics) {
+		this.selectedDataLayer = dataLayerGraphics;
 	}
 
 	
@@ -541,7 +531,7 @@ public abstract class Render implements KeyListener, IDataConsumer {
 			agentStyle.name = name;
 		}
 
-		String selectedDataLayer = null;
+		DataLayerGraphics selectedDataLayer = null;
 		SpaceStyle selectedSpace = null;
 
 		// Load attributes for each components (agents, data layers, spaces)
@@ -565,9 +555,7 @@ public abstract class Render implements KeyListener, IDataConsumer {
 				} 
 				// data layer style
 				else if (nodeName == "datalayerstyle") {
-					boolean selected = XmlDocUtils.getBooleanValue(node, "selected", false);
-					if (selected)
-						selectedDataLayer = name;
+					selectedDataLayer = DataLayerGraphics.loadXML(node, dataLayerStyles);
 				} 
 				// agent style
 				else if (node.getNodeName().equals("agentstyle")
@@ -594,9 +582,11 @@ public abstract class Render implements KeyListener, IDataConsumer {
 			// TODO: it is just a way around: find better solution
 			selectedSpace = new SpaceStyle("space", false, true);
 		}
-
+		
 		render.setSpace(selectedSpace);
-		render.setDataLayer(selectedDataLayer);
+		
+		if (selectedDataLayer != null)
+			render.setDataLayer(selectedDataLayer);
 
 		return render;
 	}
@@ -634,16 +624,7 @@ public abstract class Render implements KeyListener, IDataConsumer {
 		}
 		
 		if (selectedDataLayer != null) {
-			Node dls = doc.createElement("datalayerstyle");
-			
-			Node attr = doc.createAttribute("name");
-			attr.setNodeValue(selectedDataLayer.getName());
-			dls.getAttributes().setNamedItem(attr);
-			
-			attr = doc.createAttribute("selected");
-			attr.setNodeValue("true");
-			dls.getAttributes().setNamedItem(attr);
-			
+			Node dls = selectedDataLayer.createNode(doc, modelPath); 
 			parent.appendChild(dls);
 		}
 		
