@@ -447,7 +447,7 @@ public class SyntaxTreeBuilder {
 		Symbol s = list.peek();
 
 		if (s.id == sym.END)
-			throw new Exception("atomNode(): no symbols");
+			throw new Exception("atomNode(): no symbols - " + s);
 
 		TreeNode node;
 		Variable var;
