@@ -18,7 +18,6 @@ import java.io.File;
 import javax.imageio.ImageIO;
 
 import org.spark.runtime.data.DataObject_AgentData;
-import org.spark.runtime.data.DataObject_Grid;
 import org.spark.runtime.data.DataObject_SpaceAgents;
 import org.spark.runtime.data.DataObject_SpaceLinks;
 import org.spark.runtime.data.DataObject_Spaces;
@@ -170,21 +169,27 @@ public class JavaRender extends Render {
 	 * @param grid
 	 * @param space
 	 */
-	protected void renderDataLayer(Graphics2D g, DataObject_Grid grid,
+	protected void renderDataLayer(Graphics2D g, DataLayerGraphics info, DataRow data,
 			int spaceIndex) {
-		if (grid == null)
+		if (info == null || data == null)
 			return;
 		
-		if (grid.getSpaceIndex() != spaceIndex)
+		DataLayerGraphics.GridInfo gridInfo = info.getGridInfo(data);
+		if (gridInfo == null)
+			return;
+		
+		if (gridInfo.spaceIndex != spaceIndex)
 			return;
 
-		int xSize = grid.getXSize();
-		int ySize = grid.getYSize();
+		int xSize = gridInfo.xSize;
+		int ySize = gridInfo.ySize;
 
-		double xStep = grid.getXStep();
-		double yStep = grid.getYStep();
+		double xStep = gridInfo.xStep;
+		double yStep = gridInfo.yStep;
 
-		Vector[][] colors = GridGraphics.getColors(grid, selectedDataLayer);
+		Vector[][] colors = info.getColors(data);
+		if (colors == null)
+			return;
 
 		Rectangle2D.Double rect = new Rectangle2D.Double(0, 0, xStep, yStep);
 		double x = xMin;
@@ -448,8 +453,8 @@ public class JavaRender extends Render {
 
 		
 		if (selectedDataLayer != null) {
-			DataObject_Grid gridData = data.getGrid(selectedDataLayer.getName());
-			renderDataLayer(g, gridData, spaceIndex);
+//			DataObject_Grid gridData = data.getGrid(selectedDataLayer.getName());
+			renderDataLayer(g, selectedDataLayer, data, spaceIndex);
 		}
 
 		for (int k = agentStyles.size() - 1; k >= 0; k--) {

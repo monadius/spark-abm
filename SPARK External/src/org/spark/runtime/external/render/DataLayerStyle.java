@@ -20,9 +20,6 @@ public class DataLayerStyle {
 	/* Data layer's name */
 	private String name;
 	
-	/* Geometry of the data layer */
-	private Vector[][] gridGeometry;
-	
 	/* Minimum and maximum values */
 	private double val1, val2;
 	
@@ -59,9 +56,9 @@ public class DataLayerStyle {
 	
 	
 	/**
-	 * Default constructor
+	 * Default constructor (private)
 	 */
-	public DataLayerStyle() {
+	private DataLayerStyle() {
 	}
 	
 	
@@ -69,9 +66,9 @@ public class DataLayerStyle {
 	 * Copy constructor
 	 * @param style
 	 */
-	public DataLayerStyle(DataLayerStyle style) {
-		this(style.name, style.val1, style.val2, style.color1, style.color2);
-	}
+//	public DataLayerStyle(DataLayerStyle style) {
+//		this(style.name, style.val1, style.val2, style.color1, style.color2);
+//	}
 	
 	
 	/**
@@ -161,16 +158,6 @@ public class DataLayerStyle {
 		XmlDocUtils.addAttr(doc, node, "values-colors", str);
 	}
 	
-	
-	
-	public void setGeometry(Vector[][] geometry) {
-		this.gridGeometry = geometry;
-	}
-	
-	
-	public Vector[][] getGeometry() {
-		return gridGeometry;
-	}
 	
 	
 	public String getName() {

@@ -24,7 +24,6 @@ import javax.media.opengl.GLPbuffer;
 import javax.media.opengl.glu.GLU;
 import javax.media.opengl.glu.GLUquadric;
 
-import org.spark.runtime.data.DataObject_Grid;
 import org.spark.runtime.data.DataObject_SpaceAgents;
 import org.spark.runtime.data.DataObject_SpaceLinks;
 import org.spark.runtime.data.DataObject_Spaces;
@@ -428,12 +427,19 @@ public class JOGLRender extends Render implements GLEventListener,
 	 * @param grid
 	 * @param spaceIndex
 	 */
-	protected void renderDataLayer(GL gl, DataObject_Grid grid, int spaceIndex) {
-		if (grid == null)
+	protected void renderDataLayer(GL gl, DataLayerGraphics info, DataRow data, int spaceIndex) {
+		if (info == null)
+			return;
+		
+		DataLayerGraphics.GridInfo gridInfo = info.getGridInfo(data);
+		if (gridInfo == null)
+			return;
+		
+		if (gridInfo.spaceIndex != spaceIndex)
 			return;
 		
 		// Deal with a 3d-case
-		if (grid.getZSize() > 0) {
+/*		if (grid.getZSize() > 0) {
 			try {
 				grid = new DataGridZSlice(grid, zPlane, zMin, zMax);
 			}
@@ -447,18 +453,23 @@ public class JOGLRender extends Render implements GLEventListener,
 				gl.glTranslatef(0, 0, zPlane);
 			}
 		}
+*/
+//		if (selectedDataLayer.getGeometry() == null)
+//			selectedDataLayer.setGeometry(GridGraphics.getGeometry(grid, xMin, yMin));
 
-		if (selectedDataLayer.getGeometry() == null)
-			selectedDataLayer.setGeometry(GridGraphics.getGeometry(grid, xMin, yMin));
-
-		Vector[][] gridGeometry = selectedDataLayer.getGeometry();
+		Vector[][] gridGeometry = info.getGeometry(data, xMin, yMin);
+		if (gridGeometry == null)
+			return;
 
 		int n = gridGeometry.length - 1;
 		int m = gridGeometry[0].length - 1;
 
-		Vector[][] colors = GridGraphics.getColors(grid, selectedDataLayer);
+		Vector[][] colors = info.getColors(data);
+//		Vector[][] colors = GridGraphics.getColors(grid, selectedDataLayer);
+		if (colors == null)
+			return;
 
-		// Render center
+		// Render the center part
 		for (int i = 0; i < n; i++) {
 			gl.glBegin(GL.GL_QUAD_STRIP);
 			Vector v0 = gridGeometry[i][0];
@@ -485,9 +496,53 @@ public class JOGLRender extends Render implements GLEventListener,
 			gl.glEnd();
 		}
 
+		
+/*		double min = selectedDataLayer.getVal1();
+		double max = selectedDataLayer.getVal2();
+		
+		for (int i = 0; i < n; i++) {
+			gl.glBegin(GL.GL_TRIANGLE_STRIP);
+			Vector v0 = gridGeometry[i][0];
+			Vector v1 = gridGeometry[i + 1][0];
+			Vector c0 = colors[i][0];
+			Vector c1 = colors[i + 1][0];
+			double z0 = grid.getValue(i, 0);
+			double z1 = grid.getValue(i + 1, 0); 
+			
+			if (z0 < min) z0 = min; else if (z0 > max) z0 = max;
+			if (z1 < min) z1 = min; else if (z1 > max) z1 = max;
+			
+			gl.glColor3d(c0.x, c0.y, c0.z);
+			gl.glVertex3d(v0.x, v0.y, z0);
+			gl.glColor3d(c1.x, c1.y, c1.z);
+			gl.glVertex3d(v1.x, v1.y, z1);
+
+			for (int j = 1; j <= m; j++) {
+				Vector v3 = gridGeometry[i][j];
+				Vector v4 = gridGeometry[i + 1][j];
+				Vector c3 = colors[i][j];
+				Vector c4 = colors[i + 1][j];
+				double z3 = grid.getValue(i, j);
+				double z4 = grid.getValue(i + 1, j);
+
+				if (z3 < min) z3 = min; else if (z3 > max) z3 = max;
+				if (z4 < min) z4 = min; else if (z4 > max) z4 = max;
+				
+				gl.glColor3d(c3.x, c3.y, c3.z);
+				gl.glVertex3d(v3.x, v3.y, z3);
+				gl.glColor3d(c4.x, c4.y, c4.z);
+				gl.glVertex3d(v4.x, v4.y, z4);
+
+			}
+			gl.glEnd();
+		}
+*/
+		
+		
+		
 		// Render borders
-		double xStep = grid.getXStep();
-		double yStep = grid.getYStep();
+		double xStep = gridInfo.xStep;
+		double yStep = gridInfo.yStep;
 
 
 		double x, y;
@@ -589,10 +644,11 @@ public class JOGLRender extends Render implements GLEventListener,
 		gl.glVertex2d(x, y);
 		gl.glEnd();
 
-		
+/*		
 		if (grid.getZSize() > 0 && !slicedMode) {
 			gl.glPopMatrix();
 		}
+*/		
 	}
 	
 	
@@ -1007,6 +1063,18 @@ public class JOGLRender extends Render implements GLEventListener,
 		boolean space3d = false;
 		if (spaces.getMins()[spaceIndex].z < spaces.getMaxs()[spaceIndex].z)
 			space3d = true;
+		
+		
+		// Turn on the 3d-mode if necessary
+		boolean mode3d = false;
+		if (space3d)
+			mode3d = true;
+		
+		if (selectedDataLayer != null && selectedDataLayer.is3d())
+			mode3d = true;
+		
+		if (slicedMode)
+			mode3d = false;
 
 		
 		// Clear drawing buffer
@@ -1034,7 +1102,7 @@ public class JOGLRender extends Render implements GLEventListener,
 			gl.glRotatef(-90, 0, 0, 1);
 		}
 
-		if (space3d && !slicedMode) {
+		if (mode3d) {
 			gl.glRotatef(view_rotx, 1.0f, 0.0f, 0.0f);
 			gl.glRotatef(view_roty, 0.0f, 1.0f, 0.0f);
 			gl.glScalef(wheel_scale, wheel_scale, wheel_scale);
@@ -1043,12 +1111,12 @@ public class JOGLRender extends Render implements GLEventListener,
 
 		// Render selected data layer
 		if (selectedDataLayer != null) {
-			DataObject_Grid gridData = data.getGrid(selectedDataLayer.getName());
-			renderDataLayer(gl, gridData, spaceIndex);
+//			DataObject_Grid gridData = data.getGrid(selectedDataLayer.getName());
+			renderDataLayer(gl, selectedDataLayer, data, spaceIndex);
 		}
 
 
-		if (space3d && !slicedMode) {
+		if (mode3d) {
 			gl.glEnable(GL.GL_COLOR_MATERIAL);
 			gl.glEnable(GL.GL_LIGHT0); // Enable Light 0
 			gl.glEnable(GL.GL_LIGHTING); // Enable Lighting
@@ -1083,7 +1151,7 @@ public class JOGLRender extends Render implements GLEventListener,
 			}
 		}
 
-		if (space3d && !slicedMode) {
+		if (mode3d) {
 			gl.glDisable(GL.GL_DEPTH_TEST);
 			gl.glDisable(GL.GL_COLOR_MATERIAL);
 			gl.glDisable(GL.GL_LIGHT0); // Disable Light 0
