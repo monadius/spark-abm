@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<spark version="1">
+  <files all="true" path="."/>
+  <model tick="1">
+    <setup>Terrain.TerrainModel</setup>
+    <methods>
+      <method method="mounts" name="mounts"/>
+      <method method="rain" name="rain"/>
+      <method method="waterSource" name="water-source"/>
+    </methods>
+    <variables>
+      <variable get="get_dt" name="dt" set="set_dt" type="Double"/>
+    </variables>
+    <agents>
+      <agent name="WaterSource">Terrain.WaterSource</agent>
+      <agent name="RainDrop">Terrain.RainDrop</agent>
+      <agent name="MountAgent">Terrain.MountAgent</agent>
+      <agent name="RainAgent">Terrain.RainAgent</agent>
+    </agents>
+  </model>
+  <interface>
+    <about path="readme.txt"/>
+    <windows>
+      <window height="300" name="View" visible="false" width="300" x="909" y="260"/>
+      <window height="200" name="Methods" visible="true" width="200" x="1006" y="210"/>
+      <window height="558" name="Water" visible="true" width="540" x="823" y="428"/>
+      <window height="168" name="Parameters" visible="true" width="659" x="847" y="11"/>
+      <window height="405" name="flux-l" visible="true" width="420" x="1401" y="195"/>
+      <window height="300" name="Sediment" visible="true" width="300" x="1452" y="619"/>
+      <window height="881" main="true" name="Main Window" visible="true" width="754" x="97" y="110"/>
+    </windows>
+    <mainframe location="Main Window">
+      <spacestyle name="space" selected="true" swapXY="false"/>
+      <datalayerstyle>
+        <info color-weight="1.0" height-weight="1.0" style-name="water-map"/>
+        <info color-weight="1.0" height-weight="1.0" style-name="height-map"/>
+      </datalayerstyle>
+      <agentstyle alpha-function-value="0.0" border="true" name="MountAgent" position="0" texture-env="0" transparent="false" visible="true"/>
+      <agentstyle alpha-function-value="0.0" border="true" name="RainDrop" position="1" texture-env="0" transparent="false" visible="true"/>
+      <agentstyle alpha-function-value="0.0" border="true" name="RainAgent" position="2" texture-env="0" transparent="false" visible="true"/>
+      <agentstyle alpha-function-value="0.0" border="true" name="WaterSource" position="3" texture-env="0" transparent="false" visible="true"/>
+    </mainframe>
+    <renderframe location="View">
+      <spacestyle name="space" selected="true" swapXY="false"/>
+      <agentstyle alpha-function-value="0.0" border="true" name="MountAgent" position="0" texture-env="0" transparent="false" visible="true"/>
+      <agentstyle alpha-function-value="0.0" border="true" name="RainDrop" position="1" texture-env="0" transparent="false" visible="true"/>
+      <agentstyle alpha-function-value="0.0" border="true" name="RainAgent" position="2" texture-env="0" transparent="false" visible="true"/>
+      <agentstyle alpha-function-value="0.0" border="true" name="WaterSource" position="3" texture-env="0" transparent="false" visible="true"/>
+    </renderframe>
+    <renderframe location="Water">
+      <spacestyle name="space" selected="true" swapXY="false"/>
+      <datalayerstyle>
+        <info color-weight="1.0" height-weight="0.0" style-name="water-map"/>
+      </datalayerstyle>
+      <agentstyle alpha-function-value="0.0" border="true" name="MountAgent" position="0" texture-env="0" transparent="false" visible="true"/>
+      <agentstyle alpha-function-value="0.0" border="true" name="RainDrop" position="1" texture-env="0" transparent="false" visible="true"/>
+      <agentstyle alpha-function-value="0.0" border="true" name="RainAgent" position="2" texture-env="0" transparent="false" visible="true"/>
+      <agentstyle alpha-function-value="0.0" border="true" name="WaterSource" position="3" texture-env="0" transparent="false" visible="true"/>
+    </renderframe>
+    <parameterframe location="Parameters">
+      <parameter default="0.1" max="1.0" min="0.01" name="dt" step="0.01" type="Double" variable="dt" widget="Slider"/>
+    </parameterframe>
+    <variable-sets/>
+    <renderframe location="flux-l">
+      <spacestyle name="space" selected="true" swapXY="false"/>
+      <datalayerstyle>
+        <info color-weight="1.0" height-weight="0.0" style-name="flux-l"/>
+      </datalayerstyle>
+      <agentstyle alpha-function-value="0.0" border="true" name="MountAgent" position="0" texture-env="0" transparent="false" visible="false"/>
+      <agentstyle alpha-function-value="0.0" border="true" name="RainDrop" position="1" texture-env="0" transparent="false" visible="false"/>
+      <agentstyle alpha-function-value="0.0" border="true" name="RainAgent" position="2" texture-env="0" transparent="false" visible="false"/>
+      <agentstyle alpha-function-value="0.0" border="true" name="WaterSource" position="3" texture-env="0" transparent="false" visible="true"/>
+    </renderframe>
+    <renderframe location="Sediment">
+      <spacestyle name="space" selected="true" swapXY="false"/>
+      <datalayerstyle>
+        <info color-weight="1.0" height-weight="0.0" style-name="sediment"/>
+      </datalayerstyle>
+      <agentstyle alpha-function-value="0.0" border="true" name="MountAgent" position="0" texture-env="0" transparent="false" visible="false"/>
+      <agentstyle alpha-function-value="0.0" border="true" name="RainDrop" position="1" texture-env="0" transparent="false" visible="false"/>
+      <agentstyle alpha-function-value="0.0" border="true" name="RainAgent" position="2" texture-env="0" transparent="false" visible="false"/>
+      <agentstyle alpha-function-value="0.0" border="true" name="WaterSource" position="3" texture-env="0" transparent="false" visible="true"/>
+    </renderframe>
+    <data-layers>
+      <datalayer color1="0.0;0.0;0.0" color2="0.0;0.0;0.0" name="height-map" val1="0.0" val2="15.0" values-colors="0.23/0.4;0.4;0.0/0.73/0.8;0.8;0.0/"/>
+      <datalayer color1="0.4;0.4;0.0" color2="0.0;0.0;1.0" name="water-map" val1="0.0" val2="1.0"/>
+      <datalayer color1="0.4;0.4;0.4" color2="1.0;0.0;0.0" name="sediment" val1="0.0" val2="1.0"/>
+      <datalayer color1="0.0;0.0;0.0" color2="0.0;0.0;1.0" name="s1" val1="0.0" val2="1.0"/>
+      <datalayer color1="0.0;0.0;0.0" color2="0.0;0.0;1.0" name="vel-u" val1="0.0" val2="1.0"/>
+      <datalayer color1="0.0;0.0;0.0" color2="0.0;0.0;1.0" name="vel-v" val1="0.0" val2="1.0"/>
+      <datalayer color1="1.0;1.0;1.0" color2="0.0;0.0;1.0" name="flux-l" val1="0.0" val2="0.30473856352087075"/>
+      <datalayer color1="1.0;1.0;1.0" color2="0.0;0.0;1.0" name="flux-r" val1="0.0" val2="1.0"/>
+      <datalayer color1="0.0;0.0;0.0" color2="0.0;0.0;1.0" name="flux-t" val1="0.0" val2="1.0"/>
+      <datalayer color1="0.0;0.0;0.0" color2="0.0;0.0;1.0" name="flux-b" val1="0.0" val2="1.0"/>
+    </data-layers>
+    <methods-panel location="Methods"/>
+  </interface>
+</spark>
