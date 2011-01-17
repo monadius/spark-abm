@@ -90,7 +90,7 @@ public class SparkViewPanel extends JPanel implements ISparkPanel,
 		add(canvas, BorderLayout.CENTER);
 
 		// Create render properties dialog
-		renderDialog = new RenderProperties(render, true);
+		renderDialog = new RenderProperties(render);
 		renderDialog.setVisible(false);
 
 		// Create pop-up menu

@@ -2,13 +2,14 @@ package org.spark.runtime.external.gui.dialogs;
 
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import org.spark.runtime.external.render.DataLayerGraphics;
 import org.spark.runtime.external.render.SpaceStyle;
@@ -23,17 +24,42 @@ import org.spark.utils.SpringUtilities;
  * @author Monad
  *
  */
-public class RenderProperties extends JDialog implements ActionListener {
+public class RenderProperties extends JDialog implements ActionListener, ChangeListener {
 	private static final long serialVersionUID = -4770465039114801520L;
 
 	/* Render for this dialog */
 	private Render render;
 	
 	/* Main panels */
-	private JPanel panel, titlePanel, agentPanel, spacePanel, dataPanel;
+	private JPanel panel, agentPanel, spacePanel, dataPanel;
 	private ArrayList<AgentStyle> agentStyles;
 	
 	private JCheckBox swapSpaceXY;
+	
+	
+	// Control elements for a data layer
+	private static class DataLayerControl {
+		public final DataLayerStyle style;		
+		public final JRadioButton selector;
+		public final JSpinner colorWeight;
+		public final JSpinner heightWeight;
+		
+		public DataLayerControl(DataLayerStyle style, 
+					JRadioButton selector, JSpinner spinnerColor, JSpinner spinnerHeight) {
+			this.style = style;
+			this.selector = selector;
+			this.colorWeight = spinnerColor;
+			this.heightWeight = spinnerHeight;
+		}
+		
+		public void setEnabled(boolean flag) {
+			colorWeight.setEnabled(flag);
+			heightWeight.setEnabled(flag);
+		}
+	}
+	
+	// Controls for data layers
+	private ArrayList<DataLayerControl> dataLayerControls;	
 	
 	
 	/**
@@ -41,8 +67,8 @@ public class RenderProperties extends JDialog implements ActionListener {
 	 * @param render
 	 * @param editTitle
 	 */
-	public RenderProperties(Render render, boolean editTitle) {
-		init(render, editTitle);
+	public RenderProperties(Render render) {
+		init(render);
 	}
 	
 
@@ -51,7 +77,7 @@ public class RenderProperties extends JDialog implements ActionListener {
 	 * @param render
 	 * @param editTitle
 	 */
-	private void init(Render render, boolean editTitle) {
+	private void init(Render render) {
 		this.render = render;
 //		dataLayers = new ArrayList<Grid>(20);
 		
@@ -63,7 +89,7 @@ public class RenderProperties extends JDialog implements ActionListener {
 //		agentPanel.setPreferredSize(new Dimension(200, 100));
 		agentPanel.setBorder(BorderFactory.createTitledBorder("Agents"));
 		
-		dataPanel = new JPanel(new GridLayout(0, 1));
+		dataPanel = new JPanel(new SpringLayout());
 		dataPanel.setMinimumSize(new Dimension(100, 100));
 //		dataPanel.setPreferredSize(new Dimension(200, 200));
 		dataPanel.setBorder(BorderFactory.createTitledBorder("Data Layers"));
@@ -76,26 +102,6 @@ public class RenderProperties extends JDialog implements ActionListener {
 		
 		panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
-
-        if (editTitle) {
-        	Window owner = getOwner();
-        	// TODO: better solution is required
-        	if (owner != null && owner instanceof JDialog) {
-        	
-        		titlePanel = new JPanel(new GridLayout(1, 1));
-    			titlePanel.setMinimumSize(new Dimension(100, 100));
-    			titlePanel.setBorder(BorderFactory.createTitledBorder("Name"));
-    		
-    			JTextField text = new JTextField( ((JDialog) owner).getTitle() );
-    			text.setMinimumSize(new Dimension(100, 20));
-    			text.setActionCommand("title");
-    			text.addActionListener(this);
-    			titlePanel.add(text);
-    		
-    			panel.add(titlePanel);
-        	}
-        }
-			
 
         panel.add(agentPanel);
         panel.add(spacePanel);
@@ -110,46 +116,141 @@ public class RenderProperties extends JDialog implements ActionListener {
 	 * Initializes controls for data layers
 	 */
 	private void initDataLayers() {
+		dataLayerControls = new ArrayList<DataLayerControl>();
 		dataPanel.removeAll();
-//		dataLayers.clear();
 
+		// Get all available data layer styles
 		HashMap<String, DataLayerStyle> dataLayerStyles = render.getDataLayerStyles();
-		if (dataLayerStyles == null) return;
-		
-		DataLayerGraphics activeLayer = render.getCurrentDataLayerGraphics();
+		if (dataLayerStyles == null) 
+			return;
 
+		///////////////////////////////////
+		// Create controls
 		ButtonGroup group = new ButtonGroup();
 		
-		JRadioButton button = new JRadioButton("none");
-		if (activeLayer == null)
-			button.setSelected(true);
-		button.setActionCommand("none");
-		button.addActionListener(this);
-		group.add(button);
-		dataPanel.add(button);
-		
-		// Find the selected data layer (if unique)
-		DataLayerStyle selectedStyle = null;
-		if (activeLayer != null && !activeLayer.isSpecial()) {
-			ArrayList<DataLayerStyle> styles = activeLayer.getStyles();
-			if (styles.size() == 1)
-				selectedStyle = styles.get(0);
-			else
-				button.setSelected(true);
-		}
-		
-		
-		for (DataLayerStyle dataLayer : dataLayerStyles.values()) {
-			button = new JRadioButton(dataLayer.getName());
-			if (dataLayer == selectedStyle)
-				button.setSelected(true);
+		int i = 0;
+		for (DataLayerStyle style : dataLayerStyles.values()) {
+			// Create a selector
+			JRadioButton selector = new JRadioButton(style.getName());
+			group.add(selector);
+			selector.setActionCommand("data-selector" + i);
+
+			// Create a color spinner
+			JSpinner spinnerColor = new JSpinner(new SpinnerNumberModel(0, 0, 10, 0.1));
+			spinnerColor.setName("data-color" + i);
 			
-			button.setActionCommand("data" + dataLayer.getName());
-			button.addActionListener(this);
-			group.add(button);
-			dataPanel.add(button);
+			// Create a height spinner
+			JSpinner spinnerHeight = new JSpinner(new SpinnerNumberModel(0, 0, 10, 0.1));
+			spinnerHeight.setName("data-height" + i);
+			
+			// Create a control
+			DataLayerControl ctrl = new DataLayerControl(style, selector, spinnerColor, spinnerHeight);
+			dataLayerControls.add(ctrl);
+			
+			i += 1;
 		}
 		
+		// Create special controls
+		JRadioButton buttonNone = new JRadioButton("(none)");
+		group.add(buttonNone);
+		buttonNone.setActionCommand("data-none");
+		
+		JRadioButton buttonSpecial = new JRadioButton("(special)");
+		group.add(buttonSpecial);
+		buttonSpecial.setActionCommand("data-special");
+		
+		
+		////////////////////////////////////////////
+		// Initialize values of controls
+		DataLayerGraphics dataGraphics = render.getCurrentDataLayerGraphics();
+		
+		if (dataGraphics == null) {
+			buttonNone.setSelected(true);
+		}
+		else {
+			ArrayList<DataLayerGraphics.DataLayerInfo> descriptors = dataGraphics.getDescriptors();
+			
+			for (i = 0; i < descriptors.size(); i++) {
+				DataLayerStyle style = descriptors.get(i).dataLayerStyle;
+				double colorWeight = descriptors.get(i).colorWeight;
+				double heightWeight = descriptors.get(i).heightWeight;
+				
+				// Find the corresponding control
+				for (DataLayerControl ctrl : dataLayerControls) {
+					if (ctrl.style == style) {
+						ctrl.colorWeight.setValue(colorWeight);
+						ctrl.heightWeight.setValue(heightWeight);
+						break;
+					}
+				}
+			}
+
+			// Set the selection
+			boolean selected = false;
+			if (!dataGraphics.isSpecial() && descriptors.size() == 1) {
+				DataLayerStyle style = descriptors.get(0).dataLayerStyle;
+				for (DataLayerControl ctrl : dataLayerControls) {
+					if (ctrl.style == style) {
+						selected = true;
+						ctrl.selector.setSelected(true);
+						break;
+					}
+				}
+			}
+			
+			if (dataGraphics.isSpecial()) {
+				selected = true;
+				buttonSpecial.setSelected(true);
+			}
+			
+			if (!selected)
+				buttonNone.setSelected(true);
+		}
+		
+		
+		///////////////////////////////////////////
+		// Initialize actions
+		for (DataLayerControl ctrl : dataLayerControls) {
+			boolean activeFlag = buttonSpecial.isSelected();
+			
+			ctrl.selector.addActionListener(this);
+			ctrl.colorWeight.addChangeListener(this);
+			ctrl.heightWeight.addChangeListener(this);
+			
+			ctrl.colorWeight.setEnabled(activeFlag);
+			ctrl.heightWeight.setEnabled(activeFlag);
+		}
+		
+		buttonNone.addActionListener(this);
+		buttonSpecial.addActionListener(this);
+		
+
+		///////////////////////////////////////////
+		// Put the controls on the data panel
+		// Headers
+		dataPanel.add(new JLabel("Name"));
+		dataPanel.add(new JLabel("Color Weight"));
+		dataPanel.add(new JLabel("Height Weight"));
+		
+		// The first row
+		dataPanel.add(buttonNone);
+		dataPanel.add(new JLabel(""));
+		dataPanel.add(new JLabel(""));
+		
+		// Main rows
+		for (DataLayerControl ctrl : dataLayerControls) {
+			dataPanel.add(ctrl.selector);
+			dataPanel.add(ctrl.colorWeight);
+			dataPanel.add(ctrl.heightWeight);
+		}
+		
+		// The last row
+		dataPanel.add(buttonSpecial);
+		dataPanel.add(new JLabel(""));
+		dataPanel.add(new JLabel(""));
+		
+		SpringUtilities.makeCompactGrid(dataPanel, 3 + dataLayerControls.size(), 3, 
+				0, 0, 10, 5);
 	}
 	
 	
@@ -251,6 +352,25 @@ public class RenderProperties extends JDialog implements ActionListener {
 
 		this.pack();
 	}
+	
+	
+	/**
+	 * Creates a data layer graphics description
+	 * @return
+	 */
+	private DataLayerGraphics createDataLayerGraphics() {
+		DataLayerGraphics dlg = new DataLayerGraphics();
+
+		for (DataLayerControl ctrl : dataLayerControls) {
+			double color = ((Number) ctrl.colorWeight.getValue()).doubleValue();
+			double height = ((Number) ctrl.heightWeight.getValue()).doubleValue();
+			
+			if (color > 0 || height > 0)
+				dlg.addDataLayer(ctrl.style, color, height);
+		}
+		
+		return dlg;
+	}
 
 
 	/**
@@ -273,6 +393,7 @@ public class RenderProperties extends JDialog implements ActionListener {
 			return;
 		}
 		
+		// Space
 		if (cmd.startsWith("space-list")) {
 			JComboBox spaceList = (JComboBox) e.getSource();
 			String spaceName = (String) spaceList.getSelectedItem();
@@ -284,14 +405,14 @@ public class RenderProperties extends JDialog implements ActionListener {
 			return;
 		}
 		
-		
+		// SwapXY
 		if (cmd.startsWith("swapXY")) {
 			render.setSwapXYFlag(swapSpaceXY.isSelected());
 			render.update();
 			return;
 		}
 		
-		
+		// Agent: visibility
 		if (cmd.startsWith("agent_vis")) {
 			JCheckBox visible = (JCheckBox) e.getSource();
 			
@@ -301,7 +422,7 @@ public class RenderProperties extends JDialog implements ActionListener {
 			return;
 		}
 		
-
+		// Agent: border
 		if (cmd.startsWith("agent_border")) {
 			JCheckBox border = (JCheckBox) e.getSource();
 			
@@ -311,12 +432,14 @@ public class RenderProperties extends JDialog implements ActionListener {
 			return;
 		}
 
+		// Agent: advanced
 		if (cmd.startsWith("advanced")) {
 			n = Integer.parseInt( cmd.substring( "advanced".length() ));
 			new AgentStyleDialog(this, agentStyles.get(n)).setVisible(true);
 			return;
 		}
 		
+		// Agent: up
 		if (cmd.startsWith("agent_up")) {
 			n = Integer.parseInt( cmd.substring( "agent_up".length() ) );
 			if (n == 0)
@@ -330,7 +453,7 @@ public class RenderProperties extends JDialog implements ActionListener {
 			return;
 		}
 		
-
+		// Agent: down
 		if (cmd.startsWith("agent_down")) {
 			n = Integer.parseInt( cmd.substring( "agent_down".length() ) );
 			if (n >= agentStyles.size() - 1)
@@ -343,41 +466,73 @@ public class RenderProperties extends JDialog implements ActionListener {
 			render.update();
 			return;
 		}
+		
+		
+		/////////////////////////
+		// Data layer commands //
+		/////////////////////////
 
-				
-		if (cmd.equals("none")) {
+
+		// Data layer: none
+		if (cmd.equals("data-none")) {
+			for (DataLayerControl c : dataLayerControls) {
+				c.setEnabled(false);
+			}
+			
 			render.setDataLayer(null);
 			render.updateDataFilter();
 			return;
 		}
-
 		
-		if (cmd.startsWith("data")) {
-			String name = cmd.substring("data".length());
+		// Data layer: special
+		if (cmd.equals("data-special")) {
+			for (DataLayerControl c : dataLayerControls) {
+				c.setEnabled(true);
+			}
 			
-			DataLayerStyle style = render.getDataLayerStyles().get(name);
-			render.setDataLayer(new DataLayerGraphics(style));
+			render.setDataLayer(createDataLayerGraphics());
+			render.updateDataFilter();
+			return;
+		}
+
+		// Data layer: selector
+		if (cmd.startsWith("data-selector")) {
+			int index = Integer.parseInt(cmd.substring("data-selector".length()));
+			if (index < 0 || index >= dataLayerControls.size())
+				return;
+			
+			DataLayerControl ctrl = dataLayerControls.get(index);
+			for (DataLayerControl c : dataLayerControls) {
+				c.setEnabled(false);
+
+				if (c == ctrl)
+					c.colorWeight.setValue(1);
+				else
+					c.colorWeight.setValue(0);
+				
+				c.heightWeight.setValue(0);
+			}
+			
+			render.setDataLayer(createDataLayerGraphics());
 			render.updateDataFilter();
 			return;
 		}
 		
-		
-		if (cmd.startsWith("title")) {
-			JTextField src = (JTextField) e.getSource();
-			if (src == null)
-				return;
-			
-			String title = src.getText();
-			Window owner = getOwner();
-			
-			if (owner != null && owner instanceof JDialog) {
-				((JDialog) owner).setTitle(title);
-			}
-			
+	}
+
+
+	@Override
+	public void stateChanged(ChangeEvent e) {
+		if (!(e.getSource() instanceof JSpinner))
 			return;
-		}
 		
-		
+		JSpinner spinner = (JSpinner) e.getSource();
+		// Do not react on disabled controls
+		if (!spinner.isEnabled())
+			return;
+
+		render.setDataLayer(createDataLayerGraphics());
+		render.updateDataFilter();
 	}
 }
 
