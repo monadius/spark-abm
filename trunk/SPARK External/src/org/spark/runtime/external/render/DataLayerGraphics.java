@@ -19,15 +19,15 @@ import org.w3c.dom.Node;
  */
 public class DataLayerGraphics {
 	// Information about a data layer for visualization
-	static private class DataLayerInfo {
+	static public class DataLayerInfo {
 		// Information about a data layer itself
-		public DataLayerStyle dataLayerStyle;
+		public final DataLayerStyle dataLayerStyle;
 		
 		// The weight coefficient for the color information
-		public double colorWeight; 
+		public final double colorWeight; 
 		
 		// The weight coefficient for the height information
-		public double heightWeight;
+		public final double heightWeight;
 
 		// Default constructor
 		public DataLayerInfo(DataLayerStyle style, double colorWeight, double heightWeight) {
@@ -39,10 +39,6 @@ public class DataLayerGraphics {
 			this.dataLayerStyle = style;
 			this.colorWeight = colorWeight;
 			this.heightWeight = heightWeight;
-		}
-		
-		public DataLayerInfo(DataLayerStyle style) {
-			this(style, 1, 0);
 		}
 	}
 	
@@ -108,7 +104,7 @@ public class DataLayerGraphics {
 	 */
 	public DataLayerGraphics(DataLayerStyle style) {
 		this();
-		layers.add(new DataLayerInfo(style));
+		addDataLayer(style, 1, 0);
 	}
 	
 	
@@ -117,6 +113,9 @@ public class DataLayerGraphics {
 	 * @param style
 	 */
 	public void addDataLayer(DataLayerStyle style, double colorWeight, double heightWeight) {
+		if (style == null)
+			return;
+		
 		// Find if we already have the given data layer
 		for (int i = 0; i < layers.size(); i++) {
 			if (layers.get(i).dataLayerStyle == style) {
@@ -259,13 +258,8 @@ public class DataLayerGraphics {
 	 * Returns all styles of contained data layers
 	 * @return
 	 */
-	public ArrayList<DataLayerStyle> getStyles() {
-		ArrayList<DataLayerStyle> result = new ArrayList<DataLayerStyle>();
-		
-		for (DataLayerInfo info : layers) {
-			result.add(info.dataLayerStyle);
-		}
-		
+	public ArrayList<DataLayerInfo> getDescriptors() {
+		ArrayList<DataLayerInfo> result = new ArrayList<DataLayerInfo>(layers);
 		return result;
 	}
 	
@@ -427,7 +421,7 @@ public class DataLayerGraphics {
 
 		// Compute weights
 		for (int i = 0; i < n; i++) {
-			weights[i] = layers.get(i).heightWeight / total;
+			weights[i] = layers.get(i).heightWeight;
 		}
 
 		// Compute the height map

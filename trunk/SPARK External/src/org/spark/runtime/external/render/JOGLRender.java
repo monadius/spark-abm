@@ -34,11 +34,11 @@ import org.spark.math.Vector4d;
 import com.spinn3r.log5j.Logger;
 import com.sun.opengl.util.Screenshot;
 
-
 /**
  * JOGL renderer
+ * 
  * @author Alexey
- *
+ * 
  */
 public class JOGLRender extends Render implements GLEventListener,
 		MouseListener, MouseMotionListener, MouseWheelListener {
@@ -47,7 +47,7 @@ public class JOGLRender extends Render implements GLEventListener,
 
 	private float view_rotx = 20.0f, view_roty = 30.0f;// , view_rotz = 0.0f;
 	private float wheel_scale = 1.0f;
-//	private float mouse_x = 0.0f, mouse_y = 0.0f;
+	// private float mouse_x = 0.0f, mouse_y = 0.0f;
 	private boolean rightButtonPressed = false;
 
 	private int prevMouseX, prevMouseY;
@@ -62,25 +62,24 @@ public class JOGLRender extends Render implements GLEventListener,
 
 	private GLU glu = new GLU();
 	private GLUquadric ball, cube;
-	
+
 	/* Current data */
 	private DataRow data;
-	
+
 	/* If true then a 2d Z-slice is rendered */
 	private boolean slicedMode = false;
 	private float zPlane = 0;
-	
+
 	/* Information about current space bounds */
 	private float xMin, yMin, xMax, yMax, zMin, zMax;
-	
-	
+
 	/* Pbuffer for taking screenshots */
 	private GLPbuffer pbuffer;
 	private int pbufferWidth, pbufferHeight;
 
-
 	/**
 	 * Default constructor
+	 * 
 	 * @param interval
 	 * @throws Exception
 	 */
@@ -90,12 +89,11 @@ public class JOGLRender extends Render implements GLEventListener,
 		if (glcanvas == null) {
 			throw new Exception("Problems during OpenGL initialization");
 		}
-		
+
 		glcanvas.addGLEventListener(this);
 		this.canvas = glcanvas;
 	}
 
-	
 	/**
 	 * Returns renderer's canvas
 	 */
@@ -104,18 +102,16 @@ public class JOGLRender extends Render implements GLEventListener,
 		return canvas;
 	}
 
-	
 	/**
 	 * Main display method
 	 */
 	@Override
 	protected void display(DataRow row) {
 		this.data = row;
-		
+
 		if (canvas != null)
 			canvas.display();
 	}
-
 
 	/**
 	 * Saves a screenshot into a file
@@ -123,21 +119,20 @@ public class JOGLRender extends Render implements GLEventListener,
 	@Override
 	protected void saveSnapshot(File dir, String fname, DataRow data) {
 		GLDrawableFactory factory = GLDrawableFactory.getFactory();
-		
-		if (factory == null || !factory.canCreateGLPbuffer())
-		{
+
+		if (factory == null || !factory.canCreateGLPbuffer()) {
 			logger.error("Cannot create a pbuffer for taking a screenshot");
 			return;
 		}
-		
+
 		int w = 500;
 		int h = 500;
-		
+
 		if (canvas != null) {
 			w = canvas.getWidth();
 			h = canvas.getHeight();
 		}
-		
+
 		if (w <= 0 || h <= 0) {
 			logger.error("Canvas width or height is invalid");
 			return;
@@ -161,33 +156,30 @@ public class JOGLRender extends Render implements GLEventListener,
 			pbufferWidth = w;
 			pbufferHeight = h;
 		}
-		
+
 		try {
 			// Render the data
 			DataRow currentData = this.data;
-			this.data = data; 
+			this.data = data;
 			pbuffer.display();
 			this.data = currentData;
 
 			// Save the buffer content into a file
 			GLContext context = pbuffer.createContext(null);
-			
+
 			context.makeCurrent();
 			BufferedImage img = Screenshot.readToBufferedImage(w, h);
 			context.release();
-			
+
 			context.destroy();
 
 			File out = new File(dir, fname + ".png");
 			ImageIO.write(img, "png", out);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			logger.error(e);
 		}
 	}
 
-
-	
 	/*
 	 * public void resize() { if (canvas == null) return;
 	 * canvas.setSize(canvas.getSize()); canvas.display(); }
@@ -350,7 +342,6 @@ public class JOGLRender extends Render implements GLEventListener,
 
 	}
 
-	
 	/**
 	 * Reshape event
 	 */
@@ -359,20 +350,20 @@ public class JOGLRender extends Render implements GLEventListener,
 		GL gl = drawable.getGL();
 		reshape(gl);
 	}
-	
 
 	/**
 	 * Reshape method
+	 * 
 	 * @param gl
 	 */
 	public void reshape(GL gl) {
 		reshapeRequested = false;
-		
+
 		gl.glMatrixMode(GL.GL_PROJECTION);
 		gl.glLoadIdentity();
 
 		boolean swapXY = (selectedSpace != null) ? selectedSpace.swapXY : false;
-	
+
 		if (data != null && selectedSpace != null) {
 			DataObject_Spaces spaces = data.getSpaces();
 			if (spaces != null) {
@@ -380,18 +371,18 @@ public class JOGLRender extends Render implements GLEventListener,
 				if (index != -1) {
 					Vector min = spaces.getMins()[index];
 					Vector max = spaces.getMaxs()[index];
-					
+
 					xMin = (float) min.x;
 					yMin = (float) min.y;
 					zMin = (float) min.z;
-					
+
 					xMax = (float) max.x;
 					yMax = (float) max.y;
 					zMax = (float) max.z;
 				}
 			}
 		}
-		
+
 		if (xMin >= xMax - 1 || yMin >= yMax - 1) {
 			xMin = yMin = -60;
 			xMax = yMax = 60;
@@ -401,7 +392,7 @@ public class JOGLRender extends Render implements GLEventListener,
 		float x1 = xMax;
 		float y0 = yMin;
 		float y1 = yMax;
-		
+
 		if (swapXY) {
 			x0 = yMin;
 			x1 = yMax;
@@ -409,53 +400,47 @@ public class JOGLRender extends Render implements GLEventListener,
 			y1 = xMax;
 		}
 
-		if (zMin >= zMax - 1)
-		{
+		if (zMin >= zMax - 1) {
 			zMin = -100;
 			zMax = 100;
 		}
-		
+
 		gl.glOrtho(x0, x1, y0, y1, zMin - 10, zMax + 10);
 		gl.glMatrixMode(GL.GL_MODELVIEW);
 		gl.glLoadIdentity();
 	}
 
-
 	/**
 	 * Renders the given data layer
+	 * 
 	 * @param gl
 	 * @param grid
 	 * @param spaceIndex
 	 */
-	protected void renderDataLayer(GL gl, DataLayerGraphics info, DataRow data, int spaceIndex) {
+	protected void renderDataLayer(GL gl, DataLayerGraphics info, DataRow data,
+			int spaceIndex) {
 		if (info == null)
 			return;
-		
+
 		DataLayerGraphics.GridInfo gridInfo = info.getGridInfo(data);
 		if (gridInfo == null)
 			return;
-		
+
 		if (gridInfo.spaceIndex != spaceIndex)
 			return;
-		
-		// Deal with a 3d-case
-/*		if (grid.getZSize() > 0) {
-			try {
-				grid = new DataGridZSlice(grid, zPlane, zMin, zMax);
-			}
-			catch (Exception e) {
-				logger.error(e);
-				return;
-			}
 
-			if (!slicedMode) {
-				gl.glPushMatrix();
-				gl.glTranslatef(0, 0, zPlane);
-			}
-		}
-*/
-//		if (selectedDataLayer.getGeometry() == null)
-//			selectedDataLayer.setGeometry(GridGraphics.getGeometry(grid, xMin, yMin));
+		// Deal with a 3d-case
+		/*
+		 * if (grid.getZSize() > 0) { try { grid = new DataGridZSlice(grid,
+		 * zPlane, zMin, zMax); } catch (Exception e) { logger.error(e); return;
+		 * }
+		 * 
+		 * if (!slicedMode) { gl.glPushMatrix(); gl.glTranslatef(0, 0, zPlane);
+		 * } }
+		 */
+		// if (selectedDataLayer.getGeometry() == null)
+		// selectedDataLayer.setGeometry(GridGraphics.getGeometry(grid, xMin,
+		// yMin));
 
 		Vector[][] gridGeometry = info.getGeometry(data, xMin, yMin);
 		if (gridGeometry == null)
@@ -465,199 +450,190 @@ public class JOGLRender extends Render implements GLEventListener,
 		int m = gridGeometry[0].length - 1;
 
 		Vector[][] colors = info.getColors(data);
-//		Vector[][] colors = GridGraphics.getColors(grid, selectedDataLayer);
+		// Vector[][] colors = GridGraphics.getColors(grid, selectedDataLayer);
 		if (colors == null)
 			return;
 
-		// Render the center part
-		for (int i = 0; i < n; i++) {
-			gl.glBegin(GL.GL_QUAD_STRIP);
-			Vector v0 = gridGeometry[i][0];
-			Vector v1 = gridGeometry[i + 1][0];
-			Vector c0 = colors[i][0];
-			Vector c1 = colors[i + 1][0];
-			gl.glColor3d(c0.x, c0.y, c0.z);
-			gl.glVertex2d(v0.x, v0.y);
-			gl.glColor3d(c1.x, c1.y, c1.z);
-			gl.glVertex2d(v1.x, v1.y);
+		double[][] heightMap = info.getHeightMap(data);
 
-			for (int j = 1; j <= m; j++) {
-				Vector v3 = gridGeometry[i][j];
-				Vector v4 = gridGeometry[i + 1][j];
-				Vector c3 = colors[i][j];
-				Vector c4 = colors[i + 1][j];
+		if (heightMap != null) {
+			// Render the height map (the central part only)
+			for (int i = 0; i < n; i++) {
+				gl.glBegin(GL.GL_TRIANGLE_STRIP);
+				Vector v0 = gridGeometry[i][0];
+				Vector v1 = gridGeometry[i + 1][0];
+				Vector c0 = colors[i][0];
+				Vector c1 = colors[i + 1][0];
+				double z0 = heightMap[i][0];
+				double z1 = heightMap[i + 1][0];
 
-				gl.glColor3d(c3.x, c3.y, c3.z);
-				gl.glVertex2d(v3.x, v3.y);
-				gl.glColor3d(c4.x, c4.y, c4.z);
-				gl.glVertex2d(v4.x, v4.y);
+				gl.glColor3d(c0.x, c0.y, c0.z);
+				gl.glVertex3d(v0.x, v0.y, z0);
+				gl.glColor3d(c1.x, c1.y, c1.z);
+				gl.glVertex3d(v1.x, v1.y, z1);
 
+				for (int j = 1; j <= m; j++) {
+					Vector v3 = gridGeometry[i][j];
+					Vector v4 = gridGeometry[i + 1][j];
+					Vector c3 = colors[i][j];
+					Vector c4 = colors[i + 1][j];
+					double z3 = heightMap[i][j];
+					double z4 = heightMap[i + 1][j];
+					
+					gl.glColor3d(c3.x, c3.y, c3.z);
+					gl.glVertex3d(v3.x, v3.y, z3);
+					gl.glColor3d(c4.x, c4.y, c4.z);
+					gl.glVertex3d(v4.x, v4.y, z4);
+
+				}
+				gl.glEnd();
 			}
-			gl.glEnd();
-		}
+		} else {
+			// Render the center part
+			for (int i = 0; i < n; i++) {
+				gl.glBegin(GL.GL_QUAD_STRIP);
+				Vector v0 = gridGeometry[i][0];
+				Vector v1 = gridGeometry[i + 1][0];
+				Vector c0 = colors[i][0];
+				Vector c1 = colors[i + 1][0];
+				gl.glColor3d(c0.x, c0.y, c0.z);
+				gl.glVertex2d(v0.x, v0.y);
+				gl.glColor3d(c1.x, c1.y, c1.z);
+				gl.glVertex2d(v1.x, v1.y);
 
-		
-/*		double min = selectedDataLayer.getVal1();
-		double max = selectedDataLayer.getVal2();
-		
-		for (int i = 0; i < n; i++) {
+				for (int j = 1; j <= m; j++) {
+					Vector v3 = gridGeometry[i][j];
+					Vector v4 = gridGeometry[i + 1][j];
+					Vector c3 = colors[i][j];
+					Vector c4 = colors[i + 1][j];
+
+					gl.glColor3d(c3.x, c3.y, c3.z);
+					gl.glVertex2d(v3.x, v3.y);
+					gl.glColor3d(c4.x, c4.y, c4.z);
+					gl.glVertex2d(v4.x, v4.y);
+
+				}
+				gl.glEnd();
+			}
+
+
+			// Render borders
+			double xStep = gridInfo.xStep;
+			double yStep = gridInfo.yStep;
+
+			double x, y;
+
+			// Render the bottom border
 			gl.glBegin(GL.GL_TRIANGLE_STRIP);
-			Vector v0 = gridGeometry[i][0];
-			Vector v1 = gridGeometry[i + 1][0];
-			Vector c0 = colors[i][0];
-			Vector c1 = colors[i + 1][0];
-			double z0 = grid.getValue(i, 0);
-			double z1 = grid.getValue(i + 1, 0); 
-			
-			if (z0 < min) z0 = min; else if (z0 > max) z0 = max;
-			if (z1 < min) z1 = min; else if (z1 > max) z1 = max;
-			
-			gl.glColor3d(c0.x, c0.y, c0.z);
-			gl.glVertex3d(v0.x, v0.y, z0);
-			gl.glColor3d(c1.x, c1.y, c1.z);
-			gl.glVertex3d(v1.x, v1.y, z1);
 
-			for (int j = 1; j <= m; j++) {
-				Vector v3 = gridGeometry[i][j];
-				Vector v4 = gridGeometry[i + 1][j];
-				Vector c3 = colors[i][j];
-				Vector c4 = colors[i + 1][j];
-				double z3 = grid.getValue(i, j);
-				double z4 = grid.getValue(i + 1, j);
+			x = xMin;
+			y = yMin;
 
-				if (z3 < min) z3 = min; else if (z3 > max) z3 = max;
-				if (z4 < min) z4 = min; else if (z4 > max) z4 = max;
-				
-				gl.glColor3d(c3.x, c3.y, c3.z);
-				gl.glVertex3d(v3.x, v3.y, z3);
-				gl.glColor3d(c4.x, c4.y, c4.z);
-				gl.glVertex3d(v4.x, v4.y, z4);
+			Vector c0;
+			Vector c1 = colors[0][0];
 
+			for (int i = 0; i <= n; i++, x += xStep) {
+				c0 = c1;
+				c1 = colors[i][0];
+				Vector v0 = gridGeometry[i][0];
+
+				gl.glColor3d((c0.x + c1.x) / 2, (c0.y + c1.y) / 2,
+						(c0.z + c1.z) / 2);
+				gl.glVertex2d(x, y);
+
+				gl.glColor3d(c1.x, c1.y, c1.z);
+				gl.glVertex2d(v0.x, v0.y);
 			}
+
+			gl.glVertex2d(x, y);
+			gl.glEnd();
+
+			// Render the top border
+			gl.glBegin(GL.GL_TRIANGLE_STRIP);
+
+			x = xMin;
+			y = yMax;
+
+			c1 = colors[0][m];
+
+			for (int i = 0; i <= n; i++, x += xStep) {
+				c0 = c1;
+				c1 = colors[i][m];
+				Vector v0 = gridGeometry[i][m];
+
+				gl.glColor3d((c0.x + c1.x) / 2, (c0.y + c1.y) / 2,
+						(c0.z + c1.z) / 2);
+				gl.glVertex2d(x, y);
+
+				gl.glColor3d(c1.x, c1.y, c1.z);
+				gl.glVertex2d(v0.x, v0.y);
+			}
+
+			gl.glVertex2d(x, y);
+			gl.glEnd();
+
+			// Render the left border
+			gl.glBegin(GL.GL_TRIANGLE_STRIP);
+
+			x = xMin;
+			y = yMin;
+
+			c1 = colors[0][0];
+
+			for (int j = 0; j <= m; j++, y += yStep) {
+				c0 = c1;
+				c1 = colors[0][j];
+				Vector v0 = gridGeometry[0][j];
+
+				gl.glColor3d((c0.x + c1.x) / 2, (c0.y + c1.y) / 2,
+						(c0.z + c1.z) / 2);
+				gl.glVertex2d(x, y);
+
+				gl.glColor3d(c1.x, c1.y, c1.z);
+				gl.glVertex2d(v0.x, v0.y);
+			}
+
+			gl.glVertex2d(x, y);
+			gl.glEnd();
+
+			// Render the right border
+			gl.glBegin(GL.GL_TRIANGLE_STRIP);
+
+			x = xMax;
+			y = yMin;
+
+			c1 = colors[n][0];
+
+			for (int j = 0; j <= m; j++, y += yStep) {
+				c0 = c1;
+				c1 = colors[n][j];
+				Vector v0 = gridGeometry[n][j];
+
+				gl.glColor3d((c0.x + c1.x) / 2, (c0.y + c1.y) / 2,
+						(c0.z + c1.z) / 2);
+				gl.glVertex2d(x, y);
+
+				gl.glColor3d(c1.x, c1.y, c1.z);
+				gl.glVertex2d(v0.x, v0.y);
+			}
+
+			gl.glVertex2d(x, y);
 			gl.glEnd();
 		}
-*/
-		
-		
-		
-		// Render borders
-		double xStep = gridInfo.xStep;
-		double yStep = gridInfo.yStep;
 
-
-		double x, y;
-
-		// Render the bottom border
-		gl.glBegin(GL.GL_TRIANGLE_STRIP);
-
-		x = xMin;
-		y = yMin;
-
-		Vector c0;
-		Vector c1 = colors[0][0];
-
-		for (int i = 0; i <= n; i++, x += xStep) {
-			c0 = c1;
-			c1 = colors[i][0];
-			Vector v0 = gridGeometry[i][0];
-
-			gl.glColor3d((c0.x + c1.x) / 2, (c0.y + c1.y) / 2,
-					(c0.z + c1.z) / 2);
-			gl.glVertex2d(x, y);
-
-			gl.glColor3d(c1.x, c1.y, c1.z);
-			gl.glVertex2d(v0.x, v0.y);
-		}
-
-		gl.glVertex2d(x, y);
-		gl.glEnd();
-
-		// Render the top border
-		gl.glBegin(GL.GL_TRIANGLE_STRIP);
-
-		x = xMin;
-		y = yMax;
-
-		c1 = colors[0][m];
-
-		for (int i = 0; i <= n; i++, x += xStep) {
-			c0 = c1;
-			c1 = colors[i][m];
-			Vector v0 = gridGeometry[i][m];
-
-			gl.glColor3d((c0.x + c1.x) / 2, (c0.y + c1.y) / 2,
-					(c0.z + c1.z) / 2);
-			gl.glVertex2d(x, y);
-
-			gl.glColor3d(c1.x, c1.y, c1.z);
-			gl.glVertex2d(v0.x, v0.y);
-		}
-
-		gl.glVertex2d(x, y);
-		gl.glEnd();
-
-		// Render the left border
-		gl.glBegin(GL.GL_TRIANGLE_STRIP);
-
-		x = xMin;
-		y = yMin;
-
-		c1 = colors[0][0];
-
-		for (int j = 0; j <= m; j++, y += yStep) {
-			c0 = c1;
-			c1 = colors[0][j];
-			Vector v0 = gridGeometry[0][j];
-
-			gl.glColor3d((c0.x + c1.x) / 2, (c0.y + c1.y) / 2,
-					(c0.z + c1.z) / 2);
-			gl.glVertex2d(x, y);
-
-			gl.glColor3d(c1.x, c1.y, c1.z);
-			gl.glVertex2d(v0.x, v0.y);
-		}
-
-		gl.glVertex2d(x, y);
-		gl.glEnd();
-
-		// Render the right border
-		gl.glBegin(GL.GL_TRIANGLE_STRIP);
-
-		x = xMax;
-		y = yMin;
-
-		c1 = colors[n][0];
-
-		for (int j = 0; j <= m; j++, y += yStep) {
-			c0 = c1;
-			c1 = colors[n][j];
-			Vector v0 = gridGeometry[n][j];
-
-			gl.glColor3d((c0.x + c1.x) / 2, (c0.y + c1.y) / 2,
-					(c0.z + c1.z) / 2);
-			gl.glVertex2d(x, y);
-
-			gl.glColor3d(c1.x, c1.y, c1.z);
-			gl.glVertex2d(v0.x, v0.y);
-		}
-
-		gl.glVertex2d(x, y);
-		gl.glEnd();
-
-/*		
-		if (grid.getZSize() > 0 && !slicedMode) {
-			gl.glPopMatrix();
-		}
-*/		
+		/*
+		 * if (grid.getZSize() > 0 && !slicedMode) { gl.glPopMatrix(); }
+		 */
 	}
-	
-	
+
 	/**
 	 * Renders all visible space links of the given type (style)
+	 * 
 	 * @param gl
 	 * @param linkStyle
 	 */
-	protected void renderLinks(GL gl, DataObject_SpaceLinks links, int spaceIndex, AgentStyle linkStyle) {
+	protected void renderLinks(GL gl, DataObject_SpaceLinks links,
+			int spaceIndex, AgentStyle linkStyle) {
 		if (!linkStyle.visible)
 			return;
 
@@ -673,7 +649,7 @@ public class JOGLRender extends Render implements GLEventListener,
 
 		gl.glBegin(GL.GL_LINES);
 		for (int i = 0; i < n; i++) {
-			Vector end1 = ends1[i]; 
+			Vector end1 = ends1[i];
 			Vector end2 = ends2[i];
 
 			if (end1 == null || end2 == null)
@@ -696,10 +672,10 @@ public class JOGLRender extends Render implements GLEventListener,
 		}
 		gl.glEnd();
 	}
-	
-	
+
 	/**
 	 * Renders agents
+	 * 
 	 * @param gl
 	 * @param agents
 	 * @param spaceIndex
@@ -744,8 +720,8 @@ public class JOGLRender extends Render implements GLEventListener,
 				gl.glAlphaFunc(alphaFunc, agentStyle.alphaFuncValue);
 			}
 
-			gl.glTexEnvi(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE,
-					agentStyle.getTextureEnv());
+			gl.glTexEnvi(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, agentStyle
+					.getTextureEnv());
 
 			// enable texturing
 			gl.glEnable(GL.GL_TEXTURE_2D);
@@ -793,15 +769,15 @@ public class JOGLRender extends Render implements GLEventListener,
 				else
 					gl.glColor3d(color.x, color.y, color.z);
 				switch (shapes[i]) {
-//				case SpaceAgent.CIRCLE:
+				// case SpaceAgent.CIRCLE:
 				case 1:
 					gl.glCallList(circle);
 					break;
-//				case SpaceAgent.SQUARE:
+				// case SpaceAgent.SQUARE:
 				case 2:
 					gl.glCallList(square);
 					break;
-//				case SpaceAgent.TORUS:
+				// case SpaceAgent.TORUS:
 				case 3:
 					gl.glCallList(donnut);
 					break;
@@ -826,22 +802,22 @@ public class JOGLRender extends Render implements GLEventListener,
 
 	}
 
-	
 	/**
 	 * Displays agents in 3d
+	 * 
 	 * @param gl
 	 * @param agents
 	 * @param agentStyle
 	 * @param spaceIndex
 	 */
-	protected void renderAgents3d(GL gl, DataObject_SpaceAgents agents, AgentStyle agentStyle,
-			int spaceIndex) {
+	protected void renderAgents3d(GL gl, DataObject_SpaceAgents agents,
+			AgentStyle agentStyle, int spaceIndex) {
 		if (!agentStyle.visible)
 			return;
-		
+
 		if (agents == null)
 			return;
-		
+
 		// Get data of agents
 		int n = agents.getTotalNumber();
 		Vector[] positions = agents.getPositions();
@@ -864,47 +840,46 @@ public class JOGLRender extends Render implements GLEventListener,
 			// Save world matrix
 			gl.glPushMatrix();
 			gl.glTranslated(pos.x, pos.y, pos.z);
-			
+
 			float scale = (float) radii[i];
 			gl.glScalef(scale, scale, scale);
-			
+
 			if (agentStyle.transparent)
 				gl.glColor4d(color.x, color.y, color.z, 0.5);
 			else
 				gl.glColor3d(color.x, color.y, color.z);
-			
+
 			switch (shapes[i]) {
-//				case SpaceAgent.CIRCLE:
-				case 1:
-					glu.gluSphere(ball, 1, 8, 8);
-					break;
-//				case SpaceAgent.SQUARE:
-				case 2:
-					glu.gluSphere(cube, 1, 4, 4);
-					break;
-//				case SpaceAgent.TORUS:
-				case 3:
-					// TODO: not supported
-					// gl.glCallList(donnut);
-					break;
+			// case SpaceAgent.CIRCLE:
+			case 1:
+				glu.gluSphere(ball, 1, 8, 8);
+				break;
+			// case SpaceAgent.SQUARE:
+			case 2:
+				glu.gluSphere(cube, 1, 4, 4);
+				break;
+			// case SpaceAgent.TORUS:
+			case 3:
+				// TODO: not supported
+				// gl.glCallList(donnut);
+				break;
 			}
 
 			// Restore world matrix
 			gl.glPopMatrix();
 		}
 	}
-	
-	
-	
+
 	/**
 	 * Displays 3d agents on a 2d slice
+	 * 
 	 * @param gl
 	 * @param agents
 	 * @param agentStyle
 	 * @param spaceIndex
 	 */
-	protected void renderAgents3dSliced(GL gl, DataObject_SpaceAgents agents, AgentStyle agentStyle,
-			int spaceIndex) {
+	protected void renderAgents3dSliced(GL gl, DataObject_SpaceAgents agents,
+			AgentStyle agentStyle, int spaceIndex) {
 		if (!agentStyle.visible)
 			return;
 
@@ -942,8 +917,8 @@ public class JOGLRender extends Render implements GLEventListener,
 				gl.glAlphaFunc(alphaFunc, agentStyle.alphaFuncValue);
 			}
 
-			gl.glTexEnvi(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE,
-					agentStyle.getTextureEnv());
+			gl.glTexEnvi(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, agentStyle
+					.getTextureEnv());
 
 			// enable texturing
 			gl.glEnable(GL.GL_TEXTURE_2D);
@@ -965,7 +940,7 @@ public class JOGLRender extends Render implements GLEventListener,
 
 			if (pos == null || color == null)
 				continue;
-			
+
 			// Compute the distance between the agent and the plane
 			double dist = Math.abs(pos.z - zPlane);
 			double r = radii[i];
@@ -997,15 +972,15 @@ public class JOGLRender extends Render implements GLEventListener,
 				else
 					gl.glColor3d(color.x, color.y, color.z);
 				switch (shapes[i]) {
-//				case SpaceAgent.CIRCLE:
+				// case SpaceAgent.CIRCLE:
 				case 1:
 					gl.glCallList(circle);
 					break;
-//				case SpaceAgent.SQUARE:
+				// case SpaceAgent.SQUARE:
 				case 2:
 					gl.glCallList(square);
 					break;
-//				case SpaceAgent.TORUS:
+				// case SpaceAgent.TORUS:
 				case 3:
 					gl.glCallList(donnut);
 					break;
@@ -1028,7 +1003,6 @@ public class JOGLRender extends Render implements GLEventListener,
 			gl.glDisable(GL.GL_BLEND);
 		}
 	}
-	
 
 	/**
 	 * Main display method
@@ -1048,35 +1022,33 @@ public class JOGLRender extends Render implements GLEventListener,
 		int index = spaces.getIndex(selectedSpace.name);
 		if (index == -1)
 			return;
-		
+
 		int spaceIndex = spaces.getIndices()[index];
 
 		GL gl = drawable.getGL();
-		
-//		if (reshapeRequested) {
-//			reshape(gl);
-//		}
-		
+
+		// if (reshapeRequested) {
+		// reshape(gl);
+		// }
+
 		// TODO: call it when necessary only
 		reshape(gl);
-		
+
 		boolean space3d = false;
 		if (spaces.getMins()[spaceIndex].z < spaces.getMaxs()[spaceIndex].z)
 			space3d = true;
-		
-		
+
 		// Turn on the 3d-mode if necessary
 		boolean mode3d = false;
 		if (space3d)
 			mode3d = true;
-		
+
 		if (selectedDataLayer != null && selectedDataLayer.is3d())
 			mode3d = true;
-		
+
 		if (slicedMode)
 			mode3d = false;
 
-		
 		// Clear drawing buffer
 		if ((drawable instanceof GLJPanel)
 				&& !((GLJPanel) drawable).isOpaque()
@@ -1087,8 +1059,7 @@ public class JOGLRender extends Render implements GLEventListener,
 			gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 		}
 
-
-		// Save world matrix 
+		// Save world matrix
 		gl.glPushMatrix();
 
 		// gl.glTranslatef(mouse_x, mouse_y, 0);
@@ -1097,7 +1068,7 @@ public class JOGLRender extends Render implements GLEventListener,
 		// Make basic space transformations
 		gl.glTranslatef(dx, dy, 0);
 		gl.glScalef(zoom, zoom, zoom);
-		
+
 		if (selectedSpace.swapXY) {
 			gl.glRotatef(-90, 0, 0, 1);
 		}
@@ -1109,43 +1080,44 @@ public class JOGLRender extends Render implements GLEventListener,
 			gl.glEnable(GL.GL_DEPTH_TEST);
 		}
 
+
+		
 		// Render selected data layer
 		if (selectedDataLayer != null) {
-//			DataObject_Grid gridData = data.getGrid(selectedDataLayer.getName());
+			// DataObject_Grid gridData =
+			// data.getGrid(selectedDataLayer.getName());
 			renderDataLayer(gl, selectedDataLayer, data, spaceIndex);
 		}
-
 
 		if (mode3d) {
 			gl.glEnable(GL.GL_COLOR_MATERIAL);
 			gl.glEnable(GL.GL_LIGHT0); // Enable Light 0
 			gl.glEnable(GL.GL_LIGHTING); // Enable Lighting
+//			gl.glEnable(GL.GL_AUTO_NORMAL);
 		}
-		
-		
+
 		// Render visible agents
 		for (int k = agentStyles.size() - 1; k >= 0; k--) {
 			AgentStyle agentStyle = agentStyles.get(k);
-			
+
 			if (!agentStyle.visible)
 				continue;
-			
+
 			DataObject_SpaceAgents agentsData = data
 					.getSpaceAgents(agentStyle.typeName);
-			
+
 			if (agentsData == null)
 				continue;
-			
+
 			if (agentsData instanceof DataObject_SpaceLinks)
-				renderLinks(gl, (DataObject_SpaceLinks) agentsData, spaceIndex, agentStyle);
+				renderLinks(gl, (DataObject_SpaceLinks) agentsData, spaceIndex,
+						agentStyle);
 			else {
 				if (!space3d) {
 					renderAgents(gl, agentsData, spaceIndex, agentStyle);
-				}
-				else if (slicedMode) {
+				} else if (slicedMode) {
 					renderAgents3dSliced(gl, agentsData, agentStyle, spaceIndex);
-				}
-				else {
+				} else {
 					renderAgents3d(gl, agentsData, agentStyle, spaceIndex);
 				}
 			}
@@ -1156,31 +1128,25 @@ public class JOGLRender extends Render implements GLEventListener,
 			gl.glDisable(GL.GL_COLOR_MATERIAL);
 			gl.glDisable(GL.GL_LIGHT0); // Disable Light 0
 			gl.glDisable(GL.GL_LIGHTING); // Disable Lighting
+//			gl.glDisable(GL.GL_AUTO_NORMAL);
 		}
 
 		// Restore world matrix
 		gl.glPopMatrix();
 	}
-	
-
-
 
 	/************** Event listeners *******************/
-	
 
 	public void displayChanged(GLAutoDrawable drawable, boolean modeChanged,
 			boolean deviceChanged) {
 	}
-	
 
 	// Methods required for the implementation of MouseListener
 	public void mouseEntered(MouseEvent e) {
 	}
-	
 
 	public void mouseExited(MouseEvent e) {
 	}
-	
 
 	public void mousePressed(MouseEvent e) {
 		prevMouseX = e.getX();
@@ -1190,7 +1156,6 @@ public class JOGLRender extends Render implements GLEventListener,
 			// mouseRButtonDown = true;
 		}
 	}
-	
 
 	public void mouseReleased(MouseEvent e) {
 		if ((e.getModifiers() & MouseEvent.BUTTON3_MASK) != 0) {
@@ -1198,11 +1163,9 @@ public class JOGLRender extends Render implements GLEventListener,
 			// mouseRButtonDown = false;
 		}
 	}
-	
 
 	public void mouseClicked(MouseEvent e) {
 	}
-	
 
 	// Methods required for the implementation of MouseMotionListener
 	public void mouseDragged(MouseEvent e) {
@@ -1219,12 +1182,11 @@ public class JOGLRender extends Render implements GLEventListener,
 		if (!rightButtonPressed) {
 			view_rotx += thetaX;
 			view_roty += thetaY;
-		}
-		else {
-//			mouse_y -= thetaX;
-//			mouse_x -= thetaY;
+		} else {
+			// mouse_y -= thetaX;
+			// mouse_x -= thetaY;
 			zPlane += thetaY;
-			
+
 			if (zPlane < zMin)
 				zPlane = zMin;
 			else if (zPlane > zMax)
@@ -1233,11 +1195,9 @@ public class JOGLRender extends Render implements GLEventListener,
 
 		canvas.display();
 	}
-	
 
 	public void mouseMoved(MouseEvent e) {
 	}
-	
 
 	public void mouseWheelMoved(MouseWheelEvent e) {
 		int notches = e.getWheelRotation();
@@ -1251,8 +1211,7 @@ public class JOGLRender extends Render implements GLEventListener,
 		// if (!active) canvas.display();
 		canvas.display();
 	}
-	
-	
+
 	/**
 	 * Key event action
 	 */
@@ -1265,12 +1224,12 @@ public class JOGLRender extends Render implements GLEventListener,
 			slicedMode = !slicedMode;
 			flag = true;
 			break;
-			
+
 		default:
-			super.keyPressed(e);	
+			super.keyPressed(e);
 			return;
 		}
-		
+
 		if (flag)
 			canvas.display();
 	}
