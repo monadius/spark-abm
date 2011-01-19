@@ -160,6 +160,14 @@ public class JavaRender extends Render {
 		transform.setToIdentity();
 		transform.translate(b, d);
 		transform.concatenate(t2);
+		
+		// Test
+		int xsize = (int)(2 * (x1 - x0));
+		int ysize = (int)(2 * (y1 - y0));
+		
+		if (xsize != width || ysize != width) {
+//			canvas.setSize(xsize, ysize);
+		}
 	}
 
 	/**

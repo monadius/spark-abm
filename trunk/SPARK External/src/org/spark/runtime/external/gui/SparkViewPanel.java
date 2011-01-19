@@ -2,6 +2,7 @@ package org.spark.runtime.external.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Canvas;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -34,6 +35,9 @@ public class SparkViewPanel extends JPanel implements ISparkPanel,
 	/* Window for this panel */
 	private final SparkWindow win;
 	
+	/* Tool bar */
+	private JToolBar toolBar; 
+	
 	/* Pop-up menu */
 	private JPopupMenu popup;
 
@@ -53,8 +57,10 @@ public class SparkViewPanel extends JPanel implements ISparkPanel,
 		String location = XmlDocUtils.getValue(node, "location", null);
 		win = manager.setLocation(this, location);
 		
-		if (render != null)
+		if (render != null) {
 			render.setName(win.getName());
+			toolBar.setName(win.getName());
+		}
 	}
 	
 	
@@ -68,8 +74,64 @@ public class SparkViewPanel extends JPanel implements ISparkPanel,
 		win.addPanel(this);
 		
 		this.win = win;
-		if (render != null && win != null)
+		if (render != null && win != null) {
 			render.setName(win.getName());
+			toolBar.setName(win.getName());
+		}
+	}
+	
+	
+	/**
+	 * Creates a tool bar
+	 * @param node
+	 */
+	private void createToolBar(Node node) {
+		// Create a tool bar
+		toolBar = new JToolBar("View");
+		toolBar.setPreferredSize(new Dimension(100, 40));
+
+		// Create buttons
+		JButton select = new JButton("select");
+		select.setToolTipText("select");
+		
+		JButton move = new JButton("move");
+		JButton control = new JButton("control");
+		
+		JButton properties = new JButton("props");
+		properties.setActionCommand("properties");
+		properties.addActionListener(this);
+		
+		JButton snapshot = new JButton("snapshot");
+		snapshot.setActionCommand("snapshot");
+		snapshot.addActionListener(this);
+		
+		JButton rename = new JButton("rename");
+		rename.setActionCommand("rename");
+		rename.addActionListener(this);
+		
+		JButton remove = new JButton("remove");
+		remove.setActionCommand("remove");
+		remove.addActionListener(this);
+		
+		// Add buttons
+		toolBar.add(select);
+		toolBar.add(move);
+		toolBar.add(control);
+		
+		toolBar.addSeparator();
+		
+		toolBar.add(snapshot);
+		toolBar.add(rename);
+		toolBar.add(properties);
+		
+		toolBar.addSeparator();
+		
+		toolBar.add(remove);
+		
+		
+		// Add the tool bar
+		add(toolBar, BorderLayout.PAGE_START);
+		
 	}
 	
 	
@@ -80,6 +142,8 @@ public class SparkViewPanel extends JPanel implements ISparkPanel,
 		setLayout(new BorderLayout());
 		
 		this.xmlNode = node;
+		
+		createToolBar(node);
 		
 		// Create render
 		render = Coordinator.getInstance().createRender(node, renderType);
