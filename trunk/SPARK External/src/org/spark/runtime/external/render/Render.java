@@ -4,12 +4,15 @@ import java.awt.Canvas;
 import java.awt.EventQueue;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
-import org.spark.runtime.commands.Command_KeyPressed;
+import org.spark.runtime.commands.Command_ControlEvent;
 import org.spark.runtime.data.DataCollectorDescription;
 import org.spark.runtime.data.DataObject_Spaces;
 import org.spark.runtime.data.DataRow;
@@ -23,7 +26,12 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-public abstract class Render implements KeyListener, IDataConsumer {
+import com.spinn3r.log5j.Logger;
+
+public abstract class Render implements KeyListener, IDataConsumer, MouseWheelListener {
+	// Logger
+	private static final Logger logger = Logger.getLogger();
+	
 	/* Types of renderers */
 	public static final int JOGL_RENDER = 0;
 	public static final int JAVA_2D_RENDER = 1;
@@ -65,12 +73,28 @@ public abstract class Render implements KeyListener, IDataConsumer {
 	/* A reference to all data layer styles in a model */
 	protected HashMap<String, DataLayerStyle> globalDataLayerStyles;
 	
+	/******* Camera parameters ********/
+	
 	/* Offsets of the rendering area */
 	protected float dx = 0, dy = 0;
 	
 	/* Zoom coefficient */
 	protected float zoom = 1;
 
+	
+	/***** Render control state ******/
+	
+	/* Control state */
+	protected int controlState = 0;
+	
+	// Possible control states
+	public static final int CONTROL_STATE_SELECT = 0;
+	public static final int CONTROL_STATE_MOVE = 1;
+	public static final int CONTROL_STATE_CONTROL = 2;
+	
+	
+	/***** Render flags ******/
+	
 	/* Reshape request flag */
 	protected volatile boolean reshapeRequested;
 	
@@ -81,7 +105,7 @@ public abstract class Render implements KeyListener, IDataConsumer {
 	protected String renderName;
 //	protected long updateTick;
 	
-	
+	// Some constants
 	private final static float DY_STEP = 1;
 	private final static float DX_STEP = 1;
 	private final static float ZOOM_FACTOR = 1.2f;
@@ -97,6 +121,8 @@ public abstract class Render implements KeyListener, IDataConsumer {
 		dataFilter = new DataFilter(this, "render");
 		dataFilter.setInterval(interval);
 
+		controlState = CONTROL_STATE_SELECT;
+		
 		saveSnapshotsFlag = false;
 		
 		snapshotDataFilter = new DataFilter(new IDataConsumer() {
@@ -149,6 +175,23 @@ public abstract class Render implements KeyListener, IDataConsumer {
 				display(tmp);
 			}
 		});
+	}
+	
+	
+	/**
+	 * Sets the control state
+	 */
+	public void setControlState(int state) {
+		logger.debug("Set control state: " + state);
+		this.controlState = state;
+	}
+	
+	
+	/**
+	 * Returns the control state
+	 */
+	public int getControlState() {
+		return controlState;
 	}
 	
 
@@ -514,6 +557,15 @@ public abstract class Render implements KeyListener, IDataConsumer {
 		} else {
 			render = new JavaRender(interval);
 		}
+		
+		// Load general properties
+		int controlState = XmlDocUtils.getIntegerValue(node, "control-state", 0);
+		render.setControlState(controlState);
+		
+		render.dx = XmlDocUtils.getFloatValue(node, "dx", 0);
+		render.dy = XmlDocUtils.getFloatValue(node, "dy", 0);
+		render.zoom = XmlDocUtils.getFloatValue(node, "zoom", 1);
+		
 
 		// Create agent styles for this renderer
 		ArrayList<AgentStyle> agentStyles = new ArrayList<AgentStyle>();
@@ -600,35 +652,38 @@ public abstract class Render implements KeyListener, IDataConsumer {
 		if (doc == null || parent == null)
 			return;
 
+		// Remove all old subnodes
 		XmlDocUtils.removeChildren(parent, "spacestyle");
 		XmlDocUtils.removeChildren(parent, "datalayerstyle");
 		XmlDocUtils.removeChildren(parent, "agentstyle");
 		XmlDocUtils.removeChildren(parent, "#text");
 		
+		// Save general properties
+		XmlDocUtils.addAttr(doc, parent, "control-state", controlState);
+		XmlDocUtils.addAttr(doc, parent, "dx", dx);
+		XmlDocUtils.addAttr(doc, parent, "dy", dy);
+		XmlDocUtils.addAttr(doc, parent, "zoom", zoom);
+		
+		
+		// Node for the selected space properties
 		if (selectedSpace != null) {
 			Node spaceNode = doc.createElement("spacestyle");
-			
-			Node attr = doc.createAttribute("name");
-			attr.setNodeValue(selectedSpace.name);
-			spaceNode.getAttributes().setNamedItem(attr);
-		
-			attr = doc.createAttribute("swapXY");
-			attr.setNodeValue(String.valueOf(selectedSpace.swapXY));
-			spaceNode.getAttributes().setNamedItem(attr);
-			
-			attr = doc.createAttribute("selected");
-			attr.setNodeValue("true");
-			spaceNode.getAttributes().setNamedItem(attr);
+
+			XmlDocUtils.addAttr(doc, spaceNode, "name", selectedSpace.name);
+			XmlDocUtils.addAttr(doc, spaceNode, "swapXY", selectedSpace.swapXY);
+			XmlDocUtils.addAttr(doc, spaceNode, "selected", true);
 			
 			parent.appendChild(spaceNode);
 		}
 		
+		// Node for the selected data layer(s)
 		if (selectedDataLayer != null) {
 			Node dls = selectedDataLayer.createNode(doc, modelPath); 
 			parent.appendChild(dls);
 		}
 		
 		
+		// Nodes for styles of agents
 		for (int i = 0; i < agentStyles.size(); i++) {
 			AgentStyle agentStyle = agentStyles.get(i);
 			String name = agentStyle.name;
@@ -645,13 +700,15 @@ public abstract class Render implements KeyListener, IDataConsumer {
 	}
 
 	
-	/* KeyListener functions */
-
-	public void keyPressed(KeyEvent e) {
-		int code = e.getKeyCode();
-		char symbol = e.getKeyChar();
+	/**
+	 * Controls the camera position using the keyboard events
+	 * @param code
+	 * @param symbol
+	 */
+	private void controlCamera(int code, char symbol) {
 		boolean flag = false;
 
+		// Special reaction on + and -
 		switch (symbol) {
 		case '+':
 			code = KeyEvent.VK_PLUS;
@@ -698,28 +755,162 @@ public abstract class Render implements KeyListener, IDataConsumer {
 			break;
 		
 		case KeyEvent.VK_ENTER:
-			dx = 0;
-			dy = 0;
-			zoom = 1;
+			resetCamera(false);
 			flag = true;
 			break;
 		}
 
 		if (flag) {
-			// Update
 			update();
 		}
-		else {
-			String key = String.valueOf(symbol);
-			Coordinator.getInstance().sendCommand(new Command_KeyPressed(key));
+	}
+	
+	
+	/**
+	 * Resets the camera position
+	 */
+	public void resetCamera(boolean update) {
+		dx = 0;
+		dy = 0;
+		zoom = 1;
+		
+		if (update) {
+			update();
+		}
+	}
+	
+
+	/**
+	 * Key listeners
+	 */
+	public void keyPressed(KeyEvent e) {
+		int code = e.getKeyCode();
+		char symbol = e.getKeyChar();
+
+		switch (controlState) {
+		case CONTROL_STATE_SELECT:
+		case CONTROL_STATE_MOVE:
+			controlCamera(code, symbol);
+			break;
+			
+		case CONTROL_STATE_CONTROL:
+			Coordinator.getInstance().sendCommand(new Command_ControlEvent(true, code, symbol));
+			break;
 		}
 	}
 
 
 	public void keyReleased(KeyEvent e) {
+		int code = e.getKeyCode();
+		char symbol = e.getKeyChar();
+		
+		switch (controlState) {
+		case CONTROL_STATE_CONTROL:
+			Coordinator.getInstance().sendCommand(new Command_ControlEvent(false, code, symbol));
+			break;
+		}
 	}
 
 
 	public void keyTyped(KeyEvent e) {
+	}
+	
+/*	
+	public void mousePressed(MouseEvent e) {
+		prevMouseX = e.getX();
+		prevMouseY = e.getY();
+		if ((e.getModifiers() & MouseEvent.BUTTON3_MASK) != 0) {
+			rightButtonPressed = true;
+			// mouseRButtonDown = true;
+		}
+	}
+
+	public void mouseReleased(MouseEvent e) {
+		if ((e.getModifiers() & MouseEvent.BUTTON3_MASK) != 0) {
+			rightButtonPressed = false;
+			// mouseRButtonDown = false;
+		}
+	}
+
+	public void mouseClicked(MouseEvent e) {
+	}
+
+	// Methods required for the implementation of MouseMotionListener
+	public void mouseDragged(MouseEvent e) {
+		int x = e.getX();
+		int y = e.getY();
+		Dimension size = e.getComponent().getSize();
+
+		float thetaY = 360.0f * ((float) (x - prevMouseX) / (float) size.width);
+		float thetaX = 360.0f * ((float) (prevMouseY - y) / (float) size.height);
+
+		prevMouseX = x;
+		prevMouseY = y;
+
+		if (!rightButtonPressed) {
+			view_rotx += thetaX;
+			view_roty += thetaY;
+		} else {
+			// mouse_y -= thetaX;
+			// mouse_x -= thetaY;
+			zPlane += thetaY;
+
+			if (zPlane < zMin)
+				zPlane = zMin;
+			else if (zPlane > zMax)
+				zPlane = zMax;
+		}
+
+		canvas.display();
+	}
+
+	public void mouseMoved(MouseEvent e) {
+	}
+*/
+	
+	private void sendMouseEvent(int eventType, MouseEvent mouseEvent, int mouseWheel) {
+		int buttons = mouseEvent.getButton();
+		int mx = mouseEvent.getX();
+		int my = mouseEvent.getY();
+		
+		// TODO: translate to the space coordinates
+		double x = mx;
+		double y = my;
+		
+		Command_ControlEvent cmd = new Command_ControlEvent(eventType,
+				buttons,
+				x, y,
+				mouseWheel);
+		
+		// Send the command
+		Coordinator.getInstance().sendCommand(cmd);
+	}
+	
+	
+	/**
+	 * Listens for mouse wheel events
+	 */
+	public void mouseWheelMoved(MouseWheelEvent e) {
+		int notches = e.getWheelRotation();
+		
+		switch (controlState) {
+		case CONTROL_STATE_SELECT:
+		case CONTROL_STATE_MOVE:
+			break;
+			
+		case CONTROL_STATE_CONTROL:
+			sendMouseEvent(Command_ControlEvent.MOUSE_WHEEL, e, notches);
+			return;
+		}
+		
+		// Zoom in/out
+		zoom -= notches * 0.1f;
+		if (zoom < MIN_ZOOM)
+			zoom = MIN_ZOOM;
+		else if (zoom > MAX_ZOOM)
+			zoom = MAX_ZOOM;
+		
+		// Update the picture
+		update();
 	}
 }
