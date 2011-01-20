@@ -53,11 +53,12 @@ public class Command_ControlEvent extends ModelManagerCommand {
 	/**
 	 * Constructor for mouse events
 	 */
-	public Command_ControlEvent(int eventType, int mouseButtons, double mouseX, double mouseY) {
+	public Command_ControlEvent(int eventType, int mouseButtons, double mouseX, double mouseY, int mouseWheel) {
 		this.eventType = eventType;
 		this.mouseButtons = mouseButtons;
 		this.mouseX = mouseX;
 		this.mouseY = mouseY;
+		this.mouseWheelRotation = mouseWheel;
 	}
 	
 	/**
