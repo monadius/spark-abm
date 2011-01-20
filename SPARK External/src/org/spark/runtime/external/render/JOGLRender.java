@@ -40,8 +40,7 @@ import com.sun.opengl.util.Screenshot;
  * @author Alexey
  * 
  */
-public class JOGLRender extends Render implements GLEventListener,
-		MouseListener, MouseMotionListener, MouseWheelListener {
+public class JOGLRender extends Render implements GLEventListener {
 	/* Logger */
 	private static final Logger logger = Logger.getLogger();
 
@@ -218,9 +217,9 @@ public class JOGLRender extends Render implements GLEventListener,
 		// Set The Position For Light0
 		gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, lightPosition, 0);
 
-		drawable.addMouseListener(this);
-		drawable.addMouseMotionListener(this);
-		drawable.addMouseWheelListener(this);
+//		drawable.addMouseListener(this);
+//		drawable.addMouseMotionListener(this);
+//		drawable.addMouseWheelListener(this);
 
 		// Disable the depth test by default (for 2d-case mostly)
 		gl.glDisable(GL.GL_DEPTH_TEST);
@@ -1140,7 +1139,7 @@ public class JOGLRender extends Render implements GLEventListener,
 	public void displayChanged(GLAutoDrawable drawable, boolean modeChanged,
 			boolean deviceChanged) {
 	}
-
+/*
 	// Methods required for the implementation of MouseListener
 	public void mouseEntered(MouseEvent e) {
 	}
@@ -1211,7 +1210,7 @@ public class JOGLRender extends Render implements GLEventListener,
 		// if (!active) canvas.display();
 		canvas.display();
 	}
-
+*/
 	/**
 	 * Key event action
 	 */
