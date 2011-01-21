@@ -156,6 +156,11 @@ public class DataLayersDialog extends JDialog implements ActionListener {
 			color = JColorChooser.showDialog(this, "Choose Color", color);
 			if (color != null) {
 				v.set(color);
+				if (first)
+					style.setColor1(v);
+				else
+					style.setColor2(v);
+				
 				((JButton) e.getSource()).setBackground(color);
 				
 				Coordinator.getInstance().updateAllRenders();
