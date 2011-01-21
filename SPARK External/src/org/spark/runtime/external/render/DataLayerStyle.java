@@ -176,12 +176,12 @@ public class DataLayerStyle {
 	
 	
 	public Vector getColor1() {
-		return color1;
+		return new Vector(color1);
 	}
 	
 	
 	public Vector getColor2() {
-		return color2;
+		return new Vector(color2);
 	}
 	
 	
@@ -311,9 +311,9 @@ public class DataLayerStyle {
 		value /= dv;
 		
 		if (value <= 0)
-			return color1;
+			return new Vector(color1);
 		else if (value >= 1)
-			return color2;
+			return new Vector(color2);
 		
 		Vector c1 = null, c2 = null;
 		double t = 0;
