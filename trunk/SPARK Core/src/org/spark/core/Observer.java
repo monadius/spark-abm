@@ -204,8 +204,12 @@ public final class Observer {
 	// for some internal statistics
 	private long statTime;
 	
-	// List of user commands (experimental)
-	private final Queue<String> controlCommands;
+	// List of user commands 
+	// TODO: (experimental)
+	private final Queue<ControlState.KeyControlEvent> keyEvents;
+	private final Queue<ControlState.MouseControlEvent> mouseEvents;
+	
+	private final ControlState.KeyState keyState; 
 
 	
 	/**
@@ -280,7 +284,11 @@ public final class Observer {
 		spacesList = new ArrayList<Space>();
 		spacesMap = new HashMap<String, Space>();
 
-		controlCommands = new LinkedList<String>();
+//		controlCommands = new LinkedList<String>();
+		keyEvents = new LinkedList<ControlState.KeyControlEvent>();
+		mouseEvents = new LinkedList<ControlState.MouseControlEvent>();
+		keyState = new ControlState.KeyState();
+		
 
 		if (ExecutionMode.isMode(executionMode)) {
 			this.executionMode = executionMode;
@@ -343,16 +351,35 @@ public final class Observer {
 	 * Adds a command to the command queue
 	 * @param cmd
 	 */
-	public void addCommand(String cmd) {
-		controlCommands.offer(cmd);
+	public void addKeyEvent(ControlState.KeyControlEvent keyEvent) {
+		keyState.changeState(keyEvent);
+		keyEvents.add(keyEvent);
+	}
+	
+	
+	/**
+	 * Returns the keyboard state
+	 * @return
+	 */
+	public ControlState.KeyState getKeyState() {
+		return keyState;
+	}
+	
+	
+	/**
+	 * Returns the next keyboard event 
+	 * @return
+	 */
+	public ControlState.KeyControlEvent nextKeyEvent() {
+		return keyEvents.poll();
 	}
 	
 	/**
-	 * Returns the next command 
+	 * Returns the next mouse event
 	 * @return
 	 */
-	public String nextCommand() {
-		return controlCommands.poll();
+	public ControlState.MouseControlEvent nextMouseEvent() {
+		return mouseEvents.poll();
 	}
 	
 	
@@ -392,7 +419,10 @@ public final class Observer {
 		actionQueue.clear();
 		time.reset();
 		
-		controlCommands.clear();
+//		controlCommands.clear();
+		keyEvents.clear();
+		mouseEvents.clear();
+		keyState.reset();
 		
 		impl.clear();
 		
