@@ -1,7 +1,11 @@
 package org.spark.runtime.commands;
 
+import java.awt.event.KeyEvent;
+
+import org.spark.core.ControlState;
 import org.spark.core.Observer;
 import org.spark.core.SparkModel;
+import org.spark.math.Vector;
 import org.spark.runtime.internal.engine.AbstractSimulationEngine;
 
 /**
@@ -26,8 +30,8 @@ public class Command_ControlEvent extends ModelManagerCommand {
 	// Type of the control event 
 	private final int eventType;
 	
-	// The index of the space for which the event is valid
-	private int spaceIndex;
+	// The name of the space for which the event is valid
+	private final String spaceName;
 	
 	// Key-related parameters
 	private int keyCode;
@@ -36,14 +40,15 @@ public class Command_ControlEvent extends ModelManagerCommand {
 	// Mouse-related parameters
 	private int mouseButtons;
 	// Mouse position (in the space coordinates)
-	private double mouseX, mouseY;
-	private int mouseWheelRotation;
+	private Vector mousePosition;
+	private int mouseWheel;
 	
 	
 	/**
 	 * Constructor for key events
 	 */
-	public Command_ControlEvent(boolean keyPressed, int code, char symbol) {
+	public Command_ControlEvent(String spaceName, boolean keyPressed, int code, char symbol) {
+		this.spaceName = spaceName;
 		this.eventType = keyPressed ? KEY_PRESSED : KEY_RELEASED;
 		this.keyCode = code;
 		this.keySymbol = symbol;
@@ -53,12 +58,13 @@ public class Command_ControlEvent extends ModelManagerCommand {
 	/**
 	 * Constructor for mouse events
 	 */
-	public Command_ControlEvent(int eventType, int mouseButtons, double mouseX, double mouseY, int mouseWheel) {
+	public Command_ControlEvent(String spaceName, int eventType, 
+				int mouseButtons, Vector mousePosition, int mouseWheel) {
+		this.spaceName = spaceName;
 		this.eventType = eventType;
 		this.mouseButtons = mouseButtons;
-		this.mouseX = mouseX;
-		this.mouseY = mouseY;
-		this.mouseWheelRotation = mouseWheel;
+		this.mousePosition = mousePosition;
+		this.mouseWheel = mouseWheel;
 	}
 	
 	/**
@@ -70,9 +76,61 @@ public class Command_ControlEvent extends ModelManagerCommand {
 		Observer observer = model.getObserver();
 		
 		switch (eventType) {
+		// Key released
+		case KEY_RELEASED:
+			observer.addKeyEvent(new ControlState.KeyEvent(false, decodeKey(keyCode, keySymbol)));
+			break;
+		// Key pressed
 		case KEY_PRESSED:
-			observer.addCommand(String.valueOf(keySymbol));
+			observer.addKeyEvent(new ControlState.KeyEvent(true, decodeKey(keyCode, keySymbol)));
+			break;
+			
+		// Mouse events
+		default:
+			observer.addMouseEvent(new ControlState.MouseEvent(eventToName(eventType), 
+					mousePosition, mouseButtons, mouseWheel));
+			break;
 		}
+	}
+	
+	
+	/**
+	 * Returns a name for the given key
+	 * @param code
+	 * @param symbol
+	 * @return
+	 */
+	public static String decodeKey(int code, char symbol) {
+		switch (code) {
+		case KeyEvent.VK_UP:
+			return "up";
+		case KeyEvent.VK_DOWN:
+			return "down";
+		case KeyEvent.VK_LEFT:
+			return "left";
+		case KeyEvent.VK_RIGHT:
+			return "right";
+		case KeyEvent.VK_ENTER:
+			return "enter";
+		case KeyEvent.VK_ESCAPE:
+			return "esc";
+		case KeyEvent.VK_INSERT:
+			return "insert";
+		case KeyEvent.VK_HOME:
+			return "home";
+		case KeyEvent.VK_DELETE:
+			return "delete";
+		case KeyEvent.VK_SPACE:
+			return "space";
+		case KeyEvent.VK_END:
+			return "end";
+		case KeyEvent.VK_PAGE_DOWN:
+			return "page down";
+		case KeyEvent.VK_PAGE_UP:
+			return "page_up";
+		}
+		
+		return String.valueOf(symbol);
 	}
 	
 	
@@ -111,6 +169,8 @@ public class Command_ControlEvent extends ModelManagerCommand {
 	
 	@Override
 	public String toString() {
-		return "Command_ControlEvent: " + eventToName(eventType);
+		String str = "Command_ControlEvent: " + eventToName(eventType);
+		str += " at " + mousePosition;
+		return str;
 	}
 }
