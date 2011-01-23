@@ -11,6 +11,7 @@ import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -168,6 +169,34 @@ public class JavaRender extends Render {
 		if (xsize != width || ysize != width) {
 //			canvas.setSize(xsize, ysize);
 		}
+	}
+	
+	
+	/**
+	 * Transforms screen coordinates into space coordinates
+	 */
+	protected Vector getCoordinates(int x, int y) {
+		if (transform == null)
+			return new Vector(x, y, 0);
+		
+		AffineTransform tr = new AffineTransform(transform);
+		Point2D.Double pt = new Point2D.Double(x, y);
+		
+		tr.translate(dx, dy);
+		tr.scale(zoom, zoom);
+		
+		try {
+			tr = tr.createInverse();
+		}
+		catch (Exception e) {
+			logger.error(e);
+			return new Vector(x, y, 0);
+		}
+		
+		Point2D ptOut = tr.transform(pt, null);
+		
+		Vector v = new Vector(ptOut.getX(), ptOut.getY(), 0);
+		return v;
 	}
 
 	/**

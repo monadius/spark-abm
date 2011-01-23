@@ -200,6 +200,8 @@ public class SparkViewPanel extends JPanel implements ISparkPanel,
 		// Get the canvas and set up its event listeners
 		Canvas canvas = render.getCanvas();
 		canvas.addKeyListener(render);
+		canvas.addMouseListener(render);
+		canvas.addMouseMotionListener(render);
 		canvas.addMouseWheelListener(render);
 		
 		add(canvas, BorderLayout.CENTER);
