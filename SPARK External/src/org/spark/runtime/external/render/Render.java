@@ -5,6 +5,8 @@ import java.awt.EventQueue;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.io.File;
@@ -12,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
+import org.spark.math.Vector;
 import org.spark.runtime.commands.Command_ControlEvent;
 import org.spark.runtime.data.DataCollectorDescription;
 import org.spark.runtime.data.DataObject_Spaces;
@@ -28,7 +31,7 @@ import org.w3c.dom.NodeList;
 
 import com.spinn3r.log5j.Logger;
 
-public abstract class Render implements KeyListener, IDataConsumer, MouseWheelListener {
+public abstract class Render implements KeyListener, IDataConsumer, MouseWheelListener, MouseListener, MouseMotionListener {
 	// Logger
 	private static final Logger logger = Logger.getLogger();
 	
@@ -77,6 +80,9 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
 	
 	/* Offsets of the rendering area */
 	protected float dx = 0, dy = 0;
+	/* Rotation of the rendering area */
+	protected float view_rotx = 20.0f, view_roty = 30.0f;// , view_rotz = 0.0f;
+	
 	
 	/* Zoom coefficient */
 	protected float zoom = 1;
@@ -150,6 +156,12 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
 	 *  Always called from the AWT event thread
 	 */
 	protected abstract void display(DataRow data);
+	
+	
+	/**
+	 * Transforms screen coordinates into space coordinates
+	 */
+	protected abstract Vector getCoordinates(int x, int y);
 	
 	
 	/**
@@ -564,6 +576,8 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
 		
 		render.dx = XmlDocUtils.getFloatValue(node, "dx", 0);
 		render.dy = XmlDocUtils.getFloatValue(node, "dy", 0);
+		render.view_rotx = XmlDocUtils.getFloatValue(node, "rot-x", 20);
+		render.view_roty = XmlDocUtils.getFloatValue(node, "rot-y", 30);
 		render.zoom = XmlDocUtils.getFloatValue(node, "zoom", 1);
 		
 
@@ -662,6 +676,8 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
 		XmlDocUtils.addAttr(doc, parent, "control-state", controlState);
 		XmlDocUtils.addAttr(doc, parent, "dx", dx);
 		XmlDocUtils.addAttr(doc, parent, "dy", dy);
+		XmlDocUtils.addAttr(doc, parent, "rot-x", view_rotx);
+		XmlDocUtils.addAttr(doc, parent, "rot-y", view_roty);
 		XmlDocUtils.addAttr(doc, parent, "zoom", zoom);
 		
 		
@@ -794,7 +810,8 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
 			break;
 			
 		case CONTROL_STATE_CONTROL:
-			Coordinator.getInstance().sendCommand(new Command_ControlEvent(true, code, symbol));
+			String spaceName = (selectedSpace != null) ? selectedSpace.name : "(no space)";
+			Coordinator.getInstance().sendCommand(new Command_ControlEvent(spaceName, true, code, symbol));
 			break;
 		}
 	}
@@ -806,7 +823,8 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
 		
 		switch (controlState) {
 		case CONTROL_STATE_CONTROL:
-			Coordinator.getInstance().sendCommand(new Command_ControlEvent(false, code, symbol));
+			String spaceName = (selectedSpace != null) ? selectedSpace.name : "(no space)";
+			Coordinator.getInstance().sendCommand(new Command_ControlEvent(spaceName, false, code, symbol));
 			break;
 		}
 	}
@@ -814,32 +832,140 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
 
 	public void keyTyped(KeyEvent e) {
 	}
+
 	
-/*	
+
+	/**
+	 * Sends a mouse control event
+	 */
+	private void sendMouseEvent(int eventType, MouseEvent mouseEvent, int mouseWheel) {
+		int modifiers = mouseEvent.getModifiersEx();
+		int mx = mouseEvent.getX();
+		int my = mouseEvent.getY();
+
+		// Translate screen coordinates into space coordinates
+		Vector v = getCoordinates(mx, my);
+
+		String spaceName = (selectedSpace != null) ? selectedSpace.name : "(no space)";
+		Command_ControlEvent cmd = new Command_ControlEvent(spaceName, eventType,
+				modifiers, v, mouseWheel);
+		
+		// Send the command
+		Coordinator.getInstance().sendCommand(cmd);
+	}
+
+	
+	
+	/**
+	 * Mouse listeners
+	 * @param e
+	 */
+	private int prevMouseX, prevMouseY;
+	private boolean rightButtonPressed, leftButtonPressed;
+	
+	/**
+	 * Mouse pressed
+	 */
 	public void mousePressed(MouseEvent e) {
 		prevMouseX = e.getX();
 		prevMouseY = e.getY();
-		if ((e.getModifiers() & MouseEvent.BUTTON3_MASK) != 0) {
+		
+		int buttons = e.getModifiersEx();
+		
+		if ((buttons & MouseEvent.BUTTON3_DOWN_MASK) != 0) {
 			rightButtonPressed = true;
-			// mouseRButtonDown = true;
+		}
+		
+		if ((buttons & MouseEvent.BUTTON1_DOWN_MASK) != 0) {
+			leftButtonPressed = true;
+		}
+		
+		// Swith the control state
+		switch (controlState) {
+		case CONTROL_STATE_SELECT:
+			// TODO: implement
+			break;
+		case CONTROL_STATE_MOVE:
+			break;
+		case CONTROL_STATE_CONTROL:
+			if (leftButtonPressed)
+				sendMouseEvent(Command_ControlEvent.LBUTTON_DOWN, e, 0);
+			if (rightButtonPressed)
+				sendMouseEvent(Command_ControlEvent.RBUTTON_DOWN, e, 0);
+			break;
 		}
 	}
 
+	/**
+	 * Mouse released
+	 */
 	public void mouseReleased(MouseEvent e) {
-		if ((e.getModifiers() & MouseEvent.BUTTON3_MASK) != 0) {
+		int buttons = e.getModifiersEx();
+		
+		if ((buttons & MouseEvent.BUTTON3_DOWN_MASK) == 0) {
 			rightButtonPressed = false;
-			// mouseRButtonDown = false;
+		}
+		
+		if ((buttons & MouseEvent.BUTTON1_DOWN_MASK) == 0) {
+			leftButtonPressed = false;
+		}
+
+		// Swith the control state
+		switch (controlState) {
+		case CONTROL_STATE_SELECT:
+			// TODO: implement
+			break;
+		case CONTROL_STATE_MOVE:
+			break;
+		case CONTROL_STATE_CONTROL:
+			if (!leftButtonPressed)
+				sendMouseEvent(Command_ControlEvent.LBUTTON_UP, e, 0);
+			if (!rightButtonPressed)
+				sendMouseEvent(Command_ControlEvent.RBUTTON_UP, e, 0);
+			break;
 		}
 	}
 
+	/**
+	 * Mouse clicked
+	 */
 	public void mouseClicked(MouseEvent e) {
 	}
+	
+	public void mouseEntered(MouseEvent e) {
+	}
+	
+	public void mouseExited(MouseEvent e) {
+	}
 
-	// Methods required for the implementation of MouseMotionListener
+	/**
+	 * Mouse dragged
+	 */
 	public void mouseDragged(MouseEvent e) {
 		int x = e.getX();
 		int y = e.getY();
-		Dimension size = e.getComponent().getSize();
+		
+		// Movement 
+		if (controlState == CONTROL_STATE_MOVE) {
+			if (leftButtonPressed) {
+				dx -= 0.5f * (x - prevMouseX);
+				dy += 0.5f * (y - prevMouseY);
+				
+				update();
+			}
+			else if (rightButtonPressed) {
+				float thetaY = 0.01f * 360.0f * (x - prevMouseX);
+				float thetaX = 0.01f * 360.0f * (prevMouseY - y);
+				
+				view_rotx += thetaX;
+				view_roty += thetaY;
+				update();
+			}
+		}
+		
+		prevMouseX = x;
+		prevMouseY = y;
+/*		Dimension size = e.getComponent().getSize();
 
 		float thetaY = 360.0f * ((float) (x - prevMouseX) / (float) size.width);
 		float thetaX = 360.0f * ((float) (prevMouseY - y) / (float) size.height);
@@ -861,29 +987,14 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
 				zPlane = zMax;
 		}
 
-		canvas.display();
+		canvas.display();*/
 	}
 
-	public void mouseMoved(MouseEvent e) {
-	}
-*/
 	
-	private void sendMouseEvent(int eventType, MouseEvent mouseEvent, int mouseWheel) {
-		int buttons = mouseEvent.getButton();
-		int mx = mouseEvent.getX();
-		int my = mouseEvent.getY();
-		
-		// TODO: translate to the space coordinates
-		double x = mx;
-		double y = my;
-		
-		Command_ControlEvent cmd = new Command_ControlEvent(eventType,
-				buttons,
-				x, y,
-				mouseWheel);
-		
-		// Send the command
-		Coordinator.getInstance().sendCommand(cmd);
+	/**
+	 * Mouse moved
+	 */
+	public void mouseMoved(MouseEvent e) {
 	}
 	
 	

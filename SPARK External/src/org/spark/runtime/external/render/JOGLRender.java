@@ -1,13 +1,7 @@
 package org.spark.runtime.external.render;
 
 import java.awt.Canvas;
-import java.awt.Dimension;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 
@@ -44,12 +38,10 @@ public class JOGLRender extends Render implements GLEventListener {
 	/* Logger */
 	private static final Logger logger = Logger.getLogger();
 
-	private float view_rotx = 20.0f, view_roty = 30.0f;// , view_rotz = 0.0f;
-	private float wheel_scale = 1.0f;
 	// private float mouse_x = 0.0f, mouse_y = 0.0f;
-	private boolean rightButtonPressed = false;
+//	private boolean rightButtonPressed = false;
 
-	private int prevMouseX, prevMouseY;
+//	private int prevMouseX, prevMouseY;
 
 	// used for refreshing the frame
 	private GLCanvas canvas;
@@ -339,6 +331,15 @@ public class JOGLRender extends Render implements GLEventListener {
 
 		cube = glu.gluNewQuadric();
 
+	}
+	
+	
+	/**
+	 * Transforms screen coordinates into space coordinates
+	 */
+	protected Vector getCoordinates(int x, int y) {
+		// TODO: implement
+		return new Vector(x, y, 0);
 	}
 
 	/**
@@ -1075,7 +1076,7 @@ public class JOGLRender extends Render implements GLEventListener {
 		if (mode3d) {
 			gl.glRotatef(view_rotx, 1.0f, 0.0f, 0.0f);
 			gl.glRotatef(view_roty, 0.0f, 1.0f, 0.0f);
-			gl.glScalef(wheel_scale, wheel_scale, wheel_scale);
+//			gl.glScalef(wheel_scale, wheel_scale, wheel_scale);
 			gl.glEnable(GL.GL_DEPTH_TEST);
 		}
 
