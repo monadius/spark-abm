@@ -20,6 +20,10 @@ public class DataCollectorDescription implements Serializable {
 	public static final int AGENT_DATA = 4;
 	public static final int SPACES = 5;
 	public static final int NUMBER_OF_AGENTS = 6;
+	public static final int INSPECTION_DATA = 7;
+	
+	private static final int MIN = VARIABLE;
+	private static final int MAX = INSPECTION_DATA;
 	
 	public static final String STR_VARIABLE = "$variable:";
 	public static final String STR_DATA_LAYER = "$data-layer:";
@@ -27,6 +31,7 @@ public class DataCollectorDescription implements Serializable {
 	public static final String STR_AGENT_DATA = "$agent-data";
 	public static final String STR_SPACES = "$spaces:";
 	public static final String STR_NUMBER_OF_AGENTS = "$number:";
+	public static final String STR_INSPECTION_DATA = "$inspection:";
 	
 	
 	/* Specifies the type of the data collector */
@@ -41,22 +46,34 @@ public class DataCollectorDescription implements Serializable {
 	 */
 	private final int interval;
 	
+	/* Additional parameters */
+	private final Object parameters;
+	
+	
+	/**
+	 * Default constructor
+	 */
+	public DataCollectorDescription(int type, String dataName, int interval, Object parameters) {
+		if (interval < 0)
+			interval = 0;
+		
+		if (type < MIN)
+			type = MIN;
+		else if (type > MAX)
+			type = MAX;
+		
+		this.type = type;
+		this.dataName = dataName;
+		this.interval = interval;
+		this.parameters = parameters;
+	}
+	
 	
 	/**
 	 * Default constructor
 	 */
 	public DataCollectorDescription(int type, String dataName, int interval) {
-		if (interval < 0)
-			interval = 0;
-		
-		if (type < VARIABLE)
-			type = VARIABLE;
-		else if (type > NUMBER_OF_AGENTS)
-			type = NUMBER_OF_AGENTS;
-		
-		this.type = type;
-		this.dataName = dataName;
-		this.interval = interval;
+		this(type, dataName, interval, null);
 	}
 
 	
@@ -84,6 +101,9 @@ public class DataCollectorDescription implements Serializable {
 			
 		case NUMBER_OF_AGENTS:
 			return STR_NUMBER_OF_AGENTS;
+			
+		case INSPECTION_DATA:
+			return STR_INSPECTION_DATA;
 		}
 		
 		// Undefined data collector
@@ -105,6 +125,15 @@ public class DataCollectorDescription implements Serializable {
 	 */
 	public int getType() {
 		return type;
+	}
+	
+	
+	/**
+	 * Returns collector's parameters
+	 * @return
+	 */
+	public Object getParameters() {
+		return parameters;
 	}
 	
 	

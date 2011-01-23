@@ -177,6 +177,22 @@ public final class DataRow implements Serializable {
 	
 	
 	/**
+	 * Returns the inspection data with the given name
+	 * @param name
+	 * @return
+	 */
+	public DataObject_Inspection getInspectionData(String name) {
+		String dataName = STR_INSPECTION_DATA + name;
+		
+		DataObject obj = data.get(dataName);
+		if (obj == null)
+			return null;
+		else
+			return (DataObject_Inspection) obj;
+	}
+	
+	
+	/**
 	 * Returns the number of the given agents
 	 * @param typeName
 	 * @return
