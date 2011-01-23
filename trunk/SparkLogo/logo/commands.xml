@@ -1624,6 +1624,15 @@
                         </return>
                 </translation>
         </reporter>
+        
+        
+        <reporter name = "is-key-pressed" type = "boolean">
+        	<argument name = "name" type = "string"/>
+        	
+        	<translation>
+        		Observer.getInstance().getKeyState().getState(@name)
+        	</translation>
+        </reporter>
 
 
         <!-- K -->
@@ -1765,9 +1774,15 @@
         </reporter>
         
         
-        <reporter name = "next-command" type = "string">
+        <reporter name = "next-key-event" type = "KeyEvent">
         	<translation>
-        		Observer.getInstance().nextCommand()
+        		Observer.getInstance().nextKeyEvent()
+        	</translation>
+        </reporter>
+
+        <reporter name = "next-mouse-event" type = "MouseEvent">
+        	<translation>
+        		Observer.getInstance().nextMouseEvent()
         	</translation>
         </reporter>
         
