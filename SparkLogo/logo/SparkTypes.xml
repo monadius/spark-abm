@@ -116,7 +116,7 @@
         </type>
         
         
-        
+        <!--  Array list -->
         <type name = "ArrayList" composite = "true" parent = "$Object">
                 <javaname>ArrayList&lt;@subtype&gt;</javaname>
 
@@ -149,7 +149,7 @@
         </type>
 
 
-
+		<!-- Array -->
         <type name = "Array" composite = "true" parent = "$Object">
                 <javaname>@subtype[]</javaname>
 
@@ -173,6 +173,7 @@
 		</type>
 
 
+		<!-- Vector -->
         <type name = "vector" parent = "$Object">
                 <javaname>Vector</javaname>
 
@@ -266,6 +267,7 @@
         </type>
 
 
+		<!-- Complex -->
         <type name = "complex" parent = "$Object">
                 <javaname>Complex</javaname>
 
@@ -309,6 +311,58 @@
 				</method>                
         </type>
 
+        <!-- KeyEvent -->
+       	<type name = "KeyEvent" parent = "$Object">
+               	<javaname>ControlState.KeyEvent</javaname>
+
+                <set>
+                        @@id = @@value
+                </set>
+
+                <get>
+                        @@id
+                </get>
+                
+                <field name = "pressed" type = "boolean">
+                	<get>@@object.keyPressed</get>
+                </field>
+                
+                <field name = "name" type = "string">
+                	<get>@@object.name</get>
+                </field>
+        </type>
+        
+        
+        <!-- MouseEvent -->
+       	<type name = "MouseEvent" parent = "$Object">
+               	<javaname>ControlState.MouseEvent</javaname>
+
+                <set>
+                        @@id = @@value
+                </set>
+
+                <get>
+                        @@id
+                </get>
+                
+                <field name = "event-type" type = "string">
+                	<get>@@object.eventType</get>
+                </field>
+                
+                <field name = "position" type = "vector">
+                	<get>@@object.position</get>
+                </field>
+                
+                <field name = "buttons" type = "$integer">
+                	<get>@@object.buttons</get>
+                </field>
+                
+                <field name = "wheel" type = "$integer">
+                	<get>@@object.mouseWheel</get>
+                </field>
+        </type>        
+
+	
 
 
 		<!-- $ means translator-only name, user cannot use this type explicitly -->
