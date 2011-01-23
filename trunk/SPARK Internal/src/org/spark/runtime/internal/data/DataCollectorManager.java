@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.spark.runtime.data.DataCollectorDescription;
+import org.spark.runtime.data.DataObject_Inspection;
 
 import com.spinn3r.log5j.Logger;
 
@@ -62,6 +63,7 @@ public class DataCollectorManager {
 		
 		// Create a new data collector
 		DataCollector dc = null;
+		Object parameters = dcd.getParameters();
 		
 		switch (dcd.getType()) {
 		// Variable
@@ -92,6 +94,14 @@ public class DataCollectorManager {
 		// Number of agents
 		case DataCollectorDescription.NUMBER_OF_AGENTS:
 			dc = new DCNumberOfAgents(dcd.getDataName());
+			break;
+			
+		// Inspection data
+		case DataCollectorDescription.INSPECTION_DATA:
+			if (parameters == null || !(parameters instanceof DataObject_Inspection.Parameters))
+				break;
+			
+			dc = new DCInspectionData(dcd.getDataName(), (DataObject_Inspection.Parameters) parameters);
 			break;
 		}
 
