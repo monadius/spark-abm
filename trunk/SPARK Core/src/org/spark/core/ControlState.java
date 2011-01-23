@@ -21,7 +21,7 @@ public class ControlState {
 		/**
 		 * Changes a key state based on a keyboard event
 		 */
-		public void changeState(KeyControlEvent e) {
+		public void changeState(KeyEvent e) {
 			keys.put(e.name, e.keyPressed);
 		}
 		
@@ -48,11 +48,11 @@ public class ControlState {
 	/**
 	 * Describes a keyboard control event
 	 */
-	public static class KeyControlEvent extends ControlState {
+	public static class KeyEvent extends ControlState {
 		public final boolean keyPressed;
 		public final String name;
 		
-		public KeyControlEvent(boolean keyPressed, String name) {
+		public KeyEvent(boolean keyPressed, String name) {
 			this.keyPressed = keyPressed;
 			this.name = name;
 		}
@@ -62,13 +62,13 @@ public class ControlState {
 	/**
 	 * Describes a mouse control event
 	 */
-	public static class MouseControlEvent extends ControlState {
+	public static class MouseEvent extends ControlState {
 		public final String eventType;
 		public final Vector position;
 		public final int buttons;
 		public final int mouseWheel;
 		
-		public MouseControlEvent(String eventType, Vector position, int buttons, int mouseWheel) {
+		public MouseEvent(String eventType, Vector position, int buttons, int mouseWheel) {
 			this.eventType = eventType;
 			this.position = new Vector(position);
 			this.buttons = buttons;

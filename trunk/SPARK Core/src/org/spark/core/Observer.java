@@ -206,8 +206,8 @@ public final class Observer {
 	
 	// List of user commands 
 	// TODO: (experimental)
-	private final Queue<ControlState.KeyControlEvent> keyEvents;
-	private final Queue<ControlState.MouseControlEvent> mouseEvents;
+	private final Queue<ControlState.KeyEvent> keyEvents;
+	private final Queue<ControlState.MouseEvent> mouseEvents;
 	
 	private final ControlState.KeyState keyState; 
 
@@ -285,8 +285,8 @@ public final class Observer {
 		spacesMap = new HashMap<String, Space>();
 
 //		controlCommands = new LinkedList<String>();
-		keyEvents = new LinkedList<ControlState.KeyControlEvent>();
-		mouseEvents = new LinkedList<ControlState.MouseControlEvent>();
+		keyEvents = new LinkedList<ControlState.KeyEvent>();
+		mouseEvents = new LinkedList<ControlState.MouseEvent>();
 		keyState = new ControlState.KeyState();
 		
 
@@ -348,12 +348,20 @@ public final class Observer {
 
 	
 	/**
-	 * Adds a command to the command queue
+	 * Adds a key event into a queue
 	 * @param cmd
 	 */
-	public void addKeyEvent(ControlState.KeyControlEvent keyEvent) {
+	public void addKeyEvent(ControlState.KeyEvent keyEvent) {
 		keyState.changeState(keyEvent);
 		keyEvents.add(keyEvent);
+	}
+	
+	/**
+	 * Adds a mouse event into a queue
+	 * @param mouseEvent
+	 */
+	public void addMouseEvent(ControlState.MouseEvent mouseEvent) {
+		mouseEvents.add(mouseEvent);
 	}
 	
 	
@@ -370,7 +378,7 @@ public final class Observer {
 	 * Returns the next keyboard event 
 	 * @return
 	 */
-	public ControlState.KeyControlEvent nextKeyEvent() {
+	public ControlState.KeyEvent nextKeyEvent() {
 		return keyEvents.poll();
 	}
 	
@@ -378,7 +386,7 @@ public final class Observer {
 	 * Returns the next mouse event
 	 * @return
 	 */
-	public ControlState.MouseControlEvent nextMouseEvent() {
+	public ControlState.MouseEvent nextMouseEvent() {
 		return mouseEvents.poll();
 	}
 	
