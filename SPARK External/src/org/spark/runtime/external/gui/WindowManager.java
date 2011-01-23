@@ -102,7 +102,7 @@ public abstract class WindowManager {
 	 * @param type
 	 * @return
 	 */
-	// TODO: not a good method
+	// TODO: not a safe method
 	@SuppressWarnings("unchecked")
 	public <T extends ISparkPanel> T getSparkPanel(Class<T> type) {
 		for (SparkWindow win : windows) {
@@ -110,6 +110,22 @@ public abstract class WindowManager {
 			if (panel != null)
 				if (panel.getClass() == type)
 					return (T) panel;
+		}
+		
+		return null;
+	}
+	
+	
+	/**
+	 * Finds a window that contains the given panel
+	 */
+	public SparkWindow findWindow(ISparkPanel panel) {
+		if (mainWindow.getPanel() == panel)
+			return mainWindow;
+		
+		for (SparkWindow win : windows) {
+			if (win.getPanel() == panel)
+				return win;
 		}
 		
 		return null;

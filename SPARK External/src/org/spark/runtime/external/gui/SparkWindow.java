@@ -21,6 +21,9 @@ public abstract class SparkWindow {
 	/* Owner of the window */
 	protected SparkWindow owner;
 	
+	/* If true then the window is not saved */
+	protected boolean doNotSave; 
+	
 
 	/**
 	 * Event class for dealing with name changes
@@ -148,6 +151,11 @@ public abstract class SparkWindow {
 	
 	
 	/**
+	 * Updates the components inside the window
+	 */
+	public abstract void pack();
+	
+	/**
 	 * Returns window's space information
 	 * @return
 	 */
@@ -215,6 +223,14 @@ public abstract class SparkWindow {
 	 */
 	protected ISparkPanel getPanel() {
 		return panel;
+	}
+	
+	
+	/**
+	 * Returns the window name
+	 */
+	public String toString() {
+		return name;
 	}
 	
 	

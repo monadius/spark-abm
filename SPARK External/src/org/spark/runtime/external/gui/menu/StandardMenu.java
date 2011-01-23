@@ -12,6 +12,7 @@ import org.spark.runtime.external.gui.dialogs.BatchRunDialog;
 import org.spark.runtime.external.gui.dialogs.DataLayersDialog;
 import org.spark.runtime.external.gui.dialogs.ModelPropertiesDialog;
 import org.spark.runtime.external.gui.dialogs.SparkPreferencesDialog;
+import org.spark.runtime.external.gui.dialogs.WindowsDialog;
 import org.spark.utils.FileUtils;
 
 
@@ -209,6 +210,7 @@ public class StandardMenu {
 		
 		SparkMenuItem newView = factory.createItem("New View", 0);
 		SparkMenuItem tile = factory.createItem("Tile Windows", 0);
+		SparkMenuItem manageWindows = factory.createItem("Windows...", 0);
 		
 		// New view
 		newView.setActionListener(new ISparkMenuListener() {
@@ -232,8 +234,18 @@ public class StandardMenu {
 			}
 		});
 		
+		// Manage windows
+		manageWindows.setActionListener(new ISparkMenuListener() {
+			public void onClick(SparkMenuItem item) {
+				new WindowsDialog(null).setVisible(true);
+			}
+		});
+		
+		
+		// Add items to the menu
 		window.addItem(newView);
 		window.addItem(tile);
+		window.addItem(manageWindows);
 		
 		return window;
 	}

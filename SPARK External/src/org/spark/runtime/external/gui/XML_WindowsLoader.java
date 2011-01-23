@@ -85,6 +85,9 @@ public class XML_WindowsLoader {
 		
 		SparkWindow[] windows = windowManager.getWindows();
 		for (SparkWindow win : windows) {
+			if (win.doNotSave)
+				continue;
+			
 			saveWindow(xmlModelDoc, windowsNode, win, false);
 			
 			// TODO: location of the panel is determined by the window

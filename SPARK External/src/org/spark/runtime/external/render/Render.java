@@ -17,12 +17,15 @@ import java.util.HashMap;
 import org.spark.math.Vector;
 import org.spark.runtime.commands.Command_ControlEvent;
 import org.spark.runtime.data.DataCollectorDescription;
+import org.spark.runtime.data.DataObject_Inspection;
 import org.spark.runtime.data.DataObject_Spaces;
 import org.spark.runtime.data.DataRow;
 import org.spark.runtime.external.Coordinator;
 import org.spark.runtime.external.data.DataFilter;
 import org.spark.runtime.external.data.DataReceiver;
 import org.spark.runtime.external.data.IDataConsumer;
+import org.spark.runtime.external.gui.SparkInspectionPanel;
+import org.spark.runtime.external.gui.SparkWindow;
 import org.spark.utils.XmlDocUtils;
 
 import org.w3c.dom.Document;
@@ -98,6 +101,8 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
 	public static final int CONTROL_STATE_MOVE = 1;
 	public static final int CONTROL_STATE_CONTROL = 2;
 	
+	/* Inspection panel */
+	private SparkInspectionPanel inspectionPanel;
 	
 	/***** Render flags ******/
 	
@@ -795,6 +800,28 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
 		}
 	}
 	
+	
+	/**
+	 * Creates an inspector for the given coordinates
+	 * @param x
+	 * @param y
+	 */
+	private void createInspector(int x, int y) {
+		if (inspectionPanel == null) {
+			inspectionPanel = new SparkInspectionPanel(Coordinator.getInstance().getWindowManager(), renderName);
+		}
+		else {
+			SparkWindow win = Coordinator.getInstance().getWindowManager().findWindow(inspectionPanel);
+			if (win != null)
+				win.setVisible(true);
+		}
+
+		Vector pos = getCoordinates(x, y);
+		DataObject_Inspection.Parameters pars = new DataObject_Inspection.Parameters(pos);
+		
+		inspectionPanel.init(pars);
+	}
+	
 
 	/**
 	 * Key listeners
@@ -930,6 +957,13 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
 	 * Mouse clicked
 	 */
 	public void mouseClicked(MouseEvent e) {
+		int buttons = e.getButton();
+		
+		if ((buttons & MouseEvent.BUTTON1) != 0) {
+			if (controlState == CONTROL_STATE_SELECT) {
+				createInspector(e.getX(), e.getY());
+			}
+		}
 	}
 	
 	public void mouseEntered(MouseEvent e) {

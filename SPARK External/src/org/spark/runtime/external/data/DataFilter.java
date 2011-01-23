@@ -155,14 +155,19 @@ public class DataFilter implements IDataConsumer {
 	 * Adds data for filtering
 	 * @param dcd
 	 */
-	public synchronized void addData(int type, String dataName) {
-		DataCollectorDescription dcd = new DataCollectorDescription(type, dataName, collectionInterval);
+	public synchronized void addData(int type, String dataName, Object parameters) {
+		DataCollectorDescription dcd = new DataCollectorDescription(type, dataName, collectionInterval, parameters);
 		
 		if (inputDataList.contains(dcd))
 			return;
 		
 		inputDataList.add(dcd);
 		Coordinator.getInstance().addDataCollector(dcd);
+	}
+	
+	
+	public void addData(int type, String dataName) {
+		addData(type, dataName, null);
 	}
 	
 	
