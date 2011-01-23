@@ -89,6 +89,12 @@ public class Swing_SparkWindow extends SparkWindow {
 		}
 	}
 	
+	
+	@Override
+	public void pack() {
+		window.pack();
+	}
+	
 
 	@Override
 	public Rectangle getLocation() {
