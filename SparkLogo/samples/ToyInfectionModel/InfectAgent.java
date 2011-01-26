@@ -10,6 +10,8 @@ end
 
 
 to step [tick]
+  label = "" + floor cidal-compound.value
+
   if cidal-compound.value > 10
   [
    die
