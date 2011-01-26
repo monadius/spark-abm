@@ -75,6 +75,7 @@ public class DCSpaceAgents extends DataCollector {
 			SpaceAgent agent = (SpaceAgent) agents[i];
 			SpaceNode node = agent.getNode();
 
+			String label = agent.getLabel();
 			Vector pos = node.getPosition();
 			double r = node.getRelativeSize();
 			// Make a copy
@@ -89,7 +90,7 @@ public class DCSpaceAgents extends DataCollector {
 
 			int spaceIndex = node.getSpace().getIndex();
 
-			result.addAgent(pos, r, color, node.getRotation(), shape, spaceIndex);
+			result.addAgent(label, pos, r, color, node.getRotation(), shape, spaceIndex);
 		}
 		
 		return result;
