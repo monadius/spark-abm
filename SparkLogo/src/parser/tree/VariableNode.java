@@ -15,6 +15,7 @@ import main.type.UnknownType;
 
 public class VariableNode extends TreeNode {
 	protected Variable var;
+	private boolean gridSpecialTranslationFlag;
 	
 	public VariableNode(Symbol symbol, Variable var) {
 		super(symbol);
@@ -37,12 +38,29 @@ public class VariableNode extends TreeNode {
 	@Override
 	public Type resolveType(Type expectedType, int flag) throws Exception {
 		Type myType = var.type;
-		
+
 		// FIXME: remove this as soon as possible
 		// make natural implicit type conversion
 		AdhocImplementation.flag = false;
 		if (myType.getId() != null) {
 			Type doubleType = SparkModel.getInstance().getType(new Id("double"));
+
+			// FIXME: cheating and hacking start here...
+			if ((flag & GET_VALUE) != 0) {
+				if (doubleType.instanceOf(expectedType) || expectedType instanceof UnknownType) {
+					Type gridType = SparkModel.getInstance().getType(new Id("grid"));
+					if (myType.instanceOf(gridType) && (nodeFlags & 0x100) != 0) {
+						gridSpecialTranslationFlag = true;
+						return doubleType;
+					}
+				}
+			}
+			
+			// ...and end here
+			
+
+			
+
 			
 			// Always use double type for GET_VALUE
 			if ((flag & GET_VALUE) != 0) {
@@ -117,6 +135,19 @@ public class VariableNode extends TreeNode {
 	
 	@Override
 	public void translate(JavaEmitter java, int flag) throws Exception {
+		// FIXME: hack
+		if (gridSpecialTranslationFlag) {
+			gridSpecialTranslationFlag = false;
+			DotNode tmp = new DotNode(symbol);
+			Variable v = SparkModel.getInstance().getType(new Id("grid")).getField(new Id("data"));
+			tmp.addNode(this);
+			tmp.addNode(new VariableNode(symbol, v));
+			
+			tmp.translate(java, flag);
+			
+			return;
+		}
+		
 		// TODO: better implementation
 		
 //		java.print(var.id.toJavaName());
@@ -133,6 +164,13 @@ public class VariableNode extends TreeNode {
 		java.printText(var.getTranslationString(flag));
 		
 		java.clearBuffers();
+	}
+	
+	
+	public String toString() {
+		if (var == null)
+			return "(null variable)";
+		return var.toString();
 	}
 
 }

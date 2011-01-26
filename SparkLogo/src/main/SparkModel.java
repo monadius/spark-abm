@@ -169,6 +169,33 @@ public class SparkModel {
 	}
 	
 	
+	/**
+	 * Returns a globally defined command with the specific arguments
+	 */
+	public Command getCommand(String name, Type ... types) {
+		Command cmd = commands.get(name);
+		if (cmd == null)
+			return null;
+		
+		if (cmd instanceof OverloadedCommand) {
+			cmd = ((OverloadedCommand) cmd).findCommand(types);
+		}
+		else {
+			if (types.length != cmd.getArgumentsNumber())
+				return null;
+			
+			for (int i = 0; i < cmd.getArgumentsNumber(); i++) {
+				Type arg = cmd.getArgument(i).type;
+					
+				if (!types[i].instanceOf(arg))
+					return null;
+			}
+		}
+		
+		return cmd;
+	}
+	
+	
 	
 	/**
 	 * Returns a type by id

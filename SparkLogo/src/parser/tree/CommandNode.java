@@ -198,5 +198,23 @@ public class CommandNode extends MultiNode {
 	}
 
 
+	// toString()
+	public String toString() {
+		StringBuffer str = new StringBuffer();
+		
+		str.append(cmd);
+		str.append('(');
+		for (int i = 0; i < children.size(); i++) {
+			TreeNode arg = children.get(i);
+			str.append(arg);
+			
+			if (i != children.size() - 1)
+				str.append(", ");
+		}
+		
+		str.append(')');
+		
+		return str.toString();
+	}
 
 }

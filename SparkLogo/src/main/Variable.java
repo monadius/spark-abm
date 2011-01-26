@@ -164,4 +164,11 @@ public class Variable {
 		
 		return declaration;
 	}
+	
+	
+	public String toString() {
+		if (id == null || type == null)
+			return "(null)";
+		return id.toString() + ":" + type.toString();  
+	}
 }

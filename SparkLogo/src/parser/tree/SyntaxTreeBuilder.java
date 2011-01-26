@@ -21,6 +21,9 @@ public class SyntaxTreeBuilder {
 	// static Type currentType;
 	/* Active code block */
 	static CodeBlock currentBlock;
+	
+	// Indicates that the equation mode is on
+	static boolean equationFlag; 
 
 	/**
 	 * Auxiliary pair class
@@ -207,6 +210,9 @@ public class SyntaxTreeBuilder {
 
 		if (s.id == sym.FOR)
 			node = forNode(list);
+		// FIXME: equation hack
+		else if (s.id == sym.IDENTIFIER && s.value.equals("equations"))
+			node = parseEqBlock(list);
 		else
 			node = assignmentNode(list);
 
@@ -587,6 +593,126 @@ public class SyntaxTreeBuilder {
 
 		throw new Exception("blockNode(): ']' is expected: " + s);
 	}
+	
+	
+	/**
+	 * Parses an equation block
+	 */
+	public static CommandNode parseEqBlock(SymbolList list) throws Exception {
+		Symbol s = list.next();
+		if (s.id != sym.IDENTIFIER || !s.value.equals("equations"))
+			throw new Exception("parseEqBlock: 'equations' expected: " + s);
+		
+		s = list.next();
+		final Symbol s0 = s;
+		if (s.id != sym.LBRACK)
+			throw new Exception("parseEqBlock(): '[' is expected: " + s);
+
+		if (currentBlock == null)
+			throw new Exception("Block [] is not allowed here: " + s);
+
+		BlockNode blockNode = new BlockNode(s, currentBlock);
+
+		CodeBlock oldBlock = currentBlock;
+		currentBlock = blockNode.getCodeBlock();
+
+		boolean oldEquationFlag = equationFlag;
+		equationFlag = true;
+
+		while (list.peek().id != sym.END) {
+			s = list.peek();
+			if (s.id == sym.RBRACK) {
+				list.next();
+				currentBlock = oldBlock;
+				equationFlag = oldEquationFlag;
+				
+				CommandNode cmd = new CommandNode(s0, SparkModel.getInstance().getCommand("$equation"));
+				cmd.addNode(blockNode);
+				
+				return cmd;
+			}
+
+			boolean dtFlag = false;
+			boolean gridFlag = false;
+			
+			// FIXME: Special treatment for Dt
+			if (s.id == sym.IDENTIFIER && s.value.equals("Dt")) {
+				// Dt
+				list.next();
+				dtFlag = true;
+			}
+
+			SparkModel model = SparkModel.getInstance();
+			Type gridType = model.getType(new Id("grid"));
+			
+			// Each statement should be an assignment
+			TreeNode left = expressionNode(list);
+			Type type = left.getType();
+
+			// Special treatment for grids
+			if (type.instanceOf(gridType)) {
+				gridFlag = true;
+				
+				DotNode tmp = new DotNode(s);
+				Variable varData = gridType.getField(new Id("data"));
+				
+				tmp.addNode(left);
+				tmp.addNode(new VariableNode(s, varData));
+				
+				left = tmp;
+			}
+
+			s = list.next();
+			if (s.id != sym.EQ)
+				throw new Exception("parseEqBlock: '=' is expected: " + s);
+
+			AssignmentNode assignmentNode = new AssignmentNode(s);
+			assignmentNode.addNode(left);
+			
+			TreeNode right = expressionNode(list);
+			// Modify the right hand side if gridFlag is on
+			if (gridFlag) {
+				right.visitAll(new TreeNode.Visitor() {
+					@Override
+					public boolean visit(TreeNode node) {
+						node.nodeFlags |= 0x100;
+						return true;
+					}
+				});
+			}
+
+			// Modify the right hand side if dtFlag is on
+			if (dtFlag) {
+				Variable dt = SparkModel.getInstance().getGlobalVariable("dt");
+				if (dt == null)
+					throw new Exception("parseEqBlock: a global variable dt should be declared: " + s);
+
+				// Modify the right hand side to get the expression:
+				// left = left + dt * right
+				Type number = model.getType(new Id("number"));
+				
+				Command mul = model.getCommand("*", number, number);
+				Command add = model.getCommand("+", number, number);
+				
+				CommandNode tmp = new CommandNode(s, mul);
+				tmp.addNode(new VariableNode(s, dt));
+				tmp.addNode(right);
+				
+				CommandNode tmp2 = new CommandNode(s, add);
+				tmp2.addNode(left);
+				tmp2.addNode(tmp);
+				
+				right = tmp2;
+			}
+			
+			assignmentNode.addNode(right);
+			
+			blockNode.addCommand(assignmentNode);
+		}
+
+		throw new Exception("parseEqBlock(): ']' is expected: " + s);
+	}
+	
 
 	/**
 	 * Parses a name (identifier)

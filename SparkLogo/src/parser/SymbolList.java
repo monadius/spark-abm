@@ -5,6 +5,7 @@ import java.util.*;
 public class SymbolList {
 	ArrayList<Symbol>	list = new ArrayList<Symbol>(100);
 	int	position;
+	Stack<Integer> marks = new Stack<Integer>(); 
 	
 	public SymbolList() {
 		position = 0;
@@ -16,8 +17,27 @@ public class SymbolList {
 	}
 	
 	
+	public void pushPosition() {
+		marks.push(position);
+	}
+	
+	
+	public void popPosition() throws Exception {
+		if (marks.size() == 0)
+			throw new Exception("No saved positions");
+		
+		this.position = marks.pop();
+	}
+	
+	
 	public void insert(Symbol symbol, int position) {
 		list.add(position, symbol);
+	}
+	
+	
+	public void insertHere(List<Symbol> symbols)
+	{
+		list.addAll(position, symbols);
 	}
 	
 	

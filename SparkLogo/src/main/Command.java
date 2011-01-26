@@ -314,4 +314,9 @@ public class Command {
 		return method;
 	}
 
+	
+	// toString()
+	public String toString() {
+		return name;
+	}
 }
