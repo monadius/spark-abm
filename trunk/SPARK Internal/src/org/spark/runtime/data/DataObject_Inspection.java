@@ -14,10 +14,12 @@ public class DataObject_Inspection extends DataObject {
 	 * Parameters for creating a data inspection collector
 	 */
 	public static class Parameters implements Serializable {
+		public final String spaceName;
 		public final Vector position;
 
 		// Constructor
-		public Parameters(Vector position) {
+		public Parameters(String spaceName, Vector position) {
+			this.spaceName = spaceName;
 			this.position = position;
 		}
 	}
@@ -54,6 +56,12 @@ public class DataObject_Inspection extends DataObject {
 		
 			varNames.add(varName);
 			varValues.add(value);
+		}
+		
+		
+		@Override
+		public String toString() {
+			return objectName;
 		}
 	}
 	

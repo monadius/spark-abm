@@ -10,6 +10,7 @@ import org.spark.math.Vector4d;
  */
 @SuppressWarnings("serial")
 public class DataObject_SpaceAgents extends DataObject {
+	private String[] labels;
 	private Vector[] positions;
 	private double[] radii;
 	private Vector4d[] colors;
@@ -30,6 +31,7 @@ public class DataObject_SpaceAgents extends DataObject {
 			agentsNumber = 0;
 		
 		if (agentsNumber > 0) {
+			labels = new String[agentsNumber];
 			positions = new Vector[agentsNumber];
 			radii = new double[agentsNumber];
 			colors = new Vector4d[agentsNumber];
@@ -58,11 +60,12 @@ public class DataObject_SpaceAgents extends DataObject {
 	 * @param color
 	 * @param shape
 	 */
-	public void addAgent(Vector position, double r, Vector4d color, double rotation, int shape, int spaceIndex) {
+	public void addAgent(String label, Vector position, double r, Vector4d color, double rotation, int shape, int spaceIndex) {
 		// Cannot hold any more agents
 		if (counter >= n)
 			return;
 		
+		labels[counter] = label;
 		positions[counter] = position;
 		radii[counter] = r;
 		colors[counter] = color;
@@ -82,6 +85,10 @@ public class DataObject_SpaceAgents extends DataObject {
 		return counter;
 	}
 	
+	
+	public String[] getLabels() {
+		return labels;
+	}
 	
 	public Vector[] getPositions() {
 		return positions;
