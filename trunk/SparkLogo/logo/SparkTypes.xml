@@ -801,6 +801,11 @@
                 		super(@radius, @shape)
                 	</translation>
                 </method>
+                
+                <field name = "label" type = "string">
+                	<get>@@object.getLabel()</get>
+                	<set>@@object.setLabel(@@value)</set>
+                </field>
 
                 <field name = "position" type = "vector">
                  <get>@@object.getPosition()</get>
