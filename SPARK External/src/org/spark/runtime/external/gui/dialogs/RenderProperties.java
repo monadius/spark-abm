@@ -271,6 +271,7 @@ public class RenderProperties extends JDialog implements ActionListener, ChangeL
 			JCheckBox transparent = new JCheckBox("Transparent", agentStyle.transparent);
 			JCheckBox visible = new JCheckBox("Visible", agentStyle.visible);
 			JCheckBox border = new JCheckBox("Border", agentStyle.border);
+			JCheckBox label = new JCheckBox("Label", agentStyle.label);
 			
 			JButton advanced = new JButton("Advanced");
 			JButton up = new JButton("Up");
@@ -279,6 +280,7 @@ public class RenderProperties extends JDialog implements ActionListener, ChangeL
 			transparent.setActionCommand("agent_trans" + i);
 			visible.setActionCommand("agent_vis" + i);
 			border.setActionCommand("agent_border" + i);
+			label.setActionCommand("agent_label" + i);
 			advanced.setActionCommand("advanced" + i);
 			up.setActionCommand("agent_up" + i);
 			down.setActionCommand("agent_down" + i);
@@ -286,6 +288,7 @@ public class RenderProperties extends JDialog implements ActionListener, ChangeL
 			transparent.addActionListener(this);
 			visible.addActionListener(this);
 			border.addActionListener(this);
+			label.addActionListener(this);
 			advanced.addActionListener(this);
 			up.addActionListener(this);
 			down.addActionListener(this);
@@ -294,6 +297,7 @@ public class RenderProperties extends JDialog implements ActionListener, ChangeL
 			agentPanel.add(transparent);
 			agentPanel.add(visible);
 			agentPanel.add(border);
+			agentPanel.add(label);
 			agentPanel.add(advanced);
 			agentPanel.add(up);
 			agentPanel.add(down);
@@ -301,7 +305,7 @@ public class RenderProperties extends JDialog implements ActionListener, ChangeL
 		}
 		
 		SpringUtilities.makeCompactGrid(agentPanel, 
-				agentStyles.size(), 7, 
+				agentStyles.size(), 8, 
 				5, 5, 15, 5);
 	}
 	
@@ -384,15 +388,6 @@ public class RenderProperties extends JDialog implements ActionListener, ChangeL
 		int n;
 		
 		
-		if (cmd.startsWith("agent_trans")) {
-			JCheckBox transparent = (JCheckBox) e.getSource();
-			
-			n = Integer.parseInt( cmd.substring( "agent_trans".length() ) );
-			agentStyles.get(n).transparent = transparent.isSelected();
-			render.update();
-			return;
-		}
-		
 		// Space
 		if (cmd.startsWith("space-list")) {
 			JComboBox spaceList = (JComboBox) e.getSource();
@@ -421,6 +416,16 @@ public class RenderProperties extends JDialog implements ActionListener, ChangeL
 			render.updateDataFilter();
 			return;
 		}
+
+		// Agent: Transparency
+		if (cmd.startsWith("agent_trans")) {
+			JCheckBox transparent = (JCheckBox) e.getSource();
+			
+			n = Integer.parseInt( cmd.substring( "agent_trans".length() ) );
+			agentStyles.get(n).transparent = transparent.isSelected();
+			render.update();
+			return;
+		}
 		
 		// Agent: border
 		if (cmd.startsWith("agent_border")) {
@@ -432,6 +437,16 @@ public class RenderProperties extends JDialog implements ActionListener, ChangeL
 			return;
 		}
 
+		// Agent: label
+		if (cmd.startsWith("agent_label")) {
+			JCheckBox label = (JCheckBox) e.getSource();
+			
+			n = Integer.parseInt( cmd.substring( "agent_label".length() ) );
+			agentStyles.get(n).label = label.isSelected();
+			render.update();
+			return;
+		}
+		
 		// Agent: advanced
 		if (cmd.startsWith("advanced")) {
 			n = Integer.parseInt( cmd.substring( "advanced".length() ));

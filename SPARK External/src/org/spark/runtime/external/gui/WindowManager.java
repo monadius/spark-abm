@@ -241,7 +241,7 @@ public abstract class WindowManager {
 	 * @param panel
 	 * @param location
 	 */
-	public SparkWindow setLocation(ISparkPanel panel, String location) {
+	public SparkWindow setLocation(ISparkPanel panel, String location, int defaultWidth, int defaultHeight) {
 		if (location == null)
 			location = "Untitled";
 		
@@ -260,13 +260,16 @@ public abstract class WindowManager {
 			return mainWindow;
 		}
 		else {
-			SparkWindow win = getWindowFactory().createWindow(location, 0, 0, 200, 200);
+			SparkWindow win = getWindowFactory().createWindow(location, 0, 0, defaultWidth, defaultHeight);
 			win.addPanel(panel);
 			win.setVisible(true);
 			return win;
 		}
 	}
 	
+	public SparkWindow setLocation(ISparkPanel panel, String location) {
+		return setLocation(panel, location, 200, 200);
+	}
 	
 	
 	/**

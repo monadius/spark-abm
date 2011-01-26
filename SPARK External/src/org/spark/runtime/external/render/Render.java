@@ -817,7 +817,7 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
 		}
 
 		Vector pos = getCoordinates(x, y);
-		DataObject_Inspection.Parameters pars = new DataObject_Inspection.Parameters(pos);
+		DataObject_Inspection.Parameters pars = new DataObject_Inspection.Parameters(selectedSpace.name, pos);
 		
 		inspectionPanel.init(pars);
 	}
