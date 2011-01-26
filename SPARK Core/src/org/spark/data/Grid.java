@@ -106,6 +106,17 @@ public class Grid implements AdvancedDataLayer {
 		return data;
 	}
 	
+	
+	public int getXSize() {
+		return xSize;
+	}
+	
+	
+	public int getYSize() {
+		return ySize;
+	}
+	
+	
 	/**
 	 * Restricts the x coordinate in accordance with grid topology
 	 * @param x
@@ -736,7 +747,7 @@ public class Grid implements AdvancedDataLayer {
 	public double getValue(int x, int y) {
 		return readData[x][y];
 	}
-
+	
 	
 	public void setValue(int x, int y, double value) {
 		writeData[x][y] = value;
