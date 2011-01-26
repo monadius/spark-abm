@@ -65,5 +65,4 @@ public class BlockNode extends TreeNode {
 	public Type resolveType(Type expectedType, int flag) throws Exception {
 		return BlockType.getInstance();
 	}
-
 }

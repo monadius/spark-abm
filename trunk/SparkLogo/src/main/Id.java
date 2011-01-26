@@ -79,6 +79,7 @@ public class Id {
 	
 	@Override
 	public String toString() {
-		return "Id(name = '" + name + "')";
+		return name;
+//		return "Id(name = '" + name + "')";
 	}
 }

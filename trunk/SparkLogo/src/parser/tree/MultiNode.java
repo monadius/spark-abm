@@ -24,4 +24,14 @@ public abstract class MultiNode extends TreeNode {
 	public TreeNode getNode(int i) {
 		return children.get(i);
 	}
+	
+	@Override
+	public boolean visitAll(Visitor visitor) {
+		for (TreeNode child : children) {
+			if (!child.visitAll(visitor))
+				return false;
+		}
+		
+		return visitor.visit(this);
+	}
 }

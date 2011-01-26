@@ -1420,9 +1420,54 @@
                         @grid.diffuse(@value)
                 </translation>
         </command>
+        
+        
+        <reporter name = "Dx-" type = "double">
+        	<argument name = "data" type = "grid"/>
+        	
+        	<translation>
+        		(_i &gt;= 1 ? (@data.getValue(_i,_j) - @data.getValue(_i - 1,_j)) : 0)
+        	</translation>
+        </reporter>
+
+
+        <reporter name = "Dy-" type = "double">
+        	<argument name = "data" type = "grid"/>
+        	
+        	<translation>
+        		(_j &gt;= 1 ? (@data.getValue(_i,_j) - @data.getValue(_i,_j - 1)) : 0)
+        	</translation>
+        </reporter>
+        
+        
+        <reporter name = "Dxp" type = "double">
+        	<argument name = "data" type = "grid"/>
+        	
+        	<translation>
+        		(_i &lt; @data.getXSize() - 1 ? (@data.getValue(_i + 1,_j) - @data.getValue(_i,_j)) : 0)
+        	</translation>
+        </reporter>
+        
+
+        <reporter name = "Dyp" type = "double">
+        	<argument name = "data" type = "grid"/>
+        	
+        	<translation>
+        		(_j &lt; @data.getYSize() - 1 ? (@data.getValue(_i,_j + 1) - @data.getValue(_i,_j)) : 0)
+        	</translation>
+        </reporter>
 
 
         <!-- E -->
+        <command name = "$equation">
+                <block/>
+                <translation>
+                        {
+                                @block
+                        }
+                </translation>
+        </command>
+        
         <command name = "evaporate">
         	<argument name = "grid" type = "grid"/>
         	<argument name = "value" type = "double"/>

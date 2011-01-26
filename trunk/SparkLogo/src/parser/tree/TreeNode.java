@@ -21,6 +21,15 @@ public abstract class TreeNode {
 	private static Stack<CodeBlock> currentBlocks = new Stack<CodeBlock>();
 	
 	
+	public static interface Visitor {
+		public abstract boolean visit(TreeNode node);
+	}
+	
+	
+	/* Flags of the node */
+	protected int nodeFlags;
+	
+	
 	/* Symbol associated with this node (for error reports) */
 	protected Symbol symbol;
 	
@@ -76,4 +85,14 @@ public abstract class TreeNode {
 	 * @throws Exception
 	 */
 	public abstract Type resolveType(Type expectedType, int flag) throws Exception;
+	
+	
+	/**
+	 * Visits all nodes and calls the visitor's function for each node
+	 * @param visitor
+	 * @return
+	 */
+	public boolean visitAll(Visitor visitor) {
+		return visitor.visit(this);
+	}
 }

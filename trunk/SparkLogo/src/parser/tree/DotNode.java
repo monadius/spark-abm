@@ -13,8 +13,10 @@ public class DotNode extends CommandNode {
 
 	@Override
 	public Type getType() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		if (children.size() < 2)
+			return null;
+		
+		return getNode(1).getType();
 	}
 
 	@Override
