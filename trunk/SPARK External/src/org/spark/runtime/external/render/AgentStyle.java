@@ -31,6 +31,7 @@ public class AgentStyle implements Comparable<AgentStyle> {
 	public boolean transparent = false;
 	public boolean visible = true;
 	public boolean border = true;
+	public boolean label = false;
 	
 	/* Advanced options */
 	
@@ -322,6 +323,7 @@ public class AgentStyle implements Comparable<AgentStyle> {
 		addAttr(doc, agentNode, "visible", visible);
 		addAttr(doc, agentNode, "transparent", transparent);
 		addAttr(doc, agentNode, "border", border);
+		addAttr(doc, agentNode, "label", label);
 		addAttr(doc, agentNode, "position", position);
 		
 		if (this.textureFileName != null) {
@@ -366,6 +368,7 @@ public class AgentStyle implements Comparable<AgentStyle> {
 		visible = getBooleanValue(node, "visible", true);
 		transparent = getBooleanValue(node, "transparent", false);
 		border = getBooleanValue(node, "border", true);
+		label = getBooleanValue(node, "label", false);
 		priority = getIntegerValue(node, "position", 0);
 		
 		textureEnv = getIntegerValue(node, "texture-env", 0);

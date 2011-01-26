@@ -360,6 +360,7 @@ public class JavaRender extends Render {
 		double[] rotations = agents.getRotations();
 		int[] shapes = agents.getShapes();
 		int[] spaceIndices = agents.getSpaceIndices();
+		String[] labels = agents.getLabels();
 		
 		// Special composite
 		Composite originalComposite = null;
@@ -443,6 +444,22 @@ public class JavaRender extends Render {
 				tr.scale(1, -1);
 				tr.translate(-w / 2.0, -h / 2.0);
 				g.drawImage(image, tr, null);
+			}
+			
+			// Draw labels
+			if (agentStyle.label) {
+				String label = labels[i];
+				if (label != null) {
+					AffineTransform tr = g.getTransform();
+					g.translate(x, y);
+					g.scale(0.1f, -0.1f);
+					
+					float dx = -(float) r * 10;
+					float dy = (float) r * 5;
+					g.drawString(label, dx, dy);
+					
+					g.setTransform(tr);
+				}
 			}
 		}
 		
