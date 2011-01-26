@@ -28,6 +28,9 @@ public class SpaceAgent extends Agent {
 
 	// The space node which determines the position of the agent
 	protected SpaceNode	node;
+	
+	// A label of the agent
+	protected String label;
 
 	public static final int CIRCLE = 1;
 	public static final int SQUARE = 2;
@@ -223,6 +226,24 @@ public class SpaceAgent extends Agent {
 	 */
 	public Space getSpace() {
 		return node.getSpace();
+	}
+	
+	
+	/**
+	 * Sets the agent's label
+	 * @param label
+	 */
+	public void setLabel(String label) {
+		this.label = label;
+	}
+	
+	
+	/**
+	 * Returns the agent's label
+	 * @return
+	 */
+	public String getLabel() {
+		return label;
 	}
 	
 
