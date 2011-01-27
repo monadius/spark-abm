@@ -32,6 +32,6 @@ public class Command_SetSeed extends ModelManagerCommand {
 	
 	@Override
 	public String toString() {
-		return "SetSeed: " + seed;
+		return "SetSeed[seed = " + seed + "; timeSeed = " + useTimeSeed + "]";
 	}
 }
