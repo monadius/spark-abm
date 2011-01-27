@@ -18,6 +18,7 @@ import org.spark.runtime.data.DataObject_State;
 import org.spark.runtime.data.DataRow;
 import org.spark.runtime.external.Coordinator;
 import org.spark.runtime.external.data.IDataConsumer;
+import org.spark.utils.XmlDocUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -50,6 +51,9 @@ public class SparkControlPanel extends JPanel implements ISparkPanel, IDataConsu
 	public SparkControlPanel() {
 		this.setMinimumSize(new Dimension(300, 100));
 
+		int delay = 8;
+		int freq = 0;
+		
 //		synchButton = new JCheckBox("Sychronized", null, true);
 		startButton = new JButton("Start");
 		setupButton = new JButton("Setup");
@@ -75,13 +79,13 @@ public class SparkControlPanel extends JPanel implements ISparkPanel, IDataConsu
 		delaySlider.setMinorTickSpacing(1);
 		delaySlider.setPaintTicks(true);
 		delaySlider.setPaintLabels(true);
-		delaySlider.setValue(8);
+		delaySlider.setValue(delay);
 
 		freqSlider.setMajorTickSpacing(2);
 		freqSlider.setMinorTickSpacing(1);
 		freqSlider.setPaintTicks(true);
 		freqSlider.setPaintLabels(true);
-		freqSlider.setValue(8);
+		freqSlider.setValue(freq);
 
 		// Slider labels
 		Hashtable<Integer, JLabel> labelTable = new Hashtable<Integer, JLabel>();
@@ -105,13 +109,32 @@ public class SparkControlPanel extends JPanel implements ISparkPanel, IDataConsu
 		this.add(startButton);
 		this.add(tickLabel);
 	}
+
+	
+	/**
+	 * Initializes the values of the control elements from the given xml node
+	 * @param node
+	 */
+	public void init(Node node) {
+		int freq = XmlDocUtils.getIntegerValue(node, "freq", 0);
+		int delay = XmlDocUtils.getIntegerValue(node, "delay", 8);
+
+		delaySlider.setValue(delay);
+		freqSlider.setValue(freq);
+	}
 	
 	
 	/**
 	 * Updates XML node
 	 */
 	public void updateXML(SparkWindow location, Document xmlModelDoc, Node interfaceNode, File xmlModelFile) {
-		// Nothing to do here
+		XmlDocUtils.removeChildren(interfaceNode, "control-panel");
+		
+		Node node = xmlModelDoc.createElement("control-panel");
+		XmlDocUtils.addAttr(xmlModelDoc, node, "delay", delaySlider.getValue());
+		XmlDocUtils.addAttr(xmlModelDoc, node, "freq", freqSlider.getValue());
+		
+		interfaceNode.appendChild(node);
 	}
 
 

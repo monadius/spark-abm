@@ -614,6 +614,12 @@ public class Coordinator {
 			receiver.addDataConsumer(dataSet.getDataFilter());
 		}
 		
+		// Load control parameters
+		Node controlNode = XmlDocUtils.getChildByTagName(interfaceNode, "control-panel");
+		if (controlNode != null) {
+			controlPanel.init(controlNode);
+		}
+		
 		
 		if (windowManager == null)
 			return;
@@ -771,6 +777,7 @@ public class Coordinator {
 			saveDataLayerStyles(modelXmlDoc);
 
 			Node interfaceNode = XmlDocUtils.getChildByTagName(modelXmlDoc.getFirstChild(), "interface");
+			controlPanel.updateXML(windowManager.getMainWindow(), modelXmlDoc, interfaceNode, modelXmlFile);
 			XML_WindowsLoader.saveWindows(windowManager, modelXmlDoc, interfaceNode, modelXmlFile);
 
 			
