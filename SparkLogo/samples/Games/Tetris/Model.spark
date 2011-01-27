@@ -1,0 +1,118 @@
+model TetrisModel
+
+space GridSpace 0 12 0 20 false false
+
+@parameter(default = 15, min = 1, max = 100)
+global speed : number
+
+global state : number
+
+global data : grid
+
+
+to check-lines
+	for y = 1.5 : space-ymax - 0.5
+	[
+		var counter = 0
+		for x = 1.5 : space-xmax - 1.5
+		[
+			var p = create-vector x y 0
+			counter += count agents-at FixedBlock p 0.1
+		]
+		
+		if counter >= space-xmax - 2
+		[
+			for x = 1.5 : space-xmax - 1.5
+			[
+				var p = create-vector x y 0
+				kill agents-at FixedBlock p 0.1
+			]
+			
+			move-blocks y
+			y -= 1
+		]
+	]
+end
+
+
+to move-blocks [ y0 : number ]
+	for y = y0 + 1 : space-ymax - 0.5
+	[
+		for x = 1.5 : space-xmax - 1.5
+		[
+			var p = create-vector x y 0
+			ask agents-at FixedBlock p 0.1
+			[
+				move [0,-1,0]
+				color = yellow
+			]
+		]
+	]
+end
+
+
+to end-step
+	data.diffuse 0.5
+	data *= 0.9
+
+	if state == 1
+	[
+		check-lines
+	
+		var figure = create-one Figure
+	
+		ask figure
+		[
+			var x = 4.5
+			var y = space-ymax - 0.5
+			var p = create-vector x y 0
+			move-to p
+		]
+		
+		ifelse figure.check [0,0,0]
+			[ state = 2 figure.die ]
+			[ state = 0 ]
+	]
+	
+	if state == 2
+	[
+		ask agents FixedBlock
+		[
+			color = red
+		]
+		
+		state = 0
+	]
+end
+
+
+to setup
+	for x = space-xmin + 0.5 : space-xmax - 0.5
+	[
+		ask create-one FixedBlock
+		[
+			var p = create-vector x 0.5 0
+			move-to p
+			color = grey
+		]
+	]
+	
+	for y = space-ymin + 1.5 : space-ymax - 0.5
+	[
+		ask create-one FixedBlock
+		[
+			var p = create-vector 0.5 y 0
+			move-to p
+			color = grey
+		]
+		
+		ask create-one FixedBlock
+		[
+			var p = create-vector (space-xmax - 0.5) y 0
+			move-to p
+			color = grey
+		]
+	]
+	
+	state = 1
+end

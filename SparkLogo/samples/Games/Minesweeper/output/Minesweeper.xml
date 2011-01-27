@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<spark version="1">
+  <files all="true" path="."/>
+  <model tick="1">
+    <setup>Minesweeper.Minesweeper</setup>
+    <variables>
+      <variable get="get_bombs" name="bombs" set="set_bombs" type="Double"/>
+      <variable get="get_state" name="state" set="set_state" type="Double"/>
+    </variables>
+    <agents>
+      <agent name="Cell">Minesweeper.Cell</agent>
+      <agent name="Bomb">Minesweeper.Bomb</agent>
+    </agents>
+  </model>
+  <interface>
+    <about path="readme.txt"/>
+    <windows>
+      <window height="146" name="Parameters" visible="true" width="800" x="1352" y="72"/>
+      <window height="843" main="true" name="Main Window" visible="true" width="720" x="586" y="0"/>
+    </windows>
+    <mainframe control-state="2" dx="0.0" dy="0.0" location="Main Window" rot-x="20.0" rot-y="30.0" zoom="1.0">
+      <spacestyle name="space" selected="true" swapXY="false"/>
+      <agentstyle alpha-function-value="0.0" border="true" label="false" name="Cell" position="0" texture-env="0" tile-manager="../Images/Tiles.xml" transparent="false" visible="true"/>
+      <agentstyle alpha-function-value="0.0" border="true" label="false" name="Bomb" position="1" texture-env="0" tile-manager="../Images/Tiles.xml" transparent="false" visible="true"/>
+    </mainframe>
+    <parameterframe location="Parameters">
+      <parameter default="40.0" max="200.0" min="0.0" name="bombs" step="0.0" type="Double" variable="bombs" widget="Slider"/>
+    </parameterframe>
+    <variable-sets/>
+    
+    <data-layers/>
+  <control-panel delay="8" freq="3"/>
+  </interface>
+</spark>
