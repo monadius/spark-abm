@@ -897,14 +897,14 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
 		prevMouseX = e.getX();
 		prevMouseY = e.getY();
 		
-		int buttons = e.getModifiersEx();
+		int button = e.getButton();
 		
-		if ((buttons & MouseEvent.BUTTON3_DOWN_MASK) != 0) {
-			rightButtonPressed = true;
+		if (button == MouseEvent.BUTTON1) {
+			leftButtonPressed = true;
 		}
 		
-		if ((buttons & MouseEvent.BUTTON1_DOWN_MASK) != 0) {
-			leftButtonPressed = true;
+		if (button == MouseEvent.BUTTON3) {
+			rightButtonPressed = true;
 		}
 		
 		// Swith the control state
@@ -915,9 +915,9 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
 		case CONTROL_STATE_MOVE:
 			break;
 		case CONTROL_STATE_CONTROL:
-			if (leftButtonPressed)
+			if (button == MouseEvent.BUTTON1)
 				sendMouseEvent(Command_ControlEvent.LBUTTON_DOWN, e, 0);
-			if (rightButtonPressed)
+			if (button == MouseEvent.BUTTON3)
 				sendMouseEvent(Command_ControlEvent.RBUTTON_DOWN, e, 0);
 			break;
 		}
@@ -927,29 +927,20 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
 	 * Mouse released
 	 */
 	public void mouseReleased(MouseEvent e) {
-		int buttons = e.getModifiersEx();
-		
-		if ((buttons & MouseEvent.BUTTON3_DOWN_MASK) == 0) {
-			rightButtonPressed = false;
-		}
-		
-		if ((buttons & MouseEvent.BUTTON1_DOWN_MASK) == 0) {
+		int button = e.getButton();
+
+		if (button == MouseEvent.BUTTON1) {
 			leftButtonPressed = false;
+			if (controlState == CONTROL_STATE_CONTROL) {
+				sendMouseEvent(Command_ControlEvent.LBUTTON_UP, e, 0);
+			}
 		}
 
-		// Swith the control state
-		switch (controlState) {
-		case CONTROL_STATE_SELECT:
-			// TODO: implement
-			break;
-		case CONTROL_STATE_MOVE:
-			break;
-		case CONTROL_STATE_CONTROL:
-			if (!leftButtonPressed)
-				sendMouseEvent(Command_ControlEvent.LBUTTON_UP, e, 0);
-			if (!rightButtonPressed)
+		if (button == MouseEvent.BUTTON3) {
+			rightButtonPressed = false;
+			if (controlState == CONTROL_STATE_CONTROL) {
 				sendMouseEvent(Command_ControlEvent.RBUTTON_UP, e, 0);
-			break;
+			}
 		}
 	}
 
@@ -959,7 +950,7 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
 	public void mouseClicked(MouseEvent e) {
 		int buttons = e.getButton();
 		
-		if ((buttons & MouseEvent.BUTTON1) != 0) {
+		if (buttons == MouseEvent.BUTTON1) {
 			if (controlState == CONTROL_STATE_SELECT) {
 				createInspector(e.getX(), e.getY());
 			}

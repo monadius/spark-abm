@@ -280,9 +280,10 @@ public class SparkViewPanel extends JPanel implements ISparkPanel,
 		}
 
 		private void maybeShowPopup(MouseEvent e) {
-			if (e.isPopupTrigger()) {
-				popup.show(e.getComponent(), e.getX(), e.getY());
-			}
+			if (render.getControlState() == Render.CONTROL_STATE_SELECT)
+				if (e.isPopupTrigger()) {
+					popup.show(e.getComponent(), e.getX(), e.getY());
+				}
 		}
 	}
 

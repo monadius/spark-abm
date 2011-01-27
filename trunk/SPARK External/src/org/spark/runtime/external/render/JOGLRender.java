@@ -189,16 +189,17 @@ public class JOGLRender extends Render implements GLEventListener {
 		gl.glClearColor(1, 1, 1, 1);
 		gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
 		gl.glTexEnvi(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, GL.GL_MODULATE);
-		// gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_LINE);
+//		gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_LINE);
+//		gl.glPolygonMode(GL.GL_BACK, GL.GL_LINE);
 
 		/* Set up light */
 
 		float lightAmbient[] = { 0.2f, 0.2f, 0.2f }; // Ambient Light is 20%
 		// white
-		float lightDiffuse[] = { 1.0f, 1.0f, 1.0f }; // Diffuse Light is white
+		float lightDiffuse[] = { 0.8f, 0.8f, 0.8f }; // Diffuse Light is white
 
 		// Position is somewhat in front of screen
-		float lightPosition[] = { 0.0f, 0.0f, 0.0f };
+		float lightPosition[] = { 10.0f, 0.0f, 20.0f };
 
 		// Set The Ambient Lighting For Light0
 		gl.glLightfv(GL.GL_LIGHT0, GL.GL_AMBIENT, lightAmbient, 0);
@@ -330,6 +331,7 @@ public class JOGLRender extends Render implements GLEventListener {
 		// For The Quad
 
 		cube = glu.gluNewQuadric();
+		glu.gluQuadricNormals(cube, GL.GL_SMOOTH);
 
 	}
 	
@@ -409,6 +411,22 @@ public class JOGLRender extends Render implements GLEventListener {
 		gl.glMatrixMode(GL.GL_MODELVIEW);
 		gl.glLoadIdentity();
 	}
+	
+	private void glNormal(GL gl, Vector v0, double z0, Vector v1, double z1, Vector v2, double z2) {
+		double x0 = v1.x - v0.x;
+		double y0 = v1.y - v0.y;
+		double x1 = v2.x - v0.x;
+		double y1 = v2.y - v0.y;
+		
+		double zz0 = z1 - z0;
+		double zz1 = z2 - z0;
+		
+		double nx = y0 * zz1 - zz0 * y1;
+		double ny = zz0 * x1 - x0 * zz1;
+		double nz = x0 * y1 - y0 * x1;
+		
+		gl.glNormal3d(nx, ny, nz);
+	}
 
 	/**
 	 * Renders the given data layer
@@ -468,8 +486,11 @@ public class JOGLRender extends Render implements GLEventListener {
 				double z1 = heightMap[i + 1][0];
 
 				gl.glColor3d(c0.x, c0.y, c0.z);
+//				gl.glNormal3d(v0.x, v0.y, z0);
 				gl.glVertex3d(v0.x, v0.y, z0);
+
 				gl.glColor3d(c1.x, c1.y, c1.z);
+//				gl.glNormal3d(v1.x, v1.y, z1);
 				gl.glVertex3d(v1.x, v1.y, z1);
 
 				for (int j = 1; j <= m; j++) {
@@ -481,10 +502,19 @@ public class JOGLRender extends Render implements GLEventListener {
 					double z4 = heightMap[i + 1][j];
 					
 					gl.glColor3d(c3.x, c3.y, c3.z);
+					glNormal(gl, v3, z3, v0, z0, v1, z1);
+//					gl.glNormal3d(v3.x, v3.y, z3);
 					gl.glVertex3d(v3.x, v3.y, z3);
+
 					gl.glColor3d(c4.x, c4.y, c4.z);
+					glNormal(gl, v4, z4, v3, z3, v1, z1);
+//					gl.glNormal3d(v4.x, v4.y, z4);
 					gl.glVertex3d(v4.x, v4.y, z4);
 
+					v0 = v3;
+					z0 = z3;
+					v1 = v4;
+					z1 = z4;
 				}
 				gl.glEnd();
 			}
@@ -1089,12 +1119,12 @@ public class JOGLRender extends Render implements GLEventListener {
 			renderDataLayer(gl, selectedDataLayer, data, spaceIndex);
 		}
 
-		if (mode3d) {
+//		if (mode3d) {
 			gl.glEnable(GL.GL_COLOR_MATERIAL);
 			gl.glEnable(GL.GL_LIGHT0); // Enable Light 0
 			gl.glEnable(GL.GL_LIGHTING); // Enable Lighting
-//			gl.glEnable(GL.GL_AUTO_NORMAL);
-		}
+			gl.glEnable(GL.GL_AUTO_NORMAL);
+//		}
 
 		// Render visible agents
 		for (int k = agentStyles.size() - 1; k >= 0; k--) {
@@ -1124,10 +1154,10 @@ public class JOGLRender extends Render implements GLEventListener {
 		}
 
 		if (mode3d) {
-			gl.glDisable(GL.GL_DEPTH_TEST);
-			gl.glDisable(GL.GL_COLOR_MATERIAL);
-			gl.glDisable(GL.GL_LIGHT0); // Disable Light 0
-			gl.glDisable(GL.GL_LIGHTING); // Disable Lighting
+//			gl.glDisable(GL.GL_DEPTH_TEST);
+//			gl.glDisable(GL.GL_COLOR_MATERIAL);
+//			gl.glDisable(GL.GL_LIGHT0); // Disable Light 0
+//			gl.glDisable(GL.GL_LIGHTING); // Disable Lighting
 //			gl.glDisable(GL.GL_AUTO_NORMAL);
 		}
 
@@ -1140,78 +1170,8 @@ public class JOGLRender extends Render implements GLEventListener {
 	public void displayChanged(GLAutoDrawable drawable, boolean modeChanged,
 			boolean deviceChanged) {
 	}
-/*
-	// Methods required for the implementation of MouseListener
-	public void mouseEntered(MouseEvent e) {
-	}
 
-	public void mouseExited(MouseEvent e) {
-	}
-
-	public void mousePressed(MouseEvent e) {
-		prevMouseX = e.getX();
-		prevMouseY = e.getY();
-		if ((e.getModifiers() & MouseEvent.BUTTON3_MASK) != 0) {
-			rightButtonPressed = true;
-			// mouseRButtonDown = true;
-		}
-	}
-
-	public void mouseReleased(MouseEvent e) {
-		if ((e.getModifiers() & MouseEvent.BUTTON3_MASK) != 0) {
-			rightButtonPressed = false;
-			// mouseRButtonDown = false;
-		}
-	}
-
-	public void mouseClicked(MouseEvent e) {
-	}
-
-	// Methods required for the implementation of MouseMotionListener
-	public void mouseDragged(MouseEvent e) {
-		int x = e.getX();
-		int y = e.getY();
-		Dimension size = e.getComponent().getSize();
-
-		float thetaY = 360.0f * ((float) (x - prevMouseX) / (float) size.width);
-		float thetaX = 360.0f * ((float) (prevMouseY - y) / (float) size.height);
-
-		prevMouseX = x;
-		prevMouseY = y;
-
-		if (!rightButtonPressed) {
-			view_rotx += thetaX;
-			view_roty += thetaY;
-		} else {
-			// mouse_y -= thetaX;
-			// mouse_x -= thetaY;
-			zPlane += thetaY;
-
-			if (zPlane < zMin)
-				zPlane = zMin;
-			else if (zPlane > zMax)
-				zPlane = zMax;
-		}
-
-		canvas.display();
-	}
-
-	public void mouseMoved(MouseEvent e) {
-	}
-
-	public void mouseWheelMoved(MouseWheelEvent e) {
-		int notches = e.getWheelRotation();
-		wheel_scale -= notches * 0.1f;
-
-		if (wheel_scale < 0.1f)
-			wheel_scale = 0.1f;
-		else if (wheel_scale > 10.0f)
-			wheel_scale = 10.0f;
-
-		// if (!active) canvas.display();
-		canvas.display();
-	}
-*/
+	
 	/**
 	 * Key event action
 	 */
