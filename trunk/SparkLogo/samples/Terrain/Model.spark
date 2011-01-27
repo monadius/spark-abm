@@ -1,7 +1,7 @@
 model TerrainModel
 
 
-space GridSpace -100 100 -100 100 false false
+space GridSpace -40 40 -40 40 false false
 
 @parameter(default = 0.1, min = 0.01, max = 1, step = 0.01)
 global dt : number
@@ -17,6 +17,9 @@ global flux-l : grid
 global flux-r : grid
 global flux-t : grid
 global flux-b : grid
+
+global d1 : grid
+global K-grid : grid
 
 var counter : number
 
@@ -111,35 +114,75 @@ to update-flux
 	var lx = 1
 	var ly = 1
 	
-	for x = 1 : x-size - 2
-	[
-		for y = 1 : y-size - 2
-		[
-			var h = height-map.data-at x y + water-map.data-at x y
-		
-			var dhl = h - height-map.data-at (x - 1) y - water-map.data-at (x - 1) y
-			var dhr = h - height-map.data-at (x + 1) y - water-map.data-at (x + 1) y
-			var dht = h - height-map.data-at x (y + 1) - water-map.data-at x (y + 1)
-			var dhb = h - height-map.data-at x (y - 1) - water-map.data-at x (y - 1)
+;	modify flux-l
+;	[
+;		var h = height-map.value + water-map.value
+;		var dhl = h - height-map.value[-1,0] - water-map.value[-1,0]
+;		value = max 0 (value + dt * A * g * dhl / l)
+;	]
 
-			var vl = max 0 (flux-l.data-at x y + dt * A * g * dhl / l)
-			var vr = max 0 (flux-r.data-at x y + dt * A * g * dhr / l)
-			var vt = max 0 (flux-t.data-at x y + dt * A * g * dht / l)
-			var vb = max 0 (flux-b.data-at x y + dt * A * g * dhb / l)
-			
-			var v = vl + vr + vt + vb
-			var K = 0
-			if v > 1e-6
-			[
-				K = min 1 ((water-map.data-at x y * lx * ly) / v)
-			]
-			
-			flux-l.set-data-at x y (K * vl)
-			flux-r.set-data-at x y (K * vr)
-			flux-t.set-data-at x y (K * vt)
-			flux-b.set-data-at x y (K * vb)
-		]
-	]
+;	flux-l = max 0 (flux-l + dt * A * g * (height-map + water-map - height-map[-1,0] - water-map[-1,0]) / l)
+;equations
+;[
+;	d1 = height-map + water-map
+;	D[flux-l,t] = A * g * D-[d1, x]
+;	D[flux-r,t] = A * g * D+[d1, x]
+;	Dt flux-l x y = A * g * (Dx- d1 x y)
+;	flux-l(boundary) = 0
+;	Dt v (x,0) = a(x,0)
+;]
+
+equations
+[
+	d1 = height-map + water-map
+	Dt flux-l = A * g * Dx- d1
+	Dt flux-r = -A * g * Dxp d1
+	Dt flux-b = A * g * Dy- d1
+	Dt flux-t = -A * g * Dyp d1
+	
+	flux-l = max 0 flux-l
+	flux-r = max 0 flux-r
+	flux-t = max 0 flux-t
+	flux-b = max 0 flux-b
+	
+	K-grid = max (1e-6) (flux-l + flux-r + flux-t + flux-b)
+	K-grid = min 1 (water-map * lx * ly / K-grid)
+	
+	flux-l = K-grid * flux-l
+	flux-r = K-grid * flux-r
+	flux-t = K-grid * flux-t
+	flux-b = K-grid * flux-b
+]
+	
+;	for x = 1 : x-size - 2
+;	[
+;		for y = 1 : y-size - 2
+;		[
+;			var h = height-map.data-at x y + water-map.data-at x y
+;		
+;			var dhl = h - height-map.data-at (x - 1) y - water-map.data-at (x - 1) y
+;			var dhr = h - height-map.data-at (x + 1) y - water-map.data-at (x + 1) y
+;			var dht = h - height-map.data-at x (y + 1) - water-map.data-at x (y + 1)
+;			var dhb = h - height-map.data-at x (y - 1) - water-map.data-at x (y - 1)
+;
+;			var vl = max 0 (flux-l.data-at x y + dt * A * g * dhl / l)
+;			var vr = max 0 (flux-r.data-at x y + dt * A * g * dhr / l)
+;			var vt = max 0 (flux-t.data-at x y + dt * A * g * dht / l)
+;			var vb = max 0 (flux-b.data-at x y + dt * A * g * dhb / l)
+;			
+;			var v = vl + vr + vt + vb
+;			var K = 0
+;			if v > 1e-6
+;			[
+;				K = min 1 ((water-map.data-at x y * lx * ly) / v)
+;			]
+;			
+;			flux-l.set-data-at x y (K * vl)
+;			flux-r.set-data-at x y (K * vr)
+;			flux-t.set-data-at x y (K * vt)
+;			flux-b.set-data-at x y (K * vb)
+;		]
+;	]
 end
 
 
@@ -190,9 +233,9 @@ end
 
 @external
 to mounts
-	ask create MountAgent 1000
+	ask create MountAgent 100
 	[
-		move-to random-vector-of-length 40
+		move-to random-vector-of-length 30
 	]
 
 ;	ask create MountAgent 100

@@ -1,0 +1,44 @@
+agent SimpleAgent : SpaceAgent
+
+
+to create
+	super 0.4 dynamic-circle
+	color = green
+end
+
+
+to step
+	apply-force [0,-9,0]
+end
+
+
+model ControlDemo
+
+space PhysicalSpace2d -10 10 -10 10 false false
+
+
+
+to begin-step
+	var event = next-mouse-event
+	
+	if event == null [ return false ]
+	if event.event-type == "LBUTTON_DOWN"
+	[
+		ask create-one SimpleAgent
+		[
+			move-to event.position
+		]
+	]
+end
+
+
+to setup
+	ask create SimpleAgent 10
+	[
+		set-random-position
+	]
+end
+
+
+
+
