@@ -2,6 +2,7 @@ package org.spark.runtime.data;
 
 import org.spark.math.Vector;
 import org.spark.math.Vector4d;
+import org.spark.space.PhysicalNode;
 
 /**
  * Data for a set of space agents
@@ -15,11 +16,28 @@ public class DataObject_SpaceAgents extends DataObject {
 	private double[] radii;
 	private Vector4d[] colors;
 	private double[] rotations;
+	private ShapeInfo[] shapeInfo;
+	
 	private int[] shapes;
 	private int[] spaceIndices;
 	
 	private int counter;
 	private int n;
+	
+	// Describes agent's shape
+	public static class ShapeInfo {
+		public static final int CIRCLE = 0;
+		public static final int RECTANGLE = 1;
+		
+		public final int type;
+		public final float hx, hy;
+		
+		public ShapeInfo(PhysicalNode.ShapeInfo si) {
+			this.type = si.type;
+			this.hx = si.hx;
+			this.hy = si.hy;
+		}
+	}
 	
 	
 	/**
@@ -38,6 +56,7 @@ public class DataObject_SpaceAgents extends DataObject {
 			rotations = new double[agentsNumber];
 			shapes = new int[agentsNumber];
 			spaceIndices = new int[agentsNumber];
+			shapeInfo = new ShapeInfo[agentsNumber];
 		}
 		
 		n = agentsNumber;
@@ -60,7 +79,7 @@ public class DataObject_SpaceAgents extends DataObject {
 	 * @param color
 	 * @param shape
 	 */
-	public void addAgent(String label, Vector position, double r, Vector4d color, double rotation, int shape, int spaceIndex) {
+	public void addAgent(String label, Vector position, double r, Vector4d color, double rotation, ShapeInfo si, int shape, int spaceIndex) {
 		// Cannot hold any more agents
 		if (counter >= n)
 			return;
@@ -70,6 +89,7 @@ public class DataObject_SpaceAgents extends DataObject {
 		radii[counter] = r;
 		colors[counter] = color;
 		rotations[counter] = rotation;
+		shapeInfo[counter] = si;
 		shapes[counter] = shape;
 		spaceIndices[counter] = spaceIndex;
 		
@@ -104,6 +124,10 @@ public class DataObject_SpaceAgents extends DataObject {
 	
 	public double[] getRotations() {
 		return rotations;
+	}
+	
+	public ShapeInfo[] getShapeInfo() {
+		return shapeInfo;
 	}
 	
 	public int[] getShapes() {
