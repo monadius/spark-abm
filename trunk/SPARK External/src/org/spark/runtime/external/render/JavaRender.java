@@ -339,6 +339,34 @@ public class JavaRender extends Render {
 		return true;
 	}
 	
+	
+	/**
+	 * Draws a specific shape
+	 */
+	private void drawShape(Graphics2D g, DataObject_SpaceAgents.ShapeInfo shape, boolean border) {
+		Shape s = null;
+		switch (shape.type) {
+		case 0:
+			float r = shape.hx;
+			s = new Ellipse2D.Float(-r, -r, 2 * r, 2 * r);
+			break;
+			
+		case 1:
+			float hx = shape.hx;
+			float hy = shape.hy;
+			s = new Rectangle2D.Float(-hx, -hy, 2 * hx, 2 * hy);
+		}
+		
+		if (s == null)
+			return;
+		
+		g.fill(s);
+		if (border) {
+			g.setColor(Color.black);
+			g.draw(s);
+		}	
+	}
+	
 
 	/**
 	 * Renders agents
@@ -358,6 +386,7 @@ public class JavaRender extends Render {
 		double[] radii = agents.getRadii();
 		Vector4d[] colors = agents.getColors();
 		double[] rotations = agents.getRotations();
+		DataObject_SpaceAgents.ShapeInfo[] shapeInfo = agents.getShapeInfo();
 		int[] shapes = agents.getShapes();
 		int[] spaceIndices = agents.getSpaceIndices();
 		String[] labels = agents.getLabels();
@@ -403,29 +432,39 @@ public class JavaRender extends Render {
 			}
 
 			if (image == null) {
-				Shape s = null;
+				if (shapeInfo[i] != null) {
+					AffineTransform oldTr = g.getTransform();
+					g.translate(x, y);
+					g.rotate(rotations[i]);
+					drawShape(g, shapeInfo[i], agentStyle.border);
+					g.setTransform(oldTr);
+				}
+				else 
+				{
+					Shape s = null;
 
-				switch (shapes[i]) {
+					switch (shapes[i]) {
 				//			case SpaceAgent.CIRCLE:
-				case 1:
-					s = new Ellipse2D.Double(x - r, y - r, r2, r2);
-					break;
+					case 1:
+						s = new Ellipse2D.Double(x - r, y - r, r2, r2);
+						break;
 
 					//			case SpaceAgent.SQUARE:
-				case 2:
-					s = new Rectangle2D.Double(x - r, y - r, r2, r2);
-					break;
+					case 2:
+						s = new Rectangle2D.Double(x - r, y - r, r2, r2);
+						break;
 
 					//			case SpaceAgent.TORUS:
-				case 3:
-					s = new Ellipse2D.Double(x - r, y - r, r2, r2);
-					break;
-				}
+					case 3:
+						s = new Ellipse2D.Double(x - r, y - r, r2, r2);
+						break;
+					}
 
-				g.fill(s);
-				if (agentStyle.border) {
-					g.setColor(Color.black);
-					g.draw(s);
+					g.fill(s);
+					if (agentStyle.border) {
+						g.setColor(Color.black);
+						g.draw(s);
+					}
 				}
 			}
 			else {
