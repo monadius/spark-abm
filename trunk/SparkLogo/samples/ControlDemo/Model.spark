@@ -4,6 +4,17 @@ agent SimpleAgent : SpaceAgent
 to create
 	super 0.4 dynamic-circle
 	color = green
+
+	add-collision-category 1
+	add-collision-mask 2
+	remove-collision-mask 1
+	remove-collision-mask 2
+
+	
+	shape = create-rect 0.6 0.3
+	rotation = random 4
+;	shape = create-circle 0.5
+
 end
 
 

@@ -10,7 +10,7 @@
   <interface>
     <about path="readme.txt"/>
     <windows>
-      <window height="633" main="true" name="Main Window" visible="true" width="586" x="0" y="0"/>
+      <window height="719" main="true" name="Main Window" visible="true" width="715" x="480" y="64"/>
     </windows>
     <mainframe control-state="2" dx="0.0" dy="0.0" location="Main Window" rot-x="20.0" rot-y="30.0" zoom="1.0">
       <spacestyle name="space" selected="true" swapXY="false"/>

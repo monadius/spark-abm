@@ -1216,6 +1216,23 @@
                 </translation>
         </reporter>
         
+
+		<reporter name = "create-circle" type = "ShapeInfo">
+			<argument name = "radius" type = "double"/>
+			<translation>
+				PhysicalNode.ShapeInfo.createCircle(@radius)
+			</translation>
+		</reporter>
+		
+		
+		<reporter name = "create-rect" type = "ShapeInfo">
+			<argument name = "hx" type = "double"/>
+			<argument name = "hy" type = "double"/>
+			<translation>
+				PhysicalNode.ShapeInfo.createRectangle(@hx, @hy)
+			</translation>
+		</reporter>
+		        
         
         <command name = "create-new-file">
         	<argument name = "name" type = "string"/>
