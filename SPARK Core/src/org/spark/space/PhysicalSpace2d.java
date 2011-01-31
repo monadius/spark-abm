@@ -166,13 +166,15 @@ public class PhysicalSpace2d extends StandardSpace {
 		for (PhysicalNode node : nodes) {
 			node.updatePosition();
 			super.changeNodePosition0(node);
+			float angle = node.body.getAngle();
+			
+			node.rotation = angle;
 
 			if (!node.position.equals(node.newPosition)) {
 				// If the position of the node was corrected
 				node.newPosition.set(node.position);
 				
 				Vec2 pos = new Vec2((float)node.position.x, (float)node.position.y);
-				float angle = node.body.getAngle();
 				node.body.setXForm(pos, angle);
 			}
 		}
