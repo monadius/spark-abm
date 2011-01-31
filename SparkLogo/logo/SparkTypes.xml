@@ -639,6 +639,11 @@
 		</type>
 
 
+		<!-- Shape Info -->
+		<type name = "ShapeInfo" parent = "$Object">
+			<javaname>PhysicalNode.ShapeInfo</javaname>
+		</type>
+
 		<!-- Agent Data -->
 		<type name = "AgentData" parent = "$Object">
 			<javaname>AgentData</javaname>
@@ -832,13 +837,47 @@
                 </field>
                 
                 
+                <field name = "shape" type = "ShapeInfo">
+                	<set>((PhysicalNode)@@object.getNode()).changeShape(@@value)</set>
+                </field>
+                
+                
+                <method name = "add-collision-category">
+                	<argument name = "category" type = "double"/>
+                	<translation>
+                		((PhysicalNode) @@object.getNode()).addCollisionCategory((int) @category)
+                	</translation>
+                </method>
+
+                <method name = "add-collision-mask">
+                	<argument name = "mask" type = "double"/>
+                	<translation>
+                		((PhysicalNode) @@object.getNode()).addCollisionMask((int) @mask)
+                	</translation>
+                </method>
+
+                <method name = "remove-collision-category">
+                	<argument name = "category" type = "double"/>
+                	<translation>
+                		((PhysicalNode) @@object.getNode()).removeCollisionCategory((int) @category)
+                	</translation>
+                </method>
+
+                <method name = "remove-collision-mask">
+                	<argument name = "mask" type = "double"/>
+                	<translation>
+                		((PhysicalNode) @@object.getNode()).removeCollisionMask((int) @mask)
+                	</translation>
+                </method>
+
+<!--                 
 				<method name = "set-shape">
 					<argument name = "shape" type = "$integer"/>
 					<translation>
 						@@object.setShape(@shape)
 					</translation>
 				</method>
-
+ -->
                 
                 <method name = "set-random-position">
                 </method>
