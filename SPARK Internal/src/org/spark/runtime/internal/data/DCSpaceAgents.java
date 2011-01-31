@@ -7,6 +7,7 @@ import org.spark.runtime.data.DataCollectorDescription;
 import org.spark.runtime.data.DataObject;
 import org.spark.runtime.data.DataObject_SpaceAgents;
 import org.spark.runtime.data.DataObject_SpaceLinks;
+import org.spark.space.PhysicalNode;
 import org.spark.space.SpaceAgent;
 import org.spark.space.SpaceLink;
 import org.spark.space.SpaceNode;
@@ -89,8 +90,13 @@ public class DCSpaceAgents extends DataCollector {
 			}
 
 			int spaceIndex = node.getSpace().getIndex();
+			DataObject_SpaceAgents.ShapeInfo si = null;
+			if (node instanceof PhysicalNode) {
+				PhysicalNode pNode = (PhysicalNode) node;
+				si = new DataObject_SpaceAgents.ShapeInfo(pNode.getShapeInfo());
+			}
 
-			result.addAgent(label, pos, r, color, node.getRotation(), shape, spaceIndex);
+			result.addAgent(label, pos, r, color, node.getRotation(), si, shape, spaceIndex);
 		}
 		
 		return result;
