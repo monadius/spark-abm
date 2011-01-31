@@ -1,5 +1,6 @@
 package org.spark.runtime.external.gui.dialogs;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -10,6 +11,7 @@ import java.util.HashMap;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.table.AbstractTableModel;
 
 import org.spark.runtime.external.render.DataLayerGraphics;
 import org.spark.runtime.external.render.SpaceStyle;
@@ -31,10 +33,156 @@ public class RenderProperties extends JDialog implements ActionListener, ChangeL
 	private Render render;
 	
 	/* Main panels */
-	private JPanel panel, agentPanel, spacePanel, dataPanel;
-	private ArrayList<AgentStyle> agentStyles;
+	private JPanel panel, spacePanel, dataPanel;
+//	private ArrayList<AgentStyle> agentStyles;
 	
 	private JCheckBox swapSpaceXY;
+
+	// Data for agent styles
+	private AgentTableData agentData;
+	// Table for agent styles
+	private JTable agentTable;
+	
+	
+	// Controls for data layers
+	private ArrayList<DataLayerControl> dataLayerControls;	
+
+	
+	// Data for agent styles
+	@SuppressWarnings("serial")
+	private class AgentTableData extends AbstractTableModel {
+		// Styles of all agents
+		private ArrayList<AgentStyle> styles;
+
+		// Default constructor
+		public AgentTableData() {
+		}
+		
+		
+		public AgentStyle get(int i) {
+			if (styles == null || i < 0 || i >= styles.size())
+				return null;
+			return styles.get(i);
+		}
+		
+		
+		// Updates the agent styles
+		public void update(ArrayList<AgentStyle> styles) {
+			this.styles = styles;
+			fireTableDataChanged();
+		}
+		
+
+		@Override
+		public int getColumnCount() {
+			return 5;
+		}
+
+		@Override
+		public int getRowCount() {
+			if (styles == null)
+				return 0;
+			return styles.size(); 
+		}
+		
+		@Override
+		public String getColumnName(int col) {
+			switch (col) {
+			case 0:
+				return "Name";
+			case 1:
+				return "Visible";
+			case 2:
+				return "Border";
+			case 3:
+				return "Transparent";
+			case 4:
+				return "Label";
+			}
+			
+			return null;
+		}
+		
+		@Override
+		public Class<?> getColumnClass(int col) {
+			if (col == 0)
+				return String.class;
+			else
+				return Boolean.class;
+		}
+		
+		@Override
+		public boolean isCellEditable(int rowIndex, int columnIndex) {
+			if (columnIndex == 0)
+				return false;
+			else
+				return true;
+		}
+		
+
+		@Override
+		public Object getValueAt(int rowIndex, int columnIndex) {
+			if (styles == null || rowIndex >= styles.size())
+				return null;
+			
+			AgentStyle style = styles.get(rowIndex);
+			
+			switch (columnIndex) {
+			// Name
+			case 0:
+				return style.name;
+			// Visible
+			case 1:
+				return style.visible;
+			// Border
+			case 2:
+				return style.border;
+			// Transparent
+			case 3:
+				return style.transparent;
+			// Label
+			case 4:
+				return style.label;
+			}
+			
+			return null;
+		}
+
+		@Override
+		public void setValueAt(Object value, int row, int col) {
+			AgentStyle style = get(row);
+			if (style == null)
+				return;
+			
+			switch (col) {
+			case 0:
+				// Name
+				return;
+			case 1:
+				// Visible
+				style.visible = (Boolean) value;
+				render.updateDataFilter();
+				return;
+			case 2:
+				// Border
+				style.border = (Boolean) value;
+				break;
+			case 3:
+				// Transparent
+				style.transparent = (Boolean) value;
+				break;
+			case 4:
+				style.label = (Boolean) value;
+				break;
+				
+			default:
+				return;
+			}
+			
+			render.update();
+		}
+
+	}
 	
 	
 	// Control elements for a data layer
@@ -58,9 +206,6 @@ public class RenderProperties extends JDialog implements ActionListener, ChangeL
 		}
 	}
 	
-	// Controls for data layers
-	private ArrayList<DataLayerControl> dataLayerControls;	
-	
 	
 	/**
 	 * Default constructor
@@ -83,23 +228,61 @@ public class RenderProperties extends JDialog implements ActionListener, ChangeL
 		
 		setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
 
+		///////////////////////
+		// Initialize agents
 //		agentPanel = new JPanel(new GridLayout(0, 7));
-		agentPanel = new JPanel(new SpringLayout());
-		agentPanel.setMinimumSize(new Dimension(100, 100));
-//		agentPanel.setPreferredSize(new Dimension(200, 100));
+		JPanel agentPanel = new JPanel(new BorderLayout());
+//		agentPanel.setMinimumSize(new Dimension(100, 100));
+		agentPanel.setPreferredSize(new Dimension(500, 300));
 		agentPanel.setBorder(BorderFactory.createTitledBorder("Agents"));
 		
+		// Create a table for agent styles
+		agentData = new AgentTableData();
+		agentTable = new JTable(agentData);
+		agentTable.setColumnSelectionAllowed(false);
+		JScrollPane tablePane = new JScrollPane(agentTable);
+		agentPanel.add(tablePane);
+		
+		// Create a tool bar for agents
+		JToolBar toolBar = new JToolBar(JToolBar.VERTICAL);
+		
+		JButton up = new JButton("Up");
+		JButton down = new JButton("Down");
+		JButton advanced = new JButton("Advanced");
+
+		up.setActionCommand("agent-up");
+		down.setActionCommand("agent-down");
+		advanced.setActionCommand("agent-advanced");
+		
+		up.addActionListener(this);
+		down.addActionListener(this);
+		advanced.addActionListener(this);
+		
+		toolBar.add(up);
+		toolBar.add(down);
+		toolBar.add(advanced);
+		
+		agentPanel.add(toolBar, BorderLayout.EAST);
+		
+		
+//		agentPanel.add(scrollPane);
+		
+		////////////////////////////
+		// Initialize data layers
 		dataPanel = new JPanel(new SpringLayout());
 		dataPanel.setMinimumSize(new Dimension(100, 100));
 //		dataPanel.setPreferredSize(new Dimension(200, 200));
 		dataPanel.setBorder(BorderFactory.createTitledBorder("Data Layers"));
 
+		/////////////////////////
+		// Initialize spaces
 		spacePanel = new JPanel(new GridLayout(0, 2));
 		spacePanel.setMinimumSize(new Dimension(100, 100));
 //		dataPanel.setPreferredSize(new Dimension(200, 200));
 		spacePanel.setBorder(BorderFactory.createTitledBorder("Spaces"));
 
 		
+		// Initialize the main panel
 		panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
 
@@ -258,8 +441,17 @@ public class RenderProperties extends JDialog implements ActionListener, ChangeL
 	 * Initializes controls for agents
 	 */
 	private void initAgents() {
-		agentPanel.removeAll();
-		agentStyles = render.getAgentStyles();
+//		agentPanel.removeAll();
+//		if (agentData == null) {
+//			agentData = new AgentTableData();
+//		}
+
+		ArrayList<AgentStyle> styles = render.getAgentStyles();
+		agentData.update(styles);
+		
+/*		agentStyles = render.getAgentStyles();
+		
+		
 		
 		for (int i = 0; i < agentStyles.size(); i++) {
 			AgentStyle agentStyle = agentStyles.get(i);
@@ -306,7 +498,7 @@ public class RenderProperties extends JDialog implements ActionListener, ChangeL
 		
 		SpringUtilities.makeCompactGrid(agentPanel, 
 				agentStyles.size(), 8, 
-				5, 5, 15, 5);
+				5, 5, 15, 5);*/
 	}
 	
 	
@@ -385,7 +577,6 @@ public class RenderProperties extends JDialog implements ActionListener, ChangeL
 		if (cmd == null)
 			return;
 		
-		int n;
 		
 		
 		// Space
@@ -407,79 +598,55 @@ public class RenderProperties extends JDialog implements ActionListener, ChangeL
 			return;
 		}
 		
-		// Agent: visibility
-		if (cmd.startsWith("agent_vis")) {
-			JCheckBox visible = (JCheckBox) e.getSource();
-			
-			n = Integer.parseInt( cmd.substring( "agent_vis".length() ) );
-			agentStyles.get(n).visible = visible.isSelected();
-			render.updateDataFilter();
-			return;
-		}
+		
+		// Agent commands
+		if (cmd.startsWith("agent")) {
+			cmd = cmd.intern();
 
-		// Agent: Transparency
-		if (cmd.startsWith("agent_trans")) {
-			JCheckBox transparent = (JCheckBox) e.getSource();
-			
-			n = Integer.parseInt( cmd.substring( "agent_trans".length() ) );
-			agentStyles.get(n).transparent = transparent.isSelected();
-			render.update();
-			return;
-		}
-		
-		// Agent: border
-		if (cmd.startsWith("agent_border")) {
-			JCheckBox border = (JCheckBox) e.getSource();
-			
-			n = Integer.parseInt( cmd.substring( "agent_border".length() ) );
-			agentStyles.get(n).border = border.isSelected();
-			render.update();
-			return;
-		}
-
-		// Agent: label
-		if (cmd.startsWith("agent_label")) {
-			JCheckBox label = (JCheckBox) e.getSource();
-			
-			n = Integer.parseInt( cmd.substring( "agent_label".length() ) );
-			agentStyles.get(n).label = label.isSelected();
-			render.update();
-			return;
-		}
-		
-		// Agent: advanced
-		if (cmd.startsWith("advanced")) {
-			n = Integer.parseInt( cmd.substring( "advanced".length() ));
-			new AgentStyleDialog(this, agentStyles.get(n)).setVisible(true);
-			return;
-		}
-		
-		// Agent: up
-		if (cmd.startsWith("agent_up")) {
-			n = Integer.parseInt( cmd.substring( "agent_up".length() ) );
-			if (n == 0)
+			// Get the first selected row
+			int row = agentTable.getSelectedRow();
+			// If nothing is selected, then return
+			if (row == -1)
 				return;
 			
-			render.swapAgentStyles(agentStyles.get(n), agentStyles.get(n - 1));
-			initAgents();
-			pack();
-			validate();
-			render.update();
-			return;
-		}
-		
-		// Agent: down
-		if (cmd.startsWith("agent_down")) {
-			n = Integer.parseInt( cmd.substring( "agent_down".length() ) );
-			if (n >= agentStyles.size() - 1)
+			AgentStyle selectedStyle = agentData.get(row);
+			if (selectedStyle == null)
 				return;
 			
-			render.swapAgentStyles(agentStyles.get(n), agentStyles.get(n + 1));
-			initAgents();
-			pack();
-			validate();
-			render.update();
-			return;
+			// Agent: up
+			if (cmd == "agent-up") {
+				AgentStyle prevStyle = agentData.get(row - 1);
+				if (prevStyle == null)
+					return;
+				
+				render.swapAgentStyles(selectedStyle, prevStyle);
+				agentData.update(render.getAgentStyles());
+				agentTable.setRowSelectionInterval(row - 1, row - 1);
+				
+				render.update();
+				return;
+			}
+			
+			// Agent: down
+			if (cmd == "agent-down") {
+				AgentStyle nextStyle = agentData.get(row + 1);
+				if (nextStyle == null)
+					return;
+				
+				render.swapAgentStyles(selectedStyle, nextStyle);
+				agentData.update(render.getAgentStyles());
+				agentTable.setRowSelectionInterval(row + 1, row + 1);
+
+				render.update();
+				return;
+			}
+			
+			// Agent: advanced
+			if (cmd == "agent-advanced") {
+				new AgentStyleDialog(this, selectedStyle).setVisible(true);
+				return;
+			}
+
 		}
 		
 		
