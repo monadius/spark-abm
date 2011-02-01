@@ -138,6 +138,15 @@ public class JavaRender extends Render {
 			xMax = yMax = 60;
 		}
 
+		// Manual cell size
+		if (selectedSpace != null && !selectedSpace.autoSize) {
+			xMax = xMin + 1;
+			yMin = yMax - 1;
+			width = selectedSpace.cellXSize;
+			height = selectedSpace.cellYSize;
+		}
+
+
 		float x0 = xMin;
 		float x1 = xMax;
 		float y0 = yMin;
@@ -149,7 +158,7 @@ public class JavaRender extends Render {
 			y0 = xMin;
 			y1 = xMax;
 		}
-
+		
 		float a = width / (x1 - x0);
 		float c = -height / (y1 - y0);
 		float b = -a * x0;

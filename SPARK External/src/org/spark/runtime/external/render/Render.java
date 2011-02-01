@@ -651,7 +651,7 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
 
 		if (selectedSpace == null) {
 			// TODO: it is just a way around: find better solution
-			selectedSpace = new SpaceStyle("space", false, true);
+			selectedSpace = new SpaceStyle("space");
 		}
 		
 		render.setSpace(selectedSpace);
@@ -688,12 +688,7 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
 		
 		// Node for the selected space properties
 		if (selectedSpace != null) {
-			Node spaceNode = doc.createElement("spacestyle");
-
-			XmlDocUtils.addAttr(doc, spaceNode, "name", selectedSpace.name);
-			XmlDocUtils.addAttr(doc, spaceNode, "swapXY", selectedSpace.swapXY);
-			XmlDocUtils.addAttr(doc, spaceNode, "selected", true);
-			
+			Node spaceNode = selectedSpace.createNode(doc, modelPath);
 			parent.appendChild(spaceNode);
 		}
 		

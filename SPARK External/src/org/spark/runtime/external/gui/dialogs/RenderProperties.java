@@ -34,15 +34,22 @@ public class RenderProperties extends JDialog implements ActionListener, ChangeL
 	
 	/* Main panels */
 	private JPanel panel, spacePanel, dataPanel;
-//	private ArrayList<AgentStyle> agentStyles;
 	
-	private JCheckBox swapSpaceXY;
+	
+	/* Space controls */
+	private JCheckBox swapSpaceXY, spaceAutoSize;
+	private JSpinner spaceCellXSize, spaceCellYSize;
 
+	
+	/* Agent controls */
+	
 	// Data for agent styles
 	private AgentTableData agentData;
 	// Table for agent styles
 	private JTable agentTable;
 	
+	
+	/* Data layer controls */
 	
 	// Controls for data layers
 	private ArrayList<DataLayerControl> dataLayerControls;	
@@ -224,15 +231,12 @@ public class RenderProperties extends JDialog implements ActionListener, ChangeL
 	 */
 	private void init(Render render) {
 		this.render = render;
-//		dataLayers = new ArrayList<Grid>(20);
 		
 		setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
 
 		///////////////////////
 		// Initialize agents
-//		agentPanel = new JPanel(new GridLayout(0, 7));
 		JPanel agentPanel = new JPanel(new BorderLayout());
-//		agentPanel.setMinimumSize(new Dimension(100, 100));
 		agentPanel.setPreferredSize(new Dimension(500, 300));
 		agentPanel.setBorder(BorderFactory.createTitledBorder("Agents"));
 		
@@ -271,14 +275,12 @@ public class RenderProperties extends JDialog implements ActionListener, ChangeL
 		// Initialize data layers
 		dataPanel = new JPanel(new SpringLayout());
 		dataPanel.setMinimumSize(new Dimension(100, 100));
-//		dataPanel.setPreferredSize(new Dimension(200, 200));
 		dataPanel.setBorder(BorderFactory.createTitledBorder("Data Layers"));
 
 		/////////////////////////
 		// Initialize spaces
-		spacePanel = new JPanel(new GridLayout(0, 2));
+		spacePanel = new JPanel(new GridLayout(0, 3));
 		spacePanel.setMinimumSize(new Dimension(100, 100));
-//		dataPanel.setPreferredSize(new Dimension(200, 200));
 		spacePanel.setBorder(BorderFactory.createTitledBorder("Spaces"));
 
 		
@@ -441,64 +443,8 @@ public class RenderProperties extends JDialog implements ActionListener, ChangeL
 	 * Initializes controls for agents
 	 */
 	private void initAgents() {
-//		agentPanel.removeAll();
-//		if (agentData == null) {
-//			agentData = new AgentTableData();
-//		}
-
 		ArrayList<AgentStyle> styles = render.getAgentStyles();
 		agentData.update(styles);
-		
-/*		agentStyles = render.getAgentStyles();
-		
-		
-		
-		for (int i = 0; i < agentStyles.size(); i++) {
-			AgentStyle agentStyle = agentStyles.get(i);
-			
-			String agentName = agentStyle.name;
-			if (agentName == null || agentName.equals(""))
-				agentName = agentStyle.typeName;
-			JLabel name = new JLabel(agentName);
-			JCheckBox transparent = new JCheckBox("Transparent", agentStyle.transparent);
-			JCheckBox visible = new JCheckBox("Visible", agentStyle.visible);
-			JCheckBox border = new JCheckBox("Border", agentStyle.border);
-			JCheckBox label = new JCheckBox("Label", agentStyle.label);
-			
-			JButton advanced = new JButton("Advanced");
-			JButton up = new JButton("Up");
-			JButton down = new JButton("Down");
-
-			transparent.setActionCommand("agent_trans" + i);
-			visible.setActionCommand("agent_vis" + i);
-			border.setActionCommand("agent_border" + i);
-			label.setActionCommand("agent_label" + i);
-			advanced.setActionCommand("advanced" + i);
-			up.setActionCommand("agent_up" + i);
-			down.setActionCommand("agent_down" + i);
-			
-			transparent.addActionListener(this);
-			visible.addActionListener(this);
-			border.addActionListener(this);
-			label.addActionListener(this);
-			advanced.addActionListener(this);
-			up.addActionListener(this);
-			down.addActionListener(this);
-			
-			agentPanel.add(name);
-			agentPanel.add(transparent);
-			agentPanel.add(visible);
-			agentPanel.add(border);
-			agentPanel.add(label);
-			agentPanel.add(advanced);
-			agentPanel.add(up);
-			agentPanel.add(down);
-			
-		}
-		
-		SpringUtilities.makeCompactGrid(agentPanel, 
-				agentStyles.size(), 8, 
-				5, 5, 15, 5);*/
 	}
 	
 	
@@ -506,13 +452,17 @@ public class RenderProperties extends JDialog implements ActionListener, ChangeL
 	 * Initializes controls for spaces
 	 */
 	private void initSpaces() {
+		// Remove all components
 		spacePanel.removeAll();
+		
+		// Get the selected space and names of all spaces
 		SpaceStyle selectedSpace = render.getSelectedSpaceStyle();
 		String[] spaceNames = render.getSpaceNames();
 		
 		if (spaceNames == null)
 			spaceNames = new String[0];
 		
+		// Create the space selection control
 		JComboBox spaceList = new JComboBox(spaceNames);
 
 		if (selectedSpace != null && selectedSpace.name != null) {
@@ -527,14 +477,47 @@ public class RenderProperties extends JDialog implements ActionListener, ChangeL
 		spaceList.setActionCommand("space-list");
 		spaceList.addActionListener(this);
 	
+		// Create the swap-xy control
 		boolean swapXYflag = (selectedSpace != null) ? selectedSpace.swapXY : false;
 		
 		swapSpaceXY = new JCheckBox("Rotate", swapXYflag);
-		swapSpaceXY.setActionCommand("swapXY");
+		swapSpaceXY.setActionCommand("space-swapXY");
 		swapSpaceXY.addActionListener(this);
 		
+		
+		// Create the controls for changing space cell sizes
+		
+		// Auto size
+		boolean autoSizeFlag = (selectedSpace != null) ? selectedSpace.autoSize : true;
+		spaceAutoSize = new JCheckBox("Auto size", autoSizeFlag);
+		spaceAutoSize.setActionCommand("space-auto-size");
+		spaceAutoSize.addActionListener(this);
+		
+		// Cell sizes
+		int xSize = (selectedSpace != null) ? selectedSpace.cellXSize : 10;
+		int ySize = (selectedSpace != null) ? selectedSpace.cellYSize : 10;
+		
+		spaceCellXSize = new JSpinner(new SpinnerNumberModel(xSize, 1, 512, 1));
+		spaceCellYSize = new JSpinner(new SpinnerNumberModel(ySize, 1, 512, 1));
+		
+		spaceCellXSize.setName("space-cell-xsize");
+		spaceCellYSize.setName("space-cell-ysize");
+		
+		spaceCellXSize.addChangeListener(this);
+		spaceCellYSize.addChangeListener(this);
+		
+		spaceCellXSize.setEnabled(!autoSizeFlag);
+		spaceCellYSize.setEnabled(!autoSizeFlag);
+		
+		
+		// Add all components to the panel
 		spacePanel.add(spaceList);
 		spacePanel.add(swapSpaceXY);
+		spacePanel.add(new JLabel());
+		
+		spacePanel.add(spaceAutoSize);
+		spacePanel.add(spaceCellXSize);
+		spacePanel.add(spaceCellYSize);
 	}
 	
 	
@@ -568,93 +551,66 @@ public class RenderProperties extends JDialog implements ActionListener, ChangeL
 		return dlg;
 	}
 
-
+	
+	
 	/**
-	 * Processes commands
+	 * Processes agent commands
+	 * @param cmd
 	 */
-	public void actionPerformed(ActionEvent e) {
-		String cmd = e.getActionCommand();
-		if (cmd == null)
+	private void processAgentCommands(ActionEvent e, String cmd) {
+		cmd = cmd.intern();
+
+		// Get the first selected row
+		int row = agentTable.getSelectedRow();
+		// If nothing is selected, then return
+		if (row == -1)
 			return;
 		
+		AgentStyle selectedStyle = agentData.get(row);
+		if (selectedStyle == null)
+			return;
 		
-		
-		// Space
-		if (cmd.startsWith("space-list")) {
-			JComboBox spaceList = (JComboBox) e.getSource();
-			String spaceName = (String) spaceList.getSelectedItem();
+		// Agent: up
+		if (cmd == "agent-up") {
+			AgentStyle prevStyle = agentData.get(row - 1);
+			if (prevStyle == null)
+				return;
 			
-			render.setSpace(new SpaceStyle(spaceName, swapSpaceXY.isSelected(), true));
-			initDataLayers();
-			pack();
+			render.swapAgentStyles(selectedStyle, prevStyle);
+			agentData.update(render.getAgentStyles());
+			agentTable.setRowSelectionInterval(row - 1, row - 1);
+			
 			render.update();
 			return;
 		}
 		
-		// SwapXY
-		if (cmd.startsWith("swapXY")) {
-			render.setSwapXYFlag(swapSpaceXY.isSelected());
+		// Agent: down
+		if (cmd == "agent-down") {
+			AgentStyle nextStyle = agentData.get(row + 1);
+			if (nextStyle == null)
+				return;
+			
+			render.swapAgentStyles(selectedStyle, nextStyle);
+			agentData.update(render.getAgentStyles());
+			agentTable.setRowSelectionInterval(row + 1, row + 1);
+
 			render.update();
 			return;
 		}
 		
-		
-		// Agent commands
-		if (cmd.startsWith("agent")) {
-			cmd = cmd.intern();
-
-			// Get the first selected row
-			int row = agentTable.getSelectedRow();
-			// If nothing is selected, then return
-			if (row == -1)
-				return;
-			
-			AgentStyle selectedStyle = agentData.get(row);
-			if (selectedStyle == null)
-				return;
-			
-			// Agent: up
-			if (cmd == "agent-up") {
-				AgentStyle prevStyle = agentData.get(row - 1);
-				if (prevStyle == null)
-					return;
-				
-				render.swapAgentStyles(selectedStyle, prevStyle);
-				agentData.update(render.getAgentStyles());
-				agentTable.setRowSelectionInterval(row - 1, row - 1);
-				
-				render.update();
-				return;
-			}
-			
-			// Agent: down
-			if (cmd == "agent-down") {
-				AgentStyle nextStyle = agentData.get(row + 1);
-				if (nextStyle == null)
-					return;
-				
-				render.swapAgentStyles(selectedStyle, nextStyle);
-				agentData.update(render.getAgentStyles());
-				agentTable.setRowSelectionInterval(row + 1, row + 1);
-
-				render.update();
-				return;
-			}
-			
-			// Agent: advanced
-			if (cmd == "agent-advanced") {
-				new AgentStyleDialog(this, selectedStyle).setVisible(true);
-				return;
-			}
-
+		// Agent: advanced
+		if (cmd == "agent-advanced") {
+			new AgentStyleDialog(this, selectedStyle).setVisible(true);
+			return;
 		}
-		
-		
-		/////////////////////////
-		// Data layer commands //
-		/////////////////////////
-
-
+	}
+	
+	
+	/**
+	 * Processes data layer commands
+	 * @param cmd
+	 */
+	private void ProcessDataLayerCommands(ActionEvent e, String cmd) {
 		// Data layer: none
 		if (cmd.equals("data-none")) {
 			for (DataLayerControl c : dataLayerControls) {
@@ -699,7 +655,89 @@ public class RenderProperties extends JDialog implements ActionListener, ChangeL
 			render.updateDataFilter();
 			return;
 		}
+	}
+	
+	
+	/**
+	 * Processes space commands
+	 * @param cmd
+	 */
+	private void processSpaceCommands(ActionEvent e, String cmd) {
+		cmd = cmd.intern();
 		
+		// Space: selection
+		if (cmd == "space-list") {
+			JComboBox spaceList = (JComboBox) e.getSource();
+			String spaceName = (String) spaceList.getSelectedItem();
+			
+			SpaceStyle spaceStyle = new SpaceStyle(spaceName);
+			spaceStyle.swapXY = swapSpaceXY.isSelected();
+			spaceStyle.selected = true;
+			
+			render.setSpace(spaceStyle);
+			initDataLayers();
+			pack();
+			render.update();
+			return;
+		}
+		
+		// Space: swap xy
+		if (cmd == "space-swapXY") {
+			render.setSwapXYFlag(swapSpaceXY.isSelected());
+			render.update();
+			return;
+		}
+		
+		// Space: auto-size
+		if (cmd == "space-auto-size") {
+			boolean autoSize = spaceAutoSize.isSelected();
+			
+			spaceCellXSize.setEnabled(!autoSize);
+			spaceCellYSize.setEnabled(!autoSize);
+			
+			SpaceStyle spaceStyle = render.getSelectedSpaceStyle();
+			if (spaceStyle == null)
+				return;
+			
+			spaceStyle.autoSize = autoSize;
+			
+			if (!autoSize) {
+				spaceStyle.cellXSize = ((Number) spaceCellXSize.getValue()).intValue();
+				spaceStyle.cellYSize = ((Number) spaceCellYSize.getValue()).intValue();
+			}
+			
+			render.requestReshape();
+			render.update();
+		}
+		
+	}
+	
+
+	/**
+	 * Processes commands
+	 */
+	public void actionPerformed(ActionEvent e) {
+		String cmd = e.getActionCommand();
+		if (cmd == null)
+			return;
+		
+		// Space commands
+		if (cmd.startsWith("space")) {
+			processSpaceCommands(e, cmd);
+			return;
+		}
+		
+		// Agent commands
+		if (cmd.startsWith("agent")) {
+			processAgentCommands(e, cmd);
+			return;
+		}
+		
+		// Data layer commands
+		if (cmd.startsWith("data")) {
+			ProcessDataLayerCommands(e, cmd);
+			return;
+		}
 	}
 
 
@@ -712,9 +750,31 @@ public class RenderProperties extends JDialog implements ActionListener, ChangeL
 		// Do not react on disabled controls
 		if (!spinner.isEnabled())
 			return;
-
-		render.setDataLayer(createDataLayerGraphics());
-		render.updateDataFilter();
+		
+		String name = spinner.getName();
+		if (name == null)
+			return;
+		
+		
+		// Data layer
+		if (name.startsWith("data")) {
+			render.setDataLayer(createDataLayerGraphics());
+			render.updateDataFilter();
+			return;
+		}
+		
+		// Space
+		if (name.startsWith("space")) {
+			SpaceStyle spaceStyle = render.getSelectedSpaceStyle();
+			if (spaceStyle == null)
+				return;
+			
+			spaceStyle.cellXSize = ((Number) spaceCellXSize.getValue()).intValue();
+			spaceStyle.cellYSize = ((Number) spaceCellYSize.getValue()).intValue();
+			
+			render.requestReshape();
+			render.update();
+		}
 	}
 }
 
