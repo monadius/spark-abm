@@ -29,9 +29,9 @@ public class DataSetTmp implements IDataConsumer {
 	 * A data item class
 	 */
 	private static class DataItem {
-		public ArrayList<Double> data = new ArrayList<Double>(5000);
-		public String name;
-		public String variableName;
+		public final ArrayList<Double> data = new ArrayList<Double>(5000);
+		public final String name;
+		public final String variableName;
 		
 		public DataItem(String name, String variableName) {
 			this.name = name;
@@ -152,6 +152,42 @@ public class DataSetTmp implements IDataConsumer {
 		for (int i = 0; i < dataItems.size(); i++) {
 			dataItems.get(i).clear();
 		}
+	}
+	
+	
+	/**
+	 * Returns the data values for the given variable
+	 * @param name
+	 * @return
+	 */
+	public double[] getData(String name) {
+		for (DataItem item : dataItems) {
+			if (item.name.equals(name)) {
+				ArrayList<Double> data = item.data;
+				
+				int n = data.size();
+				double[] result = new double[n];
+				for (int i = 0; i < n; i++)
+					result[i] = data.get(i);
+				
+				return result;
+			}
+		}
+		
+		return null;
+	}
+	
+	
+	/**
+	 * Returns the names of data items
+	 * @return
+	 */
+	public String[] getNames() {
+		String[] names = new String[dataItems.size()];
+		for (int i = 0; i < dataItems.size(); i++)
+			names[i] = dataItems.get(i).name;
+		
+		return names;
 	}
 
 	
