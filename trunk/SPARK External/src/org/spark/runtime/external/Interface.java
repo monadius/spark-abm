@@ -94,6 +94,60 @@ public class Interface {
 	}
 	
 	
+	/**
+	 * Returns names of all parameters
+	 * @return
+	 */
+	public String[] parameters() {
+		ParameterCollection pc = c.getParameters();
+		if (pc == null)
+			return null;
+		
+		Parameter[] pars = pc.getParameters();
+		String[] names = new String[pars.length];
+		for (int i = 0; i < pars.length; i++) {
+			names[i] = pars[i].getName();
+		}
+		
+		return names;
+	}
+	
+	
+	/**
+	 * Sets the value of the given parameter
+	 * @param parName
+	 * @param value
+	 */
+	public void setParameterValue(String parName, double value) {
+		ParameterCollection pc = c.getParameters();
+		if (pc == null)
+			return;
+		
+		Parameter p = pc.getParameter(parName);
+		if (p == null)
+			return;
+		
+		p.setValue(value);
+	}
+	
+	
+	/**
+	 * Returns the values of the given variable 
+	 * @param varName
+	 * @return
+	 */
+	public Double getVariableValue(String varName) {
+		ProxyVariable v = c.getVariable(varName);
+		if (v == null)
+			return null;
+		
+		Object val = v.getValue();
+		if (val instanceof Double)
+			return (Double) val;
+		
+		return null;
+	}
+	
 	
 	
 	/**
