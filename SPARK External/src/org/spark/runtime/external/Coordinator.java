@@ -616,7 +616,7 @@ public class Coordinator {
 		
 		// Load control parameters
 		Node controlNode = XmlDocUtils.getChildByTagName(interfaceNode, "control-panel");
-		if (controlNode != null) {
+		if (controlNode != null && controlPanel != null) {
 			controlPanel.init(controlNode);
 		}
 		
