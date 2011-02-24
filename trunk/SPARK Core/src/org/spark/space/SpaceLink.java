@@ -62,6 +62,28 @@ public class SpaceLink extends Link {
 	
 	
 	/**
+	 * Returns the first point to which the link is connected
+	 * @return
+	 */
+	public Vector getPoint1() {
+		if (end1 == null)
+			return null;
+		return ((SpaceAgent) end1).getPosition();
+	}
+	
+	
+	/**
+	 * Returns the second point to which the link is connected
+	 * @return
+	 */
+	public Vector getPoint2() {
+		if (end2 == null)
+			return null;
+		return ((SpaceAgent) end2).getPosition();
+	}
+	
+	
+	/**
 	 * Returns a vector-distance (componentwise distance)
 	 * between connected agents
 	 * @return null if one or both ends are not initialized

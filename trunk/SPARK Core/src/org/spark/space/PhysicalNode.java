@@ -142,7 +142,7 @@ public class PhysicalNode extends CircleNode {
 	
 	
 	/**
-	 * Sets the collision category
+	 * Adds the collision category
 	 * @param category
 	 */
 	public void addCollisionCategory(int category) {
@@ -157,6 +157,26 @@ public class PhysicalNode extends CircleNode {
 				fd.categoryBits |= 1 << category;
 				shape.setFilterData(fd);
 			}
+		}
+	}
+	
+	
+	/**
+	 * Sets the collision category
+	 * @param category
+	 */
+	public void setCollisionCategory(int category) {
+		if (category < 0 || category >= 16)
+			return;
+		
+		if (body != null) {
+			FilterData fd = new FilterData();
+			
+			for (Shape shape = body.getShapeList(); shape != null; shape = shape.getNext()) {
+				fd.set(shape.getFilterData());
+				fd.categoryBits = 1 << category;
+				shape.setFilterData(fd);
+			}			
 		}
 	}
 	

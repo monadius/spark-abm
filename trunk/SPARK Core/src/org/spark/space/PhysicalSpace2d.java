@@ -8,6 +8,8 @@ import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.World;
+import org.jbox2d.dynamics.joints.Joint;
+import org.jbox2d.dynamics.joints.JointDef;
 
 /**
  * Experimental physical 2d space
@@ -79,6 +81,24 @@ public class PhysicalSpace2d extends StandardSpace {
 			b.createShape(sd);
 		}
 
+	}
+	
+	
+	/**
+	 * Creates a joint
+	 * @param jd
+	 */
+	public Joint createJoint(JointDef jd) {
+		return world.createJoint(jd);
+	}
+	
+	
+	/**
+	 * Destroy the joint
+	 * @param j
+	 */
+	public void destroyJoint(Joint j) {
+		world.destroyJoint(j);
 	}
 	
 	
