@@ -86,6 +86,7 @@ public class PhysicalNode extends CircleNode {
 		
 		body = world.createBody(bd);
 		body.createShape(cd);
+		body.setUserData(this);
 		
 		if (dynamicFlag)
 			body.setMassFromShapes();
