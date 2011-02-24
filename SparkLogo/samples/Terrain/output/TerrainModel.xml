@@ -88,6 +88,7 @@
       <datalayer color1="0.0;0.0;0.0" color2="0.0;0.0;1.0" name="K-grid" val1="0.0" val2="1.0"/>
     </data-layers>
     <methods-panel location="Methods"/>
+  
   <control-panel delay="8" freq="4"/>
   </interface>
 </spark>

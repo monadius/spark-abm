@@ -2,15 +2,15 @@
 	<spark-core-path>C:\Work\My Projects\SPARK\Spark\release\spark-core.jar</spark-core-path>
 	<spark-external-path>C:\Work\My Projects\SPARK\Spark\release\spark-external.jar</spark-external-path>
 	<recent-projects>
-		<file>C:\Work\My Projects\SPARK\SparkLogo\samples\Terrain\Terrain.xml</file>
-		<file>C:\Work\My Projects\SPARK\SparkLogo\Models\RSV multiple spaces\RSV multiple spaces.xml</file>
-		<file>C:\Work\My Projects\SPARK\SparkLogo\samples\ToyInfectionModel\ToyInfectionModel Project.xml</file>
 		<file>C:\Work\My Projects\SPARK\SparkLogo\Models\DROD\DROD.xml</file>
 		<file>C:\Work\My Projects\SPARK\SparkLogo\Models\War2\War2Model.xml</file>
-		<file>C:\Work\My Projects\SPARK\SparkLogo\samples\Equations\EquationsModel.xml</file>
-		<file>C:\Work\My Projects\SPARK\SparkLogo\samples\Physical 3d Model\Physical 3d Model.xml</file>
-		<file>C:\Work\My Projects\SPARK\SparkLogo\samples\Multiple Spaces\Multiple Spaces.xml</file>
-		<file>C:\Work\My Projects\SPARK\SparkLogo\Models\Test3d\Test3d.xml</file>
+		<file>C:\Work\My Projects\SPARK\SparkLogo\Models\BloodVesselEq\BloodVesselEq.xml</file>
+		<file>C:\Work\My Projects\SPARK\SparkLogo\Models\RSV\RSV Project.xml</file>
+		<file>C:\Work\My Projects\SPARK\SparkLogo\Models\RSV multiple spaces\RSV multiple spaces.xml</file>
+		<file>C:\Work\My Projects\SPARK\SparkLogo\Models\SCI2\SCI2 Project.xml</file>
+		<file>C:\Work\My Projects\SPARK\SparkLogo\Models\BloodVesselEq\BloodVesselEq1.xml</file>
+		<file>C:\Work\My Projects\SPARK\SparkLogo\Models\SCI-BloodVesselEq\SCI-BloodVesselEq.xml</file>
+		<file>C:\Work\My Projects\SPARK\SparkLogo\Models\BMS\BMS Model.xml</file>
 		<file>C:\Work\My Projects\SPARK\SparkLogo\samples\ControlDemo\ControlDemo.xml</file>
 	</recent-projects>
 </config>

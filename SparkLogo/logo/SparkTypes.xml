@@ -765,6 +765,28 @@
             	</translation>
             </method> 
        	</type>
+       	
+       	
+       	
+       	<type name = "DistanceJoint" parent = "Link">
+			<javaname>DistanceJointLink</javaname>
+
+			<field name = "anchor1" type = "vector">
+				<set>@@object.setAnchor1(@@value)</set>
+			</field>			
+
+			<field name = "anchor2" type = "vector">
+				<set>@@object.setAnchor2(@@value)</set>
+			</field>
+			
+			<method name = "params">
+				<argument name = "freq" type = "double"/>
+				<argument name = "damping" type = "double"/>
+				<translation>
+					@@object.setParams((float) @freq, (float) @damping)
+				</translation>
+			</method>			
+       	</type>
 		
 		
         <type name = "SpaceAgent" parent = "Agent">
@@ -841,6 +863,13 @@
                 	<set>((PhysicalNode)@@object.getNode()).changeShape(@@value)</set>
                 </field>
                 
+                
+                <method name = "set-collision-category">
+                	<argument name = "category" type = "double"/>
+                   	<translation>
+                		((PhysicalNode) @@object.getNode()).setCollisionCategory((int) @category)
+                	</translation>
+                </method>
                 
                 <method name = "add-collision-category">
                 	<argument name = "category" type = "double"/>

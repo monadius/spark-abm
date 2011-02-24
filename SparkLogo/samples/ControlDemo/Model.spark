@@ -1,3 +1,6 @@
+agent MyLink : DistanceJoint
+
+
 agent SimpleAgent : SpaceAgent
 
 
@@ -5,22 +8,29 @@ to create
 	super 0.4 dynamic-circle
 	color = green
 
-	add-collision-category 1
-	add-collision-mask 2
-	remove-collision-mask 1
-	remove-collision-mask 2
-
-	
 	shape = create-rect 0.6 0.3
 	rotation = random 4
 ;	shape = create-circle 0.5
 
+	set-collision-category 1
 end
 
 
 to step
 	apply-force [0,-9,0]
 end
+
+
+agent Agent2 : SpaceAgent
+
+to create
+	super 0.5 dynamic-circle
+	color = red
+
+	set-collision-category 2
+	remove-collision-mask 2
+end
+
 
 
 model ControlDemo
@@ -40,6 +50,14 @@ to begin-step
 			move-to event.position
 		]
 	]
+	
+	if event.event-type == "RBUTTON_DOWN"
+	[
+		ask create-one Agent2
+		[
+			move-to event.position
+		]
+	]
 end
 
 
@@ -47,6 +65,20 @@ to setup
 	ask create SimpleAgent 10
 	[
 		set-random-position
+	]
+	
+	
+	var a = agents SimpleAgent
+	var prev = get a 0
+	
+	for i = 1 : count a - 1
+	[
+		ask create-one MyLink
+		[
+			connect prev (get a i)
+		]
+		
+		prev = get a i
 	]
 end
 
