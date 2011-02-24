@@ -6,6 +6,7 @@ import org.jbox2d.collision.AABB;
 import org.jbox2d.collision.CircleDef;
 import org.jbox2d.collision.CircleShape;
 import org.jbox2d.collision.CollideCircle;
+import org.jbox2d.collision.CollidePoly;
 import org.jbox2d.collision.Manifold;
 import org.jbox2d.collision.PolygonDef;
 import org.jbox2d.collision.PolygonShape;
@@ -177,6 +178,101 @@ public class PhysicalSpace2d extends StandardSpace {
 	
 	
 	
+	/**
+	 * Gets all agents intersecting with the given space node
+	 * @param node
+	 * @return
+	 */
+	@Override
+	protected ArrayList<SpaceAgent> getAgents(SpaceNode node) {
+		ArrayList<SpaceAgent> result = new ArrayList<SpaceAgent>(10);
+		
+		Shape shape0 = null;
+		XForm x0 = null;
+
+		if (node instanceof PhysicalNode) {
+			Body body = ((PhysicalNode) node).body;
+			if (body != null) {
+				shape0 = body.getShapeList();
+				x0 = body.getXForm();
+			}
+		}
+
+		if (shape0 == null) {
+			// Create a special shape
+			double r = node.getRelativeSize();
+			Vector p = node.getPosition();
+
+			CircleDef cd = new CircleDef();
+			cd.radius = (float) r;
+		
+			shape0 = new CircleShape(cd);
+			x0 = new XForm();
+			x0.position = new Vec2((float) p.x, (float) p.y);
+		}
+
+		AABB aabb = new AABB(); 
+		shape0.computeAABB(aabb, x0);
+
+		// Get all shapes inside the AABB
+		Shape[] shapes = world.query(aabb, 10000);
+		
+		// Iterate over all shapes
+		for (Shape shape : shapes) {
+			Body b = shape.getBody();
+			if (b == null)
+				continue;
+			
+			Object data = b.getUserData();
+			if (data == null || !(data instanceof PhysicalNode))
+				continue;
+			
+			PhysicalNode n = (PhysicalNode) data;
+			SpaceAgent agent = n.agent;
+			
+			Manifold manifold = new Manifold();
+			XForm x1 = b.getXForm();
+			
+			if (shape0 instanceof CircleShape) {
+				// 0: Circle
+				CircleShape s0 = (CircleShape) shape0;
+				
+				if (shape instanceof PolygonShape) {
+					// 1: Polygon
+					CollideCircle.collidePolygonAndCircle(manifold, (PolygonShape) shape, x1, s0, x0);
+					if (manifold.pointCount > 0)
+						result.add(agent);
+				}
+				else if (shape instanceof CircleShape) {
+					// 1: Circle
+					CollideCircle.collideCircles(manifold, (CircleShape) shape, x1, s0, x0);
+					if (manifold.pointCount > 0)
+						result.add(agent);
+				}
+			}
+			else if (shape0 instanceof PolygonShape) {
+				// 0: Polygon
+				PolygonShape s0 = (PolygonShape) shape0;
+				
+				if (shape instanceof PolygonShape) {
+					// 1: Polygon
+					CollidePoly.collidePolygons(manifold, s0, x0, (PolygonShape) shape, x1);
+					if (manifold.pointCount > 0)
+						result.add(agent);
+				}
+				else if (shape instanceof CircleShape) {
+					// 1: Circle
+					CollideCircle.collidePolygonAndCircle(manifold, s0, x0, (CircleShape) shape, x1);
+					if (manifold.pointCount > 0)
+						result.add(agent);
+				}
+				
+			}
+		}
+		
+		return result;
+	}
+	
 	
 	/**
 	 * Gets all agents of the given type intersecting with the space node
@@ -189,24 +285,34 @@ public class PhysicalSpace2d extends StandardSpace {
 	protected <T extends SpaceAgent> ArrayList<T> getAgents(SpaceNode node, Class<T> type) {
 		ArrayList<SpaceAgent> result = new ArrayList<SpaceAgent>(10);
 		
+		Shape shape0 = null;
+		XForm x0 = null;
+
 		if (node instanceof PhysicalNode) {
-			// TODO: Deal with a physical node: return colliding bodies only 
+			Body body = ((PhysicalNode) node).body;
+			if (body != null) {
+				shape0 = body.getShapeList();
+				x0 = body.getXForm();
+			}
 		}
 
-		
-		double r = node.getRelativeSize();
-		Vector p = node.getPosition();
+		if (shape0 == null) {
+			// Create a special shape
+			double r = node.getRelativeSize();
+			Vector p = node.getPosition();
 
-		CircleDef cd = new CircleDef();
-		cd.radius = (float) r;
+			CircleDef cd = new CircleDef();
+			cd.radius = (float) r;
 		
-		CircleShape shape0 = new CircleShape(cd);
-		XForm x0 = new XForm();
-		x0.position = new Vec2((float) p.x, (float) p.y);
-		
-		Vec2 min = new Vec2((float)(p.x - r), (float)(p.y - r));
-		Vec2 max = new Vec2((float)(p.x + r), (float)(p.y + r));
-		AABB aabb = new AABB(min, max);
+			shape0 = new CircleShape(cd);
+			x0 = new XForm();
+			x0.position = new Vec2((float) p.x, (float) p.y);
+		}
+
+		AABB aabb = new AABB(); 
+		shape0.computeAABB(aabb, x0);
+
+		// Get all shapes inside the AABB
 		Shape[] shapes = world.query(aabb, 10000);
 		
 		// Iterate over all shapes
@@ -227,10 +333,140 @@ public class PhysicalSpace2d extends StandardSpace {
 			Manifold manifold = new Manifold();
 			XForm x1 = b.getXForm();
 			
-			if (shape instanceof PolygonShape) {
-				CollideCircle.collidePolygonAndCircle(manifold, (PolygonShape) shape, x1, shape0, x0);
-				if (manifold.pointCount > 0)
-					result.add(n.agent);
+			if (shape0 instanceof CircleShape) {
+				// 0: Circle
+				CircleShape s0 = (CircleShape) shape0;
+				
+				if (shape instanceof PolygonShape) {
+					// 1: Polygon
+					CollideCircle.collidePolygonAndCircle(manifold, (PolygonShape) shape, x1, s0, x0);
+					if (manifold.pointCount > 0)
+						result.add(agent);
+				}
+				else if (shape instanceof CircleShape) {
+					// 1: Circle
+					CollideCircle.collideCircles(manifold, (CircleShape) shape, x1, s0, x0);
+					if (manifold.pointCount > 0)
+						result.add(agent);
+				}
+			}
+			else if (shape0 instanceof PolygonShape) {
+				// 0: Polygon
+				PolygonShape s0 = (PolygonShape) shape0;
+				
+				if (shape instanceof PolygonShape) {
+					// 1: Polygon
+					CollidePoly.collidePolygons(manifold, s0, x0, (PolygonShape) shape, x1);
+					if (manifold.pointCount > 0)
+						result.add(agent);
+				}
+				else if (shape instanceof CircleShape) {
+					// 1: Circle
+					CollideCircle.collidePolygonAndCircle(manifold, s0, x0, (CircleShape) shape, x1);
+					if (manifold.pointCount > 0)
+						result.add(agent);
+				}
+				
+			}
+		}
+		
+		return (ArrayList<T>)result;
+	}
+	
+	
+	/**
+	 * Gets all agents derived from the given type intersecting with the space node
+	 * @param node
+	 * @param type
+	 * @return
+	 */
+	@Override
+	@SuppressWarnings("unchecked")
+	protected <T extends SpaceAgent> ArrayList<T> getAgentsOfKind(SpaceNode node, Class<T> kind) {
+		ArrayList<SpaceAgent> result = new ArrayList<SpaceAgent>(10);
+		
+		Shape shape0 = null;
+		XForm x0 = null;
+
+		if (node instanceof PhysicalNode) {
+			Body body = ((PhysicalNode) node).body;
+			if (body != null) {
+				shape0 = body.getShapeList();
+				x0 = body.getXForm();
+			}
+		}
+
+		if (shape0 == null) {
+			// Create a special shape
+			double r = node.getRelativeSize();
+			Vector p = node.getPosition();
+
+			CircleDef cd = new CircleDef();
+			cd.radius = (float) r;
+		
+			shape0 = new CircleShape(cd);
+			x0 = new XForm();
+			x0.position = new Vec2((float) p.x, (float) p.y);
+		}
+
+		AABB aabb = new AABB(); 
+		shape0.computeAABB(aabb, x0);
+
+		// Get all shapes inside the AABB
+		Shape[] shapes = world.query(aabb, 10000);
+		
+		// Iterate over all shapes
+		for (Shape shape : shapes) {
+			Body b = shape.getBody();
+			if (b == null)
+				continue;
+			
+			Object data = b.getUserData();
+			if (data == null || !(data instanceof PhysicalNode))
+				continue;
+			
+			PhysicalNode n = (PhysicalNode) data;
+			SpaceAgent agent = n.agent;
+			if (!kind.isInstance(agent.getClass()))
+				continue;
+			
+			Manifold manifold = new Manifold();
+			XForm x1 = b.getXForm();
+			
+			if (shape0 instanceof CircleShape) {
+				// 0: Circle
+				CircleShape s0 = (CircleShape) shape0;
+				
+				if (shape instanceof PolygonShape) {
+					// 1: Polygon
+					CollideCircle.collidePolygonAndCircle(manifold, (PolygonShape) shape, x1, s0, x0);
+					if (manifold.pointCount > 0)
+						result.add(agent);
+				}
+				else if (shape instanceof CircleShape) {
+					// 1: Circle
+					CollideCircle.collideCircles(manifold, (CircleShape) shape, x1, s0, x0);
+					if (manifold.pointCount > 0)
+						result.add(agent);
+				}
+			}
+			else if (shape0 instanceof PolygonShape) {
+				// 0: Polygon
+				PolygonShape s0 = (PolygonShape) shape0;
+				
+				if (shape instanceof PolygonShape) {
+					// 1: Polygon
+					CollidePoly.collidePolygons(manifold, s0, x0, (PolygonShape) shape, x1);
+					if (manifold.pointCount > 0)
+						result.add(agent);
+				}
+				else if (shape instanceof CircleShape) {
+					// 1: Circle
+					CollideCircle.collidePolygonAndCircle(manifold, s0, x0, (CircleShape) shape, x1);
+					if (manifold.pointCount > 0)
+						result.add(agent);
+				}
+				
 			}
 		}
 		
