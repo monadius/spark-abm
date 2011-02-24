@@ -16,10 +16,10 @@
     <about path="readme.txt"/>
     <windows>
       <window height="146" name="Parameters" visible="true" width="800" x="1352" y="72"/>
-      <window height="843" main="true" name="Main Window" visible="true" width="720" x="586" y="0"/>
+      <window height="835" main="true" name="Main Window" visible="true" width="701" x="586" y="0"/>
     </windows>
-    <mainframe control-state="2" dx="0.0" dy="0.0" location="Main Window" rot-x="20.0" rot-y="30.0" zoom="1.0">
-      <spacestyle name="space" selected="true" swapXY="false"/>
+    <mainframe control-state="2" dx="0.5" dy="-0.5" location="Main Window" rot-x="20.0" rot-y="30.0" zoom="1.0">
+      <spacestyle auto-size="false" cell-xsize="32" cell-ysize="32" name="space" selected="true" swapXY="false"/>
       <agentstyle alpha-function-value="0.0" border="true" label="false" name="Cell" position="0" texture-env="0" tile-manager="../Images/Tiles.xml" transparent="false" visible="true"/>
       <agentstyle alpha-function-value="0.0" border="true" label="false" name="Bomb" position="1" texture-env="0" tile-manager="../Images/Tiles.xml" transparent="false" visible="true"/>
     </mainframe>
@@ -29,6 +29,13 @@
     <variable-sets/>
     
     <data-layers/>
+  
+  
+  
+  
+  
+  
+  
   
   <control-panel delay="8" freq="3"/>
   </interface>

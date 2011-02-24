@@ -5,6 +5,8 @@
     <setup>ControlDemo.ControlDemo</setup>
     <agents>
       <agent name="SimpleAgent">ControlDemo.SimpleAgent</agent>
+      <agent name="Agent2">ControlDemo.Agent2</agent>
+      <agent name="MyLink">ControlDemo.MyLink</agent>
     </agents>
   </model>
   <interface>
@@ -13,8 +15,10 @@
       <window height="719" main="true" name="Main Window" visible="true" width="715" x="480" y="64"/>
     </windows>
     <mainframe control-state="2" dx="0.0" dy="0.0" location="Main Window" rot-x="20.0" rot-y="30.0" zoom="1.0">
-      <spacestyle name="space" selected="true" swapXY="false"/>
+      <spacestyle auto-size="true" cell-xsize="10" cell-ysize="10" name="space" selected="true" swapXY="false"/>
       <agentstyle alpha-function-value="0.0" border="true" label="false" name="SimpleAgent" position="0" texture-env="0" transparent="false" visible="true"/>
+      <agentstyle alpha-function-value="0.0" border="true" label="false" name="Agent2" position="1" texture-env="0" transparent="false" visible="true"/>
+      <agentstyle alpha-function-value="0.0" border="true" label="false" name="MyLink" position="2" texture-env="0" transparent="false" visible="true"/>
     </mainframe>
     
     <data-layers/>
