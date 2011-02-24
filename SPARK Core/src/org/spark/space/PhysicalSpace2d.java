@@ -3,13 +3,21 @@ package org.spark.space;
 import java.util.ArrayList;
 
 import org.jbox2d.collision.AABB;
+import org.jbox2d.collision.CircleDef;
+import org.jbox2d.collision.CircleShape;
+import org.jbox2d.collision.CollideCircle;
+import org.jbox2d.collision.Manifold;
 import org.jbox2d.collision.PolygonDef;
+import org.jbox2d.collision.PolygonShape;
+import org.jbox2d.collision.Shape;
 import org.jbox2d.common.Vec2;
+import org.jbox2d.common.XForm;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.World;
 import org.jbox2d.dynamics.joints.Joint;
 import org.jbox2d.dynamics.joints.JointDef;
+import org.spark.math.Vector;
 
 /**
  * Experimental physical 2d space
@@ -165,6 +173,68 @@ public class PhysicalSpace2d extends StandardSpace {
 			float angle = pNode.body.getAngle();
 			pNode.body.setXForm(pos, angle);
 		}
+	}
+	
+	
+	
+	
+	/**
+	 * Gets all agents of the given type intersecting with the space node
+	 * @param node
+	 * @param type
+	 * @return
+	 */
+	@Override
+	@SuppressWarnings("unchecked")
+	protected <T extends SpaceAgent> ArrayList<T> getAgents(SpaceNode node, Class<T> type) {
+		ArrayList<SpaceAgent> result = new ArrayList<SpaceAgent>(10);
+		
+		if (node instanceof PhysicalNode) {
+			// TODO: Deal with a physical node: return colliding bodies only 
+		}
+
+		
+		double r = node.getRelativeSize();
+		Vector p = node.getPosition();
+
+		CircleDef cd = new CircleDef();
+		cd.radius = (float) r;
+		
+		CircleShape shape0 = new CircleShape(cd);
+		XForm x0 = new XForm();
+		x0.position = new Vec2((float) p.x, (float) p.y);
+		
+		Vec2 min = new Vec2((float)(p.x - r), (float)(p.y - r));
+		Vec2 max = new Vec2((float)(p.x + r), (float)(p.y + r));
+		AABB aabb = new AABB(min, max);
+		Shape[] shapes = world.query(aabb, 10000);
+		
+		// Iterate over all shapes
+		for (Shape shape : shapes) {
+			Body b = shape.getBody();
+			if (b == null)
+				continue;
+			
+			Object data = b.getUserData();
+			if (data == null || !(data instanceof PhysicalNode))
+				continue;
+			
+			PhysicalNode n = (PhysicalNode) data;
+			SpaceAgent agent = n.agent;
+			if (agent.getClass() != type)
+				continue;
+			
+			Manifold manifold = new Manifold();
+			XForm x1 = b.getXForm();
+			
+			if (shape instanceof PolygonShape) {
+				CollideCircle.collidePolygonAndCircle(manifold, (PolygonShape) shape, x1, shape0, x0);
+				if (manifold.pointCount > 0)
+					result.add(n.agent);
+			}
+		}
+		
+		return (ArrayList<T>)result;
 	}
 	
 	
