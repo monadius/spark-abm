@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<spark version="1">
+  <files all="true" path="."/>
+  <model tick="1">
+    <setup>ControlDemo3.TestModel</setup>
+    <agents>
+      <agent name="SimpleAgent">ControlDemo3.SimpleAgent</agent>
+      <agent name="Agent1">ControlDemo3.Agent1</agent>
+      <agent name="TestAgent">ControlDemo3.TestAgent</agent>
+      <agent name="MyLink">ControlDemo3.MyLink</agent>
+    </agents>
+  </model>
+  <interface>
+    <about path="readme.txt"/>
+    <windows>
+      <window height="766" main="true" name="Main Window" visible="true" width="694" x="0" y="0"/>
+    </windows>
+    <mainframe control-state="2" dx="0.0" dy="0.0" location="Main Window" rot-x="20.0" rot-y="30.0" zoom="1.0">
+      <spacestyle auto-size="true" cell-xsize="10" cell-ysize="10" name="space" selected="true" swapXY="false"/>
+      <agentstyle alpha-function-value="0.0" border="true" label="false" name="MyLink" position="0" texture-env="0" transparent="false" visible="true"/>
+      <agentstyle alpha-function-value="0.0" border="true" label="false" name="Agent1" position="1" texture-env="0" transparent="false" visible="true"/>
+      <agentstyle alpha-function-value="0.0" border="true" label="false" name="TestAgent" position="2" texture-env="0" transparent="false" visible="true"/>
+      <agentstyle alpha-function-value="0.0" border="true" label="false" name="SimpleAgent" position="3" texture-env="0" transparent="false" visible="true"/>
+    </mainframe>
+    
+    <data-layers/>
+  <control-panel delay="8" freq="4"/>
+  </interface>
+</spark>

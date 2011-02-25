@@ -767,7 +767,7 @@
        	</type>
        	
        	
-       	
+       	<!-- DistanceJoint -->
        	<type name = "DistanceJoint" parent = "Link">
 			<javaname>DistanceJointLink</javaname>
 
@@ -786,6 +786,16 @@
 					@@object.setParams((float) @freq, (float) @damping)
 				</translation>
 			</method>			
+       	</type>
+       	
+       	
+       	<!-- RevoluteJoint -->
+       	<type name = "RevoluteJoint" parent = "Link">
+			<javaname>RevoluteJointLink</javaname>
+
+			<field name = "anchor" type = "vector">
+				<set>@@object.setAnchor(@@value)</set>
+			</field>			
        	</type>
 		
 		

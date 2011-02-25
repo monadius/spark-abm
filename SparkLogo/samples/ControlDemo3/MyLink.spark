@@ -1,0 +1,6 @@
+agent MyLink : RevoluteJoint
+
+
+to create
+  color = red
+end
