@@ -427,7 +427,7 @@ public class PhysicalSpace2d extends StandardSpace {
 			
 			PhysicalNode n = (PhysicalNode) data;
 			SpaceAgent agent = n.agent;
-			if (!kind.isInstance(agent.getClass()))
+			if (!kind.isInstance(agent))
 				continue;
 			
 			Manifold manifold = new Manifold();
