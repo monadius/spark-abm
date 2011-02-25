@@ -1,6 +1,7 @@
 agent MyLink : DistanceJoint
 
 
+; SimpleAgent
 agent SimpleAgent : SpaceAgent
 
 
@@ -8,7 +9,7 @@ to create
 	super 0.4 dynamic-circle
 	color = green
 
-	shape = create-rect 0.6 0.3
+	shape = create-rect 5 0.3
 	rotation = random 4
 ;	shape = create-circle 0.5
 
@@ -21,7 +22,12 @@ to step
 end
 
 
+; Agent2
 agent Agent2 : SpaceAgent
+
+var simple-agents-here : number
+var space-agents-here : number
+var agent2-here : number
 
 to create
 	super 0.5 dynamic-circle
@@ -32,11 +38,27 @@ to create
 end
 
 
+to step
+	simple-agents-here = count agents-here SimpleAgent
+	space-agents-here = count agents-here-as SpaceAgent
+	agent2-here = count agents-here Agent2
+end
 
+
+; Agent3
+agent Agent3 : SpaceAgent
+
+
+
+; Model
 model ControlDemo
 
 space PhysicalSpace2d -10 10 -10 10 false false
 
+@chart
+global collisions : number
+
+var test-agent : SpaceAgent
 
 
 to begin-step
@@ -61,8 +83,21 @@ to begin-step
 end
 
 
+to end-step
+	collisions = count agents-at SimpleAgent test-agent.position test-agent.radius
+end
+
+
 to setup
-	ask create SimpleAgent 10
+	test-agent = create-one Agent3
+	ask test-agent
+	[
+		color = blue
+		move-to [-5, -9, 0]
+		radius = 1
+	]
+
+	ask create SimpleAgent 1
 	[
 		set-random-position
 	]
