@@ -289,6 +289,9 @@ public class Project {
 		} else {
 			output = new File(projectDirectory, "output");
 		}
+		
+		// Delete all java files before producing new files
+		ProjectFile.deleteAll(model.getOutputPath(output), "java", false);
 
 		// Translate model
 		System.out.println("Creating Java code...");
@@ -346,6 +349,9 @@ public class Project {
 			return;
 		}
 
+		// Delete all .class files in the output directory
+		ProjectFile.deleteAll(output, "class", true);
+		
 		// Get all java files in the output folder and its sub-folders
 		ArrayList<File> javaFiles = ProjectFile.findAllFiles(output,
 				new FilenameFilter() {

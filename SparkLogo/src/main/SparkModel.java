@@ -264,12 +264,22 @@ public class SparkModel {
 	
 	
 	/**
+	 * Returns the output path where translated files will be created
+	 * @param basePath
+	 * @return
+	 */
+	public File getOutputPath(File basePath) {
+		return new File(basePath, getName().toJavaName());
+	}
+	
+	
+	/**
 	 * Creates java files
 	 * @param outputPath
 	 * @throws Exception
 	 */
 	public void translateToJava(File outputPath) throws Exception {
-		outputPath = new File(outputPath, getName().toJavaName());
+		outputPath = getOutputPath(outputPath);
 		outputPath.mkdirs();
 		
 		for (Type type : userTypes.values()) {
