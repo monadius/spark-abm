@@ -205,12 +205,22 @@ public class ProjectFile {
 	 * @return
 	 */
 	public static String getExtension(File f) {
+		return getExtension(f.getName());
+	}
+	
+	
+	
+	/**
+	 * Returns the extension of the given name
+	 * @param name
+	 * @return
+	 */
+	public static String getExtension(String name) {
         String ext = "";
-        String s = f.getName();
-        int i = s.lastIndexOf('.');
+        int i = name.lastIndexOf('.');
 
-        if (i > 0 &&  i < s.length() - 1) {
-            ext = s.substring(i+1).toLowerCase();
+        if (i > 0 &&  i < name.length() - 1) {
+            ext = name.substring(i+1).toLowerCase();
         }
         
         return ext;
@@ -250,6 +260,26 @@ public class ProjectFile {
 		}
 			
 		return files;
+	}
+	
+	
+	/**
+	 * Deletes all files in the given directory with the given extension
+	 * @param directory
+	 * @param extension
+	 */
+	public static void deleteAll(File directory, final String extension, boolean recursive) {
+		ArrayList<File> files = findAllFiles(directory, new FilenameFilter() {
+			@Override
+			public boolean accept(File dir, String name) {
+				String ext = getExtension(name);
+				return ext.equals(extension);
+			}
+		}, recursive);
+		
+		for (File file : files) {
+			file.delete();
+		}
 	}
 	
 	

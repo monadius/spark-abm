@@ -1854,7 +1854,7 @@
         	<argument name = "deviation" type = "double"/>
         
         	<translation>
-        		Random.getNormalDouble(@mean, @deviation)
+        		RandomHelper.normal(@mean, @deviation)
         	</translation>
         </reporter>
         
