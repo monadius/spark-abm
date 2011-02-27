@@ -2,7 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
-	<classpathentry kind="lib" path="/Spark/lib/colt.jar" sourcepath="C:/Help/Alexey/My New Projects/Java Libraries/colt/src"/>
+	<classpathentry kind="lib" path="/Spark/lib/colt.jar" sourcepath="C:/Work/My Projects/Java Libraries/colt/src"/>
 	<classpathentry kind="lib" path="/Spark/lib/log5j-1.2.jar"/>
 	<classpathentry kind="lib" path="/Spark/lib/log4j.jar"/>
 	<classpathentry kind="output" path="bin"/>
