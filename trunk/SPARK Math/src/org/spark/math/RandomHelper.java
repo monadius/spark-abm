@@ -7,26 +7,39 @@
 package org.spark.math;
 
 import com.spinn3r.log5j.Logger;
+
+import cern.jet.random.Normal;
+import cern.jet.random.engine.MersenneTwister;
 import cern.jet.random.engine.RandomEngine;
 
 /**
  * Auxiliary class for working with random numbers
  */
-// TODO: good random generator implementation
 public class RandomHelper {
+	// Logger
 	private static final Logger logger = Logger.getLogger();
 	
+	// Random seed
 	private static long rngSeed;
+	// If true then the current time is used for seeding a generator
 	private static boolean timeSeed = true;
 	
-	private static RandomEngine generator; 
+	// If true then the operations are synchronized
+	private static boolean synchronizedFlag = false;
+	
+	// The random number generator
+	private static RandomEngine generator;
+	
+	// The generator for normally distributed numbers
+	private static Normal normalGenerator;
 	
 	
     static
     {
     	logger.debug("Initializing RandomHelper class");
     	rngSeed = System.currentTimeMillis();
-        generator = new cern.jet.random.engine.MersenneTwister((int) rngSeed);
+        generator = new MersenneTwister((int) rngSeed);
+        normalGenerator = new Normal(0.0, 1.0, generator);
     }
     
     
@@ -65,12 +78,8 @@ public class RandomHelper {
     		rngSeed = System.currentTimeMillis();
     	}
 
-    	if (synchronizedFlag) {
-    		generator = new SynchronizedMersenneTwister((int) rngSeed);
-    	}
-    	else {
-    		generator = new cern.jet.random.engine.MersenneTwister((int) rngSeed);
-    	}
+    	RandomHelper.synchronizedFlag = synchronizedFlag;
+   		generator = new MersenneTwister((int) rngSeed);
     }
     
     
@@ -89,7 +98,12 @@ public class RandomHelper {
 	 * @return a random number
 	 */
 	public static double nextDoubleFromTo(double a, double b) {
-//		return Math.random() * (b - a) + a;
+		if (synchronizedFlag) {
+			synchronized (RandomHelper.class) {
+				return generator.nextDouble() * (b - a) + a;
+			}
+		}
+		
 		return generator.nextDouble() * (b - a) + a;
 	}
 	
@@ -100,7 +114,12 @@ public class RandomHelper {
 	 * @return
 	 */
 	public static double random(double number) {
-//		return Math.random() * number;
+		if (synchronizedFlag) {
+			synchronized (RandomHelper.class) {
+				return generator.nextDouble() * number;
+			}
+		}
+		
 		return generator.nextDouble() * number;
 	}
 	
@@ -110,6 +129,12 @@ public class RandomHelper {
 	 * @return
 	 */
 	public static double random() {
+		if (synchronizedFlag) {
+			synchronized (RandomHelper.class) {
+				return generator.nextDouble();
+			}
+		}
+		
 		return generator.nextDouble();
 	}
 	
@@ -121,7 +146,45 @@ public class RandomHelper {
 	 * @return a random number
 	 */
 	public static double random(double a, double b) {
-//		return Math.random() * (b - a) + a; 
+		if (synchronizedFlag) {
+			synchronized (RandomHelper.class) {
+				return generator.nextDouble() * (b - a) + a;
+			}
+		}
+
 		return generator.nextDouble() * (b - a) + a;
 	}
+
+	
+	/**
+	 * Returns a normally distributed random number with the parameters (0,1)
+	 * @return
+	 */
+	public static double normal() {
+		if (synchronizedFlag) {
+			synchronized (RandomHelper.class) {
+				return normalGenerator.nextDouble();
+			}
+		}
+		
+		return normalGenerator.nextDouble();
+	}
+	
+	
+	/**
+	 * Returns a normally distributed random number with the given
+	 * mean and standard deviation
+	 */
+	public static double normal(double mean, double std) {
+		if (synchronizedFlag) {
+			synchronized (RandomHelper.class) {
+				return normalGenerator.nextDouble(mean, std);
+			}
+		}
+
+		return normalGenerator.nextDouble(mean, std);
+	}
 }
+
+
+
