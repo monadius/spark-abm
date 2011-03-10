@@ -797,6 +797,28 @@
 				<set>@@object.setAnchor(@@value)</set>
 			</field>			
        	</type>
+       	
+       	
+       	<!-- PrismaticJoint -->
+       	<type name = "PrismaticJoint" parent = "Link">
+			<javaname>PrismaticJointLink</javaname>
+
+			<field name = "anchor" type = "vector">
+				<set>@@object.setAnchor(@@value)</set>
+			</field>
+			
+			<field name = "axis" type = "vector">
+				<set>@@object.setAxis(@@value)</set>
+			</field>
+			
+			<field name = "lower-limit" type = "double">
+				<set>@@object.setLowerLimit(@@value)</set>
+			</field>			
+			
+			<field name = "upper-limit" type = "double">
+				<set>@@object.setUpperLimit(@@value)</set>
+			</field>
+       	</type>
 		
 		
         <type name = "SpaceAgent" parent = "Agent">
