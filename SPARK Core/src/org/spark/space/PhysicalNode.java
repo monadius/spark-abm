@@ -83,6 +83,8 @@ public class PhysicalNode extends CircleNode {
 		BodyDef bd = new BodyDef();
 //		bd.isBullet = true;
 		bd.allowSleep = true;
+//		bd.linearDamping = 0.01f;
+//		bd.angularDamping = 0.01f;
 		
 		body = world.createBody(bd);
 		body.createShape(cd);
