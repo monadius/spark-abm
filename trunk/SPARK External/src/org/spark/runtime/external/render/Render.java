@@ -240,17 +240,17 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
 	 * Saves a snapshot to an automatically generated file
 	 */
 	public synchronized final void takeSnapshot(final DataRow row, final String prefix) {
+		final File dir = Coordinator.getInstance().getOutputDir();
+		
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				if (row == null)
 					return;
 				
-				File dir;
 				String name = (prefix != null ? prefix : "");
 				name += (renderName != null && renderName != "") ? renderName : "pic";
 				name += "-" + row.getTime().getTick();
 
-				dir = Coordinator.getInstance().getOutputDir();
 				saveSnapshot(dir, name, row);
 			}
 		});
@@ -562,17 +562,17 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
 	public static Render createRender(Node node, int renderType, int interval,
 			HashMap<String, DataLayerStyle> dataLayerStyles,
 			HashMap<String, String> agentTypesAndNames,
-			File modelPath) {
+			File modelPath, boolean noGUI) {
 		Render render = null;
 		if (renderType == Render.JOGL_RENDER) {
 			try {
 				render = new JOGLRender(interval);
 			} catch (Exception e) {
 				e.printStackTrace();
-				render = new JavaRender(interval);
+				render = new JavaRender(interval, noGUI);
 			}
 		} else {
-			render = new JavaRender(interval);
+			render = new JavaRender(interval, noGUI);
 		}
 		
 		// Load general properties

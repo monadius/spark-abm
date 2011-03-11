@@ -52,10 +52,12 @@ public class JavaRender extends Render {
 	/**
 	 * Internal constructor
 	 */
-	JavaRender(int interval) {
+	JavaRender(int interval, boolean noGUI) {
 		super(interval);
 		logger.info("Initializing JavaRender");
-		canvas = new JavaRenderCanvas(this);
+		
+		if (!noGUI)
+			canvas = new JavaRenderCanvas(this);
 	}
 
 	@Override
@@ -74,8 +76,8 @@ public class JavaRender extends Render {
 	@Override
 	public void saveSnapshot(File dir, String fname, DataRow data) {
 		// Default values of width and height
-		int w = 500;
-		int h = 500;
+		int w = 800;
+		int h = 800;
 		
 		if (canvas != null) {
 			w = canvas.getWidth();
@@ -540,7 +542,10 @@ public class JavaRender extends Render {
 		int spaceIndex = spaces.getIndices()[index];
 		
 		// TODO: call it when necessary only
-		reshape(0, 0, canvas.getWidth(), canvas.getHeight());
+		if (canvas != null)
+			reshape(0, 0, canvas.getWidth(), canvas.getHeight());
+		else
+			reshape(0, 0, 800, 800);
 
 		// Apply transformations
 		g.transform(transform);

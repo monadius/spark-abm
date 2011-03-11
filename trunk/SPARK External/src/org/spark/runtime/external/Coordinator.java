@@ -621,8 +621,19 @@ public class Coordinator {
 		}
 		
 		
-		if (windowManager == null)
+		// If windoManager == null (noGUI == true) then load renderers only
+		if (windowManager == null) {
+			ArrayList<Node> renders = XmlDocUtils.getChildrenByTagName(interfaceNode, "renderframe");
+			Node mainRender = XmlDocUtils.getChildByTagName(interfaceNode, "mainframe");
+			if (mainRender != null)
+				renders.add(mainRender);
+			
+			for (Node render : renders) {
+				createRender(render, configuration.getRenderType());
+			}
+			
 			return;
+		}
 		
 		XML_WindowsLoader.loadWindows(windowManager, interfaceNode);
 		
@@ -812,13 +823,13 @@ public class Coordinator {
 	 * @return
 	 */
 	public synchronized Render createRender(Node node, int renderType) {
-		if (noGUI)
-			return null;
+//		if (noGUI)
+//			return null;
 		
 		int interval = (delayTime < 0) ? -delayTime : 1;
 		
 		Render render = Render.createRender(node, renderType, interval, dataLayerStyles,
-				agentTypesAndNames, currentDir);
+				agentTypesAndNames, currentDir, noGUI);
 
 		render.updateDataFilter();
 		render.register(receiver);
@@ -833,8 +844,8 @@ public class Coordinator {
 	 * Invokes the update method for all active renders
 	 */
 	public synchronized void updateAllRenders() {
-		if (noGUI)
-			return;
+//		if (noGUI)
+//			return;
 		
 		for (Render render : renders) {
 			render.update();
