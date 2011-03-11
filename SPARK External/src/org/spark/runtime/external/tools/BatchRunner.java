@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.PropertyConfigurator;
+import org.jfree.util.Log;
 
 import org.spark.runtime.external.Coordinator;
 import org.spark.runtime.external.Parameter;
@@ -20,164 +21,168 @@ import org.w3c.dom.Node;
 
 import com.spinn3r.log5j.Logger;
 
-
-
 /**
  * Model description
+ * 
  * @author Alexey
- *
+ * 
  */
 class Model {
 	private static final Logger logger = Logger.getLogger();
-	
+
 	private final File modelFile;
 	private final ArrayList<Batch> batches;
-	
-	
+
 	/**
 	 * Loads a model description from the given xml node
+	 * 
 	 * @param node
 	 */
 	public Model(Node node, File basePath) throws Exception {
 		String path = XmlDocUtils.getValue(node, "path", null);
-		
+
 		if (path == null)
-			throw new Exception("Attribute 'path' does not exist for a 'model' node");
-		
+			throw new Exception(
+					"Attribute 'path' does not exist for a 'model' node");
+
 		modelFile = new File(basePath, path);
 		if (!modelFile.exists())
-			throw new Exception("The model file " + modelFile + " does not exist");
-		
+			throw new Exception("The model file " + modelFile
+					+ " does not exist");
+
 		// Load batches
 		ArrayList<Node> bb = XmlDocUtils.getChildrenByTagName(node, "batch");
 		batches = new ArrayList<Batch>(bb.size());
-		
+
 		for (Node b : bb) {
 			Batch batch = new Batch(b);
 			batches.add(batch);
 		}
 	}
-	
-	
 
 	/**
 	 * Runs all batches for the model
 	 */
 	public void run() {
 		logger.info("Model: " + modelFile);
-		
+
 		int i = 1;
 		for (Batch batch : batches) {
-			logger.info("Batch " + i +  " of " + batches.size());
-			
+			logger.info("Batch " + i + " of " + batches.size());
+
 			// Load model
 			Coordinator.getInstance().loadModel(modelFile);
-			
+
 			if (!Coordinator.getInstance().isModelLoaded()) {
 				logger.error("Model cannot be loaded");
 				break;
 			}
-			
+
 			// Start a batch run
 			batch.start();
-			
+
 			i++;
 		}
-		
+
 	}
-	
-	
-	
+
 }
-
-
 
 /**
  * Batch description
+ * 
  * @author Alexey
- *
+ * 
  */
 class Batch {
 	private static final Logger logger = Logger.getLogger();
-	
+
 	private final long ticks;
 	private final int repetitions;
 	private final boolean saveData;
 	private final String dataFile;
 	
+	private final boolean finalSnapshot;
+	private final int snapshotInterval;
+
 	private final ArrayList<ParameterInfo> parameters;
-	
+
 	private final Object lock = new Object();
-	
+
 	/**
 	 * Description of a parameter
+	 * 
 	 * @author Alexey
-	 *
+	 * 
 	 */
 	private static class ParameterInfo {
 		private final String name;
 		private final double start;
 		private final double end;
 		private final double step;
-		
-		
+
 		/**
 		 * Loads a parameter from the given node
+		 * 
 		 * @param node
 		 */
 		public ParameterInfo(Node node) throws Exception {
 			name = XmlDocUtils.getValue(node, "name", null);
 			if (name == null)
 				throw new Exception("Undefined parameter name");
-			
+
 			start = XmlDocUtils.getDoubleValue(node, "start", 0);
 			end = XmlDocUtils.getDoubleValue(node, "end", 0);
 			step = XmlDocUtils.getDoubleValue(node, "step", 1);
 		}
-		
-		
+
 		/**
 		 * Adds the parameter to the sweep controller
+		 * 
 		 * @param sweep
 		 */
 		public void addParameter(ParameterSweep sweep) {
-			Parameter p = Coordinator.getInstance().getParameters().getParameter(name);
+			Parameter p = Coordinator.getInstance().getParameters()
+					.getParameter(name);
 			if (p == null) {
 				logger.error("Undefined parameter " + name);
 				return;
 			}
-			
+
 			sweep.addParameter(p, start, end, step);
 		}
 	}
-	
-	
+
 	/**
 	 * Creates a batch from the given xml node
+	 * 
 	 * @param node
 	 */
 	public Batch(Node node) {
 		ticks = XmlDocUtils.getIntegerValue(node, "ticks", 100);
 		repetitions = XmlDocUtils.getIntegerValue(node, "repetitions", 1);
+		
 		saveData = XmlDocUtils.getBooleanValue(node, "save-data", true);
 		dataFile = XmlDocUtils.getValue(node, "data-file", "data");
 
+		finalSnapshot = XmlDocUtils.getBooleanValue(node, "final-snapshot", true);
+		snapshotInterval = XmlDocUtils.getIntegerValue(node, "snapshot-interval", 0);
+
 		// Load parameters
-		ArrayList<Node> pars = XmlDocUtils.getChildrenByTagName(node, "parameter");
+		ArrayList<Node> pars = XmlDocUtils.getChildrenByTagName(node,
+				"parameter");
 		parameters = new ArrayList<ParameterInfo>(pars.size());
-		
+
 		for (Node p : pars) {
 			try {
 				ParameterInfo pInfo = new ParameterInfo(p);
 				parameters.add(pInfo);
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				logger.error(e);
 			}
 		}
 	}
-	
-	
+
 	/**
 	 * Starts the batch run process
 	 */
@@ -190,49 +195,53 @@ class Batch {
 		}
 
 		// Create batch run controller
-		BatchRunController batchRunController = new BatchRunController(repetitions, ticks, dataFile);
+		BatchRunController batchRunController = new BatchRunController(
+				repetitions, ticks, dataFile);
 		batchRunController.setSaveDataFlag(saveData);
-		
+		batchRunController.setSaveFinalSnapshotsFlag(finalSnapshot);
+
 		batchRunController.setParameterSweepController(sweep);
-//		batchRunController.setDataAnalyzer(dataAnalyzer, varName);
-		
-		batchRunController.initOutputFolder(Coordinator.getInstance().getCurrentDir());
-		
+		// batchRunController.setDataAnalyzer(dataAnalyzer, varName);
+
+		batchRunController.initOutputFolder(Coordinator.getInstance()
+				.getCurrentDir());
+
 		// Change parameters before setup method is called
 		sweep.setInitialValuesAndAdvance();
-		
-		BatchRunManager batchManager = new BatchRunManager(batchRunController, null);
+
+		BatchRunManager batchManager = new BatchRunManager(batchRunController,
+				null);
 		batchManager.addBatchRunEnded(new BatchRunManager.BatchRunEnded() {
 			@Override
 			public void finished(int flag) {
-				synchronized(lock) {
+				synchronized (lock) {
 					lock.notifyAll();
 				}
 			}
 		});
 
-		synchronized(lock) {
+
+		final boolean saveSnapshots = snapshotInterval > 0;
+
+		synchronized (lock) {
 			// Start a batch run process
-			batchManager.start(false, 0);
-		
+			batchManager.start(saveSnapshots, snapshotInterval);
+
 			// Block until finished
 			try {
 				lock.wait();
-			}
-			catch (InterruptedException e) {
+			} catch (InterruptedException e) {
 				logger.error("Interrupted");
 			}
 		}
-		
-		
+
 	}
-	
+
 }
 
-
-
 /**
- * A command line tool for running batch run processes without any user interface
+ * A command line tool for running batch run processes without any user
+ * interface
  * 
  * @author Monad
  * 
@@ -240,7 +249,7 @@ class Batch {
 public class BatchRunner {
 	/* Logger */
 	private static final Logger logger = Logger.getLogger();
-	
+
 	/**
 	 * Test main method
 	 * 
@@ -251,7 +260,7 @@ public class BatchRunner {
 			System.out.println("Usage: spark-batches batchfile.xml");
 			return;
 		}
-		
+
 		// The first thing to do is to set up the logger
 		try {
 			if (new File("BatchRunner.properties").exists()) {
@@ -266,44 +275,50 @@ public class BatchRunner {
 			BasicConfigurator.configure();
 		}
 
-		// Initialize main objects
-		ModelManager_Basic manager = new ModelManager_Basic();
-		DataReceiver receiver = new DataReceiver();
+		try {
+			// Initialize main objects
+			ModelManager_Basic manager = new ModelManager_Basic();
+			DataReceiver receiver = new DataReceiver();
 
-		new Thread(manager).start();
+			new Thread(manager).start();
 
-		Coordinator.init(manager, receiver, true);
-		
-		// Load xml document
-		Document doc = XmlDocUtils.loadXmlFile(args[0]);
-		if (doc == null)
-			return;
-		
-		File basePath = new File(args[0]).getParentFile();
-		
-		Node root = doc.getFirstChild();
-		if (root == null)
-			return;
-		
-		// Load model descriptions
-		ArrayList<Node> modelNodes = XmlDocUtils.getChildrenByTagName(root, "model");
-		ArrayList<Model> models = new ArrayList<Model>(modelNodes.size());
-		
-		for (Node node : modelNodes) {
-			try {
-				Model model = new Model(node, basePath);
-				models.add(model);
+			Coordinator.init(manager, receiver, true);
+
+			// Load xml document
+			Document doc = XmlDocUtils.loadXmlFile(args[0]);
+			if (doc == null)
+				return;
+
+			File basePath = new File(args[0]).getParentFile();
+
+			Node root = doc.getFirstChild();
+			if (root == null)
+				return;
+
+			// Load model descriptions
+			ArrayList<Node> modelNodes = XmlDocUtils.getChildrenByTagName(root,
+					"model");
+			ArrayList<Model> models = new ArrayList<Model>(modelNodes.size());
+
+			for (Node node : modelNodes) {
+				try {
+					Model model = new Model(node, basePath);
+					models.add(model);
+				} catch (Exception e) {
+					logger.error(e);
+				}
 			}
-			catch (Exception e) {
-				logger.error(e);
+
+			// Run batches for all models
+			for (Model model : models) {
+				model.run();
 			}
+		} catch (Exception e) {
+			Log.error(e);
+		} finally {
+			// FIXME: make good exit without sleeping for finishing work
+			Thread.sleep(1000);
+			System.exit(0);
 		}
-		
-		// Run batches for all models
-		for (Model model : models) {
-			model.run();
-		}
-		
-		System.exit(0);
 	}
 }
