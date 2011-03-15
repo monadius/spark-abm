@@ -15,12 +15,15 @@ import org.spark.math.Vector;
  * The basic implementation of the data layer interface
  * Values are stored inside cells of a grid of the given dimension 
  */
-public class Grid implements AdvancedDataLayer {
+public class GridWithBorder implements AdvancedDataLayer {
 	private static final long serialVersionUID = -1581695024221018527L;
 	// Reference to the space object
 	protected transient Space	space;
 	// Dimension of the grid
 	protected int xSize, ySize;
+	// TODO: non-symmetric borders: left, right, top, bottom
+	// Dimension of the border which is not processed by this Grid
+	protected int xBorder, yBorder;
 	// Topology of the grid
 	protected boolean wrapX, wrapY;
 	protected double xMin, xMax, yMin, yMax;
@@ -43,7 +46,7 @@ public class Grid implements AdvancedDataLayer {
 	private double colorScale = 10;
 	
 	
-	protected Grid(Space space0, int xSize, int ySize) {
+	protected GridWithBorder(Space space0, int xSize, int ySize) {
 		assert(xSize > 0 && ySize > 0);
 		assert(space0 != null);
 		
@@ -74,6 +77,25 @@ public class Grid implements AdvancedDataLayer {
 		writeData = data;
 	}
 
+	/**
+	 * Sets the border sizes of the grid
+	 * @param xBorder
+	 * @param yBorder
+	 */
+	public void setBorders(int xBorder, int yBorder) {
+		// TODO: better solution (for all function)
+		if (xBorder < 0 ||
+			yBorder < 0 ||
+			2*xBorder > xSize ||
+			2*yBorder > ySize)
+			throw new Error("Border sizes are inappropriate");
+			
+		
+		this.xBorder = xBorder;
+		this.yBorder = yBorder;
+	}
+	
+	
 
 	
 	/**
@@ -500,11 +522,12 @@ public class Grid implements AdvancedDataLayer {
 	public double getTotalNumber() {
 		double v = 0;
 		
-		for (int i = 0; i < xSize; i++) {
-			double[] data = readData[i];
-			for (int j = 0; j < ySize; j++)
-				v += data[j];
-		}
+		int xSize2 = xSize - xBorder;
+		int ySize2 = ySize - yBorder;
+		
+		for (int i = xBorder; i < xSize2; i++)
+			for (int j = yBorder; j < ySize2; j++)
+				v += readData[i][j];
 		
 		return v;
 	}
@@ -528,20 +551,22 @@ public class Grid implements AdvancedDataLayer {
 	//************************************
 	
 	public void multiply(double value) {
-		for (int i = 0; i < xSize; i++) {
-			double[] data = writeData[i];
-			for (int j = 0; j < ySize; j++)
-				data[j] *= value;
-		}
+		int xSize2 = xSize - xBorder;
+		int ySize2 = ySize - yBorder;
+		
+		for (int i = xBorder; i < xSize2; i++)
+			for (int j = yBorder; j < ySize2; j++)
+				writeData[i][j] *= value;
 	}
 	
 	
 	public void add(double value) {
-		for (int i = 0; i < xSize; i++) {
-			double[] data = writeData[i];
-			for (int j = 0; j < ySize; j++)
-				data[j] += value;
-		}
+		int xSize2 = xSize - xBorder;
+		int ySize2 = ySize - yBorder;
+		
+		for (int i = xBorder; i < xSize2; i++)
+			for (int j = yBorder; j < ySize2; j++)
+				writeData[i][j] += value;
 	}
 	
 	
@@ -605,28 +630,43 @@ public class Grid implements AdvancedDataLayer {
 	}
 	
 	
-	/**
-	 * Diffusion operation
-	 */
 	public void diffuse(double p) {
 		assert(0 <= p && p <= 1);
 		
 		double q = p / 8;
 		// TODO: better implementation with borders (and without them)
+		int xSize2 = xSize - xBorder;
+		int ySize2 = ySize - yBorder;
+		
 		// Create a temporary buffer for diffused data
-
 		if (dataCopy == null)
 			dataCopy = new double[xSize][ySize];
 		else {
 			// Fill it with zeros
-			for (int i = 0; i < xSize; i++)
-				for (int j = 0; j < ySize; j++)
+			for (int i = xBorder; i < xSize2; i++)
+				for (int j = yBorder; j < ySize2; j++)
 					dataCopy[i][j] = 0;
+			
+			// The border values should be unchanged
+			for (int i = 0; i < xBorder; i++) {
+				for (int j = 0; j < ySize; j++) {
+					dataCopy[i][j] = data[i][j];
+					dataCopy[i + xSize2][j] = data[i + xSize2][j];
+				}
+			}
+
+			for (int i = 0; i < xSize; i++) {
+				for (int j = 0; j < yBorder; j++) {
+					dataCopy[i][j] = data[i][j];
+					dataCopy[i][j + ySize2] = data[i][j + ySize2];
+				}
+			}
+
 		}
+			
 		
-		
-		for (int x = 0; x < xSize; x++) {
-			for (int y = 0; y < ySize; y++) {
+		for (int x = xBorder; x < xSize2; x++) {
+			for (int y = yBorder; y < ySize2; y++) {
 				double v = data[x][y] * (1 - p);
 //				dataCopy[x][y] += data[x][y] * (1 - p);
 				
