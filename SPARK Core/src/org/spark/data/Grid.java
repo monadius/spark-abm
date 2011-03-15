@@ -609,21 +609,427 @@ public class Grid implements AdvancedDataLayer {
 	 * Diffusion operation
 	 */
 	public void diffuse(double p) {
-		assert(0 <= p && p <= 1);
-		
-		double q = p / 8;
-		// TODO: better implementation with borders (and without them)
-		// Create a temporary buffer for diffused data
-
 		if (dataCopy == null)
 			dataCopy = new double[xSize][ySize];
-		else {
+/*		else {
 			// Fill it with zeros
-			for (int i = 0; i < xSize; i++)
+			for (int i = 0; i < xSize; i++) {
+				double[] tmp = dataCopy[i];
 				for (int j = 0; j < ySize; j++)
-					dataCopy[i][j] = 0;
+					tmp[j] = 0;
+			}
+		}
+*/		
+		if (wrapX) {
+			if (wrapY)
+				diffuseTT(p);
+//				old_diffusion(p);
+			else
+				diffuseTF(p);
+		}
+		else {
+			if (wrapY)
+				diffuseFT(p);
+			else
+				diffuseFF(p);
+		}
+	}
+	
+	
+	
+	/**
+	 * Diffusion operation for the FF-topology
+	 */
+	protected void diffuseFF(final double p) {
+		final int xSize2 = xSize - 1;
+		final int ySize2 = ySize - 1;
+		final double p2 = 1 - p;
+		final double q = p / 8.0;
+
+		// TODO: it is assumed that xSize >= 2 and ySize >= 2
+		
+		// Diffusion for corners
+		// (0,0)
+		double pp = p2 + 5 * q;
+		dataCopy[0][0] = data[0][0] * pp +
+			q * (data[1][0] + data[0][1] + data[1][1]);
+		
+		// (xSize2,0)
+		dataCopy[xSize2][0] = data[xSize2][0] * pp +
+			q * (data[xSize2 - 1][0] + data[xSize2 - 1][1] + data[xSize2][1]);
+
+		// (xSize2,ySize2)
+		dataCopy[xSize2][ySize2] = data[xSize2][ySize2] * pp +
+			q * (data[xSize2 - 1][ySize2] + data[xSize2 - 1][ySize2 - 1] + data[xSize2][ySize2 - 1]);
+		
+		// (0,ySize2)
+		dataCopy[0][ySize2] = data[0][ySize2] * pp +
+			q * (data[1][ySize2] + data[1][ySize2 - 1] + data[0][ySize2 - 1]);
+		
+
+		// Diffusion for borders
+		// Left, x = 0
+		pp = p2 + 3 * q; 
+
+		double[] data1 = data[0];
+		double[] data2 = data[1];
+		double[] r = dataCopy[0];
+		for (int y = 1; y < ySize2; y++) {
+			r[y] = data1[y] * pp +
+				q * (data1[y - 1] + data1[y + 1] + 
+					 data2[y - 1] + data2[y] + data2[y + 1]);
+		}
+
+		// Right, x = xSize2
+		data1 = data[xSize2];
+		data2 = data[xSize2 - 1];
+		r = dataCopy[xSize2];
+		for (int y = 1; y < ySize2; y++) {
+			r[y] = data1[y] * pp +
+				q * (data1[y - 1] + data1[y + 1] +
+					 data2[y - 1] + data2[y] + data2[y + 1]);
 		}
 		
+		// Bottom, y = 0
+		for (int x = 1; x < xSize2; x++) {
+			dataCopy[x][0] = data[x][0] * pp +
+				q * (data[x - 1][0] + data[x + 1][0] +
+					 data[x - 1][1] + data[x][1] + data[x + 1][1]);
+		}
+		
+		// Top, y = ySize2
+		for (int x = 1; x < xSize2; x++) {
+			dataCopy[x][ySize2] = data[x][ySize2] * pp +
+				q * (data[x - 1][ySize2] + data[x + 1][ySize2] +
+				     data[x - 1][ySize2 - 1] + data[x][ySize2 - 1] + data[x + 1][ySize2 - 1]);
+		}
+
+		
+		// Diffusion for the center
+		for (int x = 1; x < xSize2; x++) {
+			double[] data0 = data[x - 1];
+			data1 = data[x];
+			data2 = data[x + 1];
+			r = dataCopy[x];
+			
+			for (int y = 1; y < ySize2; y++) {
+				r[y] = data1[y] * p2 +
+						q * (data0[y - 1] + data0[y] + data0[y + 1] +
+							 data1[y - 1] + data1[y + 1] +
+							 data2[y - 1] + data2[y] + data2[y + 1]);
+			}
+		}
+		
+		double[][]	temp = data;
+		data = dataCopy;
+		// TODO: is it correct?
+		readData = writeData = data;
+		dataCopy = temp;
+	}
+	
+	
+	/**
+	 * Diffusion operation for the FT-topology
+	 */
+	protected void diffuseFT(final double p) {
+		final int xSize2 = xSize - 1;
+		final int ySize2 = ySize - 1;
+		final double p2 = 1 - p;
+		final double q = p / 8.0;
+
+		// TODO: it is assumed that xSize >= 2 and ySize >= 2
+		
+		// Diffusion for corners
+		// (0,0)
+		double pp = p2 + 3 * q;
+		dataCopy[0][0] = data[0][0] * pp +
+			q * (data[1][0] + data[0][1] + data[1][1] + 
+				 data[0][ySize2] + data[1][ySize2]);
+		
+		// (xSize2,0)
+		dataCopy[xSize2][0] = data[xSize2][0] * pp +
+			q * (data[xSize2 - 1][0] + data[xSize2 - 1][1] + data[xSize2][1] +
+				 data[xSize2 - 1][ySize2] + data[xSize2][ySize2]);
+
+		// (xSize2,ySize2)
+		dataCopy[xSize2][ySize2] = data[xSize2][ySize2] * pp +
+			q * (data[xSize2 - 1][ySize2] + data[xSize2 - 1][ySize2 - 1] + data[xSize2][ySize2 - 1] +
+				 data[xSize2 - 1][0] + data[xSize2][0]);	
+					
+		// (0,ySize2)
+		dataCopy[0][ySize2] = data[0][ySize2] * pp +
+			q * (data[1][ySize2] + data[1][ySize2 - 1] + data[0][ySize2 - 1] +
+				 data[0][0] + data[1][0]);
+		
+
+		// Diffusion for borders
+		// Left, x = 0
+		pp = p2 + 3 * q; 
+
+		double[] data1 = data[0];
+		double[] data2 = data[1];
+		double[] r = dataCopy[0];
+		for (int y = 1; y < ySize2; y++) {
+			r[y] = data1[y] * pp +
+				q * (data1[y - 1] + data1[y + 1] + 
+					 data2[y - 1] + data2[y] + data2[y + 1]);
+		}
+
+		// Right, x = xSize2
+		data1 = data[xSize2];
+		data2 = data[xSize2 - 1];
+		r = dataCopy[xSize2];
+		for (int y = 1; y < ySize2; y++) {
+			r[y] = data1[y] * pp +
+				q * (data1[y - 1] + data1[y + 1] +
+					 data2[y - 1] + data2[y] + data2[y + 1]);
+		}
+		
+		// Bottom, y = 0
+		for (int x = 1; x < xSize2; x++) {
+			dataCopy[x][0] = data[x][0] * p2 +
+				q * (data[x - 1][0] + data[x + 1][0] +
+					 data[x - 1][1] + data[x][1] + data[x + 1][1] +
+					 data[x - 1][ySize2] + data[x][ySize2] + data[x + 1][ySize2]);
+		}
+		
+		// Top, y = ySize2
+		for (int x = 1; x < xSize2; x++) {
+			dataCopy[x][ySize2] = data[x][ySize2] * p2 +
+				q * (data[x - 1][ySize2] + data[x + 1][ySize2] +
+				     data[x - 1][ySize2 - 1] + data[x][ySize2 - 1] + data[x + 1][ySize2 - 1] +
+				     data[x - 1][0] + data[x][0] + data[x + 1][0]);
+		}
+
+		
+		// Diffusion for the center
+		for (int x = 1; x < xSize2; x++) {
+			double[] data0 = data[x - 1];
+			data1 = data[x];
+			data2 = data[x + 1];
+			r = dataCopy[x];
+			
+			for (int y = 1; y < ySize2; y++) {
+				r[y] = data1[y] * p2 +
+						q * (data0[y - 1] + data0[y] + data0[y + 1] +
+							 data1[y - 1] + data1[y + 1] +
+							 data2[y - 1] + data2[y] + data2[y + 1]);
+			}
+		}
+		
+		double[][]	temp = data;
+		data = dataCopy;
+		// TODO: is it correct?
+		readData = writeData = data;
+		dataCopy = temp;
+	}
+	
+	
+	/**
+	 * Diffusion operation for the TF-topology
+	 */
+	protected void diffuseTF(final double p) {
+		final int xSize2 = xSize - 1;
+		final int ySize2 = ySize - 1;
+		final double p2 = 1 - p;
+		final double q = p / 8.0;
+
+		// TODO: it is assumed that xSize >= 2 and ySize >= 2
+		
+		// Diffusion for corners
+		// (0,0)
+		double pp = p2 + 3 * q;
+		dataCopy[0][0] = data[0][0] * pp +
+			q * (data[1][0] + data[0][1] + data[1][1] + 
+				 data[xSize2][0] + data[xSize2][1]);
+		
+		// (xSize2,0)
+		dataCopy[xSize2][0] = data[xSize2][0] * pp +
+			q * (data[xSize2 - 1][0] + data[xSize2 - 1][1] + data[xSize2][1] +
+				 data[0][0] + data[0][1]);
+
+		// (xSize2,ySize2)
+		dataCopy[xSize2][ySize2] = data[xSize2][ySize2] * pp +
+			q * (data[xSize2 - 1][ySize2] + data[xSize2 - 1][ySize2 - 1] + data[xSize2][ySize2 - 1] +
+				 data[0][ySize2 - 1] + data[0][ySize2]);	
+					
+		// (0,ySize2)
+		dataCopy[0][ySize2] = data[0][ySize2] * pp +
+			q * (data[1][ySize2] + data[1][ySize2 - 1] + data[0][ySize2 - 1] +
+				 data[xSize2][ySize2 - 1] + data[xSize2][ySize2]);
+		
+
+		// Diffusion for borders
+		// Left, x = 0
+		pp = p2 + 3 * q; 
+
+		double[] data0 = data[xSize2];
+		double[] data1 = data[0];
+		double[] data2 = data[1];
+		double[] r = dataCopy[0];
+		for (int y = 1; y < ySize2; y++) {
+			r[y] = data1[y] * p2 +
+				q * (data0[y - 1] + data0[y] + data0[y + 1] +
+					 data1[y - 1] + data1[y + 1] + 
+					 data2[y - 1] + data2[y] + data2[y + 1]);
+		}
+
+		// Right, x = xSize2
+		data0 = data[xSize2 - 1];
+		data1 = data[xSize2];
+		data2 = data[0];
+		r = dataCopy[xSize2];
+		for (int y = 1; y < ySize2; y++) {
+			r[y] = data1[y] * p2 +
+				q * (data0[y - 1] + data0[y] + data0[y + 1] +
+					 data1[y - 1] + data1[y + 1] +
+					 data2[y - 1] + data2[y] + data2[y + 1]);
+		}
+		
+		// Bottom, y = 0
+		for (int x = 1; x < xSize2; x++) {
+			dataCopy[x][0] = data[x][0] * pp +
+				q * (data[x - 1][0] + data[x + 1][0] +
+					 data[x - 1][1] + data[x][1] + data[x + 1][1]);
+		}
+		
+		// Top, y = ySize2
+		for (int x = 1; x < xSize2; x++) {
+			dataCopy[x][ySize2] = data[x][ySize2] * pp +
+				q * (data[x - 1][ySize2] + data[x + 1][ySize2] +
+				     data[x - 1][ySize2 - 1] + data[x][ySize2 - 1] + data[x + 1][ySize2 - 1]);
+		}
+
+		
+		// Diffusion for the center
+		for (int x = 1; x < xSize2; x++) {
+			data0 = data[x - 1];
+			data1 = data[x];
+			data2 = data[x + 1];
+			r = dataCopy[x];
+			
+			for (int y = 1; y < ySize2; y++) {
+				r[y] = data1[y] * p2 +
+						q * (data0[y - 1] + data0[y] + data0[y + 1] +
+							 data1[y - 1] + data1[y + 1] +
+							 data2[y - 1] + data2[y] + data2[y + 1]);
+			}
+		}
+		
+		double[][]	temp = data;
+		data = dataCopy;
+		// TODO: is it correct?
+		readData = writeData = data;
+		dataCopy = temp;
+	}
+	
+	
+	
+	/**
+	 * Diffusion operation for the TT-topology
+	 */
+	protected void diffuseTT(final double p) {
+		final int xSize2 = xSize - 1;
+		final int ySize2 = ySize - 1;
+		final double p2 = 1 - p;
+		final double q = p / 8.0;
+
+		// TODO: it is assumed that xSize >= 2 and ySize >= 2
+		
+		// Diffusion for corners
+		// (0,0)
+		dataCopy[0][0] = p2 * data[0][0] + 
+			q *	(data[1][0] + data[1][1] + data[0][1] + data[xSize2][1] +
+				 data[xSize2][0] + data[xSize2][ySize2] + data[0][ySize2] + data[1][ySize2]);
+		
+		// (xSize2,0)
+		dataCopy[xSize2][0] = p2 * data[xSize2][0] + 
+			q *	(data[0][0] + data[0][1] + data[xSize2][1] + data[xSize2 - 1][1] +
+				 data[xSize2 - 1][0] + data[xSize2 - 1][ySize2] + data[xSize2][ySize2] + data[0][ySize2]);
+		
+		// (0,ySize2)
+		dataCopy[0][ySize2] = p2 * data[0][ySize2] + 
+			q *	(data[1][ySize2] + data[1][0] + data[0][0] + data[xSize2][0] +
+				 data[xSize2][ySize2] + data[xSize2][ySize2 - 1] + data[0][ySize2 - 1] + data[1][ySize2 - 1]);
+		
+		// (xSize2,ySize2)
+		dataCopy[xSize2][ySize2] = p2 * data[xSize2][ySize2] + 
+			q *	(data[0][ySize2] + data[0][0] + data[xSize2][0] + data[xSize2 - 1][0] +
+				 data[xSize2 - 1][ySize2] + data[xSize2 - 1][ySize2 - 1] + 
+				 data[xSize2][ySize2 - 1] + data[0][ySize2 - 1]);
+
+		// Diffusion for borders
+		// Left, x = 0
+		
+		double[] data0 = data[xSize2];
+		double[] data1 = data[0];
+		double[] data2 = data[1];
+		double[] r = dataCopy[0];
+		for (int y = 1; y < ySize2; y++) {
+			r[y] = p2 * data1[y] + 
+						q * (data0[y - 1] + data0[y] + data0[y + 1] +
+							 data1[y - 1] + data1[y + 1] +
+							 data2[y - 1] + data2[y] + data2[y + 1]);
+		}
+
+		// Right, x = xSize2
+		data0 = data[xSize2 - 1];
+		data1 = data[xSize2];
+		data2 = data[0];
+		r = dataCopy[xSize2];
+		for (int y = 1; y < ySize2; y++) {
+			r[y] = p2 * data1[y] + 
+						q * (data0[y - 1] + data0[y] + data0[y + 1] +
+							 data1[y - 1] + data1[y + 1] +
+							 data2[y - 1] + data2[y] + data2[y + 1]);
+		}
+		
+		// Bottom, y = 0
+		for (int x = 1; x < xSize2; x++) {
+			dataCopy[x][0] = p2 * data[x][0] + 
+				q * (data[x - 1][ySize2] + data[x - 1][0] + data[x - 1][1] +
+					 data[x][ySize2] + data[x][1] +
+					 data[x + 1][ySize2] + data[x + 1][0] + data[x + 1][1]);
+		}
+		
+		// Top, y = ySize2
+		for (int x = 1; x < xSize2; x++) {
+			dataCopy[x][ySize2] = p2 * data[x][ySize2] + 
+				q * (data[x - 1][ySize2 - 1] + data[x - 1][ySize2] + data[x - 1][0] +
+					 data[x][ySize2 - 1] + data[x][0] +
+					 data[x + 1][ySize2 - 1] + data[x + 1][ySize2] + data[x + 1][0]);
+		}
+		
+
+		// Diffusion for the center
+		for (int x = 1; x < xSize2; x++) {
+			data0 = data[x - 1];
+			data1 = data[x];
+			data2 = data[x + 1];
+			r = dataCopy[x];
+			
+			for (int y = 1; y < ySize2; y++) {
+				r[y] = p2 * data1[y] +
+						q * (data0[y - 1] + data0[y] + data0[y + 1] +
+							 data1[y - 1] + data1[y + 1] +
+							 data2[y - 1] + data2[y] + data2[y + 1]);
+			}
+		}
+		
+		double[][]	temp = data;
+		data = dataCopy;
+		// TODO: is it correct?
+		readData = writeData = data;
+		dataCopy = temp;
+	}
+	
+	
+	
+	
+		
+	
+	protected void old_diffusion(double p) {
+		double q = p / 8.0;
 		
 		for (int x = 0; x < xSize; x++) {
 			for (int y = 0; y < ySize; y++) {
