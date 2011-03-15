@@ -96,25 +96,23 @@ public class Grid_parallel extends Grid_concurrent {
 	//************************************
 	
 	public void multiply(double value) {
-		int xSize2 = xSize - xBorder;
-		int ySize2 = ySize - yBorder;
-		
 		synchronized (writeData) {
-			for (int i = xBorder; i < xSize2; i++)
-				for (int j = yBorder; j < ySize2; j++)
-					writeData[i][j] *= value;
+			for (int i = 0; i < xSize; i++) {
+				double[] data = writeData[i];
+				for (int j = 0; j < ySize; j++)
+					data[j] *= value;
+			}
 		}
 	}
 	
 	
 	public void add(double value) {
-		int xSize2 = xSize - xBorder;
-		int ySize2 = ySize - yBorder;
-		
 		synchronized (writeData) {
-			for (int i = xBorder; i < xSize2; i++)
-				for (int j = yBorder; j < ySize2; j++)
-					writeData[i][j] += value;
+			for (int i = 0; i < xSize; i++) {
+				double[] data = writeData[i];
+				for (int j = 0; j < ySize; j++)
+					data[j] += value;
+			}
 		}
 	}
 	
