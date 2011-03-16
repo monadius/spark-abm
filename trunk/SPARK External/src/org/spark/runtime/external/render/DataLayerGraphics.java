@@ -333,7 +333,7 @@ public class DataLayerGraphics {
 			weights[i] = layers.get(i).colorWeight / total;
 		}
 
-		// Compute the height map
+		// Compute the color map
 		Vector[][] colorMap = null;
 		
 		for (int i = 0; i < n; i++) {

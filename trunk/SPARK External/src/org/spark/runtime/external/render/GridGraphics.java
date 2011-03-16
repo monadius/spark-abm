@@ -70,6 +70,11 @@ public class GridGraphics {
 			for (int i = 0; i < xSize; i++) {
 				for (int j = 0; j < ySize; j++) {
 					t = data.getValue(i, j);
+					if (t < val1)
+						t = val1;
+					else if (t > val2)
+						t = val2;
+					
 					x = a1 + b1 * t;
 					y = a2 + b2 * t;
 					z = a3 + b3 * t;
