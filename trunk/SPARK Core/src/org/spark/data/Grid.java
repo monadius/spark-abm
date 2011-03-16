@@ -40,8 +40,6 @@ public class Grid implements AdvancedDataLayer {
 	// Auxiliary array for some computations
 	private transient double[][]	dataCopy;
 	
-	private double colorScale = 10;
-	
 	
 	protected Grid(Space space0, int xSize, int ySize) {
 		assert(xSize > 0 && ySize > 0);
@@ -189,43 +187,6 @@ public class Grid implements AdvancedDataLayer {
 	}
 
 	
-	//**************************
-	// Rendering implementation
-	//**************************
-	
-	
-	public Vector[][] getGeometry() {
-		Vector[][] data = new Vector[xSize + 1][ySize + 1];
-		
-		for (int i = 0; i <= xSize; i++) {
-			for (int j = 0; j <= ySize; j++) {
-				data[i][j] = new Vector(xMin + i*xStep, yMin + j*yStep, 0); 
-			}
-		}
-		
-		return data;
-	}
-	
-	
-	private transient Vector[][] geometry2;
-	
-	public Vector[][] getGeometry2() {
-		if (geometry2 != null)
-			return geometry2;
-
-		geometry2 = new Vector[xSize][ySize];
-
-		double xStepHalf = xStep / 2;
-		double yStepHalf = yStep / 2;
-		
-		for (int i = 0; i < xSize; i++) {
-			for (int j = 0; j < ySize; j++) {
-				geometry2[i][j] = new Vector(xMin + i*xStep + xStepHalf, yMin + j*yStep + yStepHalf, 0);
-			}
-		}
-		
-		return geometry2;
-	}
 	
 	
 	public double getXStep() {
@@ -239,100 +200,6 @@ public class Grid implements AdvancedDataLayer {
 	
 	
 
-	public Vector[][] getColors() {
-		Vector[][] data = new Vector[xSize + 1][ySize + 1];
-		double scale = 1.0 / colorScale;
-
-		for (int i = 0; i < xSize; i++) {
-			for (int j = 0; j < ySize; j++) {
-				data[i][j] = new Vector(this.readData[i][j] * scale, 0, 0);
-// 				data[i][j] = f(i, j);
-			}
-			data[i][ySize] = new Vector(this.readData[i][ySize - 1] * scale, 0, 0);
-//			data[i][ySize] = RED;
-		}
-		
-		for (int j = 0; j < ySize; j++) {
-			data[xSize][j] = new Vector(this.readData[xSize - 1][j] * scale, 0, 0);
-//			data[xSize][j] = RED;
-		}
-		data[xSize][ySize] = new Vector(this.readData[xSize - 1][ySize - 1] * scale, 0, 0);
-//		data[xSize][ySize] = RED;
-		
-		return data;
-	}
-	
-	private transient Vector[][] colors = null;
-	
-	public Vector[][] getColors(double val1, double val2, Vector color1, Vector color2) {
-		if (colors == null) {
-			colors = new Vector[xSize + 1][ySize + 1];
-			
-			for (int i = 0; i <= xSize; i++)
-				for (int j = 0; j <= ySize; j++)
-					colors[i][j] = new Vector();
-		}
-		
-		if (Math.abs(val1 - val2) < 1e-3)
-			val2 = val1 + 1;
-		
-		double x1, y1, z1;
-		double x2, y2, z2;
-		double a1, b1, a2, b2, a3, b3;
-		
-		x1 = color1.x; y1 = color1.y; z1 = color1.z;
-		x2 = color2.x; y2 = color2.y; z2 = color2.z;
-		
-		b1 = (x2 - x1) / (val2 - val1);
-		a1 = x1 - b1 * val1;
-
-		b2 = (y2 - y1) / (val2 - val1);
-		a2 = y1 - b2 * val1;
-
-		b3 = (z2 - z1) / (val2 - val1);
-		a3 = z1 - b3 * val1;
-
-		double x, y, z, t;
-		
-		for (int i = 0; i < xSize; i++) {
-			for (int j = 0; j < ySize; j++) {
-				t = readData[i][j];
-				x = a1 + b1 * t;
-				y = a2 + b2 * t;
-				z = a3 + b3 * t;
-				
-				colors[i][j].set(x, y, z);
-			}
-			
-			t = readData[i][ySize - 1];
-			x = a1 + b1 * t;
-			y = a2 + b2 * t;
-			z = a3 + b3 * t;
-
-			colors[i][ySize].set(x, y, z);
-		}
-		
-		for (int j = 0; j < ySize; j++) {
-			t = readData[xSize - 1][j];
-			x = a1 + b1 * t;
-			y = a2 + b2 * t;
-			z = a3 + b3 * t;
-
-			colors[xSize][j].set(x, y, z);
-		}
-		
-		t = readData[xSize - 1][ySize - 1];
-		x = a1 + b1 * t;
-		y = a2 + b2 * t;
-		z = a3 + b3 * t;
-
-		colors[xSize][ySize].set(x, y, z);
-		
-		return colors;
-	}
-	
-	
-	
 	
 	//************************************
 	// DataLayer interface implementation

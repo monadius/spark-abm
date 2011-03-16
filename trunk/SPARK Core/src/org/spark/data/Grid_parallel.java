@@ -26,12 +26,6 @@ public class Grid_parallel extends Grid_concurrent {
 	}
 	
 
-	// TODO: think about synchronization for this method
-	public Vector[][] getColors(double val1, double val2, Vector color1, Vector color2) {
-		return super.getColors(val1, val2, color1, color2);
-	}
-	
-	
 	//************************************
 	// DataLayer interface implementation
 	//************************************
