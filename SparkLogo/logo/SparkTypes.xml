@@ -1221,6 +1221,16 @@
                 </method>
                 
                 
+                <method name = "diffuse-with-mask">
+                	<argument name = "p" type = "double"/>
+                	<argument name = "mask" type = "grid"/>
+                	
+                	<translation>
+                		@@object.diffuse(@p, @mask)
+                	</translation>
+                </method>
+                
+                
                 
                 <!-- TODO: experimental feature (to be removed later) -->
                 <field name = "data" type = "double">
