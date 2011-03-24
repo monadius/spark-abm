@@ -473,6 +473,85 @@ public class Grid implements AdvancedDataLayer {
 	
 	
 	/**
+	 * Diffusion with a mask.
+	 * No diffusion to all cells with a positive mask value.
+	 */
+	public void diffuse(double p, Grid mask) {
+		if (mask.xSize != xSize || mask.ySize != ySize)
+			return;
+		
+		if (dataCopy == null)
+			dataCopy = new double[xSize][ySize];
+		
+		double[][] maskData = mask.getData();
+		double q = p / 8;
+		
+		for (int x = 0; x < xSize; x++) {
+			for (int y = 0; y < ySize; y++) {
+				if (maskData[x][y] > 0.0) {
+					// No diffusion
+					dataCopy[x][y] = 0.0;
+					continue;
+				}
+				
+				// n is the number of good neighbors
+				int n = 0;
+				double v = 0;
+				
+				for (int i = -1; i <= 1; i++) {
+					for (int j = -1; j <= 1; j++) {
+						int x1 = x + i;
+						int y1 = y + j;
+						
+						// Bound x1
+						if (x1 < 0) {
+							if (wrapX)
+								x1 = xSize - 1;
+							else
+								continue;
+						}
+						else if (x1 == xSize) {
+							if (wrapX)
+								x1 = 0;
+							else
+								continue;
+						}
+						
+						// Bound y1
+						if (y1 < 0) {
+							if (wrapY)
+								y1 = ySize - 1;
+							else
+								continue;
+						}
+						else if (y1 == ySize) {
+							if (wrapY)
+								y1 = 0;
+							else
+								continue;
+						}
+						
+						if (maskData[x1][y1] > 0.0)
+							continue;
+						
+						n++;
+						v += data[x1][y1];
+					} // j
+				} // i
+				
+				double pp = 1 - n * q;
+				dataCopy[x][y] = data[x][y] * pp + v * q;
+			} // y
+		} // x
+		
+		double[][] temp = data;
+		data = dataCopy;
+		readData = writeData = data;
+		dataCopy = temp;
+	}
+	
+	
+	/**
 	 * Diffusion operation
 	 */
 	public void diffuse(double p) {
