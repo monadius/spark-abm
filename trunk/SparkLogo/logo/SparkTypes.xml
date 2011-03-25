@@ -1207,6 +1207,13 @@
                 	<argument name = "point" type = "vector"/>
                 </method>
                 
+                <method name = "uphill-direction" type = "vector">
+                	<argument name = "point" type = "vector"/>
+                	<translation>
+                		@@object.getUphillDirection(@point);
+                	</translation>
+                </method>
+                
                 <!-- The next two methods are for debugging purposes only -->
                 <method name = "get-xsize" type = "double">
                 	<translation>
