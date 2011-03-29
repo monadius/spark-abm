@@ -1399,6 +1399,49 @@
 
 
         <!-- D -->
+        <command name = "delaunay-triangulation">
+        	<argument name = "list" type = "ArrayList" subtype = "SpaceAgent"/>
+        	<argument name = "linktype" type = "NameType"/>
+        	
+        	<translation>
+        		<temp name = "i"/>
+        		<temp name = "tri"/>
+        		<temp name = "v"/>
+        		<temp name = "n"/>
+        		<temp name = "e"/>
+        		<temp name = "link"/>
+        		<temp name = "a1"/>
+        		<temp name = "a2"/>
+        		
+        		int @n = @list.size();
+        		Vector[] @v = new Vector[@n];
+        		
+        		for (int @i = 0; @i &lt; @n; @i++)
+        		{
+        			@v[@i] = @list.get(@i).getPosition();
+        		}
+        		
+        		Triangulation @tri = new Triangulation(@v);
+        		try
+        		{
+        			new DelaunayTriangulation().triangulate(@tri);
+        		}
+        		catch (Exception @e) {}
+        		
+        		@n = @tri.edge.length;
+        		for (int @i = 0; @i &lt; @n; @i++)
+        		{
+        			SpaceLink @link = new @linktype();
+        			SpaceAgent @a1 = @list.get(@tri.edge[@i].s);
+        			SpaceAgent @a2 = @list.get(@tri.edge[@i].t);
+        			@link.connect(@a1, @a2); 
+        		}
+        		
+        		
+        	</translation>
+        </command>
+        
+        
         <reporter name = "distance" type = "vector">
                 <argument name = "agent1" type = "SpaceAgent"/>
                 <argument name = "agent2" type = "SpaceAgent"/>
