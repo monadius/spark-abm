@@ -5,6 +5,7 @@
     <setup>Terrain.TerrainModel</setup>
     <methods>
       <method method="mounts" name="mounts"/>
+      <method method="river" name="river"/>
       <method method="rain" name="rain"/>
       <method method="waterSource" name="water-source"/>
     </methods>
@@ -13,6 +14,7 @@
     </variables>
     <agents>
       <agent name="WaterSource">Terrain.WaterSource</agent>
+      <agent name="RiverAgent">Terrain.RiverAgent</agent>
       <agent name="RainDrop">Terrain.RainDrop</agent>
       <agent name="MountAgent">Terrain.MountAgent</agent>
       <agent name="RainAgent">Terrain.RainAgent</agent>
@@ -28,8 +30,8 @@
       <window height="300" name="Sediment" visible="false" width="300" x="1487" y="682"/>
       <window height="881" main="true" name="Main Window" visible="true" width="754" x="97" y="110"/>
     </windows>
-    <mainframe control-state="1" dx="0.0" dy="2.0" location="Main Window" rot-x="128.00014" rot-y="-175.20004" zoom="0.9">
-      <spacestyle name="space" selected="true" swapXY="false"/>
+    <mainframe control-state="1" dx="-1.5" dy="4.0" location="Main Window" rot-x="200.0" rot-y="-171.59996" zoom="0.9">
+      <spacestyle auto-size="true" cell-xsize="10" cell-ysize="10" name="space" selected="true" swapXY="false"/>
       <datalayerstyle>
         <info color-weight="1.0" height-weight="1.0" style-name="water-map"/>
         <info color-weight="0.1" height-weight="1.0" style-name="height-map"/>
@@ -38,9 +40,10 @@
       <agentstyle alpha-function-value="0.0" border="true" label="false" name="RainDrop" position="1" texture-env="0" transparent="false" visible="true"/>
       <agentstyle alpha-function-value="0.0" border="true" label="false" name="RainAgent" position="2" texture-env="0" transparent="false" visible="true"/>
       <agentstyle alpha-function-value="0.0" border="true" label="false" name="WaterSource" position="3" texture-env="0" transparent="false" visible="true"/>
+      <agentstyle alpha-function-value="0.0" border="true" label="false" name="RiverAgent" position="4" texture-env="0" transparent="false" visible="true"/>
     </mainframe>
     <renderframe control-state="0" dx="0.0" dy="0.0" location="Water" rot-x="20.0" rot-y="30.0" zoom="1.0">
-      <spacestyle name="space" selected="true" swapXY="false"/>
+      <spacestyle auto-size="true" cell-xsize="10" cell-ysize="10" name="space" selected="true" swapXY="false"/>
       <datalayerstyle>
         <info color-weight="1.0" height-weight="0.0" style-name="water-map"/>
       </datalayerstyle>
@@ -48,13 +51,14 @@
       <agentstyle alpha-function-value="0.0" border="true" label="false" name="RainDrop" position="1" texture-env="0" transparent="false" visible="true"/>
       <agentstyle alpha-function-value="0.0" border="true" label="false" name="RainAgent" position="2" texture-env="0" transparent="false" visible="true"/>
       <agentstyle alpha-function-value="0.0" border="true" label="false" name="WaterSource" position="3" texture-env="0" transparent="false" visible="true"/>
+      <agentstyle alpha-function-value="0.0" border="true" label="false" name="RiverAgent" position="4" texture-env="0" transparent="false" visible="true"/>
     </renderframe>
     <parameterframe location="Parameters">
       <parameter default="0.1" max="1.0" min="0.01" name="dt" step="0.01" type="Double" variable="dt" widget="Slider"/>
     </parameterframe>
     <variable-sets/>
     <renderframe control-state="0" dx="0.0" dy="0.0" location="flux-l" rot-x="20.0" rot-y="30.0" zoom="1.0">
-      <spacestyle name="space" selected="true" swapXY="false"/>
+      <spacestyle auto-size="true" cell-xsize="10" cell-ysize="10" name="space" selected="true" swapXY="false"/>
       <datalayerstyle>
         <info color-weight="1.0" height-weight="0.0" style-name="flux-l"/>
       </datalayerstyle>
@@ -62,9 +66,10 @@
       <agentstyle alpha-function-value="0.0" border="true" label="false" name="RainDrop" position="1" texture-env="0" transparent="false" visible="false"/>
       <agentstyle alpha-function-value="0.0" border="true" label="false" name="RainAgent" position="2" texture-env="0" transparent="false" visible="false"/>
       <agentstyle alpha-function-value="0.0" border="true" label="false" name="WaterSource" position="3" texture-env="0" transparent="false" visible="true"/>
+      <agentstyle alpha-function-value="0.0" border="true" label="false" name="RiverAgent" position="4" texture-env="0" transparent="false" visible="true"/>
     </renderframe>
     <renderframe control-state="0" dx="0.0" dy="0.0" location="Sediment" rot-x="20.0" rot-y="30.0" zoom="1.0">
-      <spacestyle name="space" selected="true" swapXY="false"/>
+      <spacestyle auto-size="true" cell-xsize="10" cell-ysize="10" name="space" selected="true" swapXY="false"/>
       <datalayerstyle>
         <info color-weight="1.0" height-weight="0.0" style-name="sediment"/>
       </datalayerstyle>
@@ -72,9 +77,11 @@
       <agentstyle alpha-function-value="0.0" border="true" label="false" name="RainDrop" position="1" texture-env="0" transparent="false" visible="false"/>
       <agentstyle alpha-function-value="0.0" border="true" label="false" name="RainAgent" position="2" texture-env="0" transparent="false" visible="false"/>
       <agentstyle alpha-function-value="0.0" border="true" label="false" name="WaterSource" position="3" texture-env="0" transparent="false" visible="true"/>
+      <agentstyle alpha-function-value="0.0" border="true" label="false" name="RiverAgent" position="4" texture-env="0" transparent="false" visible="true"/>
     </renderframe>
+    
     <data-layers>
-      <datalayer color1="0.4;0.4;0.0" color2="0.8;0.8;0.0" name="height-map" val1="0.0" val2="15.0" values-colors="0.23/0.4;0.4;0.0/0.73/0.8;0.8;0.0/"/>
+      <datalayer color1="0.4;0.4;0.0" color2="0.8;0.8;0.0" name="height-map" val1="-15.0" val2="15.0" values-colors="0.23/0.4;0.4;0.0/0.73/0.8;0.8;0.0/"/>
       <datalayer color1="0.6;0.6;0.0" color2="0.0;0.6;1.0" name="water-map" val1="0.0" val2="0.2" values-colors="0.88/0.0;0.6;0.6/0.2/0.6;0.6;0.6941176470588235/0.59/0.0;1.0;1.0/"/>
       <datalayer color1="0.4;0.4;0.4" color2="1.0;0.0;0.0" name="sediment" val1="0.0" val2="1.0"/>
       <datalayer color1="0.0;0.0;0.0" color2="0.0;0.0;1.0" name="s1" val1="0.0" val2="1.0"/>
@@ -88,7 +95,6 @@
       <datalayer color1="0.0;0.0;0.0" color2="0.0;0.0;1.0" name="K-grid" val1="0.0" val2="1.0"/>
     </data-layers>
     <methods-panel location="Methods"/>
-  
   <control-panel delay="8" freq="4"/>
   </interface>
 </spark>

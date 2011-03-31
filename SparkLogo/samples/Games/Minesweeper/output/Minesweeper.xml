@@ -29,14 +29,6 @@
     <variable-sets/>
     
     <data-layers/>
-  
-  
-  
-  
-  
-  
-  
-  
   <control-panel delay="8" freq="3"/>
   </interface>
 </spark>
