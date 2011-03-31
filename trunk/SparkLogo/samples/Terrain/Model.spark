@@ -246,6 +246,16 @@ to mounts
 	counter = 20
 end
 
+
+@external
+to river
+	ask create-one RiverAgent
+	[
+		var p = create-vector (space-xmin + 1) (space-ymin + 1) 0
+		move-to p
+	]
+end
+
 @external
 to rain
 	create-one RainAgent

@@ -896,6 +896,13 @@
                 </field>
                 
                 
+                <method name = "update-proxy">
+                	<translation>
+                		((PhysicalNode) @@object.getNode()).updateProxy()
+                	</translation>
+                </method>
+                
+                
                 <method name = "set-collision-category">
                 	<argument name = "category" type = "double"/>
                    	<translation>

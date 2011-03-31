@@ -1,0 +1,29 @@
+agent RiverAgent : SpaceAgent
+
+
+var heading
+var life
+var max-life = 100
+
+
+to create
+	heading = 30 + random 40
+	radius = 0.5
+	color = black
+	
+	life = max-life
+end
+
+
+to step
+	height-map.value -= random 0.1 + 1 + (max-life - life) * 0.05
+	
+	heading += random-in-interval -5 5
+	var dp = vector-in-direction 0.4 heading
+	move dp
+	
+	life -= 1
+	if life <= 0
+		[ die 
+			repeat 10 [ height-map.diffuse 0.2 ] ]
+end
