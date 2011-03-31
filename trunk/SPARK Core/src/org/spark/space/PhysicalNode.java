@@ -144,6 +144,33 @@ public class PhysicalNode extends CircleNode {
 	}
 	
 	
+	@Override
+	public void setRadius(double r) {
+		if (r == getRelativeSize())
+			return;
+		
+		super.setRadius(r);
+		changeShape(ShapeInfo.createCircle(getRelativeSize()));		
+	}
+	
+	
+	/**
+	 * Updates proxies for each shape attached to the node body
+	 */
+	public void updateProxy() {
+		if (body == null)
+			return;
+		
+		World world = body.getWorld();
+		if (world == null)
+			return;
+		
+		for (Shape shape = body.getShapeList(); shape != null; shape = shape.getNext()) {
+			world.refilter(shape);
+		}
+	}
+	
+	
 	/**
 	 * Adds the collision category
 	 * @param category
