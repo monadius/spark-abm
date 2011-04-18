@@ -1,12 +1,14 @@
 package org.spark.runtime.external.render;
 
-import java.awt.Image;
+import java.awt.Font;
 import java.io.File;
 import java.io.InputStream;
 
-import javax.imageio.ImageIO;
 import javax.media.opengl.GL;
 
+import org.spark.math.Vector;
+import org.spark.runtime.external.render.images.TileManager;
+import org.spark.runtime.external.render.images.TileManagerInfo;
 import org.spark.utils.FileUtils;
 import static org.spark.utils.XmlDocUtils.*;
 
@@ -39,16 +41,28 @@ public class AgentStyle implements Comparable<AgentStyle> {
 	InputStream textureStream;
 		
 	private Texture texture;
-	private Image image;
 	
 	private int blendSrc, blendDst;
 	private int alphaFunc;
 	public float alphaFuncValue;
 	private int textureEnv;
 	
+	// Indicates that a shape is rendering along with an image
+	private boolean drawShapeWithImage;
+	
+	/* Label options */
+	private Font font;
+	// null means a default font
+	private String fontFamily;
+	private int fontSize;
+	private int fontStyle;
+	private float dxLabel, dyLabel;
+	private Vector labelColor;
+	
+	
 	/* TileManager */
 	private File tileFile;
-	private TileManager tileManager;
+	private TileManagerInfo tileManager;
 	
 	
 	public static class RenderProperty {
@@ -115,6 +129,93 @@ public class AgentStyle implements Comparable<AgentStyle> {
 	}
 	
 	
+	/**
+	 * Returns a font for printing labels
+	 * @return
+	 */
+	public Font getFont() {
+		if (font == null) {
+			if (fontFamily == null)
+				font = new Font("Arial", 0, 10);
+			else
+				font = new Font(fontFamily, fontStyle, fontSize);
+		}
+		
+		return font;
+	}
+	
+	
+	/**
+	 * Sets a new font for printing labels
+	 */
+	public void setFont(String fontFamily, int fontStyle, int fontSize) {
+		this.fontFamily = fontFamily;
+		this.fontStyle = fontStyle;
+		this.fontSize = fontSize;
+		// Invalidate the existing font
+		this.font = null;
+	}
+
+	
+	
+	/**
+	 * Returns the x-offset of a label
+	 */
+	public float getLabelDx() {
+		return dxLabel;
+	}
+	
+
+	/**
+	 * Returns the y-offset of a label
+	 */
+	public float getLabelDy() {
+		return dyLabel;
+	}
+	
+	
+	/**
+	 * Sets the x and y offsets of a label
+	 * @param dx
+	 * @param dy
+	 */
+	public void setLabelOffset(float dx, float dy) {
+		this.dxLabel = dx;
+		this.dyLabel = dy;
+	}
+	
+	
+	/**
+	 * Returns the color of a label
+	 */
+	public Vector getLabelColor() {
+		return new Vector(labelColor);
+	}
+	
+	
+	/**
+	 * Sets the color of a label
+	 */
+	public void setLabelColor(Vector c) {
+		this.labelColor = new Vector(c);
+	}
+	
+	
+	/**
+	 * Returns a flag
+	 */
+	public boolean getDrawShapeWithImageFlag() {
+		return drawShapeWithImage;
+	}
+	
+	/**
+	 * Sets a flag
+	 */
+	public void setDrawShapeWithImageFlag(boolean flag) {
+		this.drawShapeWithImage = flag;
+	}
+	
+
 	public static final RenderProperty[] srcBlends = new RenderProperty[] {
 		new RenderProperty("NONE", -1),
 		new RenderProperty("GL_ZERO", GL.GL_ZERO),
@@ -250,22 +351,6 @@ public class AgentStyle implements Comparable<AgentStyle> {
 	}
 	
 	
-	public Image getImage() {
-		if (image != null)
-			return image;
-		
-		if (textureFileName != null) {
-			try {
-				image = ImageIO.read(new File(textureFileName));
-				return image;
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		
-		return null;
-	}
-
 	public synchronized void setTexture(String textureFileName) {
 		if (textureFileName == null || !textureFileName.equals(this.textureFileName)) {
 			// TODO: texture can be disposed only on OpenGL thread.
@@ -274,7 +359,6 @@ public class AgentStyle implements Comparable<AgentStyle> {
 //				texture.dispose();
 			
 			texture = null;
-			image = null;
 		}
 
 		this.textureFileName = textureFileName;
@@ -287,18 +371,21 @@ public class AgentStyle implements Comparable<AgentStyle> {
 	 */
 	public TileManager getTileManager() {
 		if (tileManager != null)
-			return tileManager;
+			return tileManager.getTileManager();
 		
 		if (tileFile != null) {
 			try {
-				tileManager = TileManager.loadFromXml(tileFile);
+				tileManager = TileManagerInfo.loadFromXml(tileFile);
 			}
 			catch (Exception e) {
 				logger.error("File loading problem: " + tileFile);
+				return null;
 			}
+			
+			return tileManager.getTileManager();
 		}
 		
-		return tileManager;
+		return null;
 	}
 
 
@@ -325,6 +412,20 @@ public class AgentStyle implements Comparable<AgentStyle> {
 		addAttr(doc, agentNode, "border", border);
 		addAttr(doc, agentNode, "label", label);
 		addAttr(doc, agentNode, "position", position);
+
+		addAttr(doc, agentNode, "draw-shape-with-image", drawShapeWithImage);
+		
+		// Save label options
+		if (fontFamily != null) {
+			addAttr(doc, agentNode, "font-family", fontFamily);
+			addAttr(doc, agentNode, "font-size", fontSize);
+			addAttr(doc, agentNode, "font-style", fontStyle);
+		}
+		
+		addAttr(doc, agentNode, "dx-label", dxLabel);
+		addAttr(doc, agentNode, "dy-label", dyLabel);
+		addAttr(doc, agentNode, "label-color", labelColor);
+		
 		
 		if (this.textureFileName != null) {
 			// Texture
@@ -378,9 +479,19 @@ public class AgentStyle implements Comparable<AgentStyle> {
 		alphaFunc = getIntegerValue(node, "alpha-function", 0);
 		alphaFuncValue = getFloatValue(node, "alpha-function-value", 0.0f);
 		
+		drawShapeWithImage = getBooleanValue(node, "draw-shape-with-image", false);
+
+		// Load label options
+		fontFamily = getValue(node, "font-family", null);
+		fontSize = getIntegerValue(node, "font-size", 10);
+		fontStyle = getIntegerValue(node, "font-style", 0);
+		dxLabel = getFloatValue(node, "dx-label", 0.0f);
+		dyLabel = getFloatValue(node, "dy-label", 0.0f);
+		labelColor = getVectorValue(node, "label-color", ";", new Vector());
+		
 		String texture = getValue(node, "texture", null);
 		String tileFileName = getValue(node, "tile-manager", null);
-
+		
 		if (tileFileName != null) {
 			tileFile = new File(tileFileName);
 			if (!tileFile.exists()) {

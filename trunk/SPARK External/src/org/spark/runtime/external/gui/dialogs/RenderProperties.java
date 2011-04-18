@@ -600,7 +600,7 @@ public class RenderProperties extends JDialog implements ActionListener, ChangeL
 		
 		// Agent: advanced
 		if (cmd == "agent-advanced") {
-			new AgentStyleDialog(this, selectedStyle).setVisible(true);
+			new AgentStyleDialog(this, render, selectedStyle).setVisible(true);
 			return;
 		}
 	}

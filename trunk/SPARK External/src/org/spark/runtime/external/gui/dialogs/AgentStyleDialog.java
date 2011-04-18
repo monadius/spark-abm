@@ -1,6 +1,8 @@
 package org.spark.runtime.external.gui.dialogs;
 
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -10,19 +12,27 @@ import java.io.File;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
+import javax.swing.JTabbedPane;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.SpringLayout;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
 
+import org.spark.math.Vector;
 import org.spark.runtime.external.Coordinator;
 import org.spark.runtime.external.render.AgentStyle;
+import org.spark.runtime.external.render.Render;
 import org.spark.utils.FileUtils;
+import org.spark.utils.SpringUtilities;
 
 /**
  * The dialog for configuring advanced properties
@@ -30,29 +40,246 @@ import org.spark.utils.FileUtils;
  * @author Monad
  */
 @SuppressWarnings("serial")
-public class AgentStyleDialog extends JDialog implements ActionListener, ChangeListener {
-	/* Style with which this dialog is associated */
-	private AgentStyle style;
-	
-	/* Button with selected texture name on it */
-	private JButton textureButton;
+public class AgentStyleDialog extends JDialog {
+	// Main pane
+	private JTabbedPane tabs;
 	
 	/**
 	 * Default constructor
 	 * @param owner
 	 * @param style
 	 */
-	public AgentStyleDialog(Window owner, AgentStyle style) {
+	public AgentStyleDialog(Window owner, Render render, AgentStyle style) {
 		super(owner, "Advanced properties");
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		
-		this.style = style;
-		
-		init();
+		init(render, style);
 	}
 	
 	
-	private void init() {
+	/**
+	 * Initializes the dialog elements
+	 */
+	private void init(Render render, AgentStyle style) {
+		tabs = new JTabbedPane();
+		
+		tabs.addTab("Label", new LabelOptions(render, style));
+		tabs.addTab("Image", new ImageOptions(render, style));
+		tabs.addTab("Blending", new AlphaBlendingOptions(render, style));
+		
+		this.add(tabs);
+		this.pack();
+	}
+}
+
+
+/**
+ * Abstract base for option panels
+ * @author Alexey
+ *
+ */
+@SuppressWarnings("serial")
+abstract class OptionPanel extends JPanel implements ActionListener {
+	protected AgentStyle style;
+	protected Render render;
+	
+	
+	/**
+	 * Default constructor
+	 * @param render
+	 * @param style
+	 */
+	public OptionPanel(Render render, AgentStyle style) {
+		this.render = render;
+		this.style = style;
+		init();
+	}
+	
+	protected abstract void init();
+}
+
+
+
+/**
+ * Image options
+ */
+@SuppressWarnings("serial")
+class ImageOptions extends OptionPanel {
+	private JCheckBox drawShape;
+	
+	
+	public ImageOptions(Render render, AgentStyle style) {
+		super(render, style);
+	}
+
+	@Override
+	protected void init() {
+		setLayout(new SpringLayout());
+		
+		drawShape = new JCheckBox();
+		drawShape.setSelected(style.getDrawShapeWithImageFlag());
+		drawShape.setActionCommand("draw-shape");
+		drawShape.addActionListener(this);
+		
+		add(new JLabel("Draw shape"));
+		add(drawShape);
+		
+		SpringUtilities.makeCompactGrid(this, 1, 2, 5, 5, 5, 5);
+	}
+
+	
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		String cmd = e.getActionCommand().intern();
+		
+		// Draw shape
+		if (cmd == "draw-shape") {
+			boolean flag = drawShape.isSelected();
+			style.setDrawShapeWithImageFlag(flag);
+			
+			render.update();
+		}
+	}
+}
+
+
+/**
+ * Label (font and position) options
+ */
+@SuppressWarnings("serial")
+class LabelOptions extends OptionPanel implements ChangeListener {
+	private JSpinner spinnerDx;
+	private JSpinner spinnerDy;
+	
+	private JButton fontButton;
+	private JButton colorButton;
+	
+	/**
+	 * Default constructor
+	 */
+	public LabelOptions(Render render, AgentStyle style) {
+		super(render, style);
+	}
+	
+	
+	/**
+	 * Initializes the panel
+	 */
+	protected void init() {
+		setLayout(new SpringLayout());
+		
+		// Font
+		fontButton = new JButton();
+		Font font = style.getFont(); 
+		fontButton.setFont(font);
+		fontButton.setText(font.getFamily() + ": " + font.getSize());
+		
+		fontButton.setActionCommand("font");
+		fontButton.addActionListener(this);
+		
+		// Label offsets
+		spinnerDx = new JSpinner(
+						new SpinnerNumberModel(style.getLabelDx(), -1000, 1000, 1));
+		spinnerDy = new JSpinner(
+						new SpinnerNumberModel(style.getLabelDy(), -1000, 1000, 1));
+		
+		spinnerDx.addChangeListener(this);
+		spinnerDy.addChangeListener(this);
+		
+		// Color
+		colorButton = new JButton();
+		colorButton.setBackground(style.getLabelColor().toAWTColor());
+		colorButton.setActionCommand("color");
+		colorButton.addActionListener(this);
+		
+		// Font selection
+		add(new JLabel("Font"));
+		add(fontButton);
+		
+		// Offsets
+		add(new JLabel("dx"));
+		add(spinnerDx);
+		
+		add(new JLabel("dy"));
+		add(spinnerDy);
+		
+		add(new JLabel("Color"));
+		add(colorButton);
+		
+		SpringUtilities.makeCompactGrid(this, 4, 2, 5, 5, 5, 5);
+	}
+
+
+	@Override
+	public void stateChanged(ChangeEvent e) {
+		float dx = ((Number) spinnerDx.getValue()).floatValue();
+		float dy = ((Number) spinnerDy.getValue()).floatValue();
+		
+		style.setLabelOffset(dx, dy);
+		render.update();
+	}
+
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		String cmd = e.getActionCommand().intern();
+		
+		// Color
+		if (cmd == "color") {
+			Color c = JColorChooser.showDialog(this, "Choose Color", style.getLabelColor().toAWTColor());
+			style.setLabelColor(Vector.fromAWTColor(c));
+			colorButton.setBackground(c);
+			
+			render.update();
+		}
+		
+		// Font
+		if (cmd == "font") {
+			FontSelectionDialog dialog = new FontSelectionDialog(null);
+			dialog.setVisible(true);
+			
+			Font font = dialog.getSelectedFont();
+			if (font != null) {
+				style.setFont(font.getFamily(), font.getStyle(), font.getSize());
+			}
+			else {
+				style.setFont(null, 0, 10);
+			}
+			
+			font = style.getFont();
+			fontButton.setFont(font);
+			fontButton.setText(font.getFamily() + ": " + font.getSize());
+			
+			render.update();
+		}
+	}
+}
+
+
+
+/**
+ * Alpha blending options
+ */
+class AlphaBlendingOptions extends OptionPanel implements ChangeListener {
+	private static final long serialVersionUID = 1L;
+
+	/* Button with selected texture name on it */
+	private JButton textureButton;
+
+
+	
+	/**
+	 * Default constructor
+	 */
+	public AlphaBlendingOptions(Render render, AgentStyle style) {
+		super(render, style);
+	}
+	
+
+	/**
+	 * Initializes all elements
+	 */
+	protected void init() {
 		JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
 		
@@ -80,7 +307,6 @@ public class AgentStyleDialog extends JDialog implements ActionListener, ChangeL
         panel.add(alphaPanel);
         
 		this.add(panel);
-		this.pack();
 	}
 	
 	
@@ -231,6 +457,7 @@ public class AgentStyleDialog extends JDialog implements ActionListener, ChangeL
 		// src-blend command
 		if (cmd == "src-blend") {
 			style.setSrcBlend(index);
+			render.update();
 //			GUIModelManager.getInstance().requestUpdate();
 			return;
 		}
@@ -294,4 +521,3 @@ public class AgentStyleDialog extends JDialog implements ActionListener, ChangeL
 		}
 	}
 }
-

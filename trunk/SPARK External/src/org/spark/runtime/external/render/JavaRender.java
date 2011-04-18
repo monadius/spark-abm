@@ -5,8 +5,11 @@ import java.awt.BasicStroke;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Composite;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
@@ -23,6 +26,7 @@ import org.spark.runtime.data.DataObject_SpaceAgents;
 import org.spark.runtime.data.DataObject_SpaceLinks;
 import org.spark.runtime.data.DataObject_Spaces;
 import org.spark.runtime.data.DataRow;
+import org.spark.runtime.external.render.images.TileManager;
 import org.spark.math.Vector;
 import org.spark.math.Vector4d;
 
@@ -305,7 +309,7 @@ public class JavaRender extends Render {
 	 * @return true if successful
 	 */
 	protected boolean drawTile(Graphics2D g, TileManager tiles, DataObject_AgentData agentData, int index,
-				double x, double y, double r) {
+				double x, double y, double r, double theta) {
 		if (agentData == null)
 			return false;
 		
@@ -329,12 +333,14 @@ public class JavaRender extends Render {
 		int h = image.getHeight(null);
 		AffineTransform tr = new AffineTransform();
 		tr.translate(x, y);
-		tr.scale(2 * r / w, 2 * r / h);
 		
-//		double theta = rotations[i];
-//		if (theta != 0) {
-//			tr.rotate(theta);
-//		}
+		double scale = Math.max(2 * r / w, 2 * r / h);
+//		tr.scale(2 * r / w, 2 * r / h);
+		tr.scale(scale, scale);
+		
+		if (theta != 0) {
+			tr.rotate(theta);
+		}
 
 		tr.scale(1, -1);
 		
@@ -385,13 +391,14 @@ public class JavaRender extends Render {
 	protected void renderAgents(Graphics2D g, DataObject_SpaceAgents agents,
 			DataObject_AgentData agentData,
 			int spaceIndex, AgentStyle agentStyle) {
+		// If invisible, then return
 		if (!agentStyle.visible)
 			return;
 
 		if (agents == null)
 			return;
 
-		g.setStroke(new BasicStroke(0));
+		// Get parameters
 		int n = agents.getTotalNumber();
 		Vector[] positions = agents.getPositions();
 		double[] radii = agents.getRadii();
@@ -404,7 +411,6 @@ public class JavaRender extends Render {
 		
 		// Special composite
 		Composite originalComposite = null;
-		Image image = null;
 		
 		/* Transparent agents */
 		if (agentStyle.transparent) {
@@ -412,14 +418,23 @@ public class JavaRender extends Render {
 			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
 		}
 		
-		/* Agents with image */
-		image = agentStyle.getImage();
-		
 		/* Tile manager */
 		TileManager tiles = agentStyle.getTileManager();
 		if (agentData == null)
 			tiles = null;
+		
+		/* Label options */
+		Font font = agentStyle.getFont();
+		Color labelColor = agentStyle.getLabelColor().toAWTColor();
+		float dxLabel = agentStyle.getLabelDx();
+		float dyLabel = agentStyle.getLabelDy();
 
+		// Set basic options
+		g.setFont(font);
+		g.setStroke(new BasicStroke(0));
+		FontMetrics metrics = g.getFontMetrics();
+
+		// Render all agents
 		for (int i = 0; i < n; i++) {
 			if (spaceIndices[i] != spaceIndex)
 				continue;
@@ -437,12 +452,18 @@ public class JavaRender extends Render {
 
 			g.setColor(color.toAWTColor());
 			
+			boolean drawShape = true;
+			
+			// Render a picture first
 			if (tiles != null) {
-				if (drawTile(g, tiles, agentData, i, x, y, r))
-					continue;
+				if (drawTile(g, tiles, agentData, i, x, y, r, rotations[i])) {
+					if (!agentStyle.getDrawShapeWithImageFlag())
+						drawShape = false;
+				}
 			}
 
-			if (image == null) {
+			// Render a geometric shape
+			if (drawShape) {
 				if (shapeInfo[i] != null) {
 					AffineTransform oldTr = g.getTransform();
 					g.translate(x, y);
@@ -450,7 +471,7 @@ public class JavaRender extends Render {
 					drawShape(g, shapeInfo[i], agentStyle.border);
 					g.setTransform(oldTr);
 				}
-				else 
+				else if (r > 0) 
 				{
 					Shape s = null;
 
@@ -478,34 +499,24 @@ public class JavaRender extends Render {
 					}
 				}
 			}
-			else {
-				// Draw agent's image
-				int w = image.getWidth(null);
-				int h = image.getHeight(null);
-				AffineTransform tr = new AffineTransform();
-				tr.translate(x, y);
-				tr.scale(2 * r / w, 2 * r / h);
-				
-				double theta = rotations[i];
-				if (theta != 0) {
-					tr.rotate(theta);
-				}
-
-				tr.scale(1, -1);
-				tr.translate(-w / 2.0, -h / 2.0);
-				g.drawImage(image, tr, null);
-			}
 			
 			// Draw labels
 			if (agentStyle.label) {
 				String label = labels[i];
 				if (label != null) {
+					g.setColor(labelColor);
 					AffineTransform tr = g.getTransform();
 					g.translate(x, y);
 					g.scale(0.1f, -0.1f);
 					
-					float dx = -(float) r * 10;
-					float dy = (float) r * 5;
+					float w = metrics.stringWidth(label);
+//					float h = metrics.getHeight();
+					float h = metrics.getDescent();
+					
+//					float dx = -(float) r * 10;
+//					float dy = (float) r * 5;
+					float dx = -w / 2 + dxLabel;
+					float dy = h + dyLabel;
 					g.drawString(label, dx, dy);
 					
 					g.setTransform(tr);
@@ -513,6 +524,7 @@ public class JavaRender extends Render {
 			}
 		}
 		
+		// Restore the original alpha composite
 		if (originalComposite != null) {
 			g.setComposite(originalComposite);
 		}
@@ -556,6 +568,9 @@ public class JavaRender extends Render {
 		if (selectedSpace.swapXY) {
 			g.rotate(-Math.PI / 2);
 		}
+		
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
+		        RenderingHints.VALUE_ANTIALIAS_ON);
 
 
 		
