@@ -2,15 +2,15 @@
 	<spark-core-path>C:\Work\My Projects\SPARK\Spark\release\spark-core.jar</spark-core-path>
 	<spark-external-path>C:\Work\My Projects\SPARK\Spark\release\spark-external.jar</spark-external-path>
 	<recent-projects>
-		<file>C:\Work\My Projects\SPARK\SparkLogo\samples\ControlDemo3\ControlDemo3.xml</file>
-		<file>C:\Work\My Projects\SPARK\SparkLogo\Models\CellMigration3_Mar_28_2011\CellMigration3.xml</file>
+		<file>C:\Work\My Projects\SPARK\SparkLogo\Models\TileEditor\TileEditor.xml</file>
+		<file>C:\Work\My Projects\SPARK\SparkLogo\Models\Cirrhosis\CirrhosisModel.xml</file>
+		<file>C:\Work\My Projects\SPARK\SparkLogo\Models\WaterFall\WaterFall.xml</file>
+		<file>C:\Work\My Projects\SPARK\SparkLogo\samples\Games\Minesweeper\Minesweeper.xml</file>
+		<file>C:\Work\My Projects\SPARK\SparkLogo\Models\Games\Shooter1\Shooter1.xml</file>
+		<file>C:\Work\My Projects\SPARK\SparkLogo\Models\Games\PeriodicRoulette\PeriodicRoulette.xml</file>
 		<file>C:\Work\My Projects\SPARK\SparkLogo\Models\War2\War2Model.xml</file>
 		<file>C:\Work\My Projects\SPARK\SparkLogo\Models\DROD\DROD.xml</file>
-		<file>C:\Work\My Projects\SPARK\SparkLogo\samples\Games\Minesweeper\Minesweeper.xml</file>
-		<file>C:\Work\My Projects\SPARK\SparkLogo\samples\Games\Tetris\Tetris.xml</file>
-		<file>C:\Work\My Projects\SPARK\SparkLogo\Models\WaterFall\WaterFall.xml</file>
-		<file>C:\Work\My Projects\SPARK\SparkLogo\Models\Cirrhosis\CirrhosisModel.xml</file>
-		<file>C:\Work\My Projects\SPARK\SparkLogo\Models\PhysExample\PhysExample.xml</file>
-		<file>C:\Work\My Projects\SPARK\SparkLogo\Models\PhysTest1\PhysTest1.xml</file>
+		<file>C:\Work\My Projects\SPARK\SparkLogo\Models\Games\Platform1\Platformer1.xml</file>
+		<file>C:\Work\My Projects\SPARK\SparkLogo\Models\Games\Shooter1_2\Shooter1_2.xml</file>
 	</recent-projects>
 </config>

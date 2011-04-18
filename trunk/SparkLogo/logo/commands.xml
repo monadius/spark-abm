@@ -765,7 +765,8 @@
 				Math.atan2(@y, @x)
 			</translation>
 		</reporter>
-
+		
+		
 		<reporter name = "ceil" type = "double">
 			<argument name = "number" type = "double" />
 			<translation>
@@ -1902,6 +1903,15 @@
         </reporter>
         
         
+        <reporter name = "num2int" type = "$integer">
+        	<argument name = "n" type = "double"/>
+        	<translation>
+        		((int) @n)
+        	</translation>
+        </reporter>
+        
+
+
         <!-- O -->
         <reporter name = "one-of" type = "ArgumentType:list:subtype">
         	<argument name = "list" type = "Array"/>
@@ -2177,6 +2187,39 @@
         		this
         	</translation>
         </reporter>
+        
+        <reporter name = "to-string" type = "string">
+        	<argument name = "n" type = "double"/>
+        	<translation>
+        		String.valueOf(@n)
+        	</translation>
+        </reporter>
+
+        <reporter name = "to-string" type = "string">
+        	<argument name = "n" type = "$integer"/>
+        	<translation>
+        		String.valueOf(@n)
+        	</translation>
+        </reporter>
+        
+        
+        <reporter name = "to-string" type = "string">
+        	<argument name = "v" type = "vector"/>
+        	<translation>
+        		@v.toString()
+        	</translation>
+        </reporter>
+        
+
+
+        <reporter name = "to-string" type = "string">
+        	<argument name = "obj" type = "$object"/>
+        	<translation>
+        		@obj.toString()
+        	</translation>
+        </reporter>
+
+
         
         <reporter name = "truncate" type = "vector">
                 <argument name = "v" type = "vector" />

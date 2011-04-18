@@ -23,6 +23,8 @@
     
     <data-layers/>
     <chart interval="0" label="number-of-agents" location="number-of-agents" name="number-of-agents" variable="number-of-agents"/>
+  
+  
   <control-panel delay="8" freq="4"/>
   </interface>
 </spark>
