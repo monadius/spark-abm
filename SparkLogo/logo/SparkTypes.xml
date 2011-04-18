@@ -330,6 +330,10 @@
                 <field name = "name" type = "string">
                 	<get>@@object.name</get>
                 </field>
+                
+                <field name = "space-name" type = "string">
+                	<get>@@object.spaceName</get>
+                </field>
         </type>
         
         
@@ -359,6 +363,10 @@
                 
                 <field name = "wheel" type = "$integer">
                 	<get>@@object.mouseWheel</get>
+                </field>
+
+                <field name = "space-name" type = "string">
+                	<get>@@object.spaceName</get>
                 </field>
         </type>        
 
@@ -496,7 +504,31 @@
                		    </return>
                 	</translation>
                 </method>
-                
+             
+             
+             <method name = "space-xmin" type = "double">
+             	<translation>((BoundedSpace) @@object).getXMin()</translation>
+             </method>   
+
+
+             <method name = "space-xmax" type = "double">
+             	<translation>
+             		((BoundedSpace) @@object).getXMax()
+             	</translation>
+             </method>
+
+             <method name = "space-ymin" type = "double">
+             	<translation>
+             		((BoundedSpace) @@object).getYMin()
+             	</translation>
+             </method>
+             
+             <method name = "space-ymax" type = "double">
+             	<translation>
+             		((BoundedSpace) @@object).getYMax()
+             	</translation>
+             </method>
+
                 
              <method name = "x-size" type = "double">
              	<translation>
@@ -883,6 +915,10 @@
                 <field name = "rotation" type = "double">
                 	<set>@@object.getNode().setRotation(@@value)</set>
                 	<get>@@object.getNode().getRotation()</get>
+                </field>
+                
+                <field name = "fixed-rotation" type = "boolean">
+                	<set>((PhysicalNode)@@object.getNode()).setFixedRotationFlag(@@value)</set>
                 </field>
 
                 <field name = "radius" type = "double">
