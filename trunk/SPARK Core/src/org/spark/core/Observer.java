@@ -287,7 +287,7 @@ public final class Observer {
 //		controlCommands = new LinkedList<String>();
 		keyEvents = new LinkedList<ControlState.KeyEvent>();
 		mouseEvents = new LinkedList<ControlState.MouseEvent>();
-		keyState = new ControlState.KeyState();
+		keyState = new ControlState.KeyState("space");
 		
 
 		if (ExecutionMode.isMode(executionMode)) {

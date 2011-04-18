@@ -8,13 +8,24 @@ import org.spark.math.Vector;
  * Describes a control event
  */
 public class ControlState {
+	// The name of the space where the event fired
+	public final String spaceName;
+
+	/**
+	 * Private constructor
+	 */
+	private ControlState(String spaceName) {
+		this.spaceName = spaceName;
+	}
+	
 	/**
 	 * Stores information about pressed keys
 	 */
 	public static class KeyState extends ControlState {
 		private final HashMap<String, Boolean> keys;
 		
-		public KeyState() {
+		public KeyState(String spaceName) {
+			super(spaceName);
 			this.keys = new HashMap<String, Boolean>();
 		}
 		
@@ -52,7 +63,8 @@ public class ControlState {
 		public final boolean keyPressed;
 		public final String name;
 		
-		public KeyEvent(boolean keyPressed, String name) {
+		public KeyEvent(String spaceName, boolean keyPressed, String name) {
+			super(spaceName);
 			this.keyPressed = keyPressed;
 			this.name = name;
 		}
@@ -68,7 +80,8 @@ public class ControlState {
 		public final int buttons;
 		public final int mouseWheel;
 		
-		public MouseEvent(String eventType, Vector position, int buttons, int mouseWheel) {
+		public MouseEvent(String spaceName, String eventType, Vector position, int buttons, int mouseWheel) {
+			super(spaceName);
 			this.eventType = eventType;
 			this.position = new Vector(position);
 			this.buttons = buttons;

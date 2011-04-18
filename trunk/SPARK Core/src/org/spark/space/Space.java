@@ -551,6 +551,12 @@ public abstract class Space implements Serializable {
 	}
 	
 	
+	@Override
+	public String toString() {
+		return observer.getSpaceName(this);
+	}
+	
+	
 	/**
 	 * Custom deserialization is needed.
 	 */

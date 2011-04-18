@@ -83,12 +83,14 @@ public class PhysicalNode extends CircleNode {
 		BodyDef bd = new BodyDef();
 //		bd.isBullet = true;
 		bd.allowSleep = true;
+//		bd.fixedRotation = true;
 //		bd.linearDamping = 0.01f;
 //		bd.angularDamping = 0.01f;
 		
 		body = world.createBody(bd);
 		body.createShape(cd);
 		body.setUserData(this);
+
 		
 		if (dynamicFlag)
 			body.setMassFromShapes();
@@ -167,6 +169,28 @@ public class PhysicalNode extends CircleNode {
 		
 		for (Shape shape = body.getShapeList(); shape != null; shape = shape.getNext()) {
 			world.refilter(shape);
+		}
+	}
+	
+	
+	/**
+	 * Fixes the rotation of the corresponding body
+	 */
+	public void setFixedRotationFlag(boolean flag) {
+		if (body == null)
+			return;
+		
+		if (flag)
+		{
+			body.m_flags |= Body.e_fixedRotationFlag;
+			body.m_I = 0;
+			body.m_invI = 0;
+		}
+		else
+		{
+			body.m_flags &= ~Body.e_fixedRotationFlag;
+			
+			// TODO: restore m_I and m_invI
 		}
 	}
 	
