@@ -78,16 +78,16 @@ public class Command_ControlEvent extends ModelManagerCommand {
 		switch (eventType) {
 		// Key released
 		case KEY_RELEASED:
-			observer.addKeyEvent(new ControlState.KeyEvent(false, decodeKey(keyCode, keySymbol)));
+			observer.addKeyEvent(new ControlState.KeyEvent(spaceName, false, decodeKey(keyCode, keySymbol)));
 			break;
 		// Key pressed
 		case KEY_PRESSED:
-			observer.addKeyEvent(new ControlState.KeyEvent(true, decodeKey(keyCode, keySymbol)));
+			observer.addKeyEvent(new ControlState.KeyEvent(spaceName, true, decodeKey(keyCode, keySymbol)));
 			break;
 			
 		// Mouse events
 		default:
-			observer.addMouseEvent(new ControlState.MouseEvent(eventToName(eventType), 
+			observer.addMouseEvent(new ControlState.MouseEvent(spaceName, eventToName(eventType), 
 					mousePosition, mouseButtons, mouseWheel));
 			break;
 		}
