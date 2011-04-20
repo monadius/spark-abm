@@ -492,7 +492,8 @@ public class Type {
 
 		Method init = new Method(id);
 		// TODO: better solution?
-		init.setTranslation(new Translation("_init()"));
+		String thisName = getId().toJavaName();
+		init.setTranslation(new Translation("_init" + thisName + "()"));
 		addMethod(init);
 
 		for (Variable field : fieldList) {

@@ -200,6 +200,10 @@ public class Method {
 		if (id.name.equals("_create")) {
 			id = new Id("_create" + parentType.getId().toJavaName()); 
 		}
+		
+		if (id.name.equals("_init")) {
+			id = new Id("_init" + parentType.getId().toJavaName());
+		}
 
 		
 		java.clearTempVariables();
@@ -235,11 +239,12 @@ public class Method {
 		}
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		if (constructorFlag) {
-			// FIXME: add _init call inside method source code or translated code
-			java.println("_init();");
-			
 			// For each user-defined type there is a "_create[TypeName]" method
 			String thisName = parentType.getId().toJavaName();
+
+			// FIXME: add _init call inside method source code or translated code
+			java.println("_init" + thisName + "();");
+			
 			java.println("_create" + thisName + "();");
 		}
 		else if (parentType instanceof ModelType && id.name.equals("setup")) {

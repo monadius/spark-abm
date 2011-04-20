@@ -899,6 +899,27 @@
         </reporter>
         
         
+        <reporter name = "add-physical-space" type = "Space">
+        	<argument name = "name" type = "string"/>
+			<argument name = "xMin" type = "double"/>
+			<argument name = "xMax" type = "double"/>
+			<argument name = "yMin" type = "double"/>
+			<argument name = "yMax" type = "double"/>
+			<argument name = "xWrap" type = "boolean"/>
+			<argument name = "yWrap" type = "boolean"/>
+			
+			<translation>
+				<temp name = "space"/>
+				<prelude>
+					Space @space = Observer.getInstance().addSpace(@name, new PhysicalSpace2d(@xMin, @xMax, @yMin, @yMax, @xWrap, @yWrap));
+				</prelude>
+				<return>
+					@space
+				</return>
+			</translation>
+        </reporter>
+        
+        
         <reporter name = "add-standard3d-space" type = "Space">
         	<argument name = "name" type = "string"/>
 			<argument name = "xMin" type = "double"/>
