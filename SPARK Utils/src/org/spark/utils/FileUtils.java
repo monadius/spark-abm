@@ -1,8 +1,10 @@
 package org.spark.utils;
 
 import java.awt.Window;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -11,6 +13,8 @@ import java.util.HashMap;
 
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
+
+import org.spark.math.Vector;
 
 import com.spinn3r.log5j.Logger;
 
@@ -35,8 +39,132 @@ public class FileUtils {
 			return;
 		}
 		
+		logger.info("New base directory: " + baseDir);
 		FileUtils.baseDir = baseDir;
 	}
+	
+	
+	/**
+	 * Appends the base directory to the given file name
+	 * @param fname
+	 * @return
+	 */
+	public static File getFile(String fname) {
+		File file = new File(fname);
+		if (baseDir != null) {
+			if (!file.isAbsolute()) {
+				file = new File(baseDir, fname);
+			}
+		}
+		
+		return file;
+	}
+	
+
+	/**
+	 * Returns a file reader
+	 * @param fname
+	 * @return
+	 */
+	public static BufferedReader getFileReader(String fname) {
+		try {
+			FileReader fr = new FileReader(getFile(fname));
+			return new BufferedReader(fr);
+		}
+		catch (Exception e) {
+			logger.error(e);
+			return null;
+		}
+	}
+	
+	
+	/**
+	 * Closes the file reader
+	 * @param r
+	 */
+	public static void close(BufferedReader r) {
+		if (r == null)
+			return;
+		
+		try {
+			r.close();
+		}
+		catch (IOException e) {
+			logger.error(e);
+		}
+	}
+	
+	
+	/**
+	 * Reads a line from the given reader
+	 */
+	public static String readLine(BufferedReader r) {
+		if (r == null)
+			return null;
+		
+		try {
+			return r.readLine();
+		}
+		catch (IOException e) {
+			logger.error(e);
+			return null;
+		}
+	}
+	
+	
+	/**
+	 * Reads a double number
+	 */
+	public static double readDouble(BufferedReader r) {
+		if (r == null)
+			return 0.0;
+		
+		try {
+			String line = r.readLine();
+			return StringUtils.StringToDouble(line);
+		}
+		catch (IOException e) {
+			logger.error(e);
+			return 0.0;
+		}
+	}
+	
+	
+	/**
+	 * Reads an integer
+	 */
+	public static int readInteger(BufferedReader r) {
+		if (r == null)
+			return 0;
+		
+		try {
+			String line = r.readLine();
+			return StringUtils.StringToInteger(line);
+		}
+		catch (IOException e) {
+			logger.error(e);
+			return 0;
+		}
+	}
+	
+	
+	/**
+	 * Reads a vector
+	 */
+	public static Vector readVector(BufferedReader r, String separator) {
+		if (r == null)
+			return null;
+		
+		try {
+			String line = r.readLine();
+			return StringUtils.StringToVector(line, separator);
+		}
+		catch (IOException e) {
+			logger.error(e);
+			return null;
+		}
+	}
+	
 	
 	/**
 	 * Returns an existing file writer or opens a new file
