@@ -295,35 +295,11 @@ public class XmlDocUtils {
 	public static Vector getVectorValue(Node node, String attrName, String delim, Vector defaultValue) {
 		String value = getValue(node, attrName, null);
 				
-		if (value == null)
+		Vector v = StringUtils.StringToVector(value, delim);
+		if (v == null)
 			return defaultValue;
 		
-		String[] components = value.split(delim);
-		
-		try {
-			switch (components.length) {
-			case 0:
-				return defaultValue;
-
-			case 1:
-				double v = Double.valueOf(components[0]);
-				return new Vector(v);
-
-			case 2:
-				double v1 = Double.valueOf(components[0]);
-				double v2 = Double.valueOf(components[1]);
-				return new Vector(v1, v2, 0);
-				
-			default:
-				double x = Double.valueOf(components[0]);
-				double y = Double.valueOf(components[1]);
-				double z = Double.valueOf(components[2]);
-				return new Vector(x, y, z);
-			}
-		}
-		catch (NumberFormatException e) {
-			return defaultValue;
-		}
+		return v;
 	}
 
 }
