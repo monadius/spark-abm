@@ -25,6 +25,7 @@ import org.spark.runtime.external.render.DataLayerStyle;
 import org.spark.runtime.external.render.Render;
 import org.spark.runtime.internal.manager.IModelManager;
 import org.spark.runtime.internal.manager.ModelManager_Basic;
+import org.spark.utils.FileUtils;
 import org.spark.utils.XmlDocUtils;
 
 import static org.spark.utils.XmlDocUtils.*;
@@ -517,6 +518,7 @@ public class Coordinator {
 
 			Document xmlDoc = ModelFileLoader.loadModelFile(modelFile);
 			currentDir = modelFile.getParentFile();
+			FileUtils.setBaseDir(currentDir);
 			
 //			ModelFileLoader.saveModelFile(xmlDoc, new File("test.xml"));
 

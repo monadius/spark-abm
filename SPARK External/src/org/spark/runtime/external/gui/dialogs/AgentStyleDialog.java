@@ -106,6 +106,8 @@ abstract class OptionPanel extends JPanel implements ActionListener {
 @SuppressWarnings("serial")
 class ImageOptions extends OptionPanel {
 	private JCheckBox drawShape;
+	// Image manager selection button
+	private JButton managerButton;
 	
 	
 	public ImageOptions(Render render, AgentStyle style) {
@@ -115,16 +117,32 @@ class ImageOptions extends OptionPanel {
 	@Override
 	protected void init() {
 		setLayout(new SpringLayout());
+	
+		// Image manager selection button
+		managerButton = new JButton();
+		if (style.getTileManager() == null)
+			managerButton.setText("null");
+		else
+			managerButton.setText(style.getTileManager().getName());
 		
+		managerButton.setActionCommand("manager");
+		managerButton.addActionListener(this);
+		
+		
+		// Draw shape check box
 		drawShape = new JCheckBox();
 		drawShape.setSelected(style.getDrawShapeWithImageFlag());
 		drawShape.setActionCommand("draw-shape");
 		drawShape.addActionListener(this);
 		
+		// Add all components to the main pane
+		add(new JLabel("Image Manager"));
+		add(managerButton);
+		
 		add(new JLabel("Draw shape"));
 		add(drawShape);
 		
-		SpringUtilities.makeCompactGrid(this, 1, 2, 5, 5, 5, 5);
+		SpringUtilities.makeCompactGrid(this, 2, 2, 5, 5, 5, 5);
 	}
 
 	
@@ -138,6 +156,20 @@ class ImageOptions extends OptionPanel {
 			style.setDrawShapeWithImageFlag(flag);
 			
 			render.update();
+		}
+		
+		// Select manager
+		if (cmd == "manager") {
+			File file = FileUtils.openFileDialog(Coordinator.getInstance().getCurrentDir(), "xml", null);
+			if (file != null) {
+				style.setTileManager(file);
+				if (style.getTileManager() == null)
+					managerButton.setText("null");
+				else
+					managerButton.setText(style.getTileManager().getName());
+				
+				render.update();
+			}
 		}
 	}
 }

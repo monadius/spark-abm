@@ -57,7 +57,7 @@ public class AgentStyle implements Comparable<AgentStyle> {
 	private int fontSize;
 	private int fontStyle;
 	private float dxLabel, dyLabel;
-	private Vector labelColor;
+	private Vector labelColor = new Vector();
 	
 	
 	/* TileManager */
@@ -386,6 +386,16 @@ public class AgentStyle implements Comparable<AgentStyle> {
 		}
 		
 		return null;
+	}
+	
+	
+	/**
+	 * Sets a tile manager
+	 */
+	public void setTileManager(File file) {
+		this.tileFile = file;
+		// Invalidate the existing tile manager
+		this.tileManager = null;
 	}
 
 
