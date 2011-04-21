@@ -9,7 +9,6 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
@@ -569,8 +568,8 @@ public class JavaRender extends Render {
 			g.rotate(-Math.PI / 2);
 		}
 		
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
-		        RenderingHints.VALUE_ANTIALIAS_ON);
+//		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
+//		        RenderingHints.VALUE_ANTIALIAS_ON);
 
 
 		
