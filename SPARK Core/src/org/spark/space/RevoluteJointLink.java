@@ -15,6 +15,7 @@ import org.spark.math.Vector;
 public class RevoluteJointLink extends SpaceLink {
 	// Parameters for creating a joint
 	private Vec2 anchor;
+	private float lowerLimit, upperLimit;
 	
 	private PhysicalSpace2d space;
 	private Joint joint;
@@ -35,6 +36,15 @@ public class RevoluteJointLink extends SpaceLink {
 	
 	public void setAnchor(Vector v) {
 		anchor = new Vec2((float) v.x, (float) v.y);
+	}
+	
+
+	/**
+	 * Sets the joint limits
+	 */
+	public void setLimits(double lowerLimit, double upperLimit) {
+		this.lowerLimit = (float) lowerLimit;
+		this.upperLimit = (float) upperLimit;
 	}
 	
 	
@@ -68,6 +78,19 @@ public class RevoluteJointLink extends SpaceLink {
 		
 		
 		RevoluteJointDef jd = new RevoluteJointDef();
+		
+//		lowerLimit = -(float) Math.PI / 2;
+//		upperLimit = -lowerLimit;
+		
+		if (lowerLimit < upperLimit) {
+			jd.lowerAngle = lowerLimit;
+			jd.upperAngle = upperLimit;
+			jd.enableLimit = true;
+		}
+		
+//		jd.enableMotor = true;
+//		jd.motorSpeed = 0;
+//		jd.maxMotorTorque = 10;
 		
 		if (anchor == null)
 			anchor = n1.body.getWorldCenter();

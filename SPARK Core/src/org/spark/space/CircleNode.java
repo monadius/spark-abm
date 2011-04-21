@@ -19,7 +19,7 @@ public class CircleNode extends SpaceNode {
 	private static final long serialVersionUID = 1L;
 	
 	// The radius of the circle
-	private double radius;
+	protected double radius;
 	
 	/**
 	 * Creates the circle node of the given radius

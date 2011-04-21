@@ -331,6 +331,34 @@ public class PhysicalNode extends CircleNode {
 	
 	
 	/**
+	 * Applies an impulse to the node
+	 * @param f
+	 */
+	public void applyImpulse(Vector f) {
+		if (body != null) {
+			Vec2 impulse = new Vec2((float) f.x, (float) f.y);
+			Vec2 center = body.getWorldCenter();
+			body.applyImpulse(impulse, center);
+		}
+	}
+	
+	
+	/**
+	 * Returns the velocity of the node
+	 * @return
+	 */
+	public Vector getVelocity() {
+		if (body != null) {
+			Vec2 v = body.getLinearVelocity();
+			return new Vector(v.x, v.y, 0);
+		}
+		
+		// Return the zero vector
+		return new Vector();
+	}
+	
+	
+	/**
 	 * Resets all forces applied to the node
 	 */
 	public void resetForces() {
