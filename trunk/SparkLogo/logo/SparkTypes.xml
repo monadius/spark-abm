@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <types>
+		<!-- double (number) -->
         <type name = "double" alias = "number"> 
                 <javaname>double</javaname>
 
@@ -19,23 +20,9 @@
                         @@id
                 </get>
         </type>
-        
-        <type name = "string" parent = "$Object">
-        	<javaname>String</javaname>
 
-			<declaration>
-				String @@id = "";
-			</declaration>
-			
-			<set>
-				@@id = @@value
-			</set>
-			
-			<get>
-				@@id
-			</get>        	
-        </type>
 
+		<!-- integer -->
         <type name = "$integer">
                 <javaname>int</javaname>
 
@@ -69,8 +56,64 @@
                 </set-convert>
         </type>
 
+        
+
+        <!-- string -->
+        <type name = "string" parent = "$Object">
+        	<javaname>String</javaname>
+
+			<declaration>
+				String @@id = "";
+			</declaration>
+			
+			<set>
+				@@id = @@value
+			</set>
+			
+			<get>
+				@@id
+			</get>        	
+			
+			
+			<method name = "split" type = "ArrayList" subtype = "ArgumentType:regex">
+				<argument name = "regex" type = "string"/>
+				<translation>
+					StringUtils.split(@@object, @regex)
+				</translation>
+			</method>
+			
+			
+			<method name = "trim" type = "string">
+				<translation>
+					@@object.trim()
+				</translation>
+			</method>
+			
+			
+			<method name = "to-num" type = "double">
+				<translation>
+					StringUtils.StringToDouble(@@object)
+				</translation>
+			</method>
+			
+			<method name = "to-int" type = "$integer">
+				<translation>
+					StringUtils.StringToInteger(@@object)
+				</translation>
+			</method>
+			
+			
+			<method name = "char-at" type = "double">
+				<argument name = "i" type = "double"/>
+				<translation>
+					@@object.charAt((int)@i)
+				</translation>
+			</method>
+        </type>
 
 
+
+		<!-- long -->
         <type name = "$long">
                 <javaname>long</javaname>
 
@@ -92,14 +135,14 @@
 
         </type>
         
-        
+        <!-- Simulation Time -->
         <type name = "$time">
         	<javaname>SimulationTime</javaname>
         </type>
 
         
-        
-        <type name = "boolean">
+        <!-- boolean (bool) -->
+        <type name = "boolean" alias = "bool">
                 <javaname>boolean</javaname>
 
                 <declaration>
@@ -310,6 +353,51 @@
 				<method name = "conjugate" type = "complex">
 				</method>                
         </type>
+        
+        
+        <type name = "Reader" parent = "$Object">
+        	<javaname>java.io.BufferedReader</javaname>
+        	
+            <set>
+               @@id = @@value
+            </set>
+
+            <get>
+               @@id
+            </get>
+            
+            <method name = "close">
+            	<translation>
+            		FileUtils.close(@@object)
+            	</translation>
+            </method>
+            
+            <method name = "read-line" type = "string">
+            	<translation>
+            		FileUtils.readLine(@@object)
+            	</translation>
+            </method>
+
+            <method name = "read-num" type = "double">
+            	<translation>
+            		FileUtils.readDouble(@@object)
+            	</translation>
+            </method>
+            
+            <method name = "read-int" type = "$integer">
+            	<translation>
+            		FileUtils.readInteger(@@object)
+            	</translation>
+            </method>
+            
+            <method name = "read-vector" type = "vector">
+            	<translation>
+            		FileUtils.readVector(@@object, ";")
+            	</translation>
+            </method>
+            
+        </type>
+        
 
         <!-- KeyEvent -->
        	<type name = "KeyEvent" parent = "$Object">
@@ -827,7 +915,17 @@
 
 			<field name = "anchor" type = "vector">
 				<set>@@object.setAnchor(@@value)</set>
-			</field>			
+			</field>
+			
+			
+			<method name = "set-limits">
+				<argument name = "lo" type = "double"/>
+				<argument name = "hi" type = "double"/>
+				
+				<translation>
+					@@object.setLimits(@lo, @hi)
+				</translation>
+			</method>			
        	</type>
        	
        	
@@ -1043,6 +1141,21 @@
                 	<argument name = "force" type = "vector"/>
                 	<translation>
                 		((PhysicalNode) @@object.getNode()).applyForce(@force)
+                	</translation>
+                </method>
+
+
+                <method name = "apply-impulse">
+                	<argument name = "force" type = "vector"/>
+                	<translation>
+                		((PhysicalNode) @@object.getNode()).applyImpulse(@force)
+                	</translation>
+                </method>
+                
+                
+                <method name = "get-velocity" type = "vector">
+                	<translation>
+                		((PhysicalNode) @@object.getNode()).getVelocity()
                 	</translation>
                 </method>
                 
