@@ -1254,6 +1254,14 @@
 				PhysicalNode.ShapeInfo.createRectangle(@hx, @hy)
 			</translation>
 		</reporter>
+
+		
+		<reporter name = "create-file-reader" type = "Reader">
+			<argument name = "fname" type = "string"/>
+			<translation>
+				FileUtils.getFileReader(@fname)
+			</translation>
+		</reporter>
 		        
         
         <command name = "create-new-file">
