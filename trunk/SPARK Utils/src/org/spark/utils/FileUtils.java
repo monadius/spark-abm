@@ -312,32 +312,95 @@ public class FileUtils {
 		return files;
 	}
 	
+	
+	/**
+	 * Splits the given file path into a list of all parent directories
+	 * starting from the root
+	 * @param file
+	 * @return
+	 */
+	public static ArrayList<String> splitFilePath(File file) {
+		ArrayList<String> result = new ArrayList<String>();
+
+		while (file != null) {
+			result.add(file.getName());
+			file = file.getParentFile();
+		}
+		
+		// Reverse the resulting list
+		int n = result.size();
+		for (int i = 0; i < n / 2; i++) {
+			String tmp = result.get(i);
+			result.set(i, result.get(n - i - 1));
+			result.set(n - i - 1, tmp);
+		}
+		
+		return result;
+	}
+	
 
 	/**
 	 * Returns a relative path to the given file
 	 * @param file
 	 * @return
 	 */
-	public static String getRelativePath(File basePath, File file) {
-		if (basePath == null)
+	public static String getRelativePath(File base, File file) {
+		if (file == null)
+			return null;
+		
+		if (base == null)
 			return file.getAbsolutePath();
 		
-		if (basePath.isFile())
-			basePath = basePath.getParentFile();
+		if (base.isFile())
+			base = base.getParentFile();
+
+		// Get canonical paths
+		File canonicalBase;
+		File canonicalFile;
 		
-		if (!file.isAbsolute())
-			file = new File(basePath, file.getPath());
-		
-		String path = file.getName();
-		
-		for (File f = file.getParentFile(); f != null; f = f.getParentFile()) {
-			if (f.equals(basePath))
-				return path;
-			
-			path = f.getName() + "/" + path;
+		try {
+			canonicalBase = new File(base.getCanonicalPath());
+			canonicalFile = new File(file.getCanonicalPath());
+		}
+		catch (Exception e) {
+			logger.error(e);
+			return file.getAbsolutePath();
 		}
 		
-		return file.getAbsolutePath();
+		ArrayList<String> baseList = splitFilePath(canonicalBase);
+		ArrayList<String> fileList = splitFilePath(canonicalFile);
+
+		int bn = baseList.size();
+		int fn = fileList.size();
+		int counter = 0;
+		
+		// Skip all common base directories
+		while (true) {
+			if (counter >= bn || counter >= fn)
+				break;
+
+			String name1 = baseList.get(counter);
+			String name2 = fileList.get(counter);
+			
+			if (!name1.equals(name2))
+				break;
+			
+			counter++;
+		}
+
+		StringBuilder str = new StringBuilder();
+		for (int i = counter; i < bn; i++) {
+			str.append("..");
+			str.append("/");
+		}
+		
+		for (int i = counter; i < fn; i++) {
+			str.append(fileList.get(i));
+			if (i < fn - 1)
+				str.append("/");
+		}
+		
+		return str.toString();
 	}
 	
 
