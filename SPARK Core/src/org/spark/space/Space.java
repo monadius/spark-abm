@@ -279,12 +279,65 @@ public abstract class Space implements Serializable {
 	}
 	
 	/**
-	 * Creates a circle node with a specific radius and for a given agent
+	 * Creates a square node
 	 * @param r
 	 * @param agent
 	 */
 	protected SquareNode createSquareNode0(double r) {
 		SquareNode node = new SquareNode(this, r);
+		return node;
+	}
+	
+	
+	/**
+	 * Creates a square2 node of the given size r
+	 * @param r
+	 * @return
+	 */
+	protected final Square2Node createSquare2Node(double r, SpaceAgent agent) {
+		if (r > maximumNodeRadius)
+			maximumNodeRadius = r;
+		
+		Square2Node node = createSquare2Node0(r);
+		node.agent = agent;
+		node.next = node.prev = node;
+		
+		if (observer.isSerial()) {
+			addNode0(node);
+			return node;
+		}
+		
+		switch (executionMode) {
+		case ExecutionMode.CONCURRENT_MODE:
+			if (node.state == 0) {
+				nodeQueue.add(node);
+			}
+			node.state |= SpaceNode.NODE_IS_CREATING;
+			break;
+			
+		case ExecutionMode.PARALLEL_MODE:
+			synchronized (nodeQueue) {
+				if (node.state == 0) {
+					nodeQueue.add(node);
+				}
+				node.state |= SpaceNode.NODE_IS_CREATING;
+			}
+			break;
+			
+		default:
+			throw new Error("Unexpected execution mode");
+		}
+		
+		return node;
+	}
+	
+	/**
+	 * Creates a square2 node
+	 * @param r
+	 * @param agent
+	 */
+	protected Square2Node createSquare2Node0(double r) {
+		Square2Node node = new Square2Node(this, r);
 		return node;
 	}
 	

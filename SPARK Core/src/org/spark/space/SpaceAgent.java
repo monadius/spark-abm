@@ -35,6 +35,7 @@ public class SpaceAgent extends Agent {
 	public static final int CIRCLE = 1;
 	public static final int SQUARE = 2;
 	public static final int TORUS = 3;
+	public static final int SQUARE2 = 6;
 	// Experimental flags for physical nodes
 	public static final int DYNAMIC_CIRCLE = 4;
 	public static final int STATIC_CIRCLE = 5;
@@ -64,6 +65,10 @@ public class SpaceAgent extends Agent {
 	 */
 	public SpaceAgent(Space space, double r, int type) {
 		switch (type) {
+		case SQUARE2:
+			node = space.createSquare2Node(r, this);
+			this.type = SQUARE2;
+			break;
 		case SQUARE:
 			node = space.createSquareNode(r, this);
 			this.type = SQUARE;
@@ -177,6 +182,9 @@ public class SpaceAgent extends Agent {
 			node.space.removeNode(node);
 			
 			switch (type) {
+			case SQUARE2:
+				node = space.createSquare2Node(r, this);
+				break;
 			case SQUARE:
 				node = space.createSquareNode(r, this);
 				break;

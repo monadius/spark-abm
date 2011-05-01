@@ -254,9 +254,6 @@ class Observer1 extends ObserverImpl {
 		if (types.size() == 0)
 			return null;
 		
-		if (types.size() == 1)
-			return (ArrayList<T>) types.get(0);
-		
 		ArrayList<Agent> allAgents = new ArrayList<Agent>(n);
 		for (int i = 0; i < types.size(); i++) {
 			allAgents.addAll(types.get(i));
