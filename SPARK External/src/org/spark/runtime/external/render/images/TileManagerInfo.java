@@ -130,14 +130,19 @@ public class TileManagerInfo {
 			}
 			
 			// Load the image
-			BufferedImage img = src.getImage(ref);
-			if (img == null) {
-				logger.error("Image haven't been loaded: " + tileSet + "$" + name);
-				continue;
+			try {
+				BufferedImage img = src.getImage(ref);
+				if (img == null) {
+					logger.error("Image haven't been loaded: " + tileSet + "$" + name);
+					continue;
+				}
+
+				// Add the loaded image
+				manager.addImage(tileSet, name, img, xReflect, yReflect);
 			}
-			
-			// Add the loaded image
-			manager.addImage(tileSet, name, img, xReflect, yReflect);
+			catch (Exception e) {
+				logger.error(e);
+			}
 		}
 	}
 	
@@ -204,30 +209,47 @@ public class TileManagerInfo {
 		}
 		
 		// Iterate over all children nodes
-		ArrayList<Node> nodes = getAllChildren(fileNode);
-		for (Node node : nodes) {
-			String name = node.getNodeName().intern();
-
-			// Tileset
-			if (name == "tileset") {
-				ImageSrc src = TileSrc.loadXml(top, node);
-				if (src != null)
-					result.add(src);
-				continue;
-			}
-			
-			// Subimage
-			if (name == "subimage") {
-				ImageSrc src = SubimageSrc.loadXml(top, node); 
-				if (src != null)
-					result.add(src);
-				continue;
-			}
-		}
-		
+		result.addAll(readChildrenSrc(top, fileNode));
 		return result;
 	}
 	
 	
+	/**
+	 * Reads in all children image sources
+	 */
+	private static ArrayList<ImageSrc> readChildrenSrc(ImageSrc top, Node baseNode) {
+		ArrayList<ImageSrc> result = new ArrayList<ImageSrc>();
+		if (top == null || baseNode == null)
+			return result;
+		
+		ArrayList<Node> nodes = getAllChildren(baseNode);
+		
+		for (Node node : nodes) {
+			String name = node.getNodeName().intern();
+			ImageSrc src = null;
+
+			// Tileset
+			if (name == "tileset") {
+				src = TileSrc.loadXml(top, node);
+				if (src != null)
+					result.add(src);
+			}
+			
+			// Subimage
+			if (name == "subimage") {
+				src = SubimageSrc.loadXml(top, node); 
+				if (src != null)
+					result.add(src);
+			}
+			
+			if (src == null)
+				continue;
+			
+			// Recursively read sub-nodes
+			result.addAll(readChildrenSrc(src, node));
+		}
+		
+		return result;
+	}
 
 }

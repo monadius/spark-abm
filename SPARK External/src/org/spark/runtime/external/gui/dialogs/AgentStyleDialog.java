@@ -170,6 +170,11 @@ class ImageOptions extends OptionPanel {
 				
 				render.update();
 			}
+			else {
+				style.setTileManager(null);
+				managerButton.setText("null");
+				render.update();
+			}
 		}
 	}
 }

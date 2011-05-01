@@ -34,8 +34,17 @@ class SubimageSrc extends ImageSrc {
 	 */
 	public BufferedImage getImage(String name) {
 		BufferedImage image = src.getImage(name);
-		int width = (w < 0) ? image.getWidth() : w;
-		int height = (h < 0) ? image.getHeight() : h;
+		
+		int imageW = image.getWidth();
+		int imageH = image.getHeight();
+		
+		int width = (w < 0) ? imageW : w;
+		int height = (h < 0) ? imageH : h;
+		
+		if (x + width > imageW)
+			width = imageW - x;
+		if (y + height > imageH)
+			height = imageH - y;
 			
 		return image.getSubimage(x, y, width, height);
 	}
@@ -43,7 +52,7 @@ class SubimageSrc extends ImageSrc {
 	
 	// Reads information about a subimage
 	public static SubimageSrc loadXml(ImageSrc src, Node subimageNode) {
-		String id = getValue(subimageNode, "id", "tiles");
+		String id = getValue(subimageNode, "id", "subimage");
 		int x = getIntegerValue(subimageNode, "x", 0);
 		int y = getIntegerValue(subimageNode, "y", 0);
 		int width = getIntegerValue(subimageNode, "width", -1);
