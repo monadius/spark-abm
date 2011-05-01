@@ -13,14 +13,25 @@ import org.w3c.dom.Node;
  *
  */
 class TileSrc extends ImageSrc {
-	private ImageSrc src;
-	private int xSize, ySize;
-	private int xTiles, yTiles;
+	private final ImageSrc src;
+	private final int xSize, ySize;
+	private final int xTiles, yTiles;
+	private final int xPad, yPad;
 	
+
 	/**
 	 * Constructs a tile source
+	 * @param id: the id of the tile
+	 * @param src: the image source
+	 * @param xSize: the width of each tile
+	 * @param ySize: the height of each tile
+	 * @param xTiles: the number of tiles in x-direction
+	 * @param yTiles: the number of tiles in y-direction
+	 * @param xPad: the x-space between tiles
+	 * @param yPad the y-space between tiles
 	 */
-	public TileSrc(String id, ImageSrc src, int xSize, int ySize, int xTiles, int yTiles) {
+	public TileSrc(String id, ImageSrc src, int xSize, int ySize, 
+			int xTiles, int yTiles, int xPad, int yPad) {
 		super(id);
 		this.src = src;
 		this.xSize = xSize;
@@ -34,6 +45,9 @@ class TileSrc extends ImageSrc {
 		
 		this.xTiles = xTiles;
 		this.yTiles = yTiles;
+		
+		this.xPad = xPad;
+		this.yPad = yPad;
 	}
 
 	/**
@@ -68,7 +82,7 @@ class TileSrc extends ImageSrc {
 		if (y >= yTiles)
 			y = yTiles - 1;
 		
-		image = image.getSubimage(x * xSize, y * ySize, xSize, ySize);
+		image = image.getSubimage(x * (xSize + xPad), y * (ySize + yPad), xSize, ySize);
 		return image;
 	}
 	
@@ -80,7 +94,9 @@ class TileSrc extends ImageSrc {
 		int ySize = getIntegerValue(tilesetNode, "y-size", 1);
 		int xTiles = getIntegerValue(tilesetNode, "x-tiles", 1);
 		int yTiles = getIntegerValue(tilesetNode, "y-tiles", 1);
+		int xPad = getIntegerValue(tilesetNode, "x-pad", 0);
+		int yPad = getIntegerValue(tilesetNode, "y-pad", 0);
 		
-		return new TileSrc(id, src, xSize, ySize, xTiles, yTiles);
+		return new TileSrc(id, src, xSize, ySize, xTiles, yTiles, xPad, yPad);
 	}
 }

@@ -983,6 +983,10 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
 			}
 		}
 		
+		if (controlState == CONTROL_STATE_CONTROL) {
+			sendMouseEvent(Command_ControlEvent.MOUSE_MOVE, e, 0);
+		}
+		
 		prevMouseX = x;
 		prevMouseY = y;
 /*		Dimension size = e.getComponent().getSize();
@@ -1015,6 +1019,15 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
 	 * Mouse moved
 	 */
 	public void mouseMoved(MouseEvent e) {
+		switch (controlState) {
+		case CONTROL_STATE_SELECT:
+		case CONTROL_STATE_MOVE:
+			break;
+			
+		case CONTROL_STATE_CONTROL:
+			sendMouseEvent(Command_ControlEvent.MOUSE_MOVE, e, 0);
+			return;
+		}
 	}
 	
 	

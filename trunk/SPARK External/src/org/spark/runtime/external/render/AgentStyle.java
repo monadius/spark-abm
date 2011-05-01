@@ -378,7 +378,9 @@ public class AgentStyle implements Comparable<AgentStyle> {
 				tileManager = TileManagerInfo.loadFromXml(tileFile);
 			}
 			catch (Exception e) {
+				tileFile = null;
 				logger.error("File loading problem: " + tileFile);
+				logger.error(e);
 				return null;
 			}
 			
