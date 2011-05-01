@@ -27,14 +27,14 @@
       <window height="736" main="true" name="Main Window" visible="true" width="631" x="99" y="94"/>
     </windows>
     <mainframe control-state="1" dx="0.0" dy="0.0" location="Main Window" rot-x="-959.20215" rot-y="-164.39989" zoom="1.0">
-      <spacestyle name="space" selected="true" swapXY="false"/>
+      <spacestyle auto-size="true" cell-xsize="10" cell-ysize="10" name="space" selected="true" swapXY="false"/>
       <datalayerstyle>
         <info color-weight="0.0" height-weight="3.0" style-name="toxin"/>
         <info color-weight="1.0" height-weight="0.0" style-name="tissue-life"/>
       </datalayerstyle>
-      <agentstyle alpha-function-value="0.0" border="true" label="false" name="InfectAgent" position="0" texture-env="0" transparent="false" visible="true"/>
-      <agentstyle alpha-function-value="0.0" border="true" label="false" name="InflamCell" position="1" texture-env="0" transparent="false" visible="true"/>
-      <agentstyle alpha-function-value="0.0" border="true" label="false" name="BasicAgent" position="2" texture-env="0" transparent="false" visible="true"/>
+      <agentstyle alpha-function-value="0.0" border="true" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0" name="InfectAgent" position="0" texture-env="0" transparent="false" visible="true"/>
+      <agentstyle alpha-function-value="0.0" border="true" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0" name="InflamCell" position="1" texture-env="0" transparent="false" visible="true"/>
+      <agentstyle alpha-function-value="0.0" border="true" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0" name="BasicAgent" position="2" texture-env="0" transparent="false" visible="true"/>
     </mainframe>
     <parameterframe location="Parameters">
       <parameter max="1000.0" min="0.0" name="Initial infection" step="1.0" type="Double" variable="initial-infection-number" widget="Slider"/>
@@ -44,14 +44,14 @@
     </parameterframe>
     <variable-sets/>
     <renderframe control-state="1" dx="2.0" dy="-14.0" location="Toxin" rot-x="-408.4" rot-y="-9.5999775" zoom="1.0">
-      <spacestyle name="space" selected="true" swapXY="false"/>
+      <spacestyle auto-size="true" cell-xsize="10" cell-ysize="10" name="space" selected="true" swapXY="false"/>
       <datalayerstyle>
         <info color-weight="1.0" height-weight="3.0" style-name="toxin"/>
         <info color-weight="0.5" height-weight="0.2" style-name="tissue-life"/>
       </datalayerstyle>
-      <agentstyle alpha-function-value="0.0" border="true" label="false" name="InfectAgent" position="0" texture-env="0" transparent="false" visible="false"/>
-      <agentstyle alpha-function-value="0.0" border="true" label="false" name="InflamCell" position="1" texture-env="0" transparent="false" visible="false"/>
-      <agentstyle alpha-function-value="0.0" border="true" label="false" name="BasicAgent" position="2" texture-env="0" transparent="false" visible="false"/>
+      <agentstyle alpha-function-value="0.0" border="true" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0" name="InfectAgent" position="0" texture-env="0" transparent="false" visible="false"/>
+      <agentstyle alpha-function-value="0.0" border="true" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0" name="InflamCell" position="1" texture-env="0" transparent="false" visible="false"/>
+      <agentstyle alpha-function-value="0.0" border="true" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0" name="BasicAgent" position="2" texture-env="0" transparent="false" visible="false"/>
     </renderframe>
     <data-layers>
       <datalayer color1="0.4;0.4;0.4" color2="0.4;0.4;0.4" name="cidal-compound" val1="3.375779756921484E-9" val2="6.0"/>
@@ -67,16 +67,17 @@
   
   
     <renderframe control-state="1" dx="-1.0" dy="-7.5" location="View" rot-x="-44.800014" rot-y="354.00003" zoom="0.6999999">
-      <spacestyle name="space" selected="true" swapXY="false"/>
+      <spacestyle auto-size="true" cell-xsize="10" cell-ysize="10" name="space" selected="true" swapXY="false"/>
       <datalayerstyle>
         <info color-weight="0.0" height-weight="3.0" style-name="toxin"/>
         <info color-weight="1.0" height-weight="0.0" style-name="cidal-compound"/>
         <info color-weight="0.0" height-weight="0.2" style-name="tissue-life"/>
       </datalayerstyle>
-      <agentstyle alpha-function-value="0.0" border="true" label="false" name="InfectAgent" position="0" texture-env="0" transparent="false" visible="false"/>
-      <agentstyle alpha-function-value="0.0" border="true" label="false" name="InflamCell" position="1" texture-env="0" transparent="false" visible="false"/>
-      <agentstyle alpha-function-value="0.0" border="true" label="false" name="BasicAgent" position="2" texture-env="0" transparent="false" visible="false"/>
+      <agentstyle alpha-function-value="0.0" border="true" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0" name="InfectAgent" position="0" texture-env="0" transparent="false" visible="false"/>
+      <agentstyle alpha-function-value="0.0" border="true" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0" name="InflamCell" position="1" texture-env="0" transparent="false" visible="false"/>
+      <agentstyle alpha-function-value="0.0" border="true" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0" name="BasicAgent" position="2" texture-env="0" transparent="false" visible="false"/>
     </renderframe>
+  
   
   
   
