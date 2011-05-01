@@ -160,11 +160,20 @@ public abstract class SpaceNode implements Serializable {
 	
 	
 	/**
-	 * A method for testing an intersection with a square
+	 * A method for testing an intersection with a (visual) square
 	 * @param node
 	 * @return
 	 */
 	protected abstract boolean intersectsWith(SquareNode node);
+	
+	
+	/**
+	 * A method for testing an intersection with a square
+	 * @param node
+	 * @return
+	 */
+	protected abstract boolean intersectsWith(Square2Node node);
+	
 	
 	/**
 	 * Returns the relative size of the node

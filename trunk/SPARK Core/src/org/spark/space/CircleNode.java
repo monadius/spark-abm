@@ -89,15 +89,14 @@ public class CircleNode extends SpaceNode {
 	}
 
 	@Override
+	protected boolean intersectsWith(Square2Node node) {
+		return node.intersectsWith(this);
+	}
+	
+	
+	@Override
 	protected boolean intersectsWith(SquareNode node) {
-		// TODO: write the real intersection code here
-		Vector v = space.getVector(position, node.position);
-
-		double d = radius + node.getRelativeSize();
-		if (d*d > v.lengthSquared())
-			return true;		
-		
-		return false;
+		return intersectsWith((CircleNode) node);
 	}
 
 }

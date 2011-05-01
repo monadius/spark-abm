@@ -210,6 +210,7 @@ public final class Observer {
 	private final Queue<ControlState.MouseEvent> mouseEvents;
 	
 	private final ControlState.KeyState keyState; 
+	private final ControlState.MouseState mouseState;
 
 	
 	/**
@@ -288,6 +289,7 @@ public final class Observer {
 		keyEvents = new LinkedList<ControlState.KeyEvent>();
 		mouseEvents = new LinkedList<ControlState.MouseEvent>();
 		keyState = new ControlState.KeyState("space");
+		mouseState = new ControlState.MouseState("space");
 		
 
 		if (ExecutionMode.isMode(executionMode)) {
@@ -361,6 +363,7 @@ public final class Observer {
 	 * @param mouseEvent
 	 */
 	public void addMouseEvent(ControlState.MouseEvent mouseEvent) {
+		mouseState.changeState(mouseEvent);
 		mouseEvents.add(mouseEvent);
 	}
 	
@@ -371,6 +374,15 @@ public final class Observer {
 	 */
 	public ControlState.KeyState getKeyState() {
 		return keyState;
+	}
+	
+	
+	/**
+	 * Returns the mouse state
+	 * @return
+	 */
+	public ControlState.MouseState getMouseState() {
+		return mouseState;
 	}
 	
 	

@@ -1,7 +1,7 @@
 package org.spark.space;
 
 import org.jbox2d.common.Vec2;
-import org.jbox2d.dynamics.joints.Joint;
+import org.jbox2d.dynamics.joints.RevoluteJoint;
 import org.jbox2d.dynamics.joints.RevoluteJointDef;
 import org.spark.core.Agent;
 import org.spark.math.Vector;
@@ -16,9 +16,10 @@ public class RevoluteJointLink extends SpaceLink {
 	// Parameters for creating a joint
 	private Vec2 anchor;
 	private float lowerLimit, upperLimit;
+	private float motorSpeed, motorTorque;
 	
 	private PhysicalSpace2d space;
-	private Joint joint;
+	private RevoluteJoint joint;
 	
 	/**
 	 * Default constructor
@@ -29,8 +30,10 @@ public class RevoluteJointLink extends SpaceLink {
 	
 	@Override
 	public void die() {
-		if (joint != null)
+		if (joint != null) {
 			space.destroyJoint(joint);
+			joint = null;
+		}
 	}
 	
 	
@@ -45,6 +48,44 @@ public class RevoluteJointLink extends SpaceLink {
 	public void setLimits(double lowerLimit, double upperLimit) {
 		this.lowerLimit = (float) lowerLimit;
 		this.upperLimit = (float) upperLimit;
+	}
+	
+
+	/**
+	 * Returns the joint angle
+	 */
+	public double getAngle() {
+		if (joint == null)
+			return 0.0;
+		
+		return joint.getJointAngle();
+	}
+	
+	
+	/**
+	 * Sets the joint motor speed
+	 */
+	public void setMotorSpeed(double speed) {
+		if (joint != null) {
+			joint.setMotorSpeed((float) speed);
+		}
+		else {
+			motorSpeed = (float) speed;
+		}
+	}
+	
+	
+	
+	/**
+	 * Sets the joint motor max torque
+	 */
+	public void setMotorTorque(double torque) {
+		if (joint != null) {
+			joint.setMaxMotorTorque((float) torque);
+		}
+		else {
+			motorTorque = (float) torque;
+		}
 	}
 	
 	
@@ -79,8 +120,6 @@ public class RevoluteJointLink extends SpaceLink {
 		
 		RevoluteJointDef jd = new RevoluteJointDef();
 		
-//		lowerLimit = -(float) Math.PI / 2;
-//		upperLimit = -lowerLimit;
 		
 		if (lowerLimit < upperLimit) {
 			jd.lowerAngle = lowerLimit;
@@ -88,9 +127,11 @@ public class RevoluteJointLink extends SpaceLink {
 			jd.enableLimit = true;
 		}
 		
-//		jd.enableMotor = true;
-//		jd.motorSpeed = 0;
-//		jd.maxMotorTorque = 10;
+		if (motorTorque != 0) {
+			jd.enableMotor = true;
+			jd.maxMotorTorque = motorTorque;
+			jd.motorSpeed = motorSpeed;
+		}
 		
 		if (anchor == null)
 			anchor = n1.body.getWorldCenter();
@@ -98,7 +139,7 @@ public class RevoluteJointLink extends SpaceLink {
 		jd.initialize(n1.body, n2.body, anchor);
 		
 		space = (PhysicalSpace2d) n1.getSpace();
-		joint = space.createJoint(jd);
+		joint = (RevoluteJoint) space.createJoint(jd);
 		
 		super.connect(end1, end2);
 	}

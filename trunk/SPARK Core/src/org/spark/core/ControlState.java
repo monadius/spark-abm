@@ -57,6 +57,66 @@ public class ControlState {
 	
 	
 	/**
+	 * Stores information about mouse position and pressed buttons
+	 */
+	public static class MouseState extends ControlState {
+		private Vector position;
+		private String spaceName;
+		private int buttons;
+		private int wheel;
+		
+		public MouseState(String spaceName) {
+			super(spaceName);
+			this.position = new Vector();
+			this.spaceName = spaceName;
+		}
+		
+		/**
+		 * Changes a key state based on a keyboard event
+		 */
+		public void changeState(MouseEvent e) {
+			position = e.position;
+			spaceName = e.spaceName;
+			buttons = e.buttons;
+			wheel = e.mouseWheel;
+		}
+		
+		/**
+		 * Returns the space name
+		 * @return
+		 */
+		public String getSpaceName() {
+			return spaceName;
+		}
+
+		/**
+		 * Returns the mouse position
+		 * @return
+		 */
+		public Vector getPosition() {
+			return new Vector(position);
+		}
+		
+		/**
+		 * Returns the state of mouse buttons
+		 * @return
+		 */
+		public int getButtons() {
+			return buttons;
+		}
+		
+		/**
+		 * Returns the state of the mouse wheel
+		 * @return
+		 */
+		public int getWheel() {
+			return wheel;
+		}
+	}
+	
+	
+	
+	/**
 	 * Describes a keyboard control event
 	 */
 	public static class KeyEvent extends ControlState {
