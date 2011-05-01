@@ -178,7 +178,7 @@ public class StandardSimulationEngine extends AbstractSimulationEngine {
 			if (cmd == null)
 				break;
 		
-			logger.debug("Executing command: " + cmd.toString());
+//			logger.debug("Executing command: " + cmd.toString());
 
 			// Process some commands in a special way
 			

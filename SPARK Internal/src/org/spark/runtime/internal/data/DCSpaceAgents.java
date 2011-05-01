@@ -84,9 +84,11 @@ public class DCSpaceAgents extends DataCollector {
 			// TODO: node.getShape() => torus node does not exist yet (as a
 			// node)
 			int shape = agent.getType();
+			if (shape == SpaceAgent.SQUARE2)
+				shape = SpaceAgent.SQUARE;
 			if (shape > 3) {
 				// TODO: better solution for special (static, dynamic) shapes
-				shape = 1;
+				shape = SpaceAgent.CIRCLE;
 			}
 
 			int spaceIndex = node.getSpace().getIndex();
