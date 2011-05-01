@@ -183,6 +183,12 @@
                 	</translation>
                 </method>
                 
+                <method name = "clear">
+                	<translation>
+                		@@object.clear()
+                	</translation>
+                </method>
+                
                 <method name = "remove-at">
                 	<argument name = "i" type = "number"/>
                 	<translation>
@@ -925,7 +931,21 @@
 				<translation>
 					@@object.setLimits(@lo, @hi)
 				</translation>
-			</method>			
+			</method>
+			
+			
+			<field name = "motor-speed" type = "double">
+				<set>@@object.setMotorSpeed(@@value)</set>
+			</field>
+			
+			<field name = "motor-torque" type = "double">
+				<set>@@object.setMotorTorque(@@value)</set>
+			</field>
+			
+			
+			<field name = "angle" type = "double">
+				<get>@@object.getAngle()</get>
+			</field>			
        	</type>
        	
        	

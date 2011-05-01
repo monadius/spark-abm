@@ -482,7 +482,7 @@ public class Project {
 					+ output.getPath());
 
 		StringBuilder cmd = new StringBuilder(
-				"java -Xmx512m -Xms128m -Dsun.java2d.d3d=false -jar ");
+				"java -Xmx512m -Xms128m -jar ");
 		cmd.append('\"');
 		cmd.append(sparkExternalPath.getPath());
 		cmd.append('\"');

@@ -66,6 +66,13 @@
                 </translation>
         </reporter>
 
+        <reporter name = "square2" type = "$integer">
+                <translation>
+                        SpaceAgent.SQUARE2
+                </translation>
+        </reporter>
+
+
         <reporter name = "torus" type = "$integer">
                 <translation>
                         SpaceAgent.TORUS
@@ -1768,6 +1775,14 @@
         		Observer.getInstance().getKeyState().getState(@name)
         	</translation>
         </reporter>
+        
+        
+        <reporter name = "is-mouse-button-pressed" type = "boolean">
+        	<argument name = "button" type = "double"/>
+        	<translation>
+        		((Observer.getInstance().getMouseState().getButtons() &amp; ((int) @button)) != 0)
+        	</translation>
+        </reporter>
 
 
         <!-- K -->
@@ -1835,6 +1850,13 @@
         	
         	<translation>
         		Math.min(@a, @b)
+        	</translation>
+        </reporter>
+        
+        
+        <reporter name = "mouse-position" type = "vector">
+        	<translation>
+        		Observer.getInstance().getMouseState().getPosition()
         	</translation>
         </reporter>
 
