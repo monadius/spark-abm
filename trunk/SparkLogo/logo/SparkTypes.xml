@@ -1038,6 +1038,10 @@
                 <field name = "fixed-rotation" type = "boolean">
                 	<set>((PhysicalNode)@@object.getNode()).setFixedRotationFlag(@@value)</set>
                 </field>
+                
+                <field name = "restitution" type = "double">
+                	<set>((PhysicalNode)@@object.getNode()).setRestitution((float)@@value)</set>
+                </field>
 
                 <field name = "radius" type = "double">
                 	<set>((CircleNode) @@object.getNode()).setRadius(@@value)</set>
