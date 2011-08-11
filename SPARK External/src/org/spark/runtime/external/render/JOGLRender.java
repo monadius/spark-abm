@@ -18,15 +18,18 @@ import javax.media.opengl.GLPbuffer;
 import javax.media.opengl.glu.GLU;
 import javax.media.opengl.glu.GLUquadric;
 
+import org.spark.runtime.data.DataObject_AgentData;
 import org.spark.runtime.data.DataObject_SpaceAgents;
 import org.spark.runtime.data.DataObject_SpaceLinks;
 import org.spark.runtime.data.DataObject_Spaces;
 import org.spark.runtime.data.DataRow;
+import org.spark.runtime.external.render.images.TileManager;
 import org.spark.math.Vector;
 import org.spark.math.Vector4d;
 
 import com.spinn3r.log5j.Logger;
 import com.sun.opengl.util.Screenshot;
+import com.sun.opengl.util.texture.Texture;
 
 /**
  * JOGL renderer
@@ -53,7 +56,7 @@ public class JOGLRender extends Render implements GLEventListener {
 
 	private GLU glu = new GLU();
 	private GLUquadric ball, cube;
-
+	
 	/* Current data */
 	private DataRow data;
 
@@ -340,8 +343,21 @@ public class JOGLRender extends Render implements GLEventListener {
 	 * Transforms screen coordinates into space coordinates
 	 */
 	protected Vector getCoordinates(int x, int y) {
-		// TODO: implement
-		return new Vector(x, y, 0);
+		if (canvas == null)
+			return new Vector();
+		
+		int w = canvas.getWidth();
+		int h = canvas.getHeight();
+		
+		if (w < 1)
+			w = 1;
+		if (h < 1)
+			h = 1;
+		
+		double xx = (xMax - xMin) / w * x + xMin;
+		double yy = (yMin - yMax) / h * y + yMax;
+		
+		return new Vector(xx, yy, 0);
 	}
 
 	/**
@@ -702,6 +718,121 @@ public class JOGLRender extends Render implements GLEventListener {
 		}
 		gl.glEnd();
 	}
+	
+	
+	/**
+	 * Renders a tile
+	 * @return true if successful
+	 */
+	protected boolean drawTile(GL gl, TileManager tiles, DataObject_AgentData agentData, 
+				AgentStyle style, Vector4d color, int index) {
+		if (agentData == null)
+			return false;
+		
+		// Get parameters
+		String tileSet = agentData.getStringVal(index, "tile-set");
+		if (tileSet == null)
+			return false;
+		String tileName = agentData.getStringVal(index, "tile-name");
+		if (tileName == null)
+			return false;
+		
+		// Get an image
+		TileManager.TileImage tile = tiles.getImage(tileSet, tileName);
+		if (tile == null)
+			return false;
+		
+		Texture tex = tile.getTexture();
+		if (tex == null)
+			return false;
+		
+		/* Set up the blending mode */
+		int blendSrc = style.getSrcBlend();
+		int blendDst = style.getDstBlend();
+
+		if (blendSrc >= 0 && blendDst >= 0) {
+			gl.glEnable(GL.GL_BLEND);
+			// gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE);
+			gl.glBlendFunc(blendSrc, blendDst);
+		}
+
+		int alphaFunc = style.getAlphaFunc();
+
+		if (alphaFunc >= 0) {
+			gl.glEnable(GL.GL_ALPHA_TEST);
+			gl.glAlphaFunc(alphaFunc, style.alphaFuncValue);
+		}
+
+		gl.glTexEnvi(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, style.getTextureEnv());
+
+		// enable texturing
+		gl.glEnable(GL.GL_TEXTURE_2D);
+		tex.bind();
+		
+		float x0 = 0, x1 = 1;
+		float y0 = 1, y1 = 0;
+		
+		if (tile.xReflect) {
+			x0 = 1;
+			x1 = 0;
+		}
+		
+		if (tile.yReflect) {
+			y0 = 0;
+			y1 = 1;
+		}
+		
+//		gl.glColor4d(1, 1, 1, 1);
+//		gl.glColor3d(1, 1, 1);
+		if (style.getColorBlending())
+			gl.glColor3d(color.x, color.y, color.z);
+		else
+			gl.glColor3d(1, 1, 1);
+		
+		gl.glBegin(GL.GL_QUADS);
+			gl.glTexCoord2f(x0, y0);
+			gl.glVertex2f(-1, -1);
+			gl.glTexCoord2f(x1, y0);
+			gl.glVertex2f(1, -1);
+			gl.glTexCoord2f(x1, y1);
+			gl.glVertex2f(1, 1);
+			gl.glTexCoord2f(x0, y1);
+			gl.glVertex2f(-1, 1);
+		gl.glEnd();
+		
+		// Draw the image
+/*		int w = image.getWidth(null);
+		int h = image.getHeight(null);
+		AffineTransform tr = new AffineTransform();
+		tr.translate(x, y);
+		
+		double scale = Math.max(2 * r / w, 2 * r / h);
+//		tr.scale(2 * r / w, 2 * r / h);
+		tr.scale(scale, scale);
+		
+		if (theta != 0) {
+			tr.rotate(theta);
+		}
+
+		tr.scale(1, -1);
+		
+		// Reflections
+		if (tile.xReflect)
+			tr.scale(-1, 1);
+		if (tile.yReflect)
+			tr.scale(1, -1);
+		
+		tr.translate(-w / 2.0, -h / 2.0);
+		g.drawImage(image, tr, null);*/
+
+		gl.glDisable(GL.GL_TEXTURE_2D);
+		// switch back to modulation of quad colours and texture
+
+		gl.glDisable(GL.GL_ALPHA_TEST); // switch off transparency
+		gl.glDisable(GL.GL_BLEND);
+		
+		return true;
+	}
 
 	/**
 	 * Renders agents
@@ -712,6 +843,7 @@ public class JOGLRender extends Render implements GLEventListener {
 	 * @param agentStyle
 	 */
 	protected void renderAgents(GL gl, DataObject_SpaceAgents agents,
+			DataObject_AgentData agentData,
 			int spaceIndex, AgentStyle agentStyle) {
 		if (!agentStyle.visible)
 			return;
@@ -725,38 +857,18 @@ public class JOGLRender extends Render implements GLEventListener {
 		Vector4d[] colors = agents.getColors();
 		int[] shapes = agents.getShapes();
 		int[] spaceIndices = agents.getSpaceIndices();
-
+//		double[] rotations = agents.getRotations();
+		
 		/* Transparent agents */
 		if (agentStyle.transparent) {
 			gl.glEnable(GL.GL_BLEND);
 			gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
 		}
 
-		/* Textured agents */
-		if (agentStyle.getTexture() != null) {
-			int blendSrc = agentStyle.getSrcBlend();
-			int blendDst = agentStyle.getDstBlend();
-
-			if (blendSrc >= 0 && blendDst >= 0) {
-				gl.glEnable(GL.GL_BLEND);
-				// gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE);
-				gl.glBlendFunc(blendSrc, blendDst);
-			}
-
-			int alphaFunc = agentStyle.getAlphaFunc();
-
-			if (alphaFunc >= 0) {
-				gl.glEnable(GL.GL_ALPHA_TEST);
-				gl.glAlphaFunc(alphaFunc, agentStyle.alphaFuncValue);
-			}
-
-			gl.glTexEnvi(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, agentStyle
-					.getTextureEnv());
-
-			// enable texturing
-			gl.glEnable(GL.GL_TEXTURE_2D);
-			agentStyle.getTexture().bind();
-		}
+		/* Tile manager */
+		TileManager tiles = agentStyle.getTileManager();
+		if (agentData == null)
+			tiles = null;
 
 		// Render lists
 		int circle = agentStyle.border ? this.circle : this.circle2;
@@ -778,21 +890,18 @@ public class JOGLRender extends Render implements GLEventListener {
 			gl.glTranslated(pos.x, pos.y, 0);
 			float scale = (float) radii[i];
 			gl.glScalef(scale, scale, scale);
+			
+			boolean drawShape = true;
+			
+			// Render a picture first
+			if (tiles != null) {
+				if (drawTile(gl, tiles, agentData, agentStyle, color, i)) {
+					if (!agentStyle.getDrawShapeWithImageFlag())
+						drawShape = false;
+				}
+			}			
 
-			if (agentStyle.getTexture() != null) {
-				gl.glColor4d(color.x, color.y, color.z, color.a);
-				/* Render a textured agent */
-				gl.glBegin(GL.GL_QUADS);
-				gl.glTexCoord2f(0.0f, 0.0f);
-				gl.glVertex2f(-1, -1);
-				gl.glTexCoord2f(1.0f, 0.0f);
-				gl.glVertex2f(1, -1);
-				gl.glTexCoord2f(1.0f, 1.0f);
-				gl.glVertex2f(1, 1);
-				gl.glTexCoord2f(0.0f, 1.0f);
-				gl.glVertex2f(-1, 1);
-				gl.glEnd();
-			} else {
+			if (drawShape) {
 				/* Usual rendering */
 				if (agentStyle.transparent)
 					gl.glColor4d(color.x, color.y, color.z, 0.5);
@@ -820,16 +929,6 @@ public class JOGLRender extends Render implements GLEventListener {
 		if (agentStyle.transparent) {
 			gl.glDisable(GL.GL_BLEND);
 		}
-
-		/* Disable texture */
-		if (agentStyle.getTexture() != null) {
-			gl.glDisable(GL.GL_TEXTURE_2D);
-			// switch back to modulation of quad colours and texture
-
-			gl.glDisable(GL.GL_ALPHA_TEST); // switch off transparency
-			gl.glDisable(GL.GL_BLEND);
-		}
-
 	}
 
 	/**
@@ -930,7 +1029,7 @@ public class JOGLRender extends Render implements GLEventListener {
 		}
 
 		/* Textured agents */
-		if (agentStyle.getTexture() != null) {
+/*		if (agentStyle.getTexture() != null) {
 			int blendSrc = agentStyle.getSrcBlend();
 			int blendDst = agentStyle.getDstBlend();
 
@@ -954,7 +1053,7 @@ public class JOGLRender extends Render implements GLEventListener {
 			gl.glEnable(GL.GL_TEXTURE_2D);
 			agentStyle.getTexture().bind();
 		}
-
+*/
 		// Render lists
 		int circle = agentStyle.border ? this.circle : this.circle2;
 		int square = agentStyle.border ? this.square : this.square2;
@@ -982,10 +1081,10 @@ public class JOGLRender extends Render implements GLEventListener {
 			float scale = (float) Math.sqrt(r * r - dist * dist);
 			gl.glScalef(scale, scale, scale);
 
-			if (agentStyle.getTexture() != null) {
-				gl.glColor4d(color.x, color.y, color.z, color.a);
+	//		if (agentStyle.getTexture() != null) {
+//				gl.glColor4d(color.x, color.y, color.z, color.a);
 				/* Render a textured agent */
-				gl.glBegin(GL.GL_QUADS);
+/*				gl.glBegin(GL.GL_QUADS);
 				gl.glTexCoord2f(0.0f, 0.0f);
 				gl.glVertex2f(-1, -1);
 				gl.glTexCoord2f(1.0f, 0.0f);
@@ -995,7 +1094,7 @@ public class JOGLRender extends Render implements GLEventListener {
 				gl.glTexCoord2f(0.0f, 1.0f);
 				gl.glVertex2f(-1, 1);
 				gl.glEnd();
-			} else {
+			} else {*/
 				/* Usual rendering */
 				if (agentStyle.transparent)
 					gl.glColor4d(color.x, color.y, color.z, 0.5);
@@ -1015,7 +1114,7 @@ public class JOGLRender extends Render implements GLEventListener {
 					gl.glCallList(donnut);
 					break;
 				}
-			}
+//			}
 			gl.glPopMatrix();
 		}
 
@@ -1025,13 +1124,14 @@ public class JOGLRender extends Render implements GLEventListener {
 		}
 
 		/* Disable texture */
-		if (agentStyle.getTexture() != null) {
+	/*	if (agentStyle.getTexture() != null) {
 			gl.glDisable(GL.GL_TEXTURE_2D);
 			// switch back to modulation of quad colours and texture
 
 			gl.glDisable(GL.GL_ALPHA_TEST); // switch off transparency
 			gl.glDisable(GL.GL_BLEND);
 		}
+	*/
 	}
 
 	/**
@@ -1119,12 +1219,12 @@ public class JOGLRender extends Render implements GLEventListener {
 			renderDataLayer(gl, selectedDataLayer, data, spaceIndex);
 		}
 
-//		if (mode3d) {
+		if (mode3d) {
 			gl.glEnable(GL.GL_COLOR_MATERIAL);
 			gl.glEnable(GL.GL_LIGHT0); // Enable Light 0
 			gl.glEnable(GL.GL_LIGHTING); // Enable Lighting
 			gl.glEnable(GL.GL_AUTO_NORMAL);
-//		}
+		}
 
 		// Render visible agents
 		for (int k = agentStyles.size() - 1; k >= 0; k--) {
@@ -1144,7 +1244,8 @@ public class JOGLRender extends Render implements GLEventListener {
 						agentStyle);
 			else {
 				if (!space3d) {
-					renderAgents(gl, agentsData, spaceIndex, agentStyle);
+					DataObject_AgentData additionalData = data.getAgentData(agentStyle.typeName);					
+					renderAgents(gl, agentsData, additionalData, spaceIndex, agentStyle);
 				} else if (slicedMode) {
 					renderAgents3dSliced(gl, agentsData, agentStyle, spaceIndex);
 				} else {

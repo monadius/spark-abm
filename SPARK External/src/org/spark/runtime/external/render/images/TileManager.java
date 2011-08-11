@@ -3,7 +3,11 @@ package org.spark.runtime.external.render.images;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 
+import javax.media.opengl.GL;
+
 import com.spinn3r.log5j.Logger;
+import com.sun.opengl.util.texture.Texture;
+import com.sun.opengl.util.texture.TextureIO;
 
 
 /**
@@ -21,10 +25,42 @@ public class TileManager {
 		public final boolean xReflect;
 		public final boolean yReflect;
 		
+		// OpenGL texture
+		private Texture texture;
+		
+		/**
+		 * Constructor
+		 */
 		protected TileImage(BufferedImage image, boolean xReflect, boolean yReflect) {
 			this.image = image;
 			this.xReflect = xReflect;
 			this.yReflect = yReflect;
+		}
+		
+		/**
+		 * Returns the corresponding OpenGL texture
+		 * @return
+		 */
+		public Texture getTexture() {
+			if (texture != null)
+				return texture;
+
+			if (image == null)
+				return null;
+			
+			texture = TextureIO.newTexture(image, false);
+			texture.setTexParameteri(GL.GL_TEXTURE_MAG_FILTER,
+					GL.GL_NEAREST);
+			texture.setTexParameteri(GL.GL_TEXTURE_MIN_FILTER,
+					GL.GL_NEAREST);
+
+/*			texture.setTexParameteri(GL.GL_TEXTURE_MAG_FILTER,
+					GL.GL_LINEAR);
+			texture.setTexParameteri(GL.GL_TEXTURE_MIN_FILTER,
+					GL.GL_LINEAR);
+*/
+			
+			return texture;
 		}
 	}
 	

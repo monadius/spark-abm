@@ -16,8 +16,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import com.spinn3r.log5j.Logger;
-import com.sun.opengl.util.texture.Texture;
-import com.sun.opengl.util.texture.TextureIO;
 
 public class AgentStyle implements Comparable<AgentStyle> {
 	private static final Logger logger = Logger.getLogger();
@@ -40,12 +38,14 @@ public class AgentStyle implements Comparable<AgentStyle> {
 	String textureFileName;
 	InputStream textureStream;
 		
-	private Texture texture;
 	
 	private int blendSrc, blendDst;
 	private int alphaFunc;
 	public float alphaFuncValue;
 	private int textureEnv;
+	
+	// If true then the color is blended with the agent's texture
+	private boolean colorBlending;
 	
 	// Indicates that a shape is rendering along with an image
 	private boolean drawShapeWithImage;
@@ -88,6 +88,9 @@ public class AgentStyle implements Comparable<AgentStyle> {
 	};
 	
 	public int getTextureEnv() {
+		if (textureEnv < 0 || textureEnv >= textureEnvs.length)
+			textureEnv = 0;
+		
 		return textureEnvs[textureEnv].value;
 	}
 	
@@ -204,6 +207,20 @@ public class AgentStyle implements Comparable<AgentStyle> {
 	/**
 	 * Returns a flag
 	 */
+	public boolean getColorBlending() {
+		return colorBlending;
+	}
+	
+	/**
+	 * Sets a flag
+	 */
+	public void setColorBlending(boolean flag) {
+		this.colorBlending = flag;
+	}
+	
+	/**
+	 * Returns a flag
+	 */
 	public boolean getDrawShapeWithImageFlag() {
 		return drawShapeWithImage;
 	}
@@ -295,76 +312,6 @@ public class AgentStyle implements Comparable<AgentStyle> {
 	}
 
 	
-	public String getTextureFileName() {
-		return textureFileName;
-	}
-	
-	
-	public File getTextureFile() {
-		if (textureFileName == null)
-			return null;
-		else
-			return new File(textureFileName);
-	}
-	
-
-	public Texture getTexture() {
-		if (texture != null)
-			return texture;
-
-		if (textureFileName != null) {
-			try {
-				texture = TextureIO.newTexture(new File(textureFileName), false);
-				texture.setTexParameteri(GL.GL_TEXTURE_MAG_FILTER,
-						GL.GL_NEAREST);
-				texture.setTexParameteri(GL.GL_TEXTURE_MIN_FILTER,
-						GL.GL_NEAREST);
-			} catch (Exception e) {
-				System.out.println(e.getMessage());
-				System.out.println("Error loading texture "
-						+ new File(textureFileName).getAbsolutePath());
-				texture = null;
-			}
-
-			return texture;
-		}
-		else if (textureStream != null) {
-			try {
-				texture = TextureIO.newTexture(textureStream, false, "png");
-				texture.setTexParameteri(GL.GL_TEXTURE_MAG_FILTER,
-						GL.GL_NEAREST);
-				texture.setTexParameteri(GL.GL_TEXTURE_MIN_FILTER,
-						GL.GL_NEAREST);
-				textureStream.close();
-			} catch (Exception e) {
-				System.out.println(e.getMessage());
-				System.out.println("Error loading texture from an input stream");
-				texture = null;
-			}
-
-			return texture;
-			
-		}
-
-		return null;
-
-	}
-	
-	
-	public synchronized void setTexture(String textureFileName) {
-		if (textureFileName == null || !textureFileName.equals(this.textureFileName)) {
-			// TODO: texture can be disposed only on OpenGL thread.
-			// Maybe put it into a event queue?
-//			if (texture != null)
-//				texture.dispose();
-			
-			texture = null;
-		}
-
-		this.textureFileName = textureFileName;
-	}
-	
-	
 	/**
 	 * Returns the tile manager for this agent style
 	 * @return null if no tile manager is defined
@@ -425,6 +372,7 @@ public class AgentStyle implements Comparable<AgentStyle> {
 		addAttr(doc, agentNode, "label", label);
 		addAttr(doc, agentNode, "position", position);
 
+		addAttr(doc, agentNode, "color-blending", colorBlending);
 		addAttr(doc, agentNode, "draw-shape-with-image", drawShapeWithImage);
 		
 		// Save label options
@@ -452,10 +400,7 @@ public class AgentStyle implements Comparable<AgentStyle> {
 					FileUtils.getRelativePath(modelPath, tileFile));
 		}
 		
-		if (alphaFunc > 0) {
-			addAttr(doc, agentNode, "alpha-function", alphaFunc);
-		}
-		
+		addAttr(doc, agentNode, "alpha-function", alphaFunc);
 		addAttr(doc, agentNode, "alpha-function-value", alphaFuncValue);
 		
 		if (blendDst > 0) {
@@ -488,9 +433,13 @@ public class AgentStyle implements Comparable<AgentStyle> {
 		blendSrc = getIntegerValue(node, "blend-src", 0);
 		blendDst = getIntegerValue(node, "blend-dst", 0);
 		
-		alphaFunc = getIntegerValue(node, "alpha-function", 0);
+		alphaFunc = getIntegerValue(node, "alpha-function", 4);
+		if (alphaFunc < 0 || alphaFunc >= alphaFuncs.length)
+			alphaFunc = 4;
+		
 		alphaFuncValue = getFloatValue(node, "alpha-function-value", 0.0f);
 		
+		colorBlending = getBooleanValue(node, "color-blending", true);
 		drawShapeWithImage = getBooleanValue(node, "draw-shape-with-image", false);
 
 		// Load label options
@@ -501,7 +450,6 @@ public class AgentStyle implements Comparable<AgentStyle> {
 		dyLabel = getFloatValue(node, "dy-label", 0.0f);
 		labelColor = getVectorValue(node, "label-color", ";", new Vector());
 		
-		String texture = getValue(node, "texture", null);
 		String tileFileName = getValue(node, "tile-manager", null);
 		
 		if (tileFileName != null) {
@@ -511,31 +459,6 @@ public class AgentStyle implements Comparable<AgentStyle> {
 				tileFile = new File(modelPath, tileFileName);
 				if (!tileFile.exists())
 					tileFile = null;
-			}
-		}
-		
-		if (texture != null) {
-			// TODO: find better solution. Another argument?
-			// modelPath == null means loading from the jar-file
-			if (modelPath == null) {
-				try {
-					InputStream is = this.getClass().getClassLoader().getResourceAsStream(texture);
-					if (is != null) {
-						this.textureStream = is;
-					}
-				}
-				catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-			else {
-			
-				File textureFile = new File(texture);
-			
-				if (textureFile.isAbsolute())
-					this.setTexture(textureFile.getAbsolutePath());
-				else
-					this.setTexture(new File(modelPath, texture).getAbsolutePath());
 			}
 		}
 	}
