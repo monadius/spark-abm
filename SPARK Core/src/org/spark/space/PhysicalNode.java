@@ -86,7 +86,7 @@ public class PhysicalNode extends CircleNode {
 //		bd.fixedRotation = true;
 //		bd.linearDamping = 0.01f;
 //		bd.angularDamping = 0.01f;
-		
+
 		body = world.createBody(bd);
 		body.createShape(cd);
 		body.setUserData(this);
@@ -191,6 +191,25 @@ public class PhysicalNode extends CircleNode {
 			body.m_flags &= ~Body.e_fixedRotationFlag;
 			
 			// TODO: restore m_I and m_invI
+		}
+	}
+	
+	
+	/**
+	 * Sets the restitution coefficient
+	 * @param restitution
+	 */
+	public void setRestitution(float restitution) {
+		if (body == null)
+			return;
+		
+		if (restitution < 0.0f)
+			restitution = 0.0f;
+		else if (restitution > 1.0f)
+			restitution = 1.0f;
+		
+		for (Shape shape = body.getShapeList(); shape != null; shape = shape.getNext()) {
+			shape.m_restitution = restitution;
 		}
 	}
 	
