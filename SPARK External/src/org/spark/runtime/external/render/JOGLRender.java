@@ -79,7 +79,9 @@ public class JOGLRender extends Render implements GLEventListener {
 	 */
 	public JOGLRender(int interval) throws Exception {
 		super(interval);
-		GLCanvas glcanvas = new GLCanvas();
+		GLCapabilities cap = new GLCapabilities();
+		cap.setStencilBits(8);
+		GLCanvas glcanvas = new GLCanvas(cap);
 		if (glcanvas == null) {
 			throw new Exception("Problems during OpenGL initialization");
 		}
@@ -190,6 +192,7 @@ public class JOGLRender extends Render implements GLEventListener {
 		gl.setSwapInterval(1);
 		// gl.glEnable(GL.GL_POINT_SMOOTH);
 		gl.glClearColor(1, 1, 1, 1);
+		gl.glClearStencil(0);
 		gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
 		gl.glTexEnvi(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, GL.GL_MODULATE);
 //		gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_LINE);
@@ -219,7 +222,7 @@ public class JOGLRender extends Render implements GLEventListener {
 
 		// Disable the depth test by default (for 2d-case mostly)
 		gl.glDisable(GL.GL_DEPTH_TEST);
-
+		
 		int n = 10;
 		circle = gl.glGenLists(1);
 		gl.glNewList(circle, GL.GL_COMPILE);
@@ -760,7 +763,7 @@ public class JOGLRender extends Render implements GLEventListener {
 
 		if (alphaFunc >= 0) {
 			gl.glEnable(GL.GL_ALPHA_TEST);
-			gl.glAlphaFunc(alphaFunc, style.alphaFuncValue);
+			gl.glAlphaFunc(alphaFunc, style.getAlphaFuncValue());
 		}
 
 		gl.glTexEnvi(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, style.getTextureEnv());
@@ -769,17 +772,35 @@ public class JOGLRender extends Render implements GLEventListener {
 		gl.glEnable(GL.GL_TEXTURE_2D);
 		tex.bind();
 		
-		float x0 = 0, x1 = 1;
-		float y0 = 1, y1 = 0;
+		float xt0 = 0, xt1 = 1;
+		float yt0 = 1, yt1 = 0;
+		float x0 = -1, x1 = 1;
+		float y0 = -1, y1 = 1;
 		
 		if (tile.xReflect) {
-			x0 = 1;
-			x1 = 0;
+			xt0 = 1;
+			xt1 = 0;
 		}
 		
 		if (tile.yReflect) {
-			y0 = 0;
-			y1 = 1;
+			yt0 = 0;
+			yt1 = 1;
+		}
+		
+		if (tile.image != null) {
+			int w = tile.image.getWidth();
+			int h = tile.image.getHeight();
+			
+			if (w < h && w > 0) {
+				float f = (float) h / w;
+				y0 = -f;
+				y1 = f;
+			}
+			else if (w > h && h > 0) {
+				float f = (float) w / h;
+				x0 = -f;
+				x1 = f;
+			}
 		}
 		
 //		gl.glColor4d(1, 1, 1, 1);
@@ -790,14 +811,14 @@ public class JOGLRender extends Render implements GLEventListener {
 			gl.glColor3d(1, 1, 1);
 		
 		gl.glBegin(GL.GL_QUADS);
-			gl.glTexCoord2f(x0, y0);
-			gl.glVertex2f(-1, -1);
-			gl.glTexCoord2f(x1, y0);
-			gl.glVertex2f(1, -1);
-			gl.glTexCoord2f(x1, y1);
-			gl.glVertex2f(1, 1);
-			gl.glTexCoord2f(x0, y1);
-			gl.glVertex2f(-1, 1);
+			gl.glTexCoord2f(xt0, yt0);
+			gl.glVertex2f(x0, y0);
+			gl.glTexCoord2f(xt1, yt0);
+			gl.glVertex2f(x1, y0);
+			gl.glTexCoord2f(xt1, yt1);
+			gl.glVertex2f(x1, y1);
+			gl.glTexCoord2f(xt0, yt1);
+			gl.glVertex2f(x0, y1);
 		gl.glEnd();
 		
 		// Draw the image
@@ -864,6 +885,14 @@ public class JOGLRender extends Render implements GLEventListener {
 			gl.glEnable(GL.GL_BLEND);
 			gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
 		}
+		
+		// Stencil
+		if (agentStyle.getStencilFunc() > 0) {
+			gl.glEnable(GL.GL_STENCIL_TEST);
+			gl.glStencilFunc(agentStyle.getStencilFunc(), 
+					agentStyle.getStencilRef(), agentStyle.getStencilMask());
+			gl.glStencilOp(GL.GL_KEEP, GL.GL_KEEP, GL.GL_REPLACE);
+		}
 
 		/* Tile manager */
 		TileManager tiles = agentStyle.getTileManager();
@@ -925,6 +954,11 @@ public class JOGLRender extends Render implements GLEventListener {
 			gl.glPopMatrix();
 		}
 
+		// Disable the stencil test
+		if (agentStyle.getStencilFunc() > 0) {
+			gl.glDisable(GL.GL_STENCIL_TEST);
+		}
+		
 		/* Disable transparency */
 		if (agentStyle.transparent) {
 			gl.glDisable(GL.GL_BLEND);
@@ -1186,7 +1220,9 @@ public class JOGLRender extends Render implements GLEventListener {
 						.shouldPreserveColorBufferIfTranslucent()) {
 			gl.glClear(GL.GL_DEPTH_BUFFER_BIT);
 		} else {
-			gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+			gl.glClear(GL.GL_COLOR_BUFFER_BIT | 
+					GL.GL_DEPTH_BUFFER_BIT | 
+					GL.GL_STENCIL_BUFFER_BIT);
 		}
 
 		// Save world matrix

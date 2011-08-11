@@ -2,7 +2,6 @@ package org.spark.runtime.external.render;
 
 import java.awt.Font;
 import java.io.File;
-import java.io.InputStream;
 
 import javax.media.opengl.GL;
 
@@ -35,14 +34,18 @@ public class AgentStyle implements Comparable<AgentStyle> {
 	
 	/* Advanced options */
 	
-	String textureFileName;
-	InputStream textureStream;
-		
-	
+	// Blending
 	private int blendSrc, blendDst;
-	private int alphaFunc;
-	public float alphaFuncValue;
 	private int textureEnv;
+	
+	// Alpha
+	private int alphaFunc;
+	private float alphaFuncValue;
+	
+	// Stencil
+	private int stencilFunc;
+	private int stencilRef;
+	private int stencilMask;
 	
 	// If true then the color is blended with the agent's texture
 	private boolean colorBlending;
@@ -117,6 +120,22 @@ public class AgentStyle implements Comparable<AgentStyle> {
 		new RenderProperty("GL_GEQUAL", GL.GL_GEQUAL),
 		new RenderProperty("GL_NOTEQUAL", GL.GL_NOTEQUAL)
 	};
+
+	public static final RenderProperty[] stencilFuncs = new RenderProperty[] {
+		// For the first value (index = 0) the stencil test is turned off
+		new RenderProperty("NONE", -1),
+		// GL_ALWAYS equivalent to turned off alpha function
+		new RenderProperty("GL_ALWAYS", GL.GL_ALWAYS),
+		new RenderProperty("GL_NEVER", GL.GL_NEVER),
+		new RenderProperty("GL_LESS", GL.GL_LESS),
+		new RenderProperty("GL_GREATER", GL.GL_GREATER),
+		new RenderProperty("GL_EQUAL", GL.GL_EQUAL),
+		new RenderProperty("GL_LEQUAL", GL.GL_LEQUAL),
+		new RenderProperty("GL_GEQUAL", GL.GL_GEQUAL),
+		new RenderProperty("GL_NOTEQUAL", GL.GL_NOTEQUAL)
+	};
+
+	// Alpha
 	
 	public int getAlphaFunc() {
 		return alphaFuncs[alphaFunc].value;
@@ -131,6 +150,44 @@ public class AgentStyle implements Comparable<AgentStyle> {
 			alphaFunc = index;
 	}
 	
+	public float getAlphaFuncValue() {
+		return alphaFuncValue;
+	}
+	
+	public void setAlphaFuncValue(float v) {
+		alphaFuncValue = v;
+	}
+	
+	// Stencil
+	
+	public int getStencilFunc() {
+		return stencilFuncs[stencilFunc].value;
+	}
+	
+	public int getStencilFuncIndex() {
+		return stencilFunc;
+	}
+	
+	public void setStencilFunc(int index) {
+		if (index >= 0 && index < stencilFuncs.length)
+			stencilFunc = index;
+	}
+	
+	public int getStencilRef() {
+		return stencilRef;
+	}
+	
+	public int getStencilMask() {
+		return stencilMask;
+	}
+	
+	public void setStencilRef(int val) {
+		stencilRef = val;
+	}
+	
+	public void setStencilMask(int mask) {
+		stencilMask = mask;
+	}
 	
 	/**
 	 * Returns a font for printing labels
@@ -295,7 +352,6 @@ public class AgentStyle implements Comparable<AgentStyle> {
 		this.transparent = transparent;
 		this.visible = visible;
 		this.border = border;
-		this.textureFileName = null;
 		
 		// Default values of advanced parameters
 		textureEnv = 0;
@@ -386,23 +442,22 @@ public class AgentStyle implements Comparable<AgentStyle> {
 		addAttr(doc, agentNode, "dy-label", dyLabel);
 		addAttr(doc, agentNode, "label-color", labelColor);
 		
-		
-		if (this.textureFileName != null) {
-			// Texture
-			addAttr(doc, agentNode, "texture", 
-					FileUtils.getRelativePath(modelPath,
-							new File(this.textureFileName)));
-		}
-		
 		if (this.tileFile != null) {
 			// Tile file
 			addAttr(doc, agentNode, "tile-manager", 
 					FileUtils.getRelativePath(modelPath, tileFile));
 		}
 		
+		// Alpha
 		addAttr(doc, agentNode, "alpha-function", alphaFunc);
 		addAttr(doc, agentNode, "alpha-function-value", alphaFuncValue);
 		
+		// Stencil
+		addAttr(doc, agentNode, "stencil-function", stencilFunc);
+		addAttr(doc, agentNode, "stencil-ref", stencilRef);
+		addAttr(doc, agentNode, "stencil-mask", stencilMask);
+		
+		// Blending
 		if (blendDst > 0) {
 			addAttr(doc, agentNode, "blend-dst", blendDst);
 		}
@@ -429,17 +484,27 @@ public class AgentStyle implements Comparable<AgentStyle> {
 		label = getBooleanValue(node, "label", false);
 		priority = getIntegerValue(node, "position", 0);
 		
+		// Blending
 		textureEnv = getIntegerValue(node, "texture-env", 0);
 		blendSrc = getIntegerValue(node, "blend-src", 0);
 		blendDst = getIntegerValue(node, "blend-dst", 0);
 		
+		// Alpha
 		alphaFunc = getIntegerValue(node, "alpha-function", 4);
 		if (alphaFunc < 0 || alphaFunc >= alphaFuncs.length)
 			alphaFunc = 4;
 		
 		alphaFuncValue = getFloatValue(node, "alpha-function-value", 0.0f);
+
+		// Stencil
+		stencilFunc = getIntegerValue(node, "stencil-function", 0);
+		if (stencilFunc < 0 || stencilFunc >= stencilFuncs.length)
+			stencilFunc = 0;
+		stencilRef = getIntegerValue(node, "stencil-ref", 0);
+		stencilMask = getIntegerValue(node, "stencil-mask", 0xFFFF);
 		
-		colorBlending = getBooleanValue(node, "color-blending", true);
+		// Flags
+		colorBlending = getBooleanValue(node, "color-blending", false);
 		drawShapeWithImage = getBooleanValue(node, "draw-shape-with-image", false);
 
 		// Load label options

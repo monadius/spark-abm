@@ -330,19 +330,29 @@ class AlphaBlendingOptions extends OptionPanel implements ChangeListener {
 		
 		JPanel blendPanel;
 		JPanel alphaPanel;
+		JPanel stencilPanel;
 		
+		// Blending
 		blendPanel = new JPanel(new GridLayout(2, 1));
 		blendPanel.setMinimumSize(new Dimension(100, 100));
 		blendPanel.setBorder(BorderFactory.createTitledBorder("Blend Function"));
 		initBlendPanel(blendPanel);
 
+		// Alpha
 		alphaPanel = new JPanel(new GridLayout(2, 1));
 		alphaPanel.setMinimumSize(new Dimension(100, 100));
 		alphaPanel.setBorder(BorderFactory.createTitledBorder("Alpha Function"));
 		initAlphaPanel(alphaPanel);
+		
+		// Stencil
+		stencilPanel = new JPanel(new GridLayout(3, 1));
+		stencilPanel.setMinimumSize(new Dimension(100, 100));
+		stencilPanel.setBorder(BorderFactory.createTitledBorder("Stencil Function"));
+		initStencilPanel(stencilPanel);
 
         panel.add(blendPanel);
         panel.add(alphaPanel);
+        panel.add(stencilPanel);
         
 		this.add(panel);
 	}
@@ -380,11 +390,36 @@ class AlphaBlendingOptions extends OptionPanel implements ChangeListener {
 		alpha.addActionListener(this);
 		alpha.setActionCommand("alpha-function");
 		
-		JSpinner value = new JSpinner(new SpinnerNumberModel(style.alphaFuncValue, 0, 1, 0.1));
+		JSpinner value = new JSpinner(new SpinnerNumberModel(style.getAlphaFuncValue(), 0, 1, 0.1));
+		value.setName("alpha");
 		value.addChangeListener(this);
 		
 		panel.add(alpha);
 		panel.add(value);
+	}
+	
+	
+	/**
+	 * Creates components of the stencilPanel
+	 * @param panel
+	 */
+	private void initStencilPanel(JPanel panel) {
+		JComboBox func = new JComboBox(AgentStyle.stencilFuncs);
+		func.setSelectedIndex(style.getStencilFuncIndex());
+		func.addActionListener(this);
+		func.setActionCommand("stencil-function");
+		
+		JSpinner ref = new JSpinner(new SpinnerNumberModel(style.getStencilRef(), 0, 0xFFFF, 1));
+		ref.setName("ref");
+		ref.addChangeListener(this);
+		
+		JSpinner mask = new JSpinner(new SpinnerNumberModel(style.getStencilMask(), 0, 0xFFFF, 1));
+		mask.setName("mask");
+		mask.addChangeListener(this);
+		
+		panel.add(func);
+		panel.add(ref);
+		panel.add(mask);
 	}
 	
 	
@@ -427,20 +462,44 @@ class AlphaBlendingOptions extends OptionPanel implements ChangeListener {
 			render.update();
 			return;
 		}
+		
+		// stencil-function command
+		if (cmd == "stencil-function") {
+			style.setStencilFunc(index);
+			render.update();
+			return;
+		}
 	}
 
 
 	/**
-	 * Alpha value listener
+	 * Alpha/stencil values listener
 	 */
 	public void stateChanged(ChangeEvent e) {
 		if (e.getSource() instanceof JSpinner) {
-			JSpinner value = (JSpinner) e.getSource();
+			JSpinner spinner = (JSpinner) e.getSource();
+			String name = spinner.getName().intern();
 			
-			float val = ((Number) value.getValue()).floatValue();
-			style.alphaFuncValue = val;
+			// Alpha
+			if (name == "alpha") {
+				float val = ((Number) spinner.getValue()).floatValue();
+				style.setAlphaFuncValue(val);
+				render.update();
+			}
 			
-//			GUIModelManager.getInstance().requestUpdate();
+			// Stencil ref
+			if (name == "ref") {
+				int val = ((Number) spinner.getValue()).intValue();
+				style.setStencilRef(val);
+				render.update();
+			}
+			
+			// Stencil mask
+			if (name == "mask") {
+				int val = ((Number) spinner.getValue()).intValue();
+				style.setStencilMask(val);
+				render.update();
+			}
 		}
 	}
 }
