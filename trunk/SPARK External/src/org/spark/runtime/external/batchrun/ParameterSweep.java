@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import org.spark.runtime.external.Parameter;
 
+import com.spinn3r.log5j.Logger;
+
 
 
 /**
@@ -12,6 +14,8 @@ import org.spark.runtime.external.Parameter;
  *
  */
 public class ParameterSweep {
+	private final static Logger logger = Logger.getLogger();
+	
 	/**
 	 * Auxiliary class with options for a parameter
 	 * @author Monad
@@ -64,6 +68,10 @@ public class ParameterSweep {
 		p.step = step;
 		p.iteration = 0;
 		p.stepsNumber = (int)((end - start) / step) + 1;
+		if (p.stepsNumber < 1) {
+			logger.warn("Bad number of steps for " + par.getName() + ": " + p.stepsNumber);
+			p.stepsNumber = 1;
+		}
 		
 		parOptions.add(p);
 	}
