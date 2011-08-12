@@ -44,7 +44,7 @@ public class Vector4d implements Serializable {
 	public Vector4d(double v) {
 		this.x = this.y = this.z = this.a = v;
 	}
-
+	
 	public Vector4d(java.awt.Color color) {
 		set(color);
 	}
@@ -66,7 +66,6 @@ public class Vector4d implements Serializable {
 		x = v.x;
 		y = v.y;
 		z = v.z;
-		a = 0;
 		
 		return this;
 	}
