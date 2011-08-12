@@ -189,7 +189,7 @@ public abstract class SpaceNode implements Serializable {
 	//*********************
 
 	// Node's color
-	protected Vector4d color = new Vector4d();
+	protected Vector4d color = new Vector4d(0, 0, 0, 1);
 	
 	// Rotation parameter
 	protected double rotation;
