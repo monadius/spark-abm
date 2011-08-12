@@ -805,11 +805,17 @@ public class JOGLRender extends Render implements GLEventListener {
 		
 //		gl.glColor4d(1, 1, 1, 1);
 //		gl.glColor3d(1, 1, 1);
+		double alpha = color.a;
+		if (style.transparent)
+			alpha *= 0.5;
+				
 		if (style.getColorBlending())
-			gl.glColor3d(color.x, color.y, color.z);
+			gl.glColor4d(color.x, color.y, color.z, alpha);
 		else
-			gl.glColor3d(1, 1, 1);
+			gl.glColor4d(1, 1, 1, alpha);
+//			gl.glColor3d(1, 1, 1);
 		
+		// Render a rectangle
 		gl.glBegin(GL.GL_QUADS);
 			gl.glTexCoord2f(xt0, yt0);
 			gl.glVertex2f(x0, y0);
@@ -821,37 +827,16 @@ public class JOGLRender extends Render implements GLEventListener {
 			gl.glVertex2f(x0, y1);
 		gl.glEnd();
 		
-		// Draw the image
-/*		int w = image.getWidth(null);
-		int h = image.getHeight(null);
-		AffineTransform tr = new AffineTransform();
-		tr.translate(x, y);
-		
-		double scale = Math.max(2 * r / w, 2 * r / h);
-//		tr.scale(2 * r / w, 2 * r / h);
-		tr.scale(scale, scale);
-		
-		if (theta != 0) {
-			tr.rotate(theta);
+		// Disable special rendering features
+		if (alphaFunc >= 0) {
+			gl.glDisable(GL.GL_ALPHA_TEST);
 		}
 
-		tr.scale(1, -1);
+		if (blendSrc >= 0 && blendDst >= 0 && !style.transparent) {
+			gl.glDisable(GL.GL_BLEND);
+		}
 		
-		// Reflections
-		if (tile.xReflect)
-			tr.scale(-1, 1);
-		if (tile.yReflect)
-			tr.scale(1, -1);
-		
-		tr.translate(-w / 2.0, -h / 2.0);
-		g.drawImage(image, tr, null);*/
-
 		gl.glDisable(GL.GL_TEXTURE_2D);
-		// switch back to modulation of quad colours and texture
-
-		gl.glDisable(GL.GL_ALPHA_TEST); // switch off transparency
-		gl.glDisable(GL.GL_BLEND);
-		
 		return true;
 	}
 
@@ -891,7 +876,9 @@ public class JOGLRender extends Render implements GLEventListener {
 			gl.glEnable(GL.GL_STENCIL_TEST);
 			gl.glStencilFunc(agentStyle.getStencilFunc(), 
 					agentStyle.getStencilRef(), agentStyle.getStencilMask());
-			gl.glStencilOp(GL.GL_KEEP, GL.GL_KEEP, GL.GL_REPLACE);
+			gl.glStencilOp(agentStyle.getStencilFail(),
+						   agentStyle.getStencilZFail(),
+						   agentStyle.getStencilZPass());
 		}
 
 		/* Tile manager */

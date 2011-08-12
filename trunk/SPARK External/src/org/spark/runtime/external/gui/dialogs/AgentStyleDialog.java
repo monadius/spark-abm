@@ -216,7 +216,10 @@ class LabelOptions extends OptionPanel implements ChangeListener {
 	 * Initializes the panel
 	 */
 	protected void init() {
-		setLayout(new SpringLayout());
+//		setLayout(new SpringLayout());
+//		setLayout(new GridLayout(4, 2));
+		
+		JPanel panel = new JPanel(new GridLayout(4, 2));
 		
 		// Font
 		fontButton = new JButton();
@@ -243,20 +246,21 @@ class LabelOptions extends OptionPanel implements ChangeListener {
 		colorButton.addActionListener(this);
 		
 		// Font selection
-		add(new JLabel("Font"));
-		add(fontButton);
+		panel.add(new JLabel("Font"));
+		panel.add(fontButton);
 		
 		// Offsets
-		add(new JLabel("dx"));
-		add(spinnerDx);
+		panel.add(new JLabel("dx"));
+		panel.add(spinnerDx);
 		
-		add(new JLabel("dy"));
-		add(spinnerDy);
+		panel.add(new JLabel("dy"));
+		panel.add(spinnerDy);
 		
-		add(new JLabel("Color"));
-		add(colorButton);
+		panel.add(new JLabel("Color"));
+		panel.add(colorButton);
 		
-		SpringUtilities.makeCompactGrid(this, 4, 2, 5, 5, 5, 5);
+//		SpringUtilities.makeCompactGrid(this, 4, 2, 5, 5, 5, 5);
+		add(panel);
 	}
 
 
@@ -345,7 +349,7 @@ class AlphaBlendingOptions extends OptionPanel implements ChangeListener {
 		initAlphaPanel(alphaPanel);
 		
 		// Stencil
-		stencilPanel = new JPanel(new GridLayout(3, 1));
+		stencilPanel = new JPanel(new GridLayout(6, 1));
 		stencilPanel.setMinimumSize(new Dimension(100, 100));
 		stencilPanel.setBorder(BorderFactory.createTitledBorder("Stencil Function"));
 		initStencilPanel(stencilPanel);
@@ -404,22 +408,47 @@ class AlphaBlendingOptions extends OptionPanel implements ChangeListener {
 	 * @param panel
 	 */
 	private void initStencilPanel(JPanel panel) {
+		// func
 		JComboBox func = new JComboBox(AgentStyle.stencilFuncs);
 		func.setSelectedIndex(style.getStencilFuncIndex());
 		func.addActionListener(this);
 		func.setActionCommand("stencil-function");
 		
+		// ref
 		JSpinner ref = new JSpinner(new SpinnerNumberModel(style.getStencilRef(), 0, 0xFFFF, 1));
 		ref.setName("ref");
 		ref.addChangeListener(this);
 		
+		// mask
 		JSpinner mask = new JSpinner(new SpinnerNumberModel(style.getStencilMask(), 0, 0xFFFF, 1));
 		mask.setName("mask");
 		mask.addChangeListener(this);
-		
+
+		// fail
+		JComboBox fail = new JComboBox(AgentStyle.stencilOps);
+		fail.setSelectedIndex(style.getStencilFailIndex());
+		fail.addActionListener(this);
+		fail.setActionCommand("stencil-fail");
+
+		// zfail
+		JComboBox zfail = new JComboBox(AgentStyle.stencilOps);
+		zfail.setSelectedIndex(style.getStencilZFailIndex());
+		zfail.addActionListener(this);
+		zfail.setActionCommand("stencil-zfail");
+
+		// zpass
+		JComboBox zpass = new JComboBox(AgentStyle.stencilOps);
+		zpass.setSelectedIndex(style.getStencilZPassIndex());
+		zpass.addActionListener(this);
+		zpass.setActionCommand("stencil-zpass");
+
+		// Add all components to the panel
 		panel.add(func);
 		panel.add(ref);
 		panel.add(mask);
+		panel.add(fail);
+		panel.add(zfail);
+		panel.add(zpass);
 	}
 	
 	
@@ -469,6 +498,27 @@ class AlphaBlendingOptions extends OptionPanel implements ChangeListener {
 			render.update();
 			return;
 		}
+		
+		// stencil-fail
+		if (cmd == "stencil-fail") {
+			style.setStencilFail(index);
+			render.update();
+			return;
+		}
+
+		// stencil-zfail
+		if (cmd == "stencil-zfail") {
+			style.setStencilZFail(index);
+			render.update();
+			return;
+		}
+		// stencil-zpass
+		if (cmd == "stencil-zpass") {
+			style.setStencilZPass(index);
+			render.update();
+			return;
+		}
+
 	}
 
 
