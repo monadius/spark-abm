@@ -47,6 +47,10 @@ public class AgentStyle implements Comparable<AgentStyle> {
 	private int stencilRef;
 	private int stencilMask;
 	
+	private int stencilFail;
+	private int stencilZFail;
+	private int stencilZPass;
+	
 	// If true then the color is blended with the agent's texture
 	private boolean colorBlending;
 	
@@ -134,6 +138,15 @@ public class AgentStyle implements Comparable<AgentStyle> {
 		new RenderProperty("GL_GEQUAL", GL.GL_GEQUAL),
 		new RenderProperty("GL_NOTEQUAL", GL.GL_NOTEQUAL)
 	};
+	
+	public static final RenderProperty[] stencilOps = new RenderProperty[] {
+		new RenderProperty("GL_KEEP", GL.GL_KEEP),
+		new RenderProperty("GL_ZERO", GL.GL_ZERO),
+		new RenderProperty("GL_REPLACE", GL.GL_REPLACE),
+		new RenderProperty("GL_INCR", GL.GL_INCR),
+		new RenderProperty("GL_DECR", GL.GL_DECR),
+		new RenderProperty("GL_INVERT", GL.GL_INVERT),
+	};	
 
 	// Alpha
 	
@@ -188,7 +201,46 @@ public class AgentStyle implements Comparable<AgentStyle> {
 	public void setStencilMask(int mask) {
 		stencilMask = mask;
 	}
+
+	public int getStencilFail() {
+		return stencilOps[stencilFail].value;
+	}
 	
+	public int getStencilZFail() {
+		return stencilOps[stencilZFail].value;
+	}
+	
+	public int getStencilZPass() {
+		return stencilOps[stencilZPass].value;
+	}
+	
+	public int getStencilFailIndex() {
+		return stencilFail;
+	}
+	
+	public int getStencilZFailIndex() {
+		return stencilZFail;
+	}
+	
+	public int getStencilZPassIndex() {
+		return stencilZPass;
+	}
+	
+	public void setStencilFail(int index) {
+		if (index >= 0 && index < stencilOps.length)		
+			stencilFail = index;
+	}
+	
+	public void setStencilZFail(int index) {
+		if (index >= 0 && index < stencilOps.length)		
+			stencilZFail = index;
+	}
+
+	public void setStencilZPass(int index) {
+		if (index >= 0 && index < stencilOps.length)		
+			stencilZPass = index;
+	}
+
 	/**
 	 * Returns a font for printing labels
 	 * @return
@@ -456,6 +508,12 @@ public class AgentStyle implements Comparable<AgentStyle> {
 		addAttr(doc, agentNode, "stencil-function", stencilFunc);
 		addAttr(doc, agentNode, "stencil-ref", stencilRef);
 		addAttr(doc, agentNode, "stencil-mask", stencilMask);
+		if (stencilFail > 0)
+			addAttr(doc, agentNode, "stencil-fail", stencilFail);
+		if (stencilZFail > 0)
+			addAttr(doc, agentNode, "stencil-zfail", stencilZFail);
+		if (stencilZPass > 0)
+			addAttr(doc, agentNode, "stencil-zpass", stencilZPass);
 		
 		// Blending
 		if (blendDst > 0) {
@@ -502,6 +560,10 @@ public class AgentStyle implements Comparable<AgentStyle> {
 			stencilFunc = 0;
 		stencilRef = getIntegerValue(node, "stencil-ref", 0);
 		stencilMask = getIntegerValue(node, "stencil-mask", 0xFFFF);
+		
+		stencilFail = getIntegerValue(node, "stencil-fail", 0);
+		stencilZFail = getIntegerValue(node, "stencil-zfail", 0);
+		stencilZPass = getIntegerValue(node, "stencil-zpass", 0);
 		
 		// Flags
 		colorBlending = getBooleanValue(node, "color-blending", false);
