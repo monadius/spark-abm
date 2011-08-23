@@ -160,7 +160,7 @@
         
         
         <!--  Array list -->
-        <type name = "ArrayList" composite = "true" parent = "$Object">
+        <type name = "ArrayList" composite = "true" parent = "$Object" alias = "List">
                 <javaname>ArrayList&lt;@subtype&gt;</javaname>
 
                 <set>
@@ -193,6 +193,20 @@
                 	<argument name = "i" type = "number"/>
                 	<translation>
                 		@@object.remove((int)@i)
+                	</translation>
+                </method>
+                
+                <method name = "remove">
+                	<argument name = "obj" type = "$Object"/>
+                	<translation>
+                		@@object.remove(@obj)
+                	</translation>
+                </method>
+                
+                <method name = "contains" type = "boolean">
+                	<argument name = "obj" type = "$Object"/>
+                	<translation>
+                		@@object.contains(@obj)
                 	</translation>
                 </method>
         </type>
