@@ -332,9 +332,16 @@ class AlphaBlendingOptions extends OptionPanel implements ChangeListener {
 		JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
 		
+        JPanel trPanel;
 		JPanel blendPanel;
 		JPanel alphaPanel;
 		JPanel stencilPanel;
+		
+		// Transparency
+		trPanel = new JPanel(new GridLayout(1, 1));
+		trPanel.setMinimumSize(new Dimension(100, 100));
+		trPanel.setBorder(BorderFactory.createTitledBorder("Transparency"));
+		initTransparencyPanel(trPanel);
 		
 		// Blending
 		blendPanel = new JPanel(new GridLayout(2, 1));
@@ -354,6 +361,7 @@ class AlphaBlendingOptions extends OptionPanel implements ChangeListener {
 		stencilPanel.setBorder(BorderFactory.createTitledBorder("Stencil Function"));
 		initStencilPanel(stencilPanel);
 
+		panel.add(trPanel);
         panel.add(blendPanel);
         panel.add(alphaPanel);
         panel.add(stencilPanel);
@@ -361,6 +369,18 @@ class AlphaBlendingOptions extends OptionPanel implements ChangeListener {
 		this.add(panel);
 	}
 	
+	
+	/**
+	 * Creates the components of transparencyPanel
+	 * @param panel
+	 */
+	private void initTransparencyPanel(JPanel panel) {
+		JSpinner value = new JSpinner(new SpinnerNumberModel(style.getTransparencyCoefficient(), 0, 1, 0.1));
+		value.setName("transparency");
+		value.addChangeListener(this);
+		
+		panel.add(value);
+	}
 	
 	/**
 	 * Creates the components of blendPanel
@@ -529,6 +549,13 @@ class AlphaBlendingOptions extends OptionPanel implements ChangeListener {
 		if (e.getSource() instanceof JSpinner) {
 			JSpinner spinner = (JSpinner) e.getSource();
 			String name = spinner.getName().intern();
+			
+			// Transparency
+			if (name == "transparency") {
+				float val = ((Number) spinner.getValue()).floatValue();
+				style.setTransparencyCoefficient(val);
+				render.update();
+			}
 			
 			// Alpha
 			if (name == "alpha") {

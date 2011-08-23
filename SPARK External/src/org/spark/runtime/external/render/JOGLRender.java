@@ -223,7 +223,7 @@ public class JOGLRender extends Render implements GLEventListener {
 		// Disable the depth test by default (for 2d-case mostly)
 		gl.glDisable(GL.GL_DEPTH_TEST);
 		
-		int n = 10;
+		int n = 16;
 		circle = gl.glGenLists(1);
 		gl.glNewList(circle, GL.GL_COMPILE);
 		gl.glBegin(GL.GL_TRIANGLE_FAN);
@@ -807,7 +807,7 @@ public class JOGLRender extends Render implements GLEventListener {
 //		gl.glColor3d(1, 1, 1);
 		double alpha = color.a;
 		if (style.transparent)
-			alpha *= 0.5;
+			alpha *= style.getTransparencyCoefficient();
 				
 		if (style.getColorBlending())
 			gl.glColor4d(color.x, color.y, color.z, alpha);
@@ -920,7 +920,7 @@ public class JOGLRender extends Render implements GLEventListener {
 			if (drawShape) {
 				/* Usual rendering */
 				if (agentStyle.transparent)
-					gl.glColor4d(color.x, color.y, color.z, 0.5);
+					gl.glColor4d(color.x, color.y, color.z, agentStyle.getTransparencyCoefficient());
 				else
 					gl.glColor3d(color.x, color.y, color.z);
 				switch (shapes[i]) {
