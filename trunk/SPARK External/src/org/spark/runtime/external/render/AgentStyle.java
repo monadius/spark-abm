@@ -34,6 +34,9 @@ public class AgentStyle implements Comparable<AgentStyle> {
 	
 	/* Advanced options */
 	
+	// Transparency
+	private float transparencyCoefficient;
+	
 	// Blending
 	private int blendSrc, blendDst;
 	private int textureEnv;
@@ -147,6 +150,15 @@ public class AgentStyle implements Comparable<AgentStyle> {
 		new RenderProperty("GL_DECR", GL.GL_DECR),
 		new RenderProperty("GL_INVERT", GL.GL_INVERT),
 	};	
+	
+	// Transparency
+	public float getTransparencyCoefficient() {
+		return transparencyCoefficient;
+	}
+	
+	public void setTransparencyCoefficient(float val) {
+		transparencyCoefficient = val;
+	}
 
 	// Alpha
 	
@@ -499,6 +511,9 @@ public class AgentStyle implements Comparable<AgentStyle> {
 			addAttr(doc, agentNode, "tile-manager", 
 					FileUtils.getRelativePath(modelPath, tileFile));
 		}
+
+		// Transparency
+		addAttr(doc, agentNode, "transparency-coefficient", transparencyCoefficient);
 		
 		// Alpha
 		addAttr(doc, agentNode, "alpha-function", alphaFunc);
@@ -546,6 +561,9 @@ public class AgentStyle implements Comparable<AgentStyle> {
 		textureEnv = getIntegerValue(node, "texture-env", 0);
 		blendSrc = getIntegerValue(node, "blend-src", 0);
 		blendDst = getIntegerValue(node, "blend-dst", 0);
+		
+		// Transparency
+		transparencyCoefficient = getFloatValue(node, "transparency-coefficient", 0.5f);
 		
 		// Alpha
 		alphaFunc = getIntegerValue(node, "alpha-function", 4);
