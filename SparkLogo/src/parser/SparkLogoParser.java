@@ -423,7 +423,25 @@ public class SparkLogoParser {
 			throw new Exception("Type name is expected: " + s);
 
 		Id typeId = new Id((String) s.value);
-		Type type = new UnresolvedType(typeId);
+		Id subtypeId = null;
+		s = scanner.peekToken();
+		// Subtype declaration
+		if (s.id == sym.OPERATOR && s.value.equals("<")) {
+			// <
+			scanner.nextToken();
+			// name
+			s = scanner.nextToken();
+			if (s.id != sym.IDENTIFIER)
+				throw new Exception("Subtype name is expected: " + s);
+			
+			subtypeId = new Id((String) s.value);
+			// >
+			s = scanner.nextToken();
+			if (s.id != sym.OPERATOR || !s.value.equals(">"))
+				throw new Exception("> is expected: " + s);
+		}
+		
+		Type type = new UnresolvedType(typeId, subtypeId);
 
 		return type;
 	}

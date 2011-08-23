@@ -9,8 +9,16 @@ import main.SparkModel;
  *
  */
 public class UnresolvedType extends Type {
+	// Contains the id of the subtype
+	private Id subtype;
+	
 	public UnresolvedType(Id id) {
 		super(id);
+	}
+	
+	public UnresolvedType(Id id, Id subtype) {
+		super(id);
+		this.subtype = subtype;
 	}
 	
 	
@@ -36,6 +44,13 @@ public class UnresolvedType extends Type {
 		}
 		
 		// Returns a type by its name
-		return SparkModel.getInstance().getType(id);
+		Type type = SparkModel.getInstance().getType(id);
+		if (type instanceof CompositeType) {
+			Type subtype = SparkModel.getInstance().getType(this.subtype);
+			if (subtype != null)
+				type = new CompositeType((CompositeType) type, subtype);
+		}
+		
+		return type;
 	}
 }
