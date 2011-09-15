@@ -122,7 +122,6 @@ public class SpaceAgent extends Agent {
 	}
 	
 	/**
-	 * @deprecated
 	 * Moves the agent to the position v
 	 * @param v
 	 * Use jump instead this method
