@@ -1063,6 +1063,11 @@ public class Grid implements AdvancedDataLayer {
 		writeData[x][y] = value;
 	}
 	
+	
+	public void addValue(int x, int y, double value) {
+		writeData[x][y] += value;
+	}
+	
 
 	public double getMax() {
 		double max = readData[0][0];
