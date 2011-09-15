@@ -146,6 +146,28 @@ public class SyntaxTreeBuilder {
 						new Id((String) s.value));
 				if (type == null)
 					throw new Exception("Type " + s + " is not defined");
+				
+				if (type instanceof CompositeType) {
+					// Get the composite type
+					// <
+					s = source.next();
+					if (s.id != sym.OPERATOR || !s.value.equals("<"))
+						throw new Exception("< is expected: " + s);
+					
+					s = source.next();
+					if (s.id != sym.IDENTIFIER)
+						throw new Exception("An identifier is expected: " + s);
+					Type subtype = SparkModel.getInstance().getType(new Id((String) s.value));
+					if (subtype == null)
+						throw new Exception("Subtype " + s + " is not defined");
+					
+					// <
+					s = source.next();
+					if (s.id != sym.OPERATOR || !s.value.equals(">"))
+						throw new Exception("> is expected: " + s);
+					
+					type = new CompositeType((CompositeType) type, subtype);
+				}
 			}
 
 			Variable var = new Variable(id, type);

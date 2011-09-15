@@ -138,6 +138,18 @@
         <!-- Simulation Time -->
         <type name = "$time">
         	<javaname>SimulationTime</javaname>
+        	
+            <method name = "elapsed-time" type = "double">
+	          	<translation>
+               		@@object.getElapsedTime()
+                </translation>
+            </method>
+            
+            <method name = "total-time" type = "double">
+            	<translation>
+            		@@object.getTotalTime()
+            	</translation>
+            </method>
         </type>
 
         
@@ -1009,7 +1021,7 @@
                 <method name = "move-to">
                 	<argument name = "p" type = "vector"/>
                 	<translation>
-                		@@object.jump(@p)
+                		@@object.moveTo(@p)
                 	</translation> 
                 </method>
                 
@@ -1327,6 +1339,14 @@
 					</translation>
 				</method>                
 
+				<method name = "add-data-at">
+					<argument name = "i" type = "double"/>
+					<argument name = "j" type = "double"/>
+					<argument name = "val" type = "double"/>
+					<translation>
+						@@object.addValue((int)(@i), (int)(@j), @val)
+					</translation>
+				</method>                
 
 				<method name = "max">
 					<translation>
