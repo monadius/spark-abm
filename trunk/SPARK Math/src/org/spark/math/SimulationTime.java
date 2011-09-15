@@ -16,14 +16,39 @@ public class SimulationTime implements Comparable<RationalNumber>, Serializable 
 	/* Approximates 'continuous' time */
 	private RationalNumber time;
 	
+	/* System time of the simulation start */
+	private long startTime;
+	
+	/* Time of the tick represented by the system clock */
+	private long tickTime;
+	
+	/* Time elapsed from the previous tick (in seconds) */
+	private double elapsedTime;
+	
 	/**
 	 * Internal constructor
 	 * @param tick
 	 * @param time
 	 */
 	protected SimulationTime(long tick, RationalNumber time) {
+		init(tick, time, System.currentTimeMillis());
+	}
+	
+
+	/**
+	 * Initialized the class
+	 */
+	private void init(long tick, RationalNumber time, long startTime, long tickTime, double elapsedTime) {
 		this.tick = tick;
 		this.time = new RationalNumber(time);
+
+		this.startTime = startTime;
+		this.tickTime = tickTime;
+		this.elapsedTime = elapsedTime;
+	}
+	
+	private void init(long tick, RationalNumber time, long startTime) {
+		init(tick, time, startTime, startTime, 0);
 	}
 	
 	
@@ -32,8 +57,7 @@ public class SimulationTime implements Comparable<RationalNumber>, Serializable 
 	 * @param time
 	 */
 	protected SimulationTime(SimulationTime time) {
-		this.tick = time.tick;
-		this.time = new RationalNumber(time.time);
+		init(time.tick, time.time, time.startTime, time.tickTime, time.elapsedTime);
 	}
 	
 	
@@ -49,8 +73,7 @@ public class SimulationTime implements Comparable<RationalNumber>, Serializable 
 	 * Resets the time
 	 */
 	protected void reset() {
-		tick = 0;
-		time = new RationalNumber(0);
+		init(0, new RationalNumber(0), System.currentTimeMillis());
 	}
 	
 	
@@ -62,6 +85,24 @@ public class SimulationTime implements Comparable<RationalNumber>, Serializable 
 		return tick;
 	}
 	
+	
+	/**
+	 * Returns the time elapsed from the previous tick
+	 * @return
+	 */
+	public double getElapsedTime() {
+		return elapsedTime;
+	}
+	
+	
+	/**
+	 * Returns the time elapsed from the beginning of the current simulation
+	 * @return
+	 */
+	public double getTotalTime() {
+		return (tickTime - startTime) * 0.001;
+	}
+
 	
 	/**
 	 * Returns the simulation time
@@ -87,6 +128,19 @@ public class SimulationTime implements Comparable<RationalNumber>, Serializable 
 	 */
 	protected void advanceTick() {
 		tick++;
+		
+		// TODO: implement this correctly
+		// Pausing/resuming should be taken into account (maybe)
+		// Measure the speed of System.currentTimeMillis()
+/*		long curTime = System.currentTimeMillis();
+		if (curTime > tickTime) {
+			elapsedTime = (curTime - tickTime) * 0.001;
+		}
+		else {
+			elapsedTime = 0.0;
+		}
+		
+		tickTime = curTime;*/
 	}
 	
 	
