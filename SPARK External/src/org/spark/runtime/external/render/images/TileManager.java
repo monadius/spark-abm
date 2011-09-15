@@ -49,16 +49,16 @@ public class TileManager {
 				return null;
 			
 			texture = TextureIO.newTexture(image, false);
-			texture.setTexParameteri(GL.GL_TEXTURE_MAG_FILTER,
-					GL.GL_NEAREST);
-			texture.setTexParameteri(GL.GL_TEXTURE_MIN_FILTER,
-					GL.GL_NEAREST);
-
 /*			texture.setTexParameteri(GL.GL_TEXTURE_MAG_FILTER,
+					GL.GL_NEAREST);
+			texture.setTexParameteri(GL.GL_TEXTURE_MIN_FILTER,
+					GL.GL_NEAREST);
+*/
+			texture.setTexParameteri(GL.GL_TEXTURE_MAG_FILTER,
 					GL.GL_LINEAR);
 			texture.setTexParameteri(GL.GL_TEXTURE_MIN_FILTER,
 					GL.GL_LINEAR);
-*/
+
 			
 			return texture;
 		}

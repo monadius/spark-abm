@@ -727,7 +727,7 @@ public class JOGLRender extends Render implements GLEventListener {
 	 * Renders a tile
 	 * @return true if successful
 	 */
-	protected boolean drawTile(GL gl, TileManager tiles, DataObject_AgentData agentData, 
+	protected boolean drawTile(GL gl, float scale, TileManager tiles, DataObject_AgentData agentData, 
 				AgentStyle style, Vector4d color, int index) {
 		if (agentData == null)
 			return false;
@@ -814,6 +814,9 @@ public class JOGLRender extends Render implements GLEventListener {
 		else
 			gl.glColor4d(1, 1, 1, alpha);
 //			gl.glColor3d(1, 1, 1);
+
+		// Scale
+		gl.glScalef(scale, scale, scale);
 		
 		// Render a rectangle
 		gl.glBegin(GL.GL_QUADS);
@@ -839,6 +842,31 @@ public class JOGLRender extends Render implements GLEventListener {
 		gl.glDisable(GL.GL_TEXTURE_2D);
 		return true;
 	}
+	
+	
+	/**
+	 * Renders a specific shape
+	 */
+	private void drawShape(GL gl, float scale, DataObject_SpaceAgents.ShapeInfo shape, boolean border) {
+		switch (shape.type) {
+		case 0:
+			gl.glScalef(scale, scale, scale);
+			gl.glCallList(circle);
+			break;
+			
+		case 1:
+			float hx = shape.hx;
+			float hy = shape.hy;
+			gl.glBegin(GL.GL_QUADS);
+				gl.glVertex2f(-hx, -hy);
+				gl.glVertex2f(-hx, hy);
+				gl.glVertex2f(hx, hy);
+				gl.glVertex2f(hx, -hy);
+			gl.glEnd();
+			break;
+		}
+		
+	}	
 
 	/**
 	 * Renders agents
@@ -863,7 +891,9 @@ public class JOGLRender extends Render implements GLEventListener {
 		Vector4d[] colors = agents.getColors();
 		int[] shapes = agents.getShapes();
 		int[] spaceIndices = agents.getSpaceIndices();
-//		double[] rotations = agents.getRotations();
+		double[] rotations = agents.getRotations();
+		DataObject_SpaceAgents.ShapeInfo[] shapeInfo = agents.getShapeInfo();
+		
 		
 		/* Transparent agents */
 		if (agentStyle.transparent) {
@@ -891,6 +921,8 @@ public class JOGLRender extends Render implements GLEventListener {
 		int square = agentStyle.border ? this.square : this.square2;
 		int donnut = agentStyle.border ? this.torus : this.torus2;
 
+		double rad2angles = 180.0 / Math.PI;
+		
 		/* Iterate through all agents */
 		for (int i = 0; i < n; i++) {
 			if (spaceIndices[i] != spaceIndex)
@@ -904,14 +936,18 @@ public class JOGLRender extends Render implements GLEventListener {
 
 			gl.glPushMatrix();
 			gl.glTranslated(pos.x, pos.y, 0);
+			double phi = rotations[i];
+			if (phi != 0) {
+				gl.glRotated(phi * rad2angles, 0, 0, 1);
+			}
+			
 			float scale = (float) radii[i];
-			gl.glScalef(scale, scale, scale);
 			
 			boolean drawShape = true;
 			
 			// Render a picture first
 			if (tiles != null) {
-				if (drawTile(gl, tiles, agentData, agentStyle, color, i)) {
+				if (drawTile(gl, scale, tiles, agentData, agentStyle, color, i)) {
 					if (!agentStyle.getDrawShapeWithImageFlag())
 						drawShape = false;
 				}
@@ -923,19 +959,27 @@ public class JOGLRender extends Render implements GLEventListener {
 					gl.glColor4d(color.x, color.y, color.z, agentStyle.getTransparencyCoefficient());
 				else
 					gl.glColor3d(color.x, color.y, color.z);
-				switch (shapes[i]) {
-				// case SpaceAgent.CIRCLE:
-				case 1:
-					gl.glCallList(circle);
-					break;
-				// case SpaceAgent.SQUARE:
-				case 2:
-					gl.glCallList(square);
-					break;
-				// case SpaceAgent.TORUS:
-				case 3:
-					gl.glCallList(donnut);
-					break;
+				
+				if (shapeInfo[i] != null) {
+					drawShape(gl, scale, shapeInfo[i], agentStyle.border);
+				}
+				else {
+					gl.glScalef(scale, scale, scale);
+
+					switch (shapes[i]) {
+					// case SpaceAgent.CIRCLE:
+					case 1:
+						gl.glCallList(circle);
+						break;
+					// case SpaceAgent.SQUARE:
+					case 2:
+						gl.glCallList(square);
+						break;
+					// case SpaceAgent.TORUS:
+					case 3:
+						gl.glCallList(donnut);
+						break;
+					}
 				}
 			}
 			gl.glPopMatrix();
