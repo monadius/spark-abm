@@ -359,7 +359,14 @@
                         (@left + String.valueOf(@right))
                 </translation>
         </reporter>
-
+        
+        <reporter name = "+" type = "string" infix = "true" precedence = "4">
+                <argument name = "left" type = "string" />
+                <argument name = "right" type = "boolean" />
+                <translation>
+                        (@left + String.valueOf(@right))
+                </translation>
+        </reporter>        
 
         <reporter name = "+" type = "string" infix = "true" precedence = "4">
                 <argument name = "left" type = "string" />
@@ -2012,6 +2019,13 @@
         		System.out.println(@number)
         	</translation>
         </command>
+        
+        <command name = "print">
+        	<argument name = "flag" type = "boolean"/>
+        	<translation>
+        		System.out.println(@flag)
+        	</translation>
+        </command>        
 
 
         <command name = "print">
