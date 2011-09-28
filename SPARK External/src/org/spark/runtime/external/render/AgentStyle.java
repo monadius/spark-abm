@@ -5,7 +5,7 @@ import java.io.File;
 
 import javax.media.opengl.GL;
 
-import org.spark.math.Vector;
+import org.spark.math.Vector4d;
 import org.spark.runtime.external.render.images.TileManager;
 import org.spark.runtime.external.render.images.TileManagerInfo;
 import org.spark.utils.FileUtils;
@@ -67,14 +67,100 @@ public class AgentStyle implements Comparable<AgentStyle> {
 	private int fontSize;
 	private int fontStyle;
 	private float dxLabel, dyLabel;
-	private Vector labelColor = new Vector();
+	private float labelWidth, labelHeight;
+	// If false then the agent color is used for the label
+	private boolean useLabelColor;
+	private Vector4d labelColor = new Vector4d();
+	
+	// Bitmap font options
+	private String bitmapFontName;
+	private float bitmapFontSize;
 	
 	
 	/* TileManager */
 	private File tileFile;
 	private TileManagerInfo tileManager;
+
+
+	/***************************************/
+	/* Constants */
+	private static final String ATTR_VISIBLE = "visible";
+	private static final String ATTR_TRANSPARENT = "transparent";
+	private static final String ATTR_BORDER = "border";
+	private static final String ATTR_LABEL = "label";
+	private static final String ATTR_PRIORITY = "position";
+	// Blending
+	private static final String ATTR_TEXTURE_ENV = "texture-env";
+	private static final String ATTR_BLEND_SRC = "blend-src";
+	private static final String ATTR_BLEND_DST = "blend-dst";
+	private static final String ATTR_TRANSPARENCY = "transparency-coefficient";
+	private static final String ATTR_ALPHA_FUNC = "alpha-function";
+	private static final String ATTR_ALPHA_FUNC_VALUE = "alpha-function-value";
+	// Stencil
+	private static final String ATTR_STENCIL_FUNC = "stencil-function";
+	private static final String ATTR_STENCIL_REF = "stencil-ref";
+	private static final String ATTR_STENCIL_MASK = "stencil-mask";
+	private static final String ATTR_STENCIL_FAIL = "stencil-fail";
+	private static final String ATTR_STENCIL_ZFAIL = "stencil-zfail";
+	private static final String ATTR_STENCIL_ZPASS = "stencil-zpass";
+	// Flags
+	private static final String ATTR_COLOR_BLENDING = "color-blending";
+	private static final String ATTR_DRAW_SHAPE = "draw-shape-with-image";
+	// Label
+	private static final String ATTR_FONT_FAMILY = "font-family";
+	private static final String ATTR_FONT_SIZE = "font-size";
+	private static final String ATTR_FONT_STYLE = "font-style";
+	private static final String ATTR_DX_LABEL = "dx-label";
+	private static final String ATTR_DY_LABEL = "dy-label";
+	private static final String ATTR_LABEL_WIDTH = "label-width";
+	private static final String ATTR_LABEL_HEIGHT = "label-height";
+	private static final String ATTR_LABEL_COLOR = "label-color";
+	private static final String ATTR_USE_LABEL_COLOR = "use-label-color";
+	// Bitmap font
+	private static final String ATTR_BITMAP_FONT_NAME = "bitmap-font";
+	private static final String ATTR_BITMAP_FONT_SIZE = "bitmap-font-size";
+	// Tile manager
+	private static final String ATTR_TILE_MANAGER = "tile-manager";
+
+
+	/***************************************/
+	/**
+	 * Constructor
+	 */
+	public AgentStyle(String agentTypeName, String name,
+			boolean transparent, boolean visible, boolean border) {
+		this.typeName = agentTypeName;
+		this.name = name;
+		this.transparent = transparent;
+		this.visible = visible;
+		this.border = border;
+		
+		// Default values of advanced parameters
+		textureEnv = 0;
+		
+		// Set default values
+		// 0 means that a feature is disabled
+		blendSrc = blendDst = 0;
+		alphaFunc = 4;
+		alphaFuncValue = 0.0f;
+		transparencyCoefficient = 0.5f;
+		bitmapFontSize = 1.0f;
+		useLabelColor = true;
+		labelWidth = 100.0f;
+		labelHeight = 100.0f;
+		labelColor.a = 1.0d;
+	}
 	
 	
+	public AgentStyle(String agentTypeName) {
+		this(agentTypeName, null, false, true, true);
+	}
+
+
+	
+	/**
+	 * Describes a rendering property
+	 */
 	public static class RenderProperty {
 		public final String name;
 		public final int value;
@@ -252,6 +338,74 @@ public class AgentStyle implements Comparable<AgentStyle> {
 		if (index >= 0 && index < stencilOps.length)		
 			stencilZPass = index;
 	}
+	
+	/**
+	 * If true, then the agent color should be used for the label
+	 */
+	public boolean getUseLabelColor() {
+		return useLabelColor;
+	}
+	
+	/**
+	 * If true, then the agent color should be used for the label
+	 */
+	public void setUseLabelColor(boolean flag) {
+		this.useLabelColor = flag;
+	}
+	
+	/**
+	 * Returns the name of the bitmap font
+	 */
+	public String getBitmapFontName() {
+		return bitmapFontName;
+	}
+	
+	/**
+	 * Sets the name of the bitmap font
+	 */
+	public void setBitmapFontName(String name) {
+		this.bitmapFontName = name;
+	}
+	
+	/**
+	 * Returns the relative size of the bitmap font
+	 */
+	public float getBitmapFontSize() {
+		return bitmapFontSize;
+	}
+	
+	/**
+	 * Sets the relative size of the bitmap font
+	 */
+	public void setBitmapFontSize(float value) {
+		if (value < 0)
+			return;
+		
+		this.bitmapFontSize = value;
+	}
+	
+	/**
+	 * Returns the label rectangle width
+	 */
+	public float getLabelWidth() {
+		return labelWidth;
+	}
+	
+	
+	/**
+	 * Returns the label rectangle height
+	 */
+	public float getLabelHeight() {
+		return labelHeight;
+	}
+	
+	/**
+	 * Sets the label rectangle dimensions
+	 */
+	public void setLabelRectangle(float width, float height) {
+		this.labelWidth = width;
+		this.labelHeight = height;
+	}
 
 	/**
 	 * Returns a font for printing labels
@@ -312,16 +466,16 @@ public class AgentStyle implements Comparable<AgentStyle> {
 	/**
 	 * Returns the color of a label
 	 */
-	public Vector getLabelColor() {
-		return new Vector(labelColor);
+	public Vector4d getLabelColor() {
+		return new Vector4d(labelColor);
 	}
 	
 	
 	/**
 	 * Sets the color of a label
 	 */
-	public void setLabelColor(Vector c) {
-		this.labelColor = new Vector(c);
+	public void setLabelColor(Vector4d c) {
+		this.labelColor = new Vector4d(c);
 	}
 	
 	
@@ -409,28 +563,6 @@ public class AgentStyle implements Comparable<AgentStyle> {
 	// Only used when agent styles are loading
 	public int priority = Integer.MAX_VALUE;
 
-	public AgentStyle(String agentTypeName, String name,
-			boolean transparent, boolean visible, boolean border) {
-		this.typeName = agentTypeName;
-		this.name = name;
-		this.transparent = transparent;
-		this.visible = visible;
-		this.border = border;
-		
-		// Default values of advanced parameters
-		textureEnv = 0;
-		
-		// 0 means that a feature is disabled
-		blendSrc = blendDst = 0;
-		alphaFunc = 0;
-		alphaFuncValue = 0.0f;
-	}
-	
-	
-	public AgentStyle(String agentTypeName) {
-		this(agentTypeName, null, false, true, true);
-	}
-
 	
 	/**
 	 * Returns the tile manager for this agent style
@@ -486,60 +618,71 @@ public class AgentStyle implements Comparable<AgentStyle> {
 		Node agentNode = doc.createElement("agentstyle");
 
 		addAttr(doc, agentNode, "name", name);
-		addAttr(doc, agentNode, "visible", visible);
-		addAttr(doc, agentNode, "transparent", transparent);
-		addAttr(doc, agentNode, "border", border);
-		addAttr(doc, agentNode, "label", label);
-		addAttr(doc, agentNode, "position", position);
+		addAttr(doc, agentNode, ATTR_VISIBLE, visible);
+		addAttr(doc, agentNode, ATTR_TRANSPARENT, transparent);
+		addAttr(doc, agentNode, ATTR_BORDER, border);
+		addAttr(doc, agentNode, ATTR_LABEL, label);
+		addAttr(doc, agentNode, ATTR_PRIORITY, position);
 
-		addAttr(doc, agentNode, "color-blending", colorBlending);
-		addAttr(doc, agentNode, "draw-shape-with-image", drawShapeWithImage);
+		addAttr(doc, agentNode, ATTR_COLOR_BLENDING, colorBlending);
+		addAttr(doc, agentNode, ATTR_DRAW_SHAPE, drawShapeWithImage);
 		
 		// Save label options
 		if (fontFamily != null) {
-			addAttr(doc, agentNode, "font-family", fontFamily);
-			addAttr(doc, agentNode, "font-size", fontSize);
-			addAttr(doc, agentNode, "font-style", fontStyle);
+			addAttr(doc, agentNode, ATTR_FONT_FAMILY, fontFamily);
+			addAttr(doc, agentNode, ATTR_FONT_SIZE, fontSize);
+			addAttr(doc, agentNode, ATTR_FONT_STYLE, fontStyle);
 		}
 		
-		addAttr(doc, agentNode, "dx-label", dxLabel);
-		addAttr(doc, agentNode, "dy-label", dyLabel);
-		addAttr(doc, agentNode, "label-color", labelColor);
+		// Bitmap font
+		if (bitmapFontName != null) {
+			addAttr(doc, agentNode, ATTR_BITMAP_FONT_NAME, bitmapFontName);
+		}
+		
+		addAttr(doc, agentNode, ATTR_BITMAP_FONT_SIZE, bitmapFontSize);
+		
+		// Label properties
+		addAttr(doc, agentNode, ATTR_DX_LABEL, dxLabel);
+		addAttr(doc, agentNode, ATTR_DY_LABEL, dyLabel);
+		addAttr(doc, agentNode, ATTR_LABEL_WIDTH, labelWidth);
+		addAttr(doc, agentNode, ATTR_LABEL_HEIGHT, labelHeight);
+		addAttr(doc, agentNode, ATTR_LABEL_COLOR, labelColor);
+		addAttr(doc, agentNode, ATTR_USE_LABEL_COLOR, useLabelColor);
 		
 		if (this.tileFile != null) {
 			// Tile file
-			addAttr(doc, agentNode, "tile-manager", 
+			addAttr(doc, agentNode, ATTR_TILE_MANAGER, 
 					FileUtils.getRelativePath(modelPath, tileFile));
 		}
 
 		// Transparency
-		addAttr(doc, agentNode, "transparency-coefficient", transparencyCoefficient);
+		addAttr(doc, agentNode, ATTR_TRANSPARENCY, transparencyCoefficient);
 		
 		// Alpha
-		addAttr(doc, agentNode, "alpha-function", alphaFunc);
-		addAttr(doc, agentNode, "alpha-function-value", alphaFuncValue);
+		addAttr(doc, agentNode, ATTR_ALPHA_FUNC, alphaFunc);
+		addAttr(doc, agentNode, ATTR_ALPHA_FUNC_VALUE, alphaFuncValue);
 		
 		// Stencil
-		addAttr(doc, agentNode, "stencil-function", stencilFunc);
-		addAttr(doc, agentNode, "stencil-ref", stencilRef);
-		addAttr(doc, agentNode, "stencil-mask", stencilMask);
+		addAttr(doc, agentNode, ATTR_STENCIL_FUNC, stencilFunc);
+		addAttr(doc, agentNode, ATTR_STENCIL_REF, stencilRef);
+		addAttr(doc, agentNode, ATTR_STENCIL_MASK, stencilMask);
 		if (stencilFail > 0)
-			addAttr(doc, agentNode, "stencil-fail", stencilFail);
+			addAttr(doc, agentNode, ATTR_STENCIL_FAIL, stencilFail);
 		if (stencilZFail > 0)
-			addAttr(doc, agentNode, "stencil-zfail", stencilZFail);
+			addAttr(doc, agentNode, ATTR_STENCIL_ZFAIL, stencilZFail);
 		if (stencilZPass > 0)
-			addAttr(doc, agentNode, "stencil-zpass", stencilZPass);
+			addAttr(doc, agentNode, ATTR_STENCIL_ZPASS, stencilZPass);
 		
 		// Blending
 		if (blendDst > 0) {
-			addAttr(doc, agentNode, "blend-dst", blendDst);
+			addAttr(doc, agentNode, ATTR_BLEND_DST, blendDst);
 		}
 		
 		if (blendSrc > 0) {
-			addAttr(doc, agentNode, "blend-src", blendSrc);
+			addAttr(doc, agentNode, ATTR_BLEND_SRC, blendSrc);
 		}
 		
-		addAttr(doc, agentNode, "texture-env", textureEnv);
+		addAttr(doc, agentNode, ATTR_TEXTURE_ENV, textureEnv);
 
 		return agentNode;
 	}
@@ -551,51 +694,59 @@ public class AgentStyle implements Comparable<AgentStyle> {
 	 * @param modelPath path to the model xml file
 	 */
 	public void load(Node node, File modelPath) {
-		visible = getBooleanValue(node, "visible", true);
-		transparent = getBooleanValue(node, "transparent", false);
-		border = getBooleanValue(node, "border", true);
-		label = getBooleanValue(node, "label", false);
-		priority = getIntegerValue(node, "position", 0);
+		visible = getBooleanValue(node, ATTR_VISIBLE, true);
+		transparent = getBooleanValue(node, ATTR_TRANSPARENT, false);
+		border = getBooleanValue(node, ATTR_BORDER, true);
+		label = getBooleanValue(node, ATTR_LABEL, false);
+		priority = getIntegerValue(node, ATTR_PRIORITY, 0);
 		
 		// Blending
-		textureEnv = getIntegerValue(node, "texture-env", 0);
-		blendSrc = getIntegerValue(node, "blend-src", 0);
-		blendDst = getIntegerValue(node, "blend-dst", 0);
+		textureEnv = getIntegerValue(node, ATTR_TEXTURE_ENV, 0);
+		blendSrc = getIntegerValue(node, ATTR_BLEND_SRC, 0);
+		blendDst = getIntegerValue(node, ATTR_BLEND_DST, 0);
 		
 		// Transparency
-		transparencyCoefficient = getFloatValue(node, "transparency-coefficient", 0.5f);
+		transparencyCoefficient = getFloatValue(node, ATTR_TRANSPARENCY, 0.5f);
 		
 		// Alpha
-		alphaFunc = getIntegerValue(node, "alpha-function", 4);
+		alphaFunc = getIntegerValue(node, ATTR_ALPHA_FUNC, 4);
 		if (alphaFunc < 0 || alphaFunc >= alphaFuncs.length)
 			alphaFunc = 4;
 		
-		alphaFuncValue = getFloatValue(node, "alpha-function-value", 0.0f);
+		alphaFuncValue = getFloatValue(node, ATTR_ALPHA_FUNC_VALUE, 0.0f);
 
 		// Stencil
-		stencilFunc = getIntegerValue(node, "stencil-function", 0);
+		stencilFunc = getIntegerValue(node, ATTR_STENCIL_FUNC, 0);
 		if (stencilFunc < 0 || stencilFunc >= stencilFuncs.length)
 			stencilFunc = 0;
-		stencilRef = getIntegerValue(node, "stencil-ref", 0);
-		stencilMask = getIntegerValue(node, "stencil-mask", 0xFFFF);
+		stencilRef = getIntegerValue(node, ATTR_STENCIL_REF, 0);
+		stencilMask = getIntegerValue(node, ATTR_STENCIL_MASK, 0xFFFF);
 		
-		stencilFail = getIntegerValue(node, "stencil-fail", 0);
-		stencilZFail = getIntegerValue(node, "stencil-zfail", 0);
-		stencilZPass = getIntegerValue(node, "stencil-zpass", 0);
+		stencilFail = getIntegerValue(node, ATTR_STENCIL_FAIL, 0);
+		stencilZFail = getIntegerValue(node, ATTR_STENCIL_ZFAIL, 0);
+		stencilZPass = getIntegerValue(node, ATTR_STENCIL_ZPASS, 0);
 		
 		// Flags
-		colorBlending = getBooleanValue(node, "color-blending", false);
-		drawShapeWithImage = getBooleanValue(node, "draw-shape-with-image", false);
+		colorBlending = getBooleanValue(node, ATTR_COLOR_BLENDING, false);
+		drawShapeWithImage = getBooleanValue(node, ATTR_DRAW_SHAPE, false);
 
 		// Load label options
-		fontFamily = getValue(node, "font-family", null);
-		fontSize = getIntegerValue(node, "font-size", 10);
-		fontStyle = getIntegerValue(node, "font-style", 0);
-		dxLabel = getFloatValue(node, "dx-label", 0.0f);
-		dyLabel = getFloatValue(node, "dy-label", 0.0f);
-		labelColor = getVectorValue(node, "label-color", ";", new Vector());
+		fontFamily = getValue(node, ATTR_FONT_FAMILY, null);
+		fontSize = getIntegerValue(node, ATTR_FONT_SIZE, 10);
+		fontStyle = getIntegerValue(node, ATTR_FONT_STYLE, 0);
+		dxLabel = getFloatValue(node, ATTR_DX_LABEL, 0.0f);
+		dyLabel = getFloatValue(node, ATTR_DY_LABEL, 0.0f);
+		labelWidth = getFloatValue(node, ATTR_LABEL_WIDTH, 100.0f);
+		labelHeight = getFloatValue(node, ATTR_LABEL_HEIGHT, 100.0f);
+		labelColor = getVector4dValue(node, ATTR_LABEL_COLOR, ";", Vector4d.BLACK);
+		useLabelColor = getBooleanValue(node, ATTR_USE_LABEL_COLOR, true);
 		
-		String tileFileName = getValue(node, "tile-manager", null);
+		// Bitmap font options
+		bitmapFontName = getValue(node, ATTR_BITMAP_FONT_NAME, null);
+		bitmapFontSize = getFloatValue(node, ATTR_BITMAP_FONT_SIZE, 1.0f);
+		
+		// Tile manager
+		String tileFileName = getValue(node, ATTR_TILE_MANAGER, null);
 		
 		if (tileFileName != null) {
 			tileFile = new File(tileFileName);

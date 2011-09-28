@@ -4,14 +4,12 @@ import java.io.File;
 import java.io.PrintStream;
 import java.util.ArrayList;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
 import org.spark.runtime.external.gui.menu.ISparkMenuListener;
 import org.spark.runtime.external.gui.menu.SparkMenu;
 import org.spark.runtime.external.gui.menu.SparkMenuFactory;
 import org.spark.runtime.external.gui.menu.SparkMenuItem;
 import org.spark.runtime.external.render.Render;
+import org.spark.runtime.external.render.font.FontManager;
 import org.spark.utils.XmlDocUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -34,6 +32,12 @@ public class Configuration {
 	
 	/* List of all recent projects */
 	private final ArrayList<File> recentProjects;
+	
+	/* Font directory */
+	private File fontDirectory;
+	
+	/* Default font name */
+	private String defaultFontName;
 	
 	/* The number of recent projects */
 	private int maxRecentProjects;
@@ -65,12 +69,8 @@ public class Configuration {
 		maxRecentProjects = DEFAULT_MAX_RECENT_PROJECTS;
 		renderType = Render.JAVA_2D_RENDER;
 		
-		try {
-			DocumentBuilder db = DocumentBuilderFactory.newInstance()
-					.newDocumentBuilder();
-			doc = db.parse("spark-config.xml");
-		} catch (Exception e) {
-			logger.error(e);
+		doc = XmlDocUtils.loadXmlFile("spark-config.xml");
+		if (doc == null) {
 			return;
 		}
 		
@@ -83,6 +83,21 @@ public class Configuration {
 
 		Node recentProjects = XmlDocUtils.getChildByTagName(root, "recent-models");
 		readRecentProjects(recentProjects);
+		
+		Node fontNode = XmlDocUtils.getChildByTagName(root, "font");
+		readFontParameters(fontNode);
+	}
+
+	
+	/**
+	 * Loads font parameters
+	 */
+	private void readFontParameters(Node fontNode) {
+		String dirName = XmlDocUtils.getValue(fontNode, "directory", null);
+		if (dirName != null)
+			fontDirectory = new File(dirName);
+		
+		defaultFontName = XmlDocUtils.getValue(fontNode, "default-name", null);
 	}
 	
 
@@ -123,8 +138,22 @@ public class Configuration {
 
 		out.println("<config>");
 
+		// Graphics
 		out.println("\t<graphics render = \"" + renderType + "\"/>");
 		
+		// Font
+		out.print("\t<font");
+		if (fontDirectory != null) {
+			out.print(" directory = \"" + fontDirectory.getPath() + "\"");
+		}
+		
+		if (defaultFontName != null) {
+			out.print(" default-name = \"" + defaultFontName + "\"");
+		}
+		
+		out.println("/>");
+		
+		// Recent projects
 		out.print("\t<recent-models max = \"");
 		out.print(maxRecentProjects);
 		out.print("\">");
@@ -160,6 +189,29 @@ public class Configuration {
 			type = Render.JAVA_2D_RENDER;
 		
 		renderType = type;
+	}
+	
+	
+	/**
+	 * Loads parameters of the given font manager
+	 */
+	public void loadFontManager(FontManager fontManager) {
+		fontManager.clear();
+		fontManager.setDefaultFontName(defaultFontName);
+		if (fontDirectory != null)
+			fontManager.load(fontDirectory);
+	}
+	
+	
+	/**
+	 * Saves parameters of the given font manager
+	 */
+	public void saveFontManager(FontManager fontManager) {
+		defaultFontName = fontManager.getDefaultFontName();
+		// TODO: save all directories
+		File[] dirs = fontManager.getFontDirectories();
+		if (dirs.length > 0)
+			fontDirectory = dirs[0];
 	}
 	
 	
