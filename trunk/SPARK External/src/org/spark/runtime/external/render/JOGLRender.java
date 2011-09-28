@@ -901,12 +901,14 @@ public class JOGLRender extends Render implements GLEventListener {
 		
 		/* Label options */
 		Vector4d labelColor = agentStyle.getLabelColor();
+		boolean useLabelColor = agentStyle.getUseLabelColor();
 		float fontSize = agentStyle.getBitmapFontSize();
 
 		float label_dx = agentStyle.getLabelDx();
 		float label_dy = agentStyle.getLabelDy();
 		float labelWidth = agentStyle.getLabelWidth();
 		float labelHeight = agentStyle.getLabelHeight();
+		BitmapFont.Align textAlignment = agentStyle.getTextAlignment();
 		Rectangle2D.Float labelRect = new Rectangle2D.Float();
 		
 		/* Transparent agents */
@@ -999,17 +1001,20 @@ public class JOGLRender extends Render implements GLEventListener {
 			
 			
 			// Render label
-			if (agentStyle.label) {
+			if (agentStyle.label && bitmapFont != null) {
 				String label = labels[i];
 				if (label != null) {
 					labelRect.x = label_dx + (float) pos.x;
 					labelRect.y = label_dy + (float) pos.y;
 					labelRect.width = labelWidth;
 					labelRect.height = labelHeight;
+
+					if (!useLabelColor)
+						labelColor = color;
 					
 					labelRect.y = -labelRect.y;
 					bitmapFont.AddString(label, labelRect, 
-							BitmapFont.Align.Left, fontSize, labelColor, false);
+							textAlignment, fontSize, labelColor, false);
 				}
 			}
 			

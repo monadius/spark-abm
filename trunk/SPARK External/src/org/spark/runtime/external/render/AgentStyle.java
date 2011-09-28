@@ -6,6 +6,7 @@ import java.io.File;
 import javax.media.opengl.GL;
 
 import org.spark.math.Vector4d;
+import org.spark.runtime.external.render.font.BitmapFont;
 import org.spark.runtime.external.render.images.TileManager;
 import org.spark.runtime.external.render.images.TileManagerInfo;
 import org.spark.utils.FileUtils;
@@ -75,6 +76,7 @@ public class AgentStyle implements Comparable<AgentStyle> {
 	// Bitmap font options
 	private String bitmapFontName;
 	private float bitmapFontSize;
+	private BitmapFont.Align textAlignment;
 	
 	
 	/* TileManager */
@@ -114,6 +116,7 @@ public class AgentStyle implements Comparable<AgentStyle> {
 	private static final String ATTR_DY_LABEL = "dy-label";
 	private static final String ATTR_LABEL_WIDTH = "label-width";
 	private static final String ATTR_LABEL_HEIGHT = "label-height";
+	private static final String ATTR_TEXT_ALIGNMENT = "text-alignment";
 	private static final String ATTR_LABEL_COLOR = "label-color";
 	private static final String ATTR_USE_LABEL_COLOR = "use-label-color";
 	// Bitmap font
@@ -149,6 +152,7 @@ public class AgentStyle implements Comparable<AgentStyle> {
 		labelWidth = 100.0f;
 		labelHeight = 100.0f;
 		labelColor.a = 1.0d;
+		textAlignment = BitmapFont.Align.Left;
 	}
 	
 	
@@ -402,7 +406,7 @@ public class AgentStyle implements Comparable<AgentStyle> {
 	/**
 	 * Sets the label rectangle dimensions
 	 */
-	public void setLabelRectangle(float width, float height) {
+	public void setLabelDimension(float width, float height) {
 		this.labelWidth = width;
 		this.labelHeight = height;
 	}
@@ -460,6 +464,22 @@ public class AgentStyle implements Comparable<AgentStyle> {
 	public void setLabelOffset(float dx, float dy) {
 		this.dxLabel = dx;
 		this.dyLabel = dy;
+	}
+	
+	
+	/**
+	 * Returns the text alignment
+	 */
+	public BitmapFont.Align getTextAlignment() {
+		return textAlignment;
+	}
+	
+	
+	/**
+	 * Sets the text alignment
+	 */
+	public void setTextAlignment(BitmapFont.Align alignment) {
+		this.textAlignment = alignment;
 	}
 	
 	
@@ -640,6 +660,7 @@ public class AgentStyle implements Comparable<AgentStyle> {
 		}
 		
 		addAttr(doc, agentNode, ATTR_BITMAP_FONT_SIZE, bitmapFontSize);
+		addAttr(doc, agentNode, ATTR_TEXT_ALIGNMENT, textAlignment.toString());
 		
 		// Label properties
 		addAttr(doc, agentNode, ATTR_DX_LABEL, dxLabel);
@@ -744,6 +765,7 @@ public class AgentStyle implements Comparable<AgentStyle> {
 		// Bitmap font options
 		bitmapFontName = getValue(node, ATTR_BITMAP_FONT_NAME, null);
 		bitmapFontSize = getFloatValue(node, ATTR_BITMAP_FONT_SIZE, 1.0f);
+		textAlignment = BitmapFont.Align.valueOf(getValue(node, ATTR_TEXT_ALIGNMENT, BitmapFont.Align.Left.toString()));
 		
 		// Tile manager
 		String tileFileName = getValue(node, ATTR_TILE_MANAGER, null);

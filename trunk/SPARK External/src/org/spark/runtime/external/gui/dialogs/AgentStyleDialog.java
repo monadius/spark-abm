@@ -29,6 +29,8 @@ import org.spark.math.Vector4d;
 import org.spark.runtime.external.Coordinator;
 import org.spark.runtime.external.render.AgentStyle;
 import org.spark.runtime.external.render.Render;
+import org.spark.runtime.external.render.font.BitmapFont;
+import org.spark.runtime.external.render.font.FontManager;
 import org.spark.utils.FileUtils;
 import org.spark.utils.SpringUtilities;
 
@@ -198,11 +200,36 @@ class ImageOptions extends OptionPanel {
  */
 @SuppressWarnings("serial")
 class LabelOptions extends OptionPanel implements ChangeListener {
+	// Label dx, dy
 	private JSpinner spinnerDx;
 	private JSpinner spinnerDy;
 	
+	// Label width, height
+	private JSpinner spinnerWidth;
+	private JSpinner spinnerHeight;
+	
+	// Font relative size
+	private JSpinner spinnerSize;
+	
+	// Font (Java);
 	private JButton fontButton;
+	// Color
 	private JButton colorButton;
+	// All available bitmap fonts
+	private JComboBox bitmapFonts;
+	// Text alignment options
+	private JComboBox textAlignments;
+	
+	// Use label color check box
+	private JCheckBox useLabelColor;
+	
+	// Constants
+	private static final String CMD_COLOR = "color";
+	private static final String CMD_FONT = "font";
+	private static final String CMD_BITMAP_FONT = "bitmap-font";
+	private static final String CMD_USE_LABEL_COLOR = "use-label-color";
+	private static final String CMD_TEXT_ALIGNMENT = "text-alignment";
+	
 	
 	/**
 	 * Default constructor
@@ -219,7 +246,7 @@ class LabelOptions extends OptionPanel implements ChangeListener {
 //		setLayout(new SpringLayout());
 //		setLayout(new GridLayout(4, 2));
 		
-		JPanel panel = new JPanel(new GridLayout(4, 2));
+		JPanel panel = new JPanel(new GridLayout(10, 2));
 		
 		// Font
 		fontButton = new JButton();
@@ -227,37 +254,94 @@ class LabelOptions extends OptionPanel implements ChangeListener {
 		fontButton.setFont(font);
 		fontButton.setText(font.getFamily() + ": " + font.getSize());
 		
-		fontButton.setActionCommand("font");
+		fontButton.setActionCommand(CMD_FONT);
 		fontButton.addActionListener(this);
+		
+		// Bitmap font
+		FontManager fontManager = Coordinator.getInstance().getFontManager();
+		bitmapFonts = new JComboBox(fontManager.getFontNames());
+		String bitmapFontName = style.getBitmapFontName();
+		if (style == null)
+			bitmapFontName = fontManager.getDefaultFontName();
+		
+		bitmapFonts.setSelectedItem(bitmapFontName);
+		bitmapFonts.setActionCommand(CMD_BITMAP_FONT);
+		bitmapFonts.addActionListener(this);
+		
+		// Alignment
+		BitmapFont.Align[] alignments = BitmapFont.Align.values();
+		textAlignments = new JComboBox(alignments);
+		textAlignments.setSelectedItem(style.getTextAlignment());
+		textAlignments.setActionCommand(CMD_TEXT_ALIGNMENT);
+		textAlignments.addActionListener(this);
 		
 		// Label offsets
 		spinnerDx = new JSpinner(
-						new SpinnerNumberModel(style.getLabelDx(), -1000, 1000, 1));
+						new SpinnerNumberModel(style.getLabelDx(), -1000, 1000, 0.1));
 		spinnerDy = new JSpinner(
-						new SpinnerNumberModel(style.getLabelDy(), -1000, 1000, 1));
+						new SpinnerNumberModel(style.getLabelDy(), -1000, 1000, 0.1));
 		
 		spinnerDx.addChangeListener(this);
 		spinnerDy.addChangeListener(this);
 		
+		// Label dimensions
+		spinnerWidth = new JSpinner(
+				new SpinnerNumberModel(style.getLabelWidth(), -1000, 1000, 0.1));
+		spinnerHeight = new JSpinner(
+				new SpinnerNumberModel(style.getLabelHeight(), -1000, 1000, 0.1));
+
+		spinnerWidth.addChangeListener(this);
+		spinnerHeight.addChangeListener(this);
+		
+		// Relative size
+		spinnerSize = new JSpinner(
+				new SpinnerNumberModel(style.getBitmapFontSize(), 0, 100, 0.1));
+
+		spinnerSize.addChangeListener(this);
+		
 		// Color
 		colorButton = new JButton();
 		colorButton.setBackground(style.getLabelColor().toAWTColor());
-		colorButton.setActionCommand("color");
+		colorButton.setActionCommand(CMD_COLOR);
 		colorButton.addActionListener(this);
 		
-		// Font selection
+		useLabelColor = new JCheckBox();
+		useLabelColor.setSelected(style.getUseLabelColor());
+		useLabelColor.setActionCommand(CMD_USE_LABEL_COLOR);
+		useLabelColor.addActionListener(this);
+		
+		// Font general properties
 		panel.add(new JLabel("Font"));
 		panel.add(fontButton);
 		
-		// Offsets
+		panel.add(new JLabel("Bitmap Font"));
+		panel.add(bitmapFonts);
+		
+		panel.add(new JLabel("Align"));
+		panel.add(textAlignments);
+		
+		panel.add(new JLabel("Size"));
+		panel.add(spinnerSize);
+		
+		// Offsets and dimensions
 		panel.add(new JLabel("dx"));
 		panel.add(spinnerDx);
 		
 		panel.add(new JLabel("dy"));
 		panel.add(spinnerDy);
 		
+		panel.add(new JLabel("Width"));
+		panel.add(spinnerWidth);
+		
+		panel.add(new JLabel("Height"));
+		panel.add(spinnerHeight);
+		
+		// Color
 		panel.add(new JLabel("Color"));
 		panel.add(colorButton);
+		
+		panel.add(new JLabel("Use Label Color"));
+		panel.add(useLabelColor);
 		
 //		SpringUtilities.makeCompactGrid(this, 4, 2, 5, 5, 5, 5);
 		add(panel);
@@ -268,8 +352,13 @@ class LabelOptions extends OptionPanel implements ChangeListener {
 	public void stateChanged(ChangeEvent e) {
 		float dx = ((Number) spinnerDx.getValue()).floatValue();
 		float dy = ((Number) spinnerDy.getValue()).floatValue();
+		float w = ((Number) spinnerWidth.getValue()).floatValue();
+		float h = ((Number) spinnerHeight.getValue()).floatValue();
+		float size = ((Number) spinnerSize.getValue()).floatValue();
 		
+		style.setBitmapFontSize(size);
 		style.setLabelOffset(dx, dy);
+		style.setLabelDimension(w, h);
 		render.update();
 	}
 
@@ -279,16 +368,48 @@ class LabelOptions extends OptionPanel implements ChangeListener {
 		String cmd = e.getActionCommand().intern();
 		
 		// Color
-		if (cmd == "color") {
+		if (cmd == CMD_COLOR) {
 			Color c = JColorChooser.showDialog(this, "Choose Color", style.getLabelColor().toAWTColor());
-			style.setLabelColor(Vector4d.fromAWTColor(c));
-			colorButton.setBackground(c);
+			if (c != null) {
+				style.setLabelColor(Vector4d.fromAWTColor(c));
+				colorButton.setBackground(c);
+				render.update();
+			}
 			
+			return;
+		}
+		
+		// Alignment
+		if (cmd == CMD_TEXT_ALIGNMENT) {
+			if (textAlignments.getSelectedIndex() >= 0) {
+				BitmapFont.Align align = (BitmapFont.Align) textAlignments.getSelectedItem();
+				style.setTextAlignment(align);
+				render.update();
+			}
+			
+			return;
+		}
+		
+		// Bitmap font
+		if (cmd == CMD_BITMAP_FONT) {
+			if (bitmapFonts.getSelectedIndex() >= 0) {
+				String name = (String) bitmapFonts.getSelectedItem();
+				style.setBitmapFontName(name);
+				render.update();
+			}
+			
+			return;
+		}
+		
+		// Use label color
+		if (cmd == CMD_USE_LABEL_COLOR) {
+			style.setUseLabelColor(useLabelColor.isSelected());
 			render.update();
+			return;
 		}
 		
 		// Font
-		if (cmd == "font") {
+		if (cmd == CMD_FONT) {
 			FontSelectionDialog dialog = new FontSelectionDialog(null);
 			dialog.setVisible(true);
 			
@@ -305,6 +426,7 @@ class LabelOptions extends OptionPanel implements ChangeListener {
 			fontButton.setText(font.getFamily() + ": " + font.getSize());
 			
 			render.update();
+			return;
 		}
 	}
 }
