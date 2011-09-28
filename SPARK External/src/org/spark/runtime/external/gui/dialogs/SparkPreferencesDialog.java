@@ -77,7 +77,7 @@ public class SparkPreferencesDialog extends JDialog implements ActionListener {
 		// Add tabs to the main panel
 		tabs.addTab("Graphics", graphics);
 		tabs.addTab("General", general);
-		tabs.addTab("Font", font);
+		tabs.addTab("Bitmap Fonts", font);
 		
 		mainPanel.add(tabs);
 		
@@ -143,7 +143,7 @@ public class SparkPreferencesDialog extends JDialog implements ActionListener {
 	 * Initializes the panel with graphics options
 	 */
 	private JPanel createGraphicsPanel() {
-		JPanel panel = new JPanel(new GridLayout(0, 1));
+		JPanel panel = new JPanel(new GridLayout(1, 1));
 		panel.setMinimumSize(new Dimension(300, 100));
 		panel.setPreferredSize(new Dimension(400, 100));
 		panel.setBorder(BorderFactory.createTitledBorder("Reload open model after selecting a new renderer"));
@@ -192,7 +192,7 @@ public class SparkPreferencesDialog extends JDialog implements ActionListener {
 	 * Initializes the panel with font options
 	 */
 	private JPanel createFontPanel() {
-		JPanel font = new JPanel(new GridLayout(0, 3));
+		JPanel font = new JPanel(new GridLayout(2, 3));
 		
 		// Directory
 		fontDir = new JTextField();
