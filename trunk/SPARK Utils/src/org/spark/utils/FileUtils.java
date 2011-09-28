@@ -314,6 +314,29 @@ public class FileUtils {
 	
 	
 	/**
+	 * Returns all files with the given extension in the given directory
+	 * and its sub-directories
+	 * @param directory
+	 * @param filter
+	 * @param recurse
+	 * @return
+	 */
+	public static ArrayList<File> findAllFiles(File directory, final String extension, boolean recurse) {
+		FilenameFilter filter = new FilenameFilter() {
+			@Override
+			public boolean accept(File dir, String name) {
+				if (name == null)
+					return false;
+				
+				return extension.equals(getExtension(name));
+			}
+		};
+		
+		return findAllFiles(directory, filter, recurse);
+	}
+	
+	
+	/**
 	 * Splits the given file path into a list of all parent directories
 	 * starting from the root
 	 * @param file
@@ -476,8 +499,6 @@ public class FileUtils {
 	
 	/**
 	 * Shows an open file dialog and returns a selected file
-	 * @return
-	 * @throws Exception
 	 */
 	public static File openFileDialog(File dir, String extension, Window parent) {
 		JFileChooser fc = createFileChooser(dir, extension);
@@ -495,8 +516,6 @@ public class FileUtils {
 	
 	/**
 	 * Shows an open file dialog and returns a selected file
-	 * @return
-	 * @throws Exception
 	 */
 	public static File saveFileDialog(File dir, final String extension, Window parent) {
 		JFileChooser fc = createFileChooser(dir, extension);
@@ -509,5 +528,41 @@ public class FileUtils {
 		
 		return null;
 	}
+	
+	
+	/**
+	 * Shows a dialog for selecting directories
+	 */
+	public static File selectDirDialog(File baseDir, Window parent) {
+		final JFileChooser fc = new JFileChooser(baseDir);
+		FileFilter filter = new FileFilter() {
+			// Accept all directories and all files with the given extension
+			public boolean accept(File f) {
+				if (f.isDirectory()) {
+					return true;
+				}
+
+				return false;
+			}
+
+			// The description of this filter
+			public String getDescription() {
+				return "directories";
+			}
+		};
+		
+		fc.setFileFilter(filter);
+		fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+		int returnVal = fc.showDialog(parent, "Select");
+		
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
+			File file = fc.getSelectedFile();
+			return file;
+		}
+		
+		return null;
+	}
+
 
 }
