@@ -23,6 +23,7 @@ import org.spark.runtime.external.gui.menu.SparkMenu;
 import org.spark.runtime.external.gui.menu.StandardMenu;
 import org.spark.runtime.external.render.DataLayerStyle;
 import org.spark.runtime.external.render.Render;
+import org.spark.runtime.external.render.font.FontManager;
 import org.spark.runtime.internal.manager.IModelManager;
 import org.spark.runtime.internal.manager.ModelManager_Basic;
 import org.spark.utils.FileUtils;
@@ -108,6 +109,9 @@ public class Coordinator {
 	/* If true, then no GUI elements are created */
 	private final boolean noGUI;
 	
+	/* Bitmap font manager */
+	private final FontManager fontManager;
+	
 	/* Main window manager */
 	private final WindowManager windowManager;
 	
@@ -135,6 +139,7 @@ public class Coordinator {
 		
 		this.noGUI = noGUI;
 		this.renders = new ArrayList<Render>();
+		this.fontManager = new FontManager();
 		
 		if (noGUI) {
 			this.windowManager = null;
@@ -165,6 +170,7 @@ public class Coordinator {
 		
 		// Load config file
 		configuration.readConfigFile();
+		configuration.loadFontManager(fontManager);
 	}
 
 	/**
@@ -204,6 +210,7 @@ public class Coordinator {
 			if (coordinator != null) {
 				// TODO: wait until the simulation is completely stopped
 				coordinator.unloadModel();
+				coordinator.configuration.saveFontManager(coordinator.fontManager);
 				coordinator.configuration.saveConfigFile();
 			}
 		}
@@ -225,11 +232,19 @@ public class Coordinator {
 	
 	
 	/**
-	 * Returns configuration
+	 * Returns the configuration
 	 * @return
 	 */
 	public Configuration getConfiguration() {
 		return configuration;
+	}
+	
+	
+	/**
+	 * Returns the font manager
+	 */
+	public FontManager getFontManager() {
+		return fontManager;
 	}
 	
 	

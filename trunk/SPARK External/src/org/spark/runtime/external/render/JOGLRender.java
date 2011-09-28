@@ -2,6 +2,7 @@ package org.spark.runtime.external.render;
 
 import java.awt.Canvas;
 import java.awt.event.KeyEvent;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 
@@ -23,6 +24,9 @@ import org.spark.runtime.data.DataObject_SpaceAgents;
 import org.spark.runtime.data.DataObject_SpaceLinks;
 import org.spark.runtime.data.DataObject_Spaces;
 import org.spark.runtime.data.DataRow;
+import org.spark.runtime.external.Coordinator;
+import org.spark.runtime.external.render.font.BitmapFont;
+import org.spark.runtime.external.render.font.FontManager;
 import org.spark.runtime.external.render.images.TileManager;
 import org.spark.math.Vector;
 import org.spark.math.Vector4d;
@@ -878,7 +882,7 @@ public class JOGLRender extends Render implements GLEventListener {
 	 */
 	protected void renderAgents(GL gl, DataObject_SpaceAgents agents,
 			DataObject_AgentData agentData,
-			int spaceIndex, AgentStyle agentStyle) {
+			int spaceIndex, AgentStyle agentStyle, BitmapFont bitmapFont) {
 		if (!agentStyle.visible)
 			return;
 
@@ -893,7 +897,17 @@ public class JOGLRender extends Render implements GLEventListener {
 		int[] spaceIndices = agents.getSpaceIndices();
 		double[] rotations = agents.getRotations();
 		DataObject_SpaceAgents.ShapeInfo[] shapeInfo = agents.getShapeInfo();
+		String[] labels = agents.getLabels();
 		
+		/* Label options */
+		Vector4d labelColor = agentStyle.getLabelColor();
+		float fontSize = agentStyle.getBitmapFontSize();
+
+		float label_dx = agentStyle.getLabelDx();
+		float label_dy = agentStyle.getLabelDy();
+		float labelWidth = agentStyle.getLabelWidth();
+		float labelHeight = agentStyle.getLabelHeight();
+		Rectangle2D.Float labelRect = new Rectangle2D.Float();
 		
 		/* Transparent agents */
 		if (agentStyle.transparent) {
@@ -982,6 +996,23 @@ public class JOGLRender extends Render implements GLEventListener {
 					}
 				}
 			}
+			
+			
+			// Render label
+			if (agentStyle.label) {
+				String label = labels[i];
+				if (label != null) {
+					labelRect.x = label_dx + (float) pos.x;
+					labelRect.y = label_dy + (float) pos.y;
+					labelRect.width = labelWidth;
+					labelRect.height = labelHeight;
+					
+					labelRect.y = -labelRect.y;
+					bitmapFont.AddString(label, labelRect, 
+							BitmapFont.Align.Left, fontSize, labelColor, false);
+				}
+			}
+			
 			gl.glPopMatrix();
 		}
 
@@ -1293,6 +1324,10 @@ public class JOGLRender extends Render implements GLEventListener {
 			gl.glEnable(GL.GL_AUTO_NORMAL);
 		}
 
+		// Get the bitmap font manager
+		FontManager fontManager = Coordinator.getInstance().getFontManager();
+		String[] fontNames = null;
+		
 		// Render visible agents
 		for (int k = agentStyles.size() - 1; k >= 0; k--) {
 			AgentStyle agentStyle = agentStyles.get(k);
@@ -1305,19 +1340,51 @@ public class JOGLRender extends Render implements GLEventListener {
 
 			if (agentsData == null)
 				continue;
+			
+			// Get the bitmap font
+			BitmapFont bitmapFont = null;
+			String bitmapFontName = agentStyle.getBitmapFontName();
+			if (bitmapFontName == null)
+				bitmapFontName = fontManager.getDefaultFontName();
+			
+			bitmapFont = fontManager.getFont(bitmapFontName);
+			if (bitmapFont == null) {
+				// Get the first available font
+				if (fontNames == null)
+					fontNames = fontManager.getFontNames();
+				
+				if (fontNames.length > 0)
+					bitmapFont = fontManager.getFont(fontNames[0]);
+			}
+			
+			if (bitmapFont != null) {
+				bitmapFont.ClearStrings();
+			}
+			
 
-			if (agentsData instanceof DataObject_SpaceLinks)
-				renderLinks(gl, (DataObject_SpaceLinks) agentsData, spaceIndex,
-						agentStyle);
+			if (agentsData instanceof DataObject_SpaceLinks) {
+				// Render links
+				renderLinks(gl, (DataObject_SpaceLinks) agentsData, spaceIndex, agentStyle);
+			}
 			else {
 				if (!space3d) {
+					// Render 2d-agents
 					DataObject_AgentData additionalData = data.getAgentData(agentStyle.typeName);					
-					renderAgents(gl, agentsData, additionalData, spaceIndex, agentStyle);
+					renderAgents(gl, agentsData, additionalData, spaceIndex, agentStyle, bitmapFont);
 				} else if (slicedMode) {
+					// Render 2d-slice of 3d-agents
 					renderAgents3dSliced(gl, agentsData, agentStyle, spaceIndex);
 				} else {
+					// Render 3d-agents
 					renderAgents3d(gl, agentsData, agentStyle, spaceIndex);
 				}
+			}
+			
+			// All labels are rendered after rendering corresponding agents
+			if (bitmapFont != null) {
+				gl.glScalef(1, -1, 1);
+				bitmapFont.Render(gl);
+				gl.glScalef(1, -1, 1);
 			}
 		}
 

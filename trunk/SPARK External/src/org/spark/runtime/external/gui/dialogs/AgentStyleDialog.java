@@ -25,7 +25,7 @@ import javax.swing.SpringLayout;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.spark.math.Vector;
+import org.spark.math.Vector4d;
 import org.spark.runtime.external.Coordinator;
 import org.spark.runtime.external.render.AgentStyle;
 import org.spark.runtime.external.render.Render;
@@ -281,7 +281,7 @@ class LabelOptions extends OptionPanel implements ChangeListener {
 		// Color
 		if (cmd == "color") {
 			Color c = JColorChooser.showDialog(this, "Choose Color", style.getLabelColor().toAWTColor());
-			style.setLabelColor(Vector.fromAWTColor(c));
+			style.setLabelColor(Vector4d.fromAWTColor(c));
 			colorButton.setBackground(c);
 			
 			render.update();

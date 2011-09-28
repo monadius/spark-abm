@@ -4,11 +4,15 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
 import javax.swing.*;
 
 import org.spark.runtime.external.Configuration;
+import org.spark.runtime.external.Coordinator;
 import org.spark.runtime.external.render.Render;
+import org.spark.runtime.external.render.font.FontManager;
+import org.spark.utils.FileUtils;
 
 
 /**
@@ -31,9 +35,19 @@ public class SparkPreferencesDialog extends JDialog implements ActionListener {
 	/* Specifies the maximum number of recent projects */
 	private JComboBox recentProjectsBox;
 	
+	/* Font controls */
+	private JTextField fontDir;
+	private JTextField defaultFont;
+	private JComboBox defaultFonts;
+	
 	/* Graphics buttons */
 	private JRadioButton buttonJava2d;
 	private JRadioButton buttonJOGL;
+	
+	// Constants
+	private static final String CMD_SAVE = "save-configuration";
+	private static final String CMD_FONT_DIR = "font-dir";
+	private static final String CMD_DEFAULT_FONT = "default-font";
 	
 	
 	/**
@@ -50,26 +64,26 @@ public class SparkPreferencesDialog extends JDialog implements ActionListener {
 		
 		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
 		
-		// Create graphics panel
+		// Create the graphics panel
 		JPanel graphics = createGraphicsPanel();
 		
-		// Create general panel
-		JPanel general = new JPanel(new GridLayout(0, 2));
-		recentProjectsBox = new JComboBox(new Integer[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 30, 40, 50});
-		recentProjectsBox.setActionCommand("RecentProjects");
-		recentProjectsBox.addActionListener(this);
-		general.add(new JLabel("Number of recent projects"));
-		general.add(recentProjectsBox);
+		// Create the general panel
+		JPanel general = createGeneralPanel();
+		
+		// Create the font panel
+		JPanel font = createFontPanel();
+			
 		
 		// Add tabs to the main panel
 		tabs.addTab("Graphics", graphics);
 		tabs.addTab("General", general);
+		tabs.addTab("Font", font);
 		
 		mainPanel.add(tabs);
 		
 		// Create save button
 		JButton save = new JButton("Save");
-		save.setActionCommand("save");
+		save.setActionCommand(CMD_SAVE);
 		save.addActionListener(this);
 		mainPanel.add(save);
 		
@@ -84,19 +98,49 @@ public class SparkPreferencesDialog extends JDialog implements ActionListener {
 	public void init() {
 		int renderType = config.getRenderType();
 		
+		// Graphics
 		if (renderType == Render.JOGL_RENDER)
 			buttonJOGL.setSelected(true);
 		else
 			buttonJava2d.setSelected(true);
 		
+		// Recent projects
 		int maxRecentProjects = config.getMaxRecentProjects();
 		recentProjectsBox.setSelectedItem(maxRecentProjects);
+		
+		// Font
+		FontManager fontManager = Coordinator.getInstance().getFontManager();
+
+		// Directory
+		File[] dirs = fontManager.getFontDirectories();
+		if (dirs.length > 0) {
+			fontDir.setText(dirs[0].getPath());
+		}
+		else {
+			fontDir.setText("");
+		}
+		
+		// Names
+		String defaultName = fontManager.getDefaultFontName();
+		if (defaultName != null)
+			defaultFont.setText(defaultName);
+		else
+			defaultFont.setText("");
+		
+		String[] names = fontManager.getFontNames();
+		defaultFonts.removeAllItems();
+		
+		for (String name : names) {
+			defaultFonts.addItem(name);
+		}
+		
+		defaultFonts.setSelectedItem(defaultName);
 	}
 
 
 
 	/**
-	 * Initializes a panel with graphics options
+	 * Initializes the panel with graphics options
 	 */
 	private JPanel createGraphicsPanel() {
 		JPanel panel = new JPanel(new GridLayout(0, 1));
@@ -123,18 +167,84 @@ public class SparkPreferencesDialog extends JDialog implements ActionListener {
 		return panel;
 	}
 	
+
+	/**
+	 * Initializes the panel with general options
+	 */
+	private JPanel createGeneralPanel() {
+		JPanel general = new JPanel();
+		general.setLayout(new BoxLayout(general, BoxLayout.LINE_AXIS));
+
+		// Create controls
+		recentProjectsBox = new JComboBox(new Integer[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 30, 40, 50});
+		recentProjectsBox.setActionCommand("RecentProjects");
+		recentProjectsBox.addActionListener(this);
+		
+		// Add controls
+		general.add(new JLabel("Number of recent projects"));
+		general.add(recentProjectsBox);
+		
+		return general;
+	}
+	
+	
+	/**
+	 * Initializes the panel with font options
+	 */
+	private JPanel createFontPanel() {
+		JPanel font = new JPanel(new GridLayout(0, 3));
+		
+		// Directory
+		fontDir = new JTextField();
+		fontDir.setEditable(false);
+		
+		JButton dirButton = new JButton("...");
+		dirButton.setActionCommand(CMD_FONT_DIR);
+		dirButton.addActionListener(this);
+		
+		// Default font
+		defaultFont = new JTextField();
+		defaultFont.setEditable(false);
+		
+		defaultFonts = new JComboBox();
+		defaultFonts.setActionCommand(CMD_DEFAULT_FONT);
+		defaultFonts.addActionListener(this);
+		
+		// Add controls
+		font.add(new JLabel("Font directory: "));
+		font.add(fontDir);
+		font.add(dirButton);
+		
+		font.add(new JLabel("Default font: "));
+		font.add(defaultFont);
+		font.add(defaultFonts);
+		
+		return font;
+	}
+	
 	
 	/**
 	 * Updates the configuration
 	 */
 	private void updateConfiguration() {
+		// Graphics
 		if (buttonJOGL.isSelected())
 			config.setRenderType(Render.JOGL_RENDER);
 		else
 			config.setRenderType(Render.JAVA_2D_RENDER);
 		
+		// Recent projects
 		int max = (Integer) recentProjectsBox.getSelectedItem();
 		config.setMaxRecentProjects(max);
+		
+		// Font
+		FontManager fontManager = Coordinator.getInstance().getFontManager();
+		
+		fontManager.clear();
+		fontManager.load(new File(fontDir.getText()));
+		fontManager.setDefaultFontName(defaultFont.getText());
+		
+		config.saveFontManager(fontManager);
 	}
 	
 	
@@ -149,7 +259,29 @@ public class SparkPreferencesDialog extends JDialog implements ActionListener {
 		
 		cmd = cmd.trim();
 		
-		if (cmd == "save") {
+		// Font directory
+		if (cmd == CMD_FONT_DIR) {
+			File dir = FileUtils.selectDirDialog(new File("."), null);
+			if (dir == null || !dir.exists() || !dir.isDirectory())
+				return;
+			
+			fontDir.setText(dir.getPath());
+			return;
+		}
+		
+		// Default font
+		if (cmd == CMD_DEFAULT_FONT) {
+			Object item = defaultFonts.getSelectedItem();
+			if (!(item instanceof String))
+				return;
+			
+			String name = (String) item;
+			defaultFont.setText(name);
+			return;
+		}
+		
+		// Save
+		if (cmd == CMD_SAVE) {
 			updateConfiguration();
 			setVisible(false);
 			return;
