@@ -3,6 +3,7 @@ package org.spark.utils;
 import java.util.ArrayList;
 
 import org.spark.math.Vector;
+import org.spark.math.Vector4d;
 
 /**
  * Auxiliary operations on strings
@@ -61,7 +62,7 @@ public class StringUtils {
 	
 	
 	/**
-	 * Converts the string to a vector
+	 * Converts the string to a 3d-vector
 	 */
 	public static Vector StringToVector(String str, String separator) {
 		if (str == null)
@@ -88,6 +89,50 @@ public class StringUtils {
 				double y = Double.valueOf(components[1]);
 				double z = Double.valueOf(components[2]);
 				return new Vector(x, y, z);
+			}
+		}
+		catch (NumberFormatException e) {
+			return null;
+		}
+	}
+	
+	
+	/**
+	 * Converts the string to a 4d-vector
+	 */
+	public static Vector4d StringToVector4d(String str, String separator) {
+		if (str == null)
+			return null;
+		
+		String[] components = str.split(separator);
+		double x, y, z, a;
+	
+		try {
+			switch (components.length) {
+			case 0:
+				return null;
+
+			case 1:
+				x = Double.valueOf(components[0]);
+				return new Vector4d(x);
+
+			case 2:
+				x = Double.valueOf(components[0]);
+				y = Double.valueOf(components[1]);
+				return new Vector4d(x, y, 0, 0);
+			
+			case 3:
+				x = Double.valueOf(components[0]);
+				y = Double.valueOf(components[1]);
+				z = Double.valueOf(components[2]);
+				return new Vector4d(x, y, z, 0);
+
+			default:
+				x = Double.valueOf(components[0]);
+				y = Double.valueOf(components[1]);
+				z = Double.valueOf(components[2]);
+				a = Double.valueOf(components[3]);
+				return new Vector4d(x, y, z, a);
 			}
 		}
 		catch (NumberFormatException e) {

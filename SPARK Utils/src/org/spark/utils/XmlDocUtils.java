@@ -3,12 +3,21 @@ package org.spark.utils;
 import java.io.File;
 import java.util.ArrayList;
 
+import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.spark.math.Vector;
+import org.spark.math.Vector4d;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
+
+import com.spinn3r.log5j.Logger;
 
 /**
  * Utilities for working with xml documents
@@ -16,44 +25,92 @@ import org.w3c.dom.Node;
  *
  */
 public class XmlDocUtils {
+	// Log
+	private static final Logger logger = Logger.getLogger();
+	
 	/**
 	 * Loads an xml file
+	 * 
 	 * @param fname
 	 * @return
 	 */
 	public static Document loadXmlFile(String fname) {
 		try {
 			Document doc = DocumentBuilderFactory.newInstance()
-								.newDocumentBuilder().parse(fname);
-		
+					.newDocumentBuilder().parse(fname);
 			return doc;
+		} catch (Exception e) {
+			logger.error(e);
 		}
-		catch (Exception e) {
-			e.printStackTrace();
-		}
-		
+
 		return null;
 	}
 	
 	/**
 	 * Loads an xml file
+	 * 
 	 * @param fname
 	 * @return
 	 */
 	public static Document loadXmlFile(File file) {
 		try {
 			Document doc = DocumentBuilderFactory.newInstance()
-								.newDocumentBuilder().parse(file);
+					.newDocumentBuilder().parse(file);
+
+			return doc;
+		} catch (Exception e) {
+			logger.error(e);
+		}
+
+		return null;
+	}	
+	
+	/**
+	 * Creates a new document with the given root node.
+	 * If the version is positive then the version attributes is attached to the root node.
+	 */
+	public static Document createNewDocument(String rootName, int version) {
+		try {
+			DocumentBuilder db = DocumentBuilderFactory.newInstance()
+				.newDocumentBuilder();
+			Document doc = db.newDocument();
+			Node root = doc.createElement(rootName);
+			if (version > 0) {
+				addAttr(doc, root, "version", version);
+			}
 		
+			doc.appendChild(root);
 			return doc;
 		}
 		catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 		}
 		
 		return null;
 	}
 	
+	
+	/**
+	 * Saves the document in the given file
+	 * @param modelDoc
+	 * @param fileName
+	 * @throws Exception
+	 */
+	public static void saveDocument(Document doc, File file) throws Exception {
+		if (doc == null || file == null)
+			return;
+
+		TransformerFactory tFactory = TransformerFactory.newInstance();
+		Transformer transformer = tFactory.newTransformer();
+
+		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+		transformer.setOutputProperty(
+				"{http://xml.apache.org/xslt}indent-amount", "2");
+
+		DOMSource source = new DOMSource(doc);
+		StreamResult result = new StreamResult(file);
+		transformer.transform(source, result);
+	}
 	
 	/**
 	 * Returns a list of children with the specified name
@@ -286,7 +343,7 @@ public class XmlDocUtils {
 	
 	
 	/**
-	 * Gets a double value of the given attribute
+	 * Gets a 3d-vector value of the given attribute
 	 * @param node
 	 * @param attrName
 	 * @param defaultValue
@@ -296,6 +353,24 @@ public class XmlDocUtils {
 		String value = getValue(node, attrName, null);
 				
 		Vector v = StringUtils.StringToVector(value, delim);
+		if (v == null)
+			return defaultValue;
+		
+		return v;
+	}
+	
+	
+	/**
+	 * Gets a 4d-vector value of the given attribute
+	 * @param node
+	 * @param attrName
+	 * @param defaultValue
+	 * @return
+	 */
+	public static Vector4d getVector4dValue(Node node, String attrName, String delim, Vector4d defaultValue) {
+		String value = getValue(node, attrName, null);
+				
+		Vector4d v = StringUtils.StringToVector4d(value, delim);
 		if (v == null)
 			return defaultValue;
 		
