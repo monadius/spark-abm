@@ -17,6 +17,12 @@ public class Vector4d implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
+	// Constant vectors
+	// FIXME: make vectors immutable in order to prevent changing these constants
+	public static final Vector4d BLACK = new Vector4d(0, 0, 0, 1);
+	public static final Vector4d WHITE = new Vector4d(1);
+	
+	
 	public double	x, y, z, a;
 
 	public Vector4d(Vector4d v) {
@@ -255,7 +261,7 @@ public class Vector4d implements Serializable {
 		y = color.getGreen() / 255.0;
 		z = color.getBlue() / 255.0;
 		
-		return new Vector4d(x, y, z, 0);
+		return new Vector4d(x, y, z, 1.0);
 	}
 	
 	
