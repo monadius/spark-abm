@@ -149,6 +149,18 @@ public class Vector4d implements Serializable {
 		return this;
 	}
 	
+	/**
+	 *  Component multiplication
+	 */
+	public Vector4d mul(Vector4d v2) {
+		x *= v2.x;
+		y *= v2.y;
+		z *= v2.z;
+		a *= v2.a;
+		
+		return this;
+	}
+	
 	public Vector4d negate() {
 		x = -x;
 		y = -y;
