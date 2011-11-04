@@ -69,8 +69,10 @@ public class AgentStyle implements Comparable<AgentStyle> {
 	private int fontStyle;
 	private float dxLabel, dyLabel;
 	private float labelWidth, labelHeight;
-	// If false then the agent color is used for the label
-	private boolean useLabelColor;
+	// If true then the agent's color is mixed with the label color
+	private boolean modulateLabelColor;
+	// If true then the label size is multiplied by the agent's size 
+	private boolean modulateLabelSize;
 	private Vector4d labelColor = new Vector4d();
 	
 	// Bitmap font options
@@ -118,7 +120,8 @@ public class AgentStyle implements Comparable<AgentStyle> {
 	private static final String ATTR_LABEL_HEIGHT = "label-height";
 	private static final String ATTR_TEXT_ALIGNMENT = "text-alignment";
 	private static final String ATTR_LABEL_COLOR = "label-color";
-	private static final String ATTR_USE_LABEL_COLOR = "use-label-color";
+	private static final String ATTR_MODULATE_LABEL_COLOR = "modulate-label-color";
+	private static final String ATTR_MODULATE_LABEL_SIZE = "modulate-label-size";
 	// Bitmap font
 	private static final String ATTR_BITMAP_FONT_NAME = "bitmap-font";
 	private static final String ATTR_BITMAP_FONT_SIZE = "bitmap-font-size";
@@ -148,7 +151,8 @@ public class AgentStyle implements Comparable<AgentStyle> {
 		alphaFuncValue = 0.0f;
 		transparencyCoefficient = 0.5f;
 		bitmapFontSize = 1.0f;
-		useLabelColor = true;
+		modulateLabelColor = false;
+		modulateLabelSize = false;
 		labelWidth = 100.0f;
 		labelHeight = 100.0f;
 		labelColor.a = 1.0d;
@@ -346,15 +350,29 @@ public class AgentStyle implements Comparable<AgentStyle> {
 	/**
 	 * If true, then the agent color should be used for the label
 	 */
-	public boolean getUseLabelColor() {
-		return useLabelColor;
+	public boolean getModulateLabelColor() {
+		return modulateLabelColor;
 	}
 	
 	/**
 	 * If true, then the agent color should be used for the label
 	 */
-	public void setUseLabelColor(boolean flag) {
-		this.useLabelColor = flag;
+	public void setModulateLabelColor(boolean flag) {
+		this.modulateLabelColor = flag;
+	}
+	
+	/**
+	 * If true, then the agent color should be used for the label
+	 */
+	public boolean getModulateLabelSize() {
+		return modulateLabelSize;
+	}
+	
+	/**
+	 * If true, then the agent color should be used for the label
+	 */
+	public void setModulateLabelSize(boolean flag) {
+		this.modulateLabelSize = flag;
 	}
 	
 	/**
@@ -668,7 +686,8 @@ public class AgentStyle implements Comparable<AgentStyle> {
 		addAttr(doc, agentNode, ATTR_LABEL_WIDTH, labelWidth);
 		addAttr(doc, agentNode, ATTR_LABEL_HEIGHT, labelHeight);
 		addAttr(doc, agentNode, ATTR_LABEL_COLOR, labelColor);
-		addAttr(doc, agentNode, ATTR_USE_LABEL_COLOR, useLabelColor);
+		addAttr(doc, agentNode, ATTR_MODULATE_LABEL_COLOR, modulateLabelColor);
+		addAttr(doc, agentNode, ATTR_MODULATE_LABEL_SIZE, modulateLabelSize);
 		
 		if (this.tileFile != null) {
 			// Tile file
@@ -760,7 +779,8 @@ public class AgentStyle implements Comparable<AgentStyle> {
 		labelWidth = getFloatValue(node, ATTR_LABEL_WIDTH, 100.0f);
 		labelHeight = getFloatValue(node, ATTR_LABEL_HEIGHT, 100.0f);
 		labelColor = getVector4dValue(node, ATTR_LABEL_COLOR, ";", Vector4d.BLACK);
-		useLabelColor = getBooleanValue(node, ATTR_USE_LABEL_COLOR, true);
+		modulateLabelColor = getBooleanValue(node, ATTR_MODULATE_LABEL_COLOR, false);
+		modulateLabelSize = getBooleanValue(node, ATTR_MODULATE_LABEL_SIZE, false);
 		
 		// Bitmap font options
 		bitmapFontName = getValue(node, ATTR_BITMAP_FONT_NAME, null);

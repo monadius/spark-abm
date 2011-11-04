@@ -1,11 +1,12 @@
 package org.spark.runtime.external;
 
 import java.awt.BorderLayout;
-import java.awt.EventQueue;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Stack;
+
+import javax.swing.SwingUtilities;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.PropertyConfigurator;
@@ -885,7 +886,7 @@ public class Coordinator {
 	 * 
 	 * @param args
 	 */
-	public static void main(String[] args) throws Exception {
+	public static void main(final String[] args) throws Exception {
 		// The first thing to do is to set up the logger
 		try {
 			if (new File("spark.log4j.properties").exists()) {
@@ -900,18 +901,17 @@ public class Coordinator {
 			BasicConfigurator.configure();
 		}
 
-		ModelManager_Basic manager = new ModelManager_Basic();
-		DataReceiver receiver = new DataReceiver();
+		final ModelManager_Basic manager = new ModelManager_Basic();
+		final DataReceiver receiver = new DataReceiver();
 
 		new Thread(manager).start();
 
-		Coordinator.init(manager, receiver, false);
-		
-		if (args.length == 1) {
-			final String modelPath = args[0];
-			
-			EventQueue.invokeLater(new Runnable() {
-				public void run() {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				Coordinator.init(manager, receiver, false);
+				if (args.length == 1) {
+					final String modelPath = args[0];
 					try {
 						Coordinator.getInstance().loadModel(new File(modelPath));
 						Coordinator.getInstance().startLoadedModel(Long.MAX_VALUE, true);
@@ -920,8 +920,9 @@ public class Coordinator {
 						e.printStackTrace();
 					}
 				}
-			});
-		}
+			}
+		});
+		
 
 		/*
 		 * Coordinator c = Coordinator.getInstance(); c.loadModel(newFile(
