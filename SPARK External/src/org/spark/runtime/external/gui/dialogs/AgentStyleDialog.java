@@ -220,14 +220,18 @@ class LabelOptions extends OptionPanel implements ChangeListener {
 	// Text alignment options
 	private JComboBox textAlignments;
 	
-	// Use label color check box
-	private JCheckBox useLabelColor;
+	// Modulate label color check box
+	private JCheckBox modulateLabelColor;
+
+	// Modulate label size check box
+	private JCheckBox modulateLabelSize;
 	
 	// Constants
 	private static final String CMD_COLOR = "color";
 	private static final String CMD_FONT = "font";
 	private static final String CMD_BITMAP_FONT = "bitmap-font";
-	private static final String CMD_USE_LABEL_COLOR = "use-label-color";
+	private static final String CMD_MODULATE_LABEL_COLOR = "modulate-label-color";
+	private static final String CMD_MODULATE_LABEL_SIZE = "modulate-label-size";
 	private static final String CMD_TEXT_ALIGNMENT = "text-alignment";
 	
 	
@@ -246,7 +250,7 @@ class LabelOptions extends OptionPanel implements ChangeListener {
 //		setLayout(new SpringLayout());
 //		setLayout(new GridLayout(4, 2));
 		
-		JPanel panel = new JPanel(new GridLayout(10, 2));
+		JPanel panel = new JPanel(new GridLayout(11, 2));
 		
 		// Font
 		fontButton = new JButton();
@@ -298,6 +302,12 @@ class LabelOptions extends OptionPanel implements ChangeListener {
 				new SpinnerNumberModel(style.getBitmapFontSize(), 0, 100, 0.1));
 
 		spinnerSize.addChangeListener(this);
+
+		modulateLabelSize = new JCheckBox();
+		modulateLabelSize.setSelected(style.getModulateLabelSize());
+		modulateLabelSize.setActionCommand(CMD_MODULATE_LABEL_SIZE);
+		modulateLabelSize.addActionListener(this);
+
 		
 		// Color
 		colorButton = new JButton();
@@ -305,10 +315,11 @@ class LabelOptions extends OptionPanel implements ChangeListener {
 		colorButton.setActionCommand(CMD_COLOR);
 		colorButton.addActionListener(this);
 		
-		useLabelColor = new JCheckBox();
-		useLabelColor.setSelected(style.getUseLabelColor());
-		useLabelColor.setActionCommand(CMD_USE_LABEL_COLOR);
-		useLabelColor.addActionListener(this);
+		modulateLabelColor = new JCheckBox();
+		modulateLabelColor.setSelected(style.getModulateLabelColor());
+		modulateLabelColor.setActionCommand(CMD_MODULATE_LABEL_COLOR);
+		modulateLabelColor.addActionListener(this);
+
 		
 		// Font general properties
 		panel.add(new JLabel("Font"));
@@ -340,8 +351,11 @@ class LabelOptions extends OptionPanel implements ChangeListener {
 		panel.add(new JLabel("Color"));
 		panel.add(colorButton);
 		
-		panel.add(new JLabel("Use Label Color"));
-		panel.add(useLabelColor);
+		panel.add(new JLabel("Modulate Label Color"));
+		panel.add(modulateLabelColor);
+		
+		panel.add(new JLabel("Modulate Label Size"));
+		panel.add(modulateLabelSize);
 		
 //		SpringUtilities.makeCompactGrid(this, 4, 2, 5, 5, 5, 5);
 		add(panel);
@@ -401,13 +415,20 @@ class LabelOptions extends OptionPanel implements ChangeListener {
 			return;
 		}
 		
-		// Use label color
-		if (cmd == CMD_USE_LABEL_COLOR) {
-			style.setUseLabelColor(useLabelColor.isSelected());
+		// Modulate label color
+		if (cmd == CMD_MODULATE_LABEL_COLOR) {
+			style.setModulateLabelColor(modulateLabelColor.isSelected());
 			render.update();
 			return;
 		}
-		
+
+		// Modulate label size
+		if (cmd == CMD_MODULATE_LABEL_SIZE) {
+			style.setModulateLabelSize(modulateLabelSize.isSelected());
+			render.update();
+			return;
+		}
+
 		// Font
 		if (cmd == CMD_FONT) {
 			FontSelectionDialog dialog = new FontSelectionDialog(null);

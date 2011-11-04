@@ -87,6 +87,8 @@ public class FontManager {
 	 * Returns the font with the given name
 	 */
 	public BitmapFont getFont(String name) {
+		if (name == null)
+			return null;
 		return fontTable.get(name);
 	}
 	

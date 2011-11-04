@@ -313,12 +313,12 @@ public class BitmapFont {
 		m_texture.bind();
 		
 		gl.glEnable(GL.GL_BLEND);
-		gl.glBlendFunc(GL.GL_ONE, GL.GL_ONE_MINUS_SRC_ALPHA);
+		gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
 		
 		gl.glBegin(GL.GL_TRIANGLES);
 		for (FontQuad quad : m_quads) {
 			Vector4d color = quad.m_vertices[0].ColorValue;
-			gl.glColor3d(color.x, color.y, color.z);
+			gl.glColor4d(color.x, color.y, color.z, color.a);
 
 			for (int i = 0; i < 6; i++) {
 				TransformedColoredTextured v = quad.m_vertices[i];

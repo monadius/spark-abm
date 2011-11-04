@@ -13,6 +13,7 @@ import org.spark.runtime.external.Coordinator;
 import org.spark.runtime.external.render.Render;
 import org.spark.runtime.external.render.font.FontManager;
 import org.spark.utils.FileUtils;
+import org.spark.utils.SpringUtilities;
 
 
 /**
@@ -173,7 +174,8 @@ public class SparkPreferencesDialog extends JDialog implements ActionListener {
 	 */
 	private JPanel createGeneralPanel() {
 		JPanel general = new JPanel();
-		general.setLayout(new BoxLayout(general, BoxLayout.LINE_AXIS));
+//		general.setLayout(new BoxLayout(general, BoxLayout.LINE_AXIS));
+		general.setLayout(new SpringLayout());
 
 		// Create controls
 		recentProjectsBox = new JComboBox(new Integer[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 30, 40, 50});
@@ -184,6 +186,8 @@ public class SparkPreferencesDialog extends JDialog implements ActionListener {
 		general.add(new JLabel("Number of recent projects"));
 		general.add(recentProjectsBox);
 		
+		SpringUtilities.makeCompactGrid(general, 1, 2, 0, 0, 5, 5);
+		
 		return general;
 	}
 	
@@ -192,10 +196,13 @@ public class SparkPreferencesDialog extends JDialog implements ActionListener {
 	 * Initializes the panel with font options
 	 */
 	private JPanel createFontPanel() {
-		JPanel font = new JPanel(new GridLayout(2, 3));
+//		JPanel font = new JPanel(new GridLayout(2, 3));
+		JPanel font = new JPanel();
+		font.setLayout(new SpringLayout());
 		
 		// Directory
 		fontDir = new JTextField();
+		fontDir.setMaximumSize(new Dimension(600, 70));
 		fontDir.setEditable(false);
 		
 		JButton dirButton = new JButton("...");
@@ -204,6 +211,7 @@ public class SparkPreferencesDialog extends JDialog implements ActionListener {
 		
 		// Default font
 		defaultFont = new JTextField();
+		defaultFont.setMaximumSize(new Dimension(600, 70));
 		defaultFont.setEditable(false);
 		
 		defaultFonts = new JComboBox();
@@ -218,6 +226,8 @@ public class SparkPreferencesDialog extends JDialog implements ActionListener {
 		font.add(new JLabel("Default font: "));
 		font.add(defaultFont);
 		font.add(defaultFonts);
+
+		SpringUtilities.makeCompactGrid(font, 2, 3, 0, 0, 5, 5);
 		
 		return font;
 	}

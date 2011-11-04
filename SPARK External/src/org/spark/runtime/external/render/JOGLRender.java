@@ -364,6 +364,12 @@ public class JOGLRender extends Render implements GLEventListener {
 		double xx = (xMax - xMin) / w * x + xMin;
 		double yy = (yMin - yMax) / h * y + yMax;
 		
+		xx -= dx;
+		yy -= dy;
+		
+		xx /= zoom;
+		yy /= zoom;
+		
 		return new Vector(xx, yy, 0);
 	}
 
@@ -901,7 +907,8 @@ public class JOGLRender extends Render implements GLEventListener {
 		
 		/* Label options */
 		Vector4d labelColor = agentStyle.getLabelColor();
-		boolean useLabelColor = agentStyle.getUseLabelColor();
+		boolean modulateLabelColor = agentStyle.getModulateLabelColor();
+		boolean modulateLabelSize = agentStyle.getModulateLabelSize();
 		float fontSize = agentStyle.getBitmapFontSize();
 
 		float label_dx = agentStyle.getLabelDx();
@@ -1009,12 +1016,21 @@ public class JOGLRender extends Render implements GLEventListener {
 					labelRect.width = labelWidth;
 					labelRect.height = labelHeight;
 
-					if (!useLabelColor)
-						labelColor = color;
+					// Compute the text color
+					Vector4d textColor = labelColor;
+					if (modulateLabelColor) {
+						textColor = new Vector4d(labelColor).mul(color);
+					}
+					
+					// Compute the text size
+					float textSize = fontSize;
+					if (modulateLabelSize) {
+						textSize *= scale;
+					}
 					
 					labelRect.y = -labelRect.y;
 					bitmapFont.AddString(label, labelRect, 
-							textAlignment, fontSize, labelColor, false);
+							textAlignment, textSize, textColor, false);
 				}
 			}
 			
