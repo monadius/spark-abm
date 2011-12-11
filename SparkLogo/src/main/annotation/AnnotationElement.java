@@ -140,6 +140,44 @@ class StringElement extends AnnotationElement {
 }
 
 
+/**
+ * Represents a value: a number, a boolean, or a string
+ */
+class ValueElement extends AnnotationElement {
+	public ValueElement(String name) {
+		this.name = name;
+		this.value = null;
+	}
+	
+	public void parseValue(Symbol s) throws Exception {
+		switch (s.id) {
+		// string
+		case sym.STRING:
+			this.value = (String) s.value;
+			break;
+			
+		// number
+		case sym.DOUBLE:
+			this.value = (Double) s.value;
+			break;
+		
+		// true, false, or something else
+		case sym.IDENTIFIER:
+			this.value = (String) s.value;
+			break;
+			
+		default:
+			throw new Exception("A value is expected: " + s);
+		}
+	}
+
+	@Override
+	public Object getDefaultValue() {
+		return "";
+	}	
+}
+
+
 
 /**
  * Color-valued element

@@ -16,7 +16,8 @@ class ParameterAnnotation extends VariableAnnotation {
 		annotationId = "parameter";
 		
 		// TODO: what to do with other types?
-		items.put("default", new DoubleElement("default"));
+//		items.put("default", new DoubleElement("default"));
+		items.put("default", new ValueElement("default"));
 		items.put("min", new DoubleElement("min"));
 		items.put("max", new DoubleElement("max"));
 		items.put("step", new DoubleElement("step"));
