@@ -102,6 +102,20 @@
 				</translation>
 			</method>
 			
+			<method name = "starts-with" type = "boolean">
+				<argument name = "str" type = "string"/>
+				<translation>
+					@@object.startsWith(@str)
+				</translation>
+			</method>
+			
+			<method name = "substring" type = "string">
+				<argument name = "begin" type = "double"/>
+				<argument name = "end" type = "double"/>
+				<translation>
+					@@object.substring(@begin, @end)
+				</translation>
+			</method>
 			
 			<method name = "char-at" type = "double">
 				<argument name = "i" type = "double"/>
@@ -198,6 +212,15 @@
                 <method name = "clear">
                 	<translation>
                 		@@object.clear()
+                	</translation>
+                </method>
+                
+                <method name = "set">
+                	<argument name = "i" type = "number"/>
+                	<argument name = "val" type = "$Object"/>
+                	
+                	<translation>
+                		@@object.set((int) @i, @val)
                 	</translation>
                 </method>
                 
