@@ -1005,8 +1005,7 @@ public class JOGLRender extends Render implements GLEventListener {
 					}
 				}
 			}
-			
-			
+
 			// Render label
 			if (agentStyle.label && bitmapFont != null) {
 				String label = labels[i];
