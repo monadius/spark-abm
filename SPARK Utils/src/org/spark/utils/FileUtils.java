@@ -76,7 +76,7 @@ public class FileUtils {
 			return null;
 		}
 	}
-	
+
 	
 	/**
 	 * Closes the file reader
@@ -174,8 +174,9 @@ public class FileUtils {
 	public static PrintStream getFileWriter(String name) {
 		PrintStream writer = writers.get(name);
 		
-		if (writer != null)
+		if (writer != null) {
 			return writer;
+		}
 		
 		try {
 			File file = new File(name);
@@ -201,6 +202,8 @@ public class FileUtils {
 	 * @param name
 	 */
 	public static void createNew(String name) {
+		closeFile(name);
+		
 		File file = new File(name);
 		if (baseDir != null) {
 			if (!file.isAbsolute()) {
@@ -262,6 +265,19 @@ public class FileUtils {
 		}
 		
 		return name;
+	}
+	
+	
+	/**
+	 * Closes the file associated with the given name
+	 */
+	public static void closeFile(String name) {
+		PrintStream writer = writers.get(name);
+		
+		if (writer != null) {
+			writer.close();
+			writers.remove(name);
+		}
 	}
 	
 	
