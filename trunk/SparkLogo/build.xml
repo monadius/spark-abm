@@ -55,7 +55,7 @@
 			<include name="**/*.class" />
 			<manifest>
 				<attribute name="Main-Class" value="gui.MainGUI"/>
-				<attribute name="Class-Path" value="lib/javac.jar"/>
+				<attribute name="Class-Path" value="lib/javac.jar lib/spark-utils.jar lib/log4j.jar lib/log5j-1.2.jar"/>
 			</manifest>
 		</jar>
 <!--
