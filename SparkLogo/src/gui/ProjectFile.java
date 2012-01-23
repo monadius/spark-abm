@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.spark.utils.FileUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -42,7 +43,10 @@ public class ProjectFile {
 		parent = parent.getAbsoluteFile();
 		if (!file.isAbsolute())
 			file = new File(parent, file.getPath());
-		String path = file.getName();
+		
+		return new File(FileUtils.getRelativePath(parent, file));
+		
+/*		String path = file.getName();
 		
 		for (File f = file.getParentFile(); f != null; f = f.getParentFile()) {
 			if (f.equals(parent))
@@ -52,7 +56,7 @@ public class ProjectFile {
 				
 		}
 		
-		return file;
+		return file;*/
 	}
 	
 	

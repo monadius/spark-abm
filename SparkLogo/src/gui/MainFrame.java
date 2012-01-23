@@ -24,8 +24,6 @@ import org.w3c.dom.NodeList;
 public class MainFrame extends JFrame implements ActionListener {
 	private static final int MAX_RECENT_PROJECTS = 10;
 
-	
-	
 	private final JList fileList;
 	private final Console console;
 	private final JButton addButton;
@@ -72,17 +70,17 @@ public class MainFrame extends JFrame implements ActionListener {
 				System.exit(0);
 			}
 		});
+
+		// Create file list
+		fileList = new JList(project.getListModel());
+//		listPanel.add(fileList);
 		
 		// Create three panels and console
-		JPanel listPanel = new JPanel(new BorderLayout());
 		JPanel projectPanel = new JPanel(new GridLayout(3, 2));
 		JPanel buttonPanel = new JPanel(new GridLayout(6, 1));
 		console = new Console();
 
 		// Set panel sizes
-		listPanel.setMinimumSize(new Dimension(100, 100));
-		listPanel.setPreferredSize(new Dimension(400, 200));
-
 		projectPanel.setMinimumSize(new Dimension(100, 100));
 		projectPanel.setPreferredSize(new Dimension(400, 100));
 
@@ -94,7 +92,8 @@ public class MainFrame extends JFrame implements ActionListener {
 		console.setPreferredSize(new Dimension(600, 100));
 
 		// Create scroll pane for list
-		JScrollPane listScroll = new JScrollPane(listPanel);
+		JScrollPane listScroll = new JScrollPane(fileList);
+		listScroll.setPreferredSize(new Dimension(400, 200));
 		listScroll.setMinimumSize(new Dimension(100, 100));
 
 		// Create splitters
@@ -104,10 +103,6 @@ public class MainFrame extends JFrame implements ActionListener {
 				splitter3, buttonPanel);
 		JSplitPane splitter = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
 				splitter2, console);
-
-		// Create file list
-		fileList = new JList(project.getListModel());
-		listPanel.add(fileList);
 
 		// Create buttons
 		addButton = new JButton("Add");
