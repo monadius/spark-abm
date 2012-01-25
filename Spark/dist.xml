@@ -172,35 +172,32 @@
 
 			<zipfileset refid="docs" />
 
-			<zipfileset dir="${spark-lib}" prefix="lib">
+			<zipfileset dir="${spark}/lib" prefix="lib">
 				<include name="*.jar" />
 			</zipfileset>
 
-			<zipfileset dir="${spark-release}" prefix="lib">
+			<zipfileset dir="${spark}/release" prefix="lib">
 				<include name="*.jar" />
 				<include name="spark-server.bat" />
 				<include name="spark-client.bat" />
 				<include name="spark-batches.bat" />
 			</zipfileset>
 			
-			<zipfileset dir="${basedir}/logo">
+			<zipfileset dir="${spark-pl}/logo">
 				<include name="spark-config.xml" />
 				<include name="config.xml" />
 			</zipfileset>
 
-			<zipfileset dir="${spark-lib}">
+			<zipfileset dir="${spark}/lib">
 				<include name="logo.jpg" />
 			</zipfileset>
 
-			<zipfileset dir="${release}">
-				<include name="*.jar" />
+			<zipfileset dir="${spark}/lib" prefix="">
 				<include name="*.dll" />
-				<include name="*.bat" />
 			</zipfileset>
-
-
-			<zipfileset dir="${spark-release}" prefix="">
-				<include name="*.dll" />
+			
+			<zipfileset dir="${spark-pl}/release">
+				<include name="*.jar" />
 			</zipfileset>
 
 			<fileset refid="samples" />
