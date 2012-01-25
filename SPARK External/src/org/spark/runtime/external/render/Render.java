@@ -249,7 +249,13 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
 				
 				String name = (prefix != null ? prefix : "");
 				name += (renderName != null && renderName != "") ? renderName : "pic";
-				name += "-" + row.getTime().getTick();
+				name += "-";
+				
+				String time = String.valueOf(row.getTime().getTick());
+				for (int i = time.length(); i < 4; i++)
+					name += "0";
+				
+				name += time;
 
 				saveSnapshot(dir, name, row);
 			}

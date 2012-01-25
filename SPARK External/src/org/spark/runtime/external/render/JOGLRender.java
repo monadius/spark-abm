@@ -905,6 +905,10 @@ public class JOGLRender extends Render implements GLEventListener {
 		DataObject_SpaceAgents.ShapeInfo[] shapeInfo = agents.getShapeInfo();
 		String[] labels = agents.getLabels();
 		
+		/* Parameters */
+		float baseScale = agentStyle.getScaleFactor();
+		boolean modulateSize = agentStyle.getModulateSize();
+		
 		/* Label options */
 		Vector4d labelColor = agentStyle.getLabelColor();
 		boolean modulateLabelColor = agentStyle.getModulateLabelColor();
@@ -964,7 +968,10 @@ public class JOGLRender extends Render implements GLEventListener {
 				gl.glRotated(phi * rad2angles, 0, 0, 1);
 			}
 			
-			float scale = (float) radii[i];
+			// Compute the scale factor
+			float scale = baseScale;
+			if (modulateSize)
+				scale *= (float) radii[i];
 			
 			boolean drawShape = true;
 			

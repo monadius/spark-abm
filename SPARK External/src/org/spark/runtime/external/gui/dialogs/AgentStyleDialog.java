@@ -21,7 +21,6 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.SpringLayout;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -32,7 +31,6 @@ import org.spark.runtime.external.render.Render;
 import org.spark.runtime.external.render.font.BitmapFont;
 import org.spark.runtime.external.render.font.FontManager;
 import org.spark.utils.FileUtils;
-import org.spark.utils.SpringUtilities;
 
 /**
  * The dialog for configuring advanced properties
@@ -104,11 +102,18 @@ abstract class OptionPanel extends JPanel implements ActionListener {
  * Image options
  */
 @SuppressWarnings("serial")
-class ImageOptions extends OptionPanel {
+class ImageOptions extends OptionPanel implements ChangeListener {
 	private JCheckBox drawShape;
 	private JCheckBox colorBlending;
+	private JCheckBox modulateSize;
 	// Image manager selection button
 	private JButton managerButton;
+	private JSpinner scaleSpinner;
+	
+	private final static String CMD_MODULATE_SIZE = "modulate-size";
+	private final static String CMD_MANAGER = "manager";
+	private final static String CMD_DRAW_SHAPE = "draw-shape";
+	private final static String CMD_COLOR_BLENDING = "color-blending";
 	
 	
 	public ImageOptions(Render render, AgentStyle style) {
@@ -117,7 +122,8 @@ class ImageOptions extends OptionPanel {
 
 	@Override
 	protected void init() {
-		setLayout(new SpringLayout());
+//		setLayout(new SpringLayout());
+		JPanel panel = new JPanel(new GridLayout(5, 2));
 	
 		// Image manager selection button
 		managerButton = new JButton();
@@ -126,32 +132,52 @@ class ImageOptions extends OptionPanel {
 		else
 			managerButton.setText(style.getTileManager().getName());
 		
-		managerButton.setActionCommand("manager");
+		managerButton.setActionCommand(CMD_MANAGER);
 		managerButton.addActionListener(this);
+
+		// Scale spinner
+		scaleSpinner = new JSpinner(
+				new SpinnerNumberModel(style.getScaleFactor(), -100, 100, 0.01));
+		scaleSpinner.addChangeListener(this);
+		
 		
 		// Draw shape check box
 		drawShape = new JCheckBox();
 		drawShape.setSelected(style.getDrawShapeWithImageFlag());
-		drawShape.setActionCommand("draw-shape");
+		drawShape.setActionCommand(CMD_DRAW_SHAPE);
 		drawShape.addActionListener(this);
 
 		// Color blending check box
 		colorBlending = new JCheckBox();
 		colorBlending.setSelected(style.getColorBlending());
-		colorBlending.setActionCommand("color-blending");
+		colorBlending.setActionCommand(CMD_COLOR_BLENDING);
 		colorBlending.addActionListener(this);
+		
+		// Modulate size
+		modulateSize = new JCheckBox();
+		modulateSize.setSelected(style.getModulateSize());
+		modulateSize.setActionCommand(CMD_MODULATE_SIZE);
+		modulateSize.addActionListener(this);
+		
 
 		// Add all components to the main pane
-		add(new JLabel("Image Manager"));
-		add(managerButton);
+		panel.add(new JLabel("Image Manager"));
+		panel.add(managerButton);
 		
-		add(new JLabel("Draw shape"));
-		add(drawShape);
+		panel.add(new JLabel("Scale"));
+		panel.add(scaleSpinner);
 		
-		add(new JLabel("Blend colors"));
-		add(colorBlending);
+		panel.add(new JLabel("Modulate scale"));
+		panel.add(modulateSize);
 		
-		SpringUtilities.makeCompactGrid(this, 3, 2, 5, 5, 5, 5);
+		panel.add(new JLabel("Draw shape"));
+		panel.add(drawShape);
+		
+		panel.add(new JLabel("Blend colors"));
+		panel.add(colorBlending);
+	
+		add(panel);
+//		SpringUtilities.makeCompactGrid(this, 5, 2, 5, 5, 5, 5);
 	}
 
 	
@@ -160,21 +186,28 @@ class ImageOptions extends OptionPanel {
 		String cmd = e.getActionCommand().intern();
 		
 		// Draw shape
-		if (cmd == "draw-shape") {
+		if (cmd == CMD_DRAW_SHAPE) {
 			boolean flag = drawShape.isSelected();
 			style.setDrawShapeWithImageFlag(flag);
 			render.update();
 		}
 		
 		// Color blending
-		if (cmd == "color-blending") {
+		if (cmd == CMD_COLOR_BLENDING) {
 			boolean flag = colorBlending.isSelected();
 			style.setColorBlending(flag);
 			render.update();
 		}
 		
+		// Modulate size
+		if (cmd == CMD_MODULATE_SIZE) {
+			boolean flag = modulateSize.isSelected();
+			style.setModulateSize(flag);
+			render.update();
+		}
+		
 		// Select manager
-		if (cmd == "manager") {
+		if (cmd == CMD_MANAGER) {
 			File file = FileUtils.openFileDialog(Coordinator.getInstance().getCurrentDir(), "xml", null);
 			if (file != null) {
 				style.setTileManager(file);
@@ -191,6 +224,13 @@ class ImageOptions extends OptionPanel {
 				render.update();
 			}
 		}
+	}
+
+	@Override
+	public void stateChanged(ChangeEvent e) {
+		float scale = ((Number) scaleSpinner.getValue()).floatValue();
+		style.setScaleFactor(scale);
+		render.update();	
 	}
 }
 
