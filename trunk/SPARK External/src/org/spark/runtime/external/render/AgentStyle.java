@@ -60,6 +60,11 @@ public class AgentStyle implements Comparable<AgentStyle> {
 	
 	// Indicates that a shape is rendering along with an image
 	private boolean drawShapeWithImage;
+
+	// The image scale factor
+	private float scaleFactor;
+	// If true, then the scale factor is multiplied by the agent's size
+	private boolean modulateSize;
 	
 	/* Label options */
 	private Font font;
@@ -84,7 +89,7 @@ public class AgentStyle implements Comparable<AgentStyle> {
 	/* TileManager */
 	private File tileFile;
 	private TileManagerInfo tileManager;
-
+	
 
 	/***************************************/
 	/* Constants */
@@ -93,6 +98,7 @@ public class AgentStyle implements Comparable<AgentStyle> {
 	private static final String ATTR_BORDER = "border";
 	private static final String ATTR_LABEL = "label";
 	private static final String ATTR_PRIORITY = "position";
+	private static final String ATTR_SCALE = "scale";
 	// Blending
 	private static final String ATTR_TEXTURE_ENV = "texture-env";
 	private static final String ATTR_BLEND_SRC = "blend-src";
@@ -108,6 +114,7 @@ public class AgentStyle implements Comparable<AgentStyle> {
 	private static final String ATTR_STENCIL_ZFAIL = "stencil-zfail";
 	private static final String ATTR_STENCIL_ZPASS = "stencil-zpass";
 	// Flags
+	private static final String ATTR_MODULATE_SIZE = "modulate-size";
 	private static final String ATTR_COLOR_BLENDING = "color-blending";
 	private static final String ATTR_DRAW_SHAPE = "draw-shape-with-image";
 	// Label
@@ -157,6 +164,8 @@ public class AgentStyle implements Comparable<AgentStyle> {
 		labelHeight = 100.0f;
 		labelColor.a = 1.0d;
 		textAlignment = BitmapFont.Align.Left;
+		scaleFactor = 1.0f;
+		modulateSize = true;
 	}
 	
 	
@@ -254,6 +263,23 @@ public class AgentStyle implements Comparable<AgentStyle> {
 		transparencyCoefficient = val;
 	}
 
+	// Scaling
+	public float getScaleFactor() {
+		return scaleFactor;
+	}
+	
+	public void setScaleFactor(float scale) {
+		this.scaleFactor = scale;
+	}
+	
+	public boolean getModulateSize() {
+		return modulateSize;
+	}
+	
+	public void setModulateSize(boolean flag) {
+		modulateSize = flag;
+	}
+	
 	// Alpha
 	
 	public int getAlphaFunc() {
@@ -662,8 +688,13 @@ public class AgentStyle implements Comparable<AgentStyle> {
 		addAttr(doc, agentNode, ATTR_LABEL, label);
 		addAttr(doc, agentNode, ATTR_PRIORITY, position);
 
+		// Parameters
+		addAttr(doc, agentNode, ATTR_SCALE, scaleFactor);
+		
+		// Flags
 		addAttr(doc, agentNode, ATTR_COLOR_BLENDING, colorBlending);
 		addAttr(doc, agentNode, ATTR_DRAW_SHAPE, drawShapeWithImage);
+		addAttr(doc, agentNode, ATTR_MODULATE_SIZE, modulateSize);
 		
 		// Save label options
 		if (fontFamily != null) {
@@ -766,7 +797,11 @@ public class AgentStyle implements Comparable<AgentStyle> {
 		stencilZFail = getIntegerValue(node, ATTR_STENCIL_ZFAIL, 0);
 		stencilZPass = getIntegerValue(node, ATTR_STENCIL_ZPASS, 0);
 		
+		// Parameters
+		scaleFactor = getFloatValue(node, ATTR_SCALE, 1.0f);
+		
 		// Flags
+		modulateSize = getBooleanValue(node, ATTR_MODULATE_SIZE, true);
 		colorBlending = getBooleanValue(node, ATTR_COLOR_BLENDING, false);
 		drawShapeWithImage = getBooleanValue(node, ATTR_DRAW_SHAPE, false);
 
