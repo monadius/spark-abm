@@ -223,6 +223,19 @@ public class Type {
 
 		return null;
 	}
+	
+	
+	/**
+	 * Returns all fields in the type
+	 * @return
+	 */
+	public ArrayList<Variable> getAllFields() {
+		ArrayList<Variable> result = new ArrayList<Variable>();
+		result.addAll(fieldList);
+		
+		return result;
+	}
+	
 
 	/**
 	 * Returns a method with the given name
@@ -246,9 +259,12 @@ public class Type {
 	 * @param field
 	 */
 	public void addField(Variable field) throws Exception {
-		if (SparkModel.getInstance().checkGlobalNameConflicts(field.id)
-				|| getField(field.id) != null) {
+		if (SparkModel.getInstance().checkGlobalNameConflicts(field.id)) {
 			throw new Exception("Field " + field.id + " is already defined as a global variable");
+		}
+		
+		if (getField(field.id) != null) {
+			throw new Exception("Field " + field.id + " is already defined");
 		}
 
 		// TODO: do not add twice for fields with predefined object translation
@@ -261,6 +277,17 @@ public class Type {
 		fields.put(field.id, field);
 		fieldList.add(field);
 	}
+	
+	
+	/**
+	 * Removes a field from the type
+	 * @param field
+	 */
+	public void removeField(Variable field) {
+		fields.remove(field.id);
+		fieldList.remove(field);
+	}
+	
 
 	/**
 	 * Adds a new method

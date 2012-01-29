@@ -22,16 +22,19 @@ public class SparkModel {
 	private static SparkModel theModel;	
 	
 	/* Model's name */
-	protected Id name;
+	protected final Id name;
 	
 	/* All user defined types: agents and models */
-	protected HashMap<Id, Type> userTypes;
+	protected final HashMap<Id, Type> userTypes;
 	
 	/* All predefined spark types */
-	protected HashMap<Id, Type> sparkTypes;
+	protected final HashMap<Id, Type> sparkTypes;
 	
 	/* All commands */
-	protected HashMap<String, Command> commands;
+	protected final HashMap<String, Command> commands;
+
+	// The main model
+	protected ModelType mainModel;
 	
 	
 	/**
@@ -168,8 +171,13 @@ public class SparkModel {
 		// Create a new type
 		if (agentFlag)
 			type = Type.createAgentType(id, parentType, partialFlag);
-		else if (modelFlag)
-			type = Type.createModelType(id, parentType, partialFlag);
+		else if (modelFlag) {
+			if (mainModel != null)
+				throw new Exception("Only one model file is allowed: " + token);
+			
+			this.mainModel = Type.createModelType(id, parentType, partialFlag);
+			type = mainModel;
+		}
 		else
 			type = Type.createClassType(id, parentType, partialFlag);
 		
@@ -177,6 +185,7 @@ public class SparkModel {
 		return type;
 	}
 	
+
 	
 	
 	/**
@@ -268,6 +277,42 @@ public class SparkModel {
 	}
 	
 	
+	/**
+	 * Moves all global variables to the model file
+	 */
+	public void resolveGlobalVariables() throws Exception {
+		if (mainModel == null)
+			throw new Exception("No model file in the project");
+		
+		for (Type type : userTypes.values()) {
+			ArrayList<Variable> fields = type.getAllFields();
+			ArrayList<Variable> globals = new ArrayList<Variable>();
+			for (Variable var : fields) {
+				if (var.global)
+					globals.add(var);
+			}
+			
+			if (type != mainModel) {
+				for (Variable var : globals) {
+					// Delete all global variable from the current type
+					type.removeField(var);
+					
+					// Add all global variables to the model type
+					mainModel.addField(var);
+				}
+			}
+
+			// Set up translation strings
+			for (Variable var : globals) {
+				// TODO: move it into Variable class
+				String typeName = mainModel.getId().toJavaName();
+				var.setTranslation(typeName + "." + var.getTranslation,
+						typeName + "." + var.setTranslation);
+				
+			}
+		}
+	}
+	
 	
 	/**
 	 * Tries to resolve types of fields, methods, etc.
@@ -335,19 +380,24 @@ public class SparkModel {
 	 */
 	public void createXMLFiles(File outputPath) throws Exception {
 		ArrayList<AgentType> agents = new ArrayList<AgentType>();
-		ArrayList<ModelType> models = new ArrayList<ModelType>();
+//		ArrayList<ModelType> models = new ArrayList<ModelType>();
 		
 		for (Type type : userTypes.values()) {
 			if (type instanceof AgentType)
 				agents.add((AgentType) type);
-			else if (type instanceof ModelType)
-				models.add((ModelType) type);
+//			else if (type instanceof ModelType)
+//				models.add((ModelType) type);
 		}
+		
+		if (mainModel == null)
+			throw new Exception("No model file");
 
-		for (ModelType model : models) {
-			File file = new File(outputPath, model.getId().toJavaName() + ".xml");
-			model.createXMLModelFile(file, agents);
-		}
+//		for (ModelType model : models) {
+//			File file = new File(outputPath, model.getId().toJavaName() + ".xml");
+//			model.createXMLModelFile(file, agents);
+//		}
+		File file = new File(outputPath, mainModel.getId().toJavaName() + ".xml");
+		mainModel.createXMLModelFile(file, agents);
 	}
 	
 
