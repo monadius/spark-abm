@@ -30,9 +30,9 @@ public class ModelType extends Type {
 	 * @param id
 	 * @param parent
 	 */
-	protected ModelType(Id id, Type parent) {
+	protected ModelType(Id id, Type parent, boolean partial) {
 		// TODO: better implementation, check wrong parent types
-		super(id, new UnresolvedType(new Id("$model")));
+		super(id, new UnresolvedType(new Id("$model")), partial);
 		annotations = new ArrayList<ModelAnnotation>();
 	}
 	

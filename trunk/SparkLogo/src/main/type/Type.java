@@ -32,6 +32,9 @@ public class Type {
 	
 	// TODO: remove this later
 	public Id alias;
+	
+	// If true, then it is possible to extend this type
+	private boolean partialFlag;
 
 	/* Declaration translation string */
 	protected String declarationTranslation;
@@ -63,8 +66,8 @@ public class Type {
 	 * @param parentType
 	 * @return
 	 */
-	public static AgentType createAgentType(Id id, Type parentType) {
-		return new AgentType(id, parentType);
+	public static AgentType createAgentType(Id id, Type parentType, boolean partial) {
+		return new AgentType(id, parentType, partial);
 	}
 
 	/**
@@ -74,8 +77,8 @@ public class Type {
 	 * @param parentType
 	 * @return
 	 */
-	public static ModelType createModelType(Id id, Type parentType) {
-		return new ModelType(id, parentType);
+	public static ModelType createModelType(Id id, Type parentType, boolean partial) {
+		return new ModelType(id, parentType, partial);
 	}
 
 	/**
@@ -85,10 +88,10 @@ public class Type {
 	 * @param parentType
 	 * @return
 	 */
-	public static Type createClassType(Id id, Type parentType) {
+	public static Type createClassType(Id id, Type parentType, boolean partial) {
 		if (parentType == null)
 			parentType = new UnresolvedType(new Id("$Object"));
-		return new Type(id, parentType);
+		return new Type(id, parentType, partial);
 	}
 
 	/**
@@ -98,6 +101,14 @@ public class Type {
 	 */
 	public Id getId() {
 		return id;
+	}
+	
+	/**
+	 * Returns the partial flag
+	 * @return
+	 */
+	public boolean isPartial() {
+		return partialFlag;
 	}
 
 	/**
@@ -143,7 +154,7 @@ public class Type {
 	 * @param id
 	 */
 	protected Type(Id id) {
-		this(id, null);
+		this(id, null, false);
 	}
 
 	/**
@@ -152,9 +163,10 @@ public class Type {
 	 * @param id
 	 * @param parent
 	 */
-	protected Type(Id id, Type parent) {
+	protected Type(Id id, Type parent, boolean partial) {
 		this.id = id;
 		this.parentType = parent;
+		this.partialFlag = partial;
 
 		fields = new HashMap<Id, Variable>();
 		methods = new HashMap<Id, Method>();

@@ -34,6 +34,60 @@ public class Symbol {
 		this(name, id, null, line, column);
 	}
 	
+
+	/**
+	 * Returns a string value (if any) of the symbol
+	 * @return
+	 */
+	public String stringValue() {
+		if (value instanceof String)
+			return (String) value;
+		
+		return null;
+	}
+	
+	
+	/**
+	 * Returns a double value of the symbol or 0.0 if the symbol is not a number
+	 */
+	public double doubleValue() {
+		if (value instanceof Number)
+			return ((Number) value).doubleValue();
+		
+		return 0.0;
+	}
+
+	/**
+	 * Returns a float value of the symbol or 0.0f if the symbol is not a number
+	 */
+	public float floatValue() {
+		if (value instanceof Number)
+			return ((Number) value).floatValue();
+		
+		return 0.0f;
+	}
+	
+	/**
+	 * Returns an integer value of the symbol or 0 if the symbol is not a number
+	 */
+	public int intValue() {
+		if (value instanceof Number)
+			return ((Number) value).intValue();
+		
+		return 0;
+	}
+	
+	/**
+	 * Returns a long value of the symbol or 0l if the symbol is not a number
+	 */
+	public long longValue() {
+		if (value instanceof Number)
+			return ((Number) value).longValue();
+		
+		return 0l;
+	}
+
+
 	
 	@Override
 	public String toString() {

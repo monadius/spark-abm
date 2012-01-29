@@ -16,8 +16,8 @@ public class AgentType extends Type {
 	 * @param id
 	 * @param parent
 	 */
-	protected AgentType(Id id, Type parent) {
-		super(id, parent);
+	protected AgentType(Id id, Type parent, boolean partial) {
+		super(id, parent, partial);
 		annotations = new ArrayList<AgentAnnotation>();
 		// TODO: parent should be specific: Agent, SpaceAgent, etc.
 	}

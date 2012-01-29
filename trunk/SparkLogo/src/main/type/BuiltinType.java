@@ -17,7 +17,8 @@ public class BuiltinType extends Type {
 	 * @param isInterface
 	 */
 	public BuiltinType(Id id, Type parentType, boolean isInterface) {
-		super(id, parentType);
+		// A built-in time is never partial (extendable)
+		super(id, parentType, false);
 		this.isInterface = isInterface;
 	}
 	
