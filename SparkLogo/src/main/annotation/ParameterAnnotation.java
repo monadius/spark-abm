@@ -13,14 +13,14 @@ import org.w3c.dom.Node;
  */
 class ParameterAnnotation extends VariableAnnotation {
 	protected ParameterAnnotation() {
-		annotationId = "parameter";
+		super(PARAMETER_ANNOTATION);
 		
 		// TODO: what to do with other types?
 //		items.put("default", new DoubleElement("default"));
 		items.put("default", new ValueElement("default"));
-		items.put("min", new DoubleElement("min"));
-		items.put("max", new DoubleElement("max"));
-		items.put("step", new DoubleElement("step"));
+		items.put("min", new DoubleElement("min", 0.0));
+		items.put("max", new DoubleElement("max", 10.0));
+		items.put("step", new DoubleElement("step", 0.1));
 		items.put("name", new StringElement("name"));
 		items.put("values", new StringElement("values"));
 		items.put("$type", new StringElement("type"));

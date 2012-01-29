@@ -9,6 +9,14 @@ import main.type.AgentType;
 public abstract class AgentAnnotation extends InterfaceAnnotation {
 	/* Associated agent type */
 	protected AgentType agent;
+
+	/**
+	 * Constructor
+	 * @param id
+	 */
+	protected AgentAnnotation(int id) {
+		super(id);
+	}
 	
 	/**
 	 * Associates an agent type with the annotation

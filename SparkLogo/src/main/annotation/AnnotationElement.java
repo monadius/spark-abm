@@ -16,6 +16,7 @@ import parser.sym;
 abstract class AnnotationElement {
 	public String name;
 	public Object value;
+	public Object defaultValue;
 	/* True means that no default value will be assigned */
 	public boolean optional;
 	
@@ -30,7 +31,7 @@ abstract class AnnotationElement {
 	 * Returns a default value of the element
 	 * @return
 	 */
-	public abstract Object getDefaultValue();
+//	public abstract Object getDefaultValue();
 	
 	@Override
 	public String toString() {
@@ -40,10 +41,12 @@ abstract class AnnotationElement {
 		Object value = this.value;
 		
 		if (value == null)
-			value = getDefaultValue();
+			value = defaultValue;//getDefaultValue();
 		
 		String str = name + " = \"";
-		str += value.toString();
+		if (value != null) {
+			str += value.toString();
+		}
 		str += "\"";
 		
 		return str;
@@ -62,7 +65,10 @@ abstract class AnnotationElement {
 		Object value = this.value;
 		
 		if (value == null)
-			value = getDefaultValue();
+			value = defaultValue; //getDefaultValue();
+		
+		if (value == null)
+			value = "";
 		
 		Node attr = doc.createAttribute(name);
 		attr.setNodeValue(value.toString());
@@ -78,6 +84,7 @@ abstract class AnnotationElement {
 class IntegerElement extends AnnotationElement {
 	public IntegerElement(String name) {
 		this.name = name;
+		this.defaultValue = Integer.valueOf(0);
 		this.value = null;
 	}
 	
@@ -87,11 +94,6 @@ class IntegerElement extends AnnotationElement {
 		
 		this.value = (int)((Double) s.value).doubleValue();
 	}
-
-	@Override
-	public Object getDefaultValue() {
-		return Integer.valueOf(0);
-	}
 }
 
 
@@ -99,9 +101,14 @@ class IntegerElement extends AnnotationElement {
  * Double-valued element
  */
 class DoubleElement extends AnnotationElement {
-	public DoubleElement(String name) {
+	public DoubleElement(String name, double defaultValue) {
 		this.name = name;
+		this.defaultValue = Double.valueOf(defaultValue);
 		this.value = null;
+	}
+	
+	public DoubleElement(String name) {
+		this(name, Double.valueOf(0));
 	}
 	
 	public void parseValue(Symbol s) throws Exception {
@@ -109,11 +116,6 @@ class DoubleElement extends AnnotationElement {
 			throw new Exception("A number is expected: " + s);
 		
 		this.value = (Double) s.value;
-	}
-
-	@Override
-	public Object getDefaultValue() {
-		return Double.valueOf(0);
 	}
 }
 
@@ -124,6 +126,7 @@ class DoubleElement extends AnnotationElement {
 class StringElement extends AnnotationElement {
 	public StringElement(String name) {
 		this.name = name;
+		this.defaultValue = "";
 	}
 	
 	public void parseValue(Symbol s) throws Exception {
@@ -131,11 +134,6 @@ class StringElement extends AnnotationElement {
 			throw new Exception("A string is expected: " + s);
 		
 		this.value = (String) s.value;
-	}
-
-	@Override
-	public Object getDefaultValue() {
-		return "";
 	}
 }
 
@@ -147,6 +145,7 @@ class ValueElement extends AnnotationElement {
 	public ValueElement(String name) {
 		this.name = name;
 		this.value = null;
+		this.defaultValue = "";
 	}
 	
 	public void parseValue(Symbol s) throws Exception {
@@ -170,11 +169,6 @@ class ValueElement extends AnnotationElement {
 			throw new Exception("A value is expected: " + s);
 		}
 	}
-
-	@Override
-	public Object getDefaultValue() {
-		return "";
-	}	
 }
 
 

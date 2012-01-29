@@ -11,7 +11,7 @@ import org.w3c.dom.Node;
 public class ObserverAnnotation extends ModelAnnotation {
 
 	protected ObserverAnnotation() {
-		annotationId = "observer";
+		super(OBSERVER_ANNOTATION);
 		
 		items.put("observer", new StringElement("observer"));
 		items.put("mode", new StringElement("mode"));

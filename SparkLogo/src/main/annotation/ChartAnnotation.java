@@ -10,7 +10,7 @@ import org.w3c.dom.Node;
 class ChartAnnotation extends VariableAnnotation {
 
 	protected ChartAnnotation() {
-		annotationId = "chart";
+		super(CHART_ANNOTATION);
 		
 		items.put("interval", new IntegerElement("interval"));
 		items.put("$variable", new StringElement("variable"));

@@ -11,7 +11,7 @@ import org.w3c.dom.Node;
 class NoStepAnnotation extends AgentAnnotation {
 
 	protected NoStepAnnotation() {
-		annotationId = "nostep";
+		super(NOSTEP_ANNOTATION);
 	}
 	
 	

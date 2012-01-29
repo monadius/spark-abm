@@ -13,7 +13,7 @@ import org.w3c.dom.Node;
  */
 public class ExternalVariableAnnotation extends VariableAnnotation {
 	public ExternalVariableAnnotation() {
-		annotationId = "ExternalVariable";
+		super(EXTERNAL_VARIABLE_ANNOTATION);
 		
 		items.put("$get", new StringElement("get"));
 		items.put("$set", new StringElement("set"));

@@ -45,7 +45,7 @@ public class VariableNode extends TreeNode {
 		if (myType.getId() != null) {
 			Type doubleType = SparkModel.getInstance().getType(new Id("double"));
 
-			// FIXME: cheating and hacking start here...
+			// FIXME: hacking starts here...
 			if ((flag & GET_VALUE) != 0) {
 				if (doubleType.instanceOf(expectedType) || expectedType instanceof UnknownType) {
 					Type gridType = SparkModel.getInstance().getType(new Id("grid"));
@@ -56,7 +56,7 @@ public class VariableNode extends TreeNode {
 				}
 			}
 			
-			// ...and end here
+			// ...and ends here
 			
 
 			

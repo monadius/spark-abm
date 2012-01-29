@@ -14,7 +14,7 @@ import org.w3c.dom.Node;
 class ExternalAnnotation extends MethodAnnotation {
 
 	protected ExternalAnnotation() {
-		annotationId = "external";
+		super(EXTERNAL_ANNOTATION);
 		
 		items.put("$method", new StringElement("method"));
 		items.put("name", new StringElement("name"));
@@ -40,7 +40,7 @@ class ExternalAnnotation extends MethodAnnotation {
 	@Override
 	public void associateMethod(Method method) throws Exception {
 		if (!(method.getParentType() instanceof ModelType))
-			throw new Exception("Annotation " + annotationId + " cannot be applied to a non-model method " + method);
+			throw new Exception("Annotation " + this.getClass().getSimpleName() + " cannot be applied to a non-model method " + method);
 
 		super.associateMethod(method);
 	}

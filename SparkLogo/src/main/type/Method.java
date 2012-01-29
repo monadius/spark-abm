@@ -80,7 +80,7 @@ public class Method {
 	
 	public void addAnnotation(InterfaceAnnotation annotation) throws Exception {
 		if (!(annotation instanceof MethodAnnotation))
-			throw new Exception("Annotation " + annotation.getId() + " cannot be associated with the method " + this.id);
+			throw new Exception("Annotation " + annotation.getClass().getSimpleName() + " cannot be associated with the method " + this.id);
 
 		MethodAnnotation a = (MethodAnnotation) annotation;
 		annotations.add(a);
