@@ -3,5 +3,8 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/javac.jar"/>
+	<classpathentry kind="lib" path="/SPARK Utils/bin" sourcepath="/SPARK Utils/src"/>
+	<classpathentry kind="lib" path="/Spark/lib/log4j.jar"/>
+	<classpathentry kind="lib" path="/Spark/lib/log5j-1.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

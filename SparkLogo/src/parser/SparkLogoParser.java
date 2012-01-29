@@ -169,9 +169,13 @@ public class SparkLogoParser {
 			
 			// Parse all other declarations
 			switch (symbol.id) {
+			case sym.IDENTIFIER:
 			case sym.AGENT:
 			case sym.MODEL:
 			case sym.CLASS:
+				if (symbol.id == sym.IDENTIFIER && !symbol.stringValue().equals("partial"))
+					throw new Exception("Unexpected symbol: " + symbol);
+				
 				type = parseNewTypeDeclaration();
 				agentFlag = type instanceof AgentType;
 				
@@ -301,6 +305,9 @@ public class SparkLogoParser {
 
 		while (true) {
 			symbol = scanner.peekToken();
+			
+			if (symbol.id == sym.IDENTIFIER && symbol.stringValue().equals("partial"))
+				return;
 
 			switch (symbol.id) {
 			case sym.CLASS:
@@ -344,12 +351,15 @@ public class SparkLogoParser {
 				flag--;
 			}
 
+			if (symbol.id == sym.IDENTIFIER && symbol.stringValue().equals("partial"))
+				return;
+
 			switch (symbol.id) {
 			case sym.COMMA:
 				if (flag == 0)
 					return;
 				break;
-				
+
 			case sym.SPACE:
 			case sym.SHARED:
 			case sym.COLON:
@@ -415,7 +425,6 @@ public class SparkLogoParser {
 	 * 
 	 * @return
 	 */
-	// TODO: composite types
 	private Type parseTypeDeclaration() throws Exception {
 		Symbol s = scanner.nextToken();
 
@@ -455,16 +464,24 @@ public class SparkLogoParser {
 	 */
 	private Type parseNewTypeDeclaration() throws IOException, Exception {
 		Type parentType = null;
+		boolean partialFlag = false;
 		Id typeId;
 		Id parentId;
 
 		Symbol symbol = scanner.nextToken();
+		Symbol firstToken = symbol;
 
+		// Partial flag
+		if (symbol.id == sym.IDENTIFIER && symbol.stringValue().equals("partial")) {
+			partialFlag = true;
+			symbol = scanner.nextToken();
+		}
+		
 		// Read type class: agent or model
 		if (symbol.id != sym.AGENT && symbol.id != sym.MODEL
 				&& symbol.id != sym.CLASS)
 			throw new Exception(
-					"Each SparkLogo-file should start with agent or model, or class keywords");
+					"Expecting: agent, model, or class: " + symbol);
 
 		boolean agentFlag = symbol.id == sym.AGENT;
 		boolean modelFlag = symbol.id == sym.MODEL;
@@ -488,8 +505,8 @@ public class SparkLogoParser {
 			parentType = new UnresolvedType(parentId);
 		}
 
-		return SparkModel.getInstance().createUserType(typeId, parentType,
-				agentFlag, modelFlag);
+		return SparkModel.getInstance().createUserType(partialFlag, typeId, parentType,
+				agentFlag, modelFlag, firstToken);
 	}
 
 	/**

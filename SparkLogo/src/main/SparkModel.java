@@ -8,6 +8,7 @@ import main.type.AgentType;
 import main.type.ModelType;
 import main.type.Type;
 
+import parser.Symbol;
 import parser.xml.Loader;
 import parser.xml.TypeLoader;
 
@@ -121,20 +122,58 @@ public class SparkModel {
 	 * @param type
 	 * @return
 	 */
-	public Type createUserType(Id id, Type parentType, boolean agentFlag, boolean modelFlag) throws Exception {
-		if (userTypes.containsKey(id) || sparkTypes.containsKey(id))
-			throw new Exception("The type " + id + " is already defined");
+	public Type createUserType(boolean partialFlag, Id id, Type parentType, 
+				boolean agentFlag, boolean modelFlag, Symbol token) throws Exception {
+		// Cannot redefine a global type
+		if (sparkTypes.containsKey(id))
+			throw new Exception("The type " + id + " is globally defined: " + token);
+		
+		Type type = userTypes.get(id);
+		
+		// User types can be extended using the "partial" keyword
+		if (type != null) {
+			if (!type.isPartial() || !partialFlag)
+				throw new Exception("The type " + id + 
+						" is already defined and cannot be extended (use 'partial' keyword): " + token);
+			
+			if (agentFlag ^ type instanceof AgentType)
+				throw new Exception("Agent type " + id + " is extended by a non-agent type: " + token);
+			
+			if (modelFlag ^ type instanceof ModelType)
+				throw new Exception("Model type " + id + " is extended by a non-model type: " + token);
+			
+			// TODO: simplify
+			boolean sameParentFlag = false;
+			Type parentType2 = type.getParentType();
+			
+			Id parentId1 = (parentType == null) ? null : parentType.getId();
+			Id parentId2 = (parentType2 == null) ? null : parentType2.getId();
+			
+			if (parentId1 == null) {
+				if (parentId2 == null)
+					sameParentFlag = true;
+				else if (parentId2.equals(new Id("$Object")))
+					sameParentFlag = true;
+			}
+			else {
+				sameParentFlag = parentId1.equals(parentId2);
+			}
 
-		Type type;
+			if (!sameParentFlag)
+				throw new Exception("Extendable types should have the same parent type: " + token);
+			
+			return type;
+		}
+
+		// Create a new type
 		if (agentFlag)
-			type = Type.createAgentType(id, parentType);
+			type = Type.createAgentType(id, parentType, partialFlag);
 		else if (modelFlag)
-			type = Type.createModelType(id, parentType);
+			type = Type.createModelType(id, parentType, partialFlag);
 		else
-			type = Type.createClassType(id, parentType);
+			type = Type.createClassType(id, parentType, partialFlag);
 		
 		userTypes.put(type.getId(), type);
-		
 		return type;
 	}
 	
