@@ -306,7 +306,9 @@ public class FileUtils {
 		
 		// Get files / directories in the directory
 		File[] entries = directory.listFiles();
-			
+		if (entries == null)
+			return files;
+		
 		// Go over entries
 		for (File entry : entries)
 		{
