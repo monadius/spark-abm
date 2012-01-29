@@ -496,6 +496,7 @@ public class JavaEmitter {
 			modifier = "protected";
 		
 		String declaration = "// Error!";
+		boolean passFlag = true;
 		
 		try {
 			declaration = field.getDeclarationTranslation();
@@ -506,10 +507,14 @@ public class JavaEmitter {
 //				typeName = typeId.toJavaName();
 		}
 		catch (Exception e) {
-			e.printStackTrace();
+//			e.printStackTrace();
+			System.err.println(e.getMessage());
+			passFlag = false;
 		}
 		
-		println(modifier + " " + declaration);
+		if (passFlag) {
+			println(modifier + " " + declaration);
+		}
 //		field(modifier, typeName, field.id.toJavaName(), null);
 	}
 	
