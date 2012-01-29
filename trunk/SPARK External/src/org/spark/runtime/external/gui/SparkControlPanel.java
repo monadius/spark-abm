@@ -7,6 +7,8 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.Hashtable;
 
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -51,16 +53,30 @@ public class SparkControlPanel extends JPanel implements ISparkPanel, IDataConsu
 
 	public SparkControlPanel() {
 		this.setMinimumSize(new Dimension(300, 100));
+		this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 
 		int delay = 8;
 		int freq = 0;
 		
 //		synchButton = new JCheckBox("Sychronized", null, true);
+		
 		startButton = new JButton("Start");
 		setupButton = new JButton("Setup");
-		tickLabel = new JLabel("");
-		tickLabel.setMinimumSize(new Dimension(100, 80));
 
+		Dimension d = new Dimension(80, 30);
+		startButton.setPreferredSize(d);
+		startButton.setMinimumSize(d);
+		startButton.setMaximumSize(d);
+
+		setupButton.setPreferredSize(d);
+		setupButton.setMinimumSize(d);
+		setupButton.setMaximumSize(d);
+		
+		tickLabel = new JLabel("");
+		tickLabel.setMinimumSize(new Dimension(60, 20));
+		tickLabel.setPreferredSize(new Dimension(60, 20));
+		tickLabel.setMaximumSize(new Dimension(60, 20));
+		
 //		synchButton.setActionCommand("synchronize");
 		startButton.setActionCommand("start");
 		setupButton.setActionCommand("setup");
@@ -103,12 +119,17 @@ public class SparkControlPanel extends JPanel implements ISparkPanel, IDataConsu
 		labelTable.put(4, new JLabel("60"));
 		freqSlider.setLabelTable(labelTable);
 
-		this.add(freqSlider);
-		this.add(delaySlider);
-//		this.add(synchButton);
-		this.add(setupButton);
-		this.add(startButton);
+		this.add(Box.createRigidArea(new Dimension(10, 0)));
 		this.add(tickLabel);
+		this.add(startButton);
+		this.add(Box.createRigidArea(new Dimension(5, 0)));
+		this.add(setupButton);
+		this.add(Box.createRigidArea(new Dimension(5, 0)));
+		this.add(delaySlider);
+		this.add(Box.createRigidArea(new Dimension(5, 0)));
+		this.add(freqSlider);
+		this.add(Box.createRigidArea(new Dimension(10, 0)));
+//		this.add(synchButton);
 	}
 
 	
