@@ -56,10 +56,11 @@ public class FontManager {
 			return;
 		}
 
-		ArrayList<File> files = FileUtils.findAllFiles(dir, "fnt", true);
+		ArrayList<File> files = FileUtils.findAllFiles(dir, "fnt", false);
 		
-		if (files == null) {
+		if (files == null || files.size() == 0) {
 			log.warn("No font files in the directory: " + dir);
+			dirs.add(dir);
 			return;
 		}
 	
