@@ -89,6 +89,7 @@ public class SparkLogoParser {
 			in.close();
 		}
 
+		sparkModel.resolveGlobalVariables();
 		sparkModel.resolveDeclarationTypes();
 		return sparkModel;
 	}
@@ -134,19 +135,13 @@ public class SparkLogoParser {
 			// First parse global variables
 			if (symbol.id == sym.GLOBAL) {
 				// TODO: remove it later
-				if (agentFlag)
-					throw new Exception(
-							"Global variables can be defined only for models: "
-									+ symbol);
-				ArrayList<Variable> globals = parseGlobal();
+//				if (agentFlag)
+//					throw new Exception(
+//							"Global variables can be defined only for models: "
+//									+ symbol);
+				ArrayList<Variable> globals = parseGlobal(type);
 				
-				// TODO: move it to parseGlobal()
 				for (Variable var : globals) {
-					var.global = true;
-					String typeName = type.getId().toJavaName();
-					// TODO: move it into Variable class
-					var.setTranslation(typeName + "." + var.getTranslation,
-							typeName + "." + var.setTranslation);
 					type.addField(var);
 				}
 				
@@ -555,7 +550,7 @@ public class SparkLogoParser {
 	 * @param type
 	 * @throws Exception
 	 */
-	private ArrayList<Variable> parseGlobal() throws Exception {
+	private ArrayList<Variable> parseGlobal(Type type) throws Exception {
 		Symbol symbol = scanner.nextToken();
 		if (symbol.id != sym.GLOBAL)
 			throw new Exception("parseGlobal(): expected 'global': " + symbol);
@@ -576,7 +571,7 @@ public class SparkLogoParser {
 				}
 
 				// Stop after first explicit type declaration
-				return fields;
+				break;
 			}
 
 			symbol = scanner.peekToken();
@@ -585,8 +580,15 @@ public class SparkLogoParser {
 				continue;
 			}
 			
-			return fields;
+			break;
 		}
+		
+		// Set up the global flags
+		for (Variable var : fields) {
+			var.global = true;
+		}
+		
+		return fields;
 	}
 
 	/**
