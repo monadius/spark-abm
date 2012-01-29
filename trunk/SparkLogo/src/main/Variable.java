@@ -77,7 +77,7 @@ public class Variable {
 			return;
 		}
 	
-		throw new Exception("Annotation " + annotation.getId() + " cannot be associated with a variable " + this);
+		throw new Exception("Annotation " + annotation.getClass().getSimpleName() + " cannot be associated with a variable " + this);
 	}
 	
 

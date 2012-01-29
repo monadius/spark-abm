@@ -4,9 +4,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import main.annotation.InterfaceAnnotation;
+import main.annotation.VariableAnnotation;
 import main.type.AgentType;
 import main.type.ModelType;
 import main.type.Type;
+import main.type.UnknownType;
 
 import parser.Symbol;
 import parser.xml.Loader;
@@ -274,6 +277,56 @@ public class SparkModel {
 		// TODO: constant
 		
 		return null;
+	}
+	
+	
+	/**
+	 * Adds an automatically generated global parameter
+	 * @param var
+	 */
+	public Variable addAutoGlobalParameter(Id id) throws Exception {
+		Variable var = getGlobalVariable(id.name);
+		boolean existingVariable = var != null;
+		boolean parameterFlag = false;
+		
+		if (existingVariable) {
+			// Find if a parameter annotation is defined for the variable
+			for (VariableAnnotation ann : var.annotations) {
+				if (ann.getType() == InterfaceAnnotation.PARAMETER_ANNOTATION) {
+					parameterFlag = true;
+					break;
+				}
+			}
+		}
+		else {
+			// Create a new variable with the undefined type
+			var = new Variable(id, new UnknownType());
+			var.global = true;
+		}
+		
+		// Add a parameter annotation if necessary
+		if (!parameterFlag) {
+			Symbol token = Symbol.createIdentifier("parameter");
+			try { 
+				InterfaceAnnotation ann = InterfaceAnnotation.beginParsing(token);
+				var.addAnnotation(ann);
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		// Add the (new) variable to the main model as a global variable
+		if (!existingVariable) {
+			// TODO: move it into Variable class
+			String typeName = mainModel.getId().toJavaName();
+			var.setTranslation(typeName + "." + var.getTranslation,
+					typeName + "." + var.setTranslation);
+			
+			mainModel.addField(var);
+		}
+		
+		return var;
 	}
 	
 	

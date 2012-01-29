@@ -11,7 +11,7 @@ import org.w3c.dom.Node;
 class DatasetAnnotation extends VariableAnnotation {
 	
 	protected DatasetAnnotation() {
-		annotationId = "dataset";
+		super(DATASET_ANNOTATION);
 		
 		items.put("$variable", new StringElement("variable"));
 		items.put("name", new StringElement("name"));

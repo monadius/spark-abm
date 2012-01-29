@@ -11,7 +11,7 @@ import org.w3c.dom.Node;
 public class TickAnnotation extends ModelAnnotation {
 
 	protected TickAnnotation() {
-		annotationId = "tick";
+		super(TICK_ANNOTATION);
 		
 		items.put("time", new StringElement("tick"));
 

@@ -30,7 +30,7 @@ public class AgentType extends Type {
 	 */
 	public void addAnnotation(InterfaceAnnotation annotation) throws Exception {
 		if (!(annotation instanceof AgentAnnotation))
-			throw new Exception("Annotation " + annotation.getId() + " cannot be associated with " + this);
+			throw new Exception("Annotation " + annotation.getClass().getSimpleName() + " cannot be associated with " + this);
 		
 		AgentAnnotation a = (AgentAnnotation) annotation;
 		annotations.add(a);

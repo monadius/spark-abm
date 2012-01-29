@@ -481,6 +481,7 @@ public class SyntaxTreeBuilder {
 		Variable var;
 
 		switch (s.id) {
+		// (
 		case sym.LPAREN:
 			list.next();
 			node = expressionNode(list);
@@ -491,17 +492,32 @@ public class SyntaxTreeBuilder {
 
 			return node;
 
+		// number
 		case sym.DOUBLE:
 			list.next();
 			return new ConstantNode(s);
 
+		// string
 		case sym.STRING:
 			list.next();
 			return new ConstantNode(s);
 
+		// [
 		case sym.LBRACK:
 			return parseVectorConstant(list);
 
+		// @id
+		case sym.ANNOTATION:
+			list.next();
+			s = list.next();
+			if (s.id != sym.IDENTIFIER)
+				throw new Exception("IDENTIFIER expected: " + s);
+			
+			var = SparkModel.getInstance().addAutoGlobalParameter(new Id(s.stringValue()));
+			return new VariableNode(s, var);
+			
+			
+		// identifier or operator
 		case sym.IDENTIFIER:
 		case sym.OPERATOR:
 			String name = (String) s.value;

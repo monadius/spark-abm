@@ -11,6 +11,14 @@ public abstract class ModelAnnotation extends InterfaceAnnotation {
 	protected ModelType agent;
 	
 	/**
+	 * Constructor
+	 * @param id
+	 */
+	protected ModelAnnotation(int id) {
+		super(id);
+	}
+	
+	/**
 	 * Associates an agent type with the annotation
 	 * @param agent
 	 */

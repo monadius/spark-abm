@@ -44,7 +44,7 @@ public class ModelType extends Type {
 	 */
 	public void addAnnotation(InterfaceAnnotation annotation) throws Exception {
 		if (!(annotation instanceof ModelAnnotation))
-			throw new Exception("Annotation " + annotation.getId() + " cannot be associated with " + this);
+			throw new Exception("Annotation " + annotation.getClass().getSimpleName() + " cannot be associated with " + this);
 		
 		ModelAnnotation a = (ModelAnnotation) annotation;
 		annotations.add(a);
@@ -289,7 +289,7 @@ outer:
 				continue;
 
 			for (InterfaceAnnotation annotation : field.annotations) {
-				if (annotation.getId().equals("datalayer"))
+				if (annotation.getType() == InterfaceAnnotation.DATALAYER_ANNOTATION)
 					continue outer;
 			}
 		
@@ -324,7 +324,28 @@ outer:
 		
 		for (Variable field : fieldList) {
 			for (InterfaceAnnotation annotation : field.annotations) {
-				String str = annotation.toString();
+				switch (annotation.getType()) {
+				case InterfaceAnnotation.EXTERNAL_VARIABLE_ANNOTATION:
+					variables.add(annotation);
+					break;
+					
+				case InterfaceAnnotation.PARAMETER_ANNOTATION:
+					parameters.add(annotation);
+					break;
+					
+				case InterfaceAnnotation.DATASET_ANNOTATION:
+					dataset.add(annotation);
+					break;
+					
+				case InterfaceAnnotation.DATALAYER_ANNOTATION:
+					datalayers.add(annotation);
+					break;
+					
+				case InterfaceAnnotation.CHART_ANNOTATION:
+					charts.add(annotation);
+				}
+				
+/*				String str = annotation.toString();
 				if (str.startsWith("<variable"))
 					variables.add(annotation);
 				else if (str.startsWith("<parameter"))
@@ -334,7 +355,7 @@ outer:
 				else if (str.startsWith("<datalayer"))
 					datalayers.add(annotation);
 				else if (str.startsWith("<chart"))
-					charts.add(annotation);
+					charts.add(annotation);*/
 			}
 		}
 		

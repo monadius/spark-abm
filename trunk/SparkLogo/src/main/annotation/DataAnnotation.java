@@ -12,7 +12,7 @@ import org.w3c.dom.Node;
 class DataAnnotation extends VariableAnnotation {
 	
 	protected DataAnnotation() {
-		annotationId = "data";
+		super(DATA_ANNOTATION);
 		
 		items.put("$variable", new StringElement("variable"));
 		items.put("name", new StringElement("name"));

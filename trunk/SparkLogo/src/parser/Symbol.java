@@ -9,6 +9,12 @@ public class Symbol {
 	public int	column;
 	public String fileName;
 	
+	
+	public static Symbol createIdentifier(String value) {
+		return new Symbol("IDENTIFIER", sym.IDENTIFIER, value, -1, -1);
+	}
+	
+	
 	public Symbol(String name, int id, Object value, int line, int column, String fname) {
 		this.name = name;
 		this.id = id;

@@ -212,7 +212,7 @@ public class ModelFileWriter {
 			Node agentNode = null;
 			// Process agent's annotations
 			for (InterfaceAnnotation ann : agent.getAnnotations()) {
-				if (ann.getId().equals("step"))
+				if (ann.getType() == InterfaceAnnotation.STEP_ANNOTATION) 
 					agentNode = ann.toNode(doc);
 			}
 			

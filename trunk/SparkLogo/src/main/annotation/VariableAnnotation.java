@@ -11,6 +11,14 @@ public abstract class VariableAnnotation extends InterfaceAnnotation{
 	protected Variable variable;
 	
 	/**
+	 * Constructor
+	 * @param id
+	 */
+	protected VariableAnnotation(int id) {
+		super(id);
+	}
+	
+	/**
 	 * Associates a variable with the annotation
 	 * @param var
 	 */

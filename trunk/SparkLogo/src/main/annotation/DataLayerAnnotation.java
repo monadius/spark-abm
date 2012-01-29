@@ -12,7 +12,7 @@ import org.w3c.dom.Node;
 class DataLayerAnnotation extends VariableAnnotation {
 	
 	protected DataLayerAnnotation() {
-		annotationId = "datalayer";
+		super(DATALAYER_ANNOTATION);
 		
 		items.put("min", new DoubleElement("val1"));
 		items.put("max", new DoubleElement("val2"));

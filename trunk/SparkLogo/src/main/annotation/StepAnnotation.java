@@ -10,7 +10,7 @@ import org.w3c.dom.Node;
 class StepAnnotation extends AgentAnnotation {
 
 	protected StepAnnotation() {
-		annotationId = "step";
+		super(STEP_ANNOTATION);
 		
 		items.put("priority", new IntegerElement("priority"));
 		items.put("time", new StringElement("time"));

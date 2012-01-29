@@ -12,6 +12,14 @@ public abstract class MethodAnnotation extends InterfaceAnnotation {
 	protected Method method;
 	
 	/**
+	 * Constructor
+	 * @param id
+	 */
+	protected MethodAnnotation(int id) {
+		super(id);
+	}
+	
+	/**
 	 * Associates a variable with the annotation
 	 * @param var
 	 */
