@@ -11,12 +11,12 @@ import main.annotation.InterfaceAnnotation;
 import main.annotation.ObserverAnnotation;
 import main.type.AgentType;
 
+import org.spark.modelfile.ModelFileLoader;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import parser.xml.modelfile.ModelFileLoader;
 
-import static parser.xml.XmlDocUtils.*;
+import static org.spark.utils.XmlDocUtils.*;
 
 /**
  * Class for creating new model files and updating existing model files.
@@ -243,7 +243,7 @@ public class ModelFileWriter {
 		
 		for (Node window : windows) {
 			if (getBooleanValue(window, "main", false)) {
-				location = getStringValue(window, "name", null);
+				location = getValue(window, "name", null);
 				break;
 			}
 		}
@@ -341,7 +341,7 @@ public class ModelFileWriter {
 		for (InterfaceAnnotation annotation : annotations) {
 			Node tmp = annotation.toNode(doc);
 			if (tmp != null) {
-				String location = getStringValue(tmp, "name", "Chart");
+				String location = getValue(tmp, "name", "Chart");
 				addAttr(doc, tmp, "location", location);
 				interfaceNode.appendChild(tmp);
 			}

@@ -337,32 +337,43 @@ public class SparkModel {
 		if (mainModel == null)
 			throw new Exception("No model file in the project");
 		
+		ArrayList<Variable> globals = new ArrayList<Variable>();
+		ArrayList<Variable> fields = mainModel.getAllFields();
+		
+		// First, add global variables from the main model
+		for (Variable var : fields) {
+			if (var.global)
+				globals.add(var);
+		}
+		
+		// Then, add global variables from other types
 		for (Type type : userTypes.values()) {
-			ArrayList<Variable> fields = type.getAllFields();
-			ArrayList<Variable> globals = new ArrayList<Variable>();
+			if (type == mainModel)
+				continue;
+			
+			ArrayList<Variable> localGlobals = new ArrayList<Variable>();
+			fields = type.getAllFields();
 			for (Variable var : fields) {
 				if (var.global)
-					globals.add(var);
+					localGlobals.add(var);
 			}
 			
-			if (type != mainModel) {
-				for (Variable var : globals) {
-					// Delete all global variable from the current type
-					type.removeField(var);
-					
-					// Add all global variables to the model type
-					mainModel.addField(var);
-				}
+			for (Variable var : localGlobals) {
+				// Delete all global variable from the current type
+				type.removeField(var);
+				// Add all global variables to the model type
+				mainModel.addField(var);
 			}
+			
+			globals.addAll(localGlobals);
+		}
 
-			// Set up translation strings
-			for (Variable var : globals) {
-				// TODO: move it into Variable class
-				String typeName = mainModel.getId().toJavaName();
-				var.setTranslation(typeName + "." + var.getTranslation,
-						typeName + "." + var.setTranslation);
-				
-			}
+		// Set up translation strings
+		for (Variable var : globals) {
+			// TODO: move it into Variable class
+			String typeName = mainModel.getId().toJavaName();
+			var.setTranslation(typeName + "." + var.getTranslation,
+					typeName + "." + var.setTranslation);
 		}
 	}
 	
