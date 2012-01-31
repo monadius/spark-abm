@@ -208,7 +208,7 @@ public abstract class WindowManager {
 	/**
 	 * Updates window menu
 	 */
-	private void updateWindowMenu() {
+	protected final void updateWindowMenu() {
 		if (windowMenu == null)
 			return;
 		
