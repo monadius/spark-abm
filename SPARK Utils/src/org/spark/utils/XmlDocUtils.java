@@ -69,13 +69,13 @@ public class XmlDocUtils {
 	 * Creates a new document with the given root node.
 	 * If the version is positive then the version attributes is attached to the root node.
 	 */
-	public static Document createNewDocument(String rootName, int version) {
+	public static Document createNewDocument(String rootName, Version version) {
 		try {
 			DocumentBuilder db = DocumentBuilderFactory.newInstance()
 				.newDocumentBuilder();
 			Document doc = db.newDocument();
 			Node root = doc.createElement(rootName);
-			if (version > 0) {
+			if (version != null) {
 				addAttr(doc, root, "version", version);
 			}
 		
@@ -87,6 +87,32 @@ public class XmlDocUtils {
 		}
 		
 		return null;
+	}
+	
+	
+	/**
+	 * Parses the attribute version of the form major.minor
+	 */
+	public static Version getNodeVersion(Node node) {
+		String value = getValue(node, "version", "0");
+		String[] els = value.split("\\.");
+		if (els.length == 0)
+			els = new String[] {value};
+
+		int major = 0, minor = 0;
+		
+		if (els.length >= 1) {
+			try {
+				major = Integer.valueOf(els[0]);
+				if (els.length >= 2)
+					minor = Integer.valueOf(els[1]);
+			}
+			catch (Exception e) {
+				logger.error(e);
+			}
+		}
+
+		return new Version(major, minor);
 	}
 	
 	

@@ -8,6 +8,13 @@ import org.w3c.dom.Document;
  *
  */
 abstract class ModelConverter {
+	// Possible results of the checkDocument() function
+	protected enum CheckResult {
+		OLDER_VERSION,
+		GOOD_VERSION,
+		NEWER_VERSION
+	}
+	
 	/* Converter to the previos version document */
 	private ModelConverter previousVersionConverter;
 	
@@ -26,7 +33,7 @@ abstract class ModelConverter {
 	 * @param doc
 	 * @return
 	 */
-	public abstract boolean checkDocument(Document doc);
+	public abstract CheckResult checkDocument(Document doc);
 	
 	
 	
@@ -36,16 +43,25 @@ abstract class ModelConverter {
 	 * @return
 	 */
 	public final Document convert(Document doc) throws Exception {
-		// Document is in the right version
-		if (checkDocument(doc))
+		// Check the version of the document
+		CheckResult result = checkDocument(doc);
+		
+		switch (result) {
+		// Good version or newer version
+		case GOOD_VERSION:
+		case NEWER_VERSION:
 			return doc;
-		
-		if (previousVersionConverter == null)
-			throw new Exception("Document is not supported");
-		
-		Document result = previousVersionConverter.convert(doc);
-		
-		return convert0(result);
+			
+		// Older version:
+		case OLDER_VERSION:	
+			if (previousVersionConverter == null)
+				throw new Exception("Document is not supported");
+			
+			Document doc2 = previousVersionConverter.convert(doc);
+			return convert0(doc2);
+		}
+
+		throw new Exception("Document is not supported");
 	}
 	
 	
