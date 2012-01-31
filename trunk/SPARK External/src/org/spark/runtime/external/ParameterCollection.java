@@ -43,6 +43,14 @@ public class ParameterCollection {
 	
 	
 	/**
+	 * Returns the number of parameters in the collection
+	 */
+	public int size() {
+		return parametersList.size();
+	}
+	
+	
+	/**
 	 * Returns a parameter by its name
 	 * @param name
 	 * @return
