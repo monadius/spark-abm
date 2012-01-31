@@ -559,7 +559,7 @@ public class Coordinator {
 
 			/* Load parameters and variable sets */
 			parameters = new ParameterCollection();
-			list = XmlDocUtils.getChildrenByTagName(interfaceNode, "parameterframe");
+			list = XmlDocUtils.getChildrenByTagName(modelNode, "parameters");
 			if (list.size() >= 1) {
 				parameters.loadParameters(list.get(0));
 			}
@@ -609,7 +609,7 @@ public class Coordinator {
 			
 			
 			if (interfaceNode != null) {
-				loadInterface(interfaceNode);
+				loadInterface(xmlDoc, interfaceNode);
 			}
 			
 			configuration.addRecentProject(modelFile);
@@ -624,7 +624,7 @@ public class Coordinator {
 	 * Loads interface from the given interface node
 	 * @param interfaceNode
 	 */
-	private void loadInterface(Node interfaceNode) {
+	private void loadInterface(Document doc, Node interfaceNode) {
 		// TODO: load data set properly
 		Node datasetNode = XmlDocUtils.getChildByTagName(interfaceNode, "dataset");
 		if (datasetNode != null) {
@@ -668,6 +668,13 @@ public class Coordinator {
 		
 		/* Load the parameter panel */
 		Node parameterNode = XmlDocUtils.getChildByTagName(interfaceNode, "parameterframe");
+		if (parameterNode == null && getParameters().size() > 0) {
+			// Create a parameter frame if there are some parameters in the model
+			parameterNode = doc.createElement("parameterframe");
+			XmlDocUtils.addAttr(doc, parameterNode, "location", "Parameters");
+			interfaceNode.appendChild(parameterNode);
+		}
+		
 		if (parameterNode != null) {
 			new SparkParameterPanel(windowManager, parameterNode);
 		}
