@@ -252,8 +252,7 @@ public class BatchRunDialog extends JDialog implements ActionListener {
 		for (int i = 0; i < vars.length; i++) {
 			ProxyVariable var = vars[i];
 			// TODO: other types
-			if (var.getTypeName() == "double" ||
-					var.getTypeName() == "integer") {
+			if (var.getType() == ProxyVariable.DOUBLE_TYPE) {
 				names.add(var.getName());
 			}
 		}

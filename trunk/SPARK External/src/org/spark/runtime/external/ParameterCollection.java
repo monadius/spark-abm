@@ -4,8 +4,8 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.spark.utils.XmlDocUtils;
 import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -29,10 +29,6 @@ public class ParameterCollection {
 		new ArrayList<Parameter>();
 	
 
-	
-	// TODO: getParameter(String name)
-	// Problem: id contains variable's name also
-	
 	/**
 	 * Returns an array containing all parameters in the collection
 	 */
@@ -107,87 +103,50 @@ public class ParameterCollection {
 	 * @return
 	 */
 	public Parameter createParameter(Node node) throws Exception {
-		NamedNodeMap attributes = node.getAttributes();
-		Node tmp;
-
 		// Read node attributes
-		String variable = (tmp = attributes.getNamedItem("variable")) != null ? tmp.getNodeValue() : "???";
-		String name = (tmp = attributes.getNamedItem("name")) != null ? tmp.getNodeValue() : null;
-		String smin = (tmp = attributes.getNamedItem("min")) != null ? tmp.getNodeValue() : "0";
-		String smax = (tmp = attributes.getNamedItem("max")) != null ? tmp.getNodeValue() : "1";
-		String step = (tmp = attributes.getNamedItem("step")) != null ? tmp.getNodeValue() : "1";
-		String svalues = (tmp = attributes.getNamedItem("values")) != null ? tmp.getNodeValue() : null;
-		String widget = (tmp = attributes.getNamedItem("widget")) != null ? tmp.getNodeValue() : "Spinner";
-		String defaultValue = (tmp = attributes.getNamedItem("default")) != null ? tmp.getNodeValue() : null;
+		String variableRef = XmlDocUtils.getValue(node, "variable", "???");
+		String name = XmlDocUtils.getValue(node, "name", null);
+		double min = XmlDocUtils.getDoubleValue(node, "min", 0.0);
+		double max = XmlDocUtils.getDoubleValue(node, "max", 0.0);
+		double step = XmlDocUtils.getDoubleValue(node, "step", 1.0);
+		String svalues = XmlDocUtils.getValue(node, "values", null);
+		String defaultValue = XmlDocUtils.getValue(node, "default", null); 
 
-		// Create a parameter
-		Parameter par = new Parameter();
-		
-		// Add parameter to the table
-		par.variable = Coordinator.getInstance().getVariable(variable);
-		if (par.variable == null)
-			throw new Exception("Variable " + variable + " is not defined");
-		
-		
-		String id = variable + ";" + name;
-		if (parameters.containsKey(id))
-			throw new Exception("Parameter " + name + " for variable " + 
-					variable + "is already defined");
-		
-		parameters.put(id, par);
-		parametersList.add(par);
-		
-		// Set up the parameter
-		par.variable.addChangeListener(par);
-
-		if (name != null)
-			par.name = name;
-		else
-			par.name = par.variable.getName();
-		
-
-		// Use specific list of values
-		if (svalues != null) {
-			String[] values = svalues.split(",");
-			par.setValues(values);
-			
-			// TODO: better solution is required
-			smin = "-1e1000";
-			smax = "1e1000";
-		}
-		
-		// Set up parameter's widget
-		par.widgetName = widget;
-		
-		// Set up min/max values
-		double min = Double.valueOf(smin);
-		double max = Double.valueOf(smax);
-		
 		if (min > max)
 			min = max;
 		
-		par.setMinimum(par.min = min);
-		par.setMaximum(par.max = max);
+		if (step <= 0)
+			step = 1.0;
 		
-		// Set up step
-		par.setStepSize(par.step = Double.valueOf(step));
-		
-		if (par.step <= 0)
-			par.setStepSize(par.step = 1);
+		// Get the corresponding variable
+		ProxyVariable variable = Coordinator.getInstance().getVariable(variableRef);
+		if (variable == null)
+			throw new Exception("Variable " + variable + " is not defined for the parameter " + name);
 
-		par.adjustFormat();
+		if (name == null) {
+			name = variable.getName();
+		}
 		
+		if (parameters.containsKey(name))
+			throw new Exception("Parameter " + name + " is already defined");
+
+		// Create a parameter
+		Parameter par = new Parameter();
+		par.init(name, variable, min, max, step);
+		
+		// Adds the parameter to the table and to the list
+		parameters.put(name, par);
+		parametersList.add(par);
+
+		// Use a list of values
+		if (svalues != null) {
+			String[] values = svalues.split(",");
+			par.setValues(values);
+		}
+
 		// Assign the default value
 		if (defaultValue != null)
 			par.setValue(defaultValue);
-/*		else {
-			if (par.variable.getType() == Double.class)
-				par.setValue(min);
-			else if (par.variable.getType() == Integer.class)
-				par.setValue((int) min);
-		}
-*/		
-		// TODO: set initial value to be between 'min' and 'max'
 		
 		return par;
 	}

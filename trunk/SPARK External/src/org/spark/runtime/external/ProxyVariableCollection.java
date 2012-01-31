@@ -23,7 +23,7 @@ public class ProxyVariableCollection {
 	 * inside the given node
 	 * @param node
 	 */
-	public ProxyVariableCollection(Node node) {
+	public ProxyVariableCollection(Node node) throws Exception {
 		variables = new HashMap<String, ProxyVariable>();
 		ArrayList<Node> list = XmlDocUtils.getChildrenByTagName(node, "variable");
 		

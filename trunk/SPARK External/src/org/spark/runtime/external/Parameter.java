@@ -9,7 +9,6 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JSlider;
-import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -21,23 +20,20 @@ import javax.swing.event.ChangeListener;
 @SuppressWarnings("serial")
 public class Parameter extends SpinnerNumberModel implements ChangeListener, ActionListener {
 	/* Associated variable */
-	protected ProxyVariable variable;
+	private ProxyVariable variable;
 	
 	/* A list of specific values: if it is not null, then
 	 * only values from this list can be assigned to the parameter
 	 */
 	// TODO: other value types
-	protected Double[] values;
+	private Double[] values;
 	
 	/* Parameter's name */
-	protected String name;
+	private String name;
 	
 	/* Parameter's parameters */
-	protected double min, max, step;
+	private double min, max, step;
 
-	/* Widget name associated with the parameter */
-	protected String widgetName;
-	
 	/* Widget associated with the parameter */
 	private JComponent widget;
 	
@@ -67,6 +63,31 @@ public class Parameter extends SpinnerNumberModel implements ChangeListener, Act
 	 * Internal constructor
 	 */
 	Parameter() {
+	}
+	
+	/**
+	 * Initializes the parameter
+	 */
+	void init(String name, ProxyVariable var, double min, double max, double step) {
+		if (min > max)
+			min = max;
+		
+		this.name = name;
+		this.variable = var;
+		this.min = min;
+		this.max = max;
+		this.step = step;
+		
+		var.addChangeListener(this);
+		updateModel();
+	}
+	
+	
+	/**
+	 * Returns the corresponding variable
+	 */
+	public ProxyVariable getVariable() {
+		return variable;
 	}
 	
 	
@@ -103,6 +124,7 @@ public class Parameter extends SpinnerNumberModel implements ChangeListener, Act
 	 */
 	protected void setValues(String[] vals) {
 		values = new Double[vals.length];
+		double min = 0.0, max = 0.0;
 		
 		for (int i = 0; i < vals.length; i++) {
 			Double v = 0.0;
@@ -115,15 +137,35 @@ public class Parameter extends SpinnerNumberModel implements ChangeListener, Act
 			}
 			finally {
 				values[i] = v;
+				if (v < min)
+					min = v;
+				
+				if (v > max)
+					max = v;
 			}
 		}
+		
+		this.min = min;
+		this.max = max;
+		updateModel();
+	}
+	
+	
+	/**
+	 * Updates the related data models
+	 */
+	private void updateModel() {
+		setMinimum(min);
+		setMaximum(max);
+		setStepSize(step);
+		adjustFormat();
 	}
 	
 	
 	/**
 	 * Adjusts the default output format
 	 */
-	public void adjustFormat() {
+	private void adjustFormat() {
 		// Special formats for a list of values
 		if (values != null) {
 			for (int i = 0; i < values.length; i++) {
@@ -168,6 +210,8 @@ public class Parameter extends SpinnerNumberModel implements ChangeListener, Act
 		if (widget != null)
 			return widget;
 		
+		int type = variable.getType();
+		
 		if (values != null) {
 			final JComboBox box = new JComboBox(values);
 			box.addActionListener(this);
@@ -198,16 +242,13 @@ public class Parameter extends SpinnerNumberModel implements ChangeListener, Act
 				}
 			};
 		}
-		else
-		// TODO: default SpinnerNumberModel does not work
-		// with boolean values. Implement spinner model which
-		// deals with Boolean, Integer, Double.
+/*		else
 		if (widgetName.equals("Spinner")) {
 			JSpinner spinner = new JSpinner(this);
 			widget = spinner;
 			widgetUpdater = new WidgetUpdater() {};
-		}
-		else if (widgetName.equals("Slider")) {
+		}*/
+		else if (type == ProxyVariable.DOUBLE_TYPE) {
 			final JSlider slider = new JSlider();
 			widget = slider;
 			
@@ -238,7 +279,7 @@ public class Parameter extends SpinnerNumberModel implements ChangeListener, Act
 				}
 			};
 		}
-		else if (widgetName.equals("OnOff")) {
+		else if (type == ProxyVariable.BOOL_TYPE) {
 			final JCheckBox checkbox = new JCheckBox();
 			widget = checkbox;
 			checkbox.addActionListener(this);
@@ -271,7 +312,7 @@ public class Parameter extends SpinnerNumberModel implements ChangeListener, Act
 		Object value = getValue();
 		String str;
 		
-		if (variable.getTypeName() == "double") {
+		if (variable.getType() == ProxyVariable.DOUBLE_TYPE) {
 			double val = (Double) value;
 			if (Math.abs(val) < threshold && Math.abs(val) > 0)
 				str = format2.format(val);
@@ -310,21 +351,25 @@ public class Parameter extends SpinnerNumberModel implements ChangeListener, Act
 			if (!source.getValueIsAdjusting()) {
 				double n = source.getValue() * step + min;
 		    	
-				if (variable.getTypeName() == "integer")
-					setValue((int) n);
-				else if (variable.getTypeName() == "boolean")
+				switch (variable.getType()) {
+				case ProxyVariable.BOOL_TYPE:
 					setValue(n > 0);
-				else if (variable.getTypeName() == "double")
+					break;
+					
+				case ProxyVariable.DOUBLE_TYPE:
 					setValue(n);
-				else
+					break;
+					
+				default:
 					throw new Error("Unsupported variable type: " + variable.getTypeName());
+				}
 		    }
 			
 			return;
 		}
 		
 		// TODO: modify underlying value (SpinnerNumberModel)
-		if (variable.getTypeName() != "boolean") {
+		if (variable.getType() != ProxyVariable.BOOL_TYPE) {
 			Number value = (Number) variable.getValue();
 
 			try {
@@ -363,7 +408,7 @@ public class Parameter extends SpinnerNumberModel implements ChangeListener, Act
 		if (src instanceof JCheckBox) {
 			JCheckBox source = (JCheckBox) src;
 		
-			if (variable.getTypeName() == "boolean")
+			if (variable.getType() == ProxyVariable.BOOL_TYPE)
 				setValue(source.isSelected());
 		}
 		else if (src instanceof JComboBox) {
@@ -394,7 +439,7 @@ public class Parameter extends SpinnerNumberModel implements ChangeListener, Act
 	@Override
 	public void setValue(Object value) {
 		// Boolean type is processed by this class
-		if (variable.getTypeName() != "boolean") {
+		if (variable.getType() != ProxyVariable.BOOL_TYPE) {
 			// TODO: fireStateChanged() will be called twice for the widget:
 			// one time here and another time in stateChanged() in this class
 			super.setValue(value);
@@ -420,12 +465,13 @@ public class Parameter extends SpinnerNumberModel implements ChangeListener, Act
 		Object value = variable.getValue();
 
 		if (value == null) {
-			if (variable.getTypeName() == "boolean")
+			switch (variable.getType()) {
+			case ProxyVariable.BOOL_TYPE:
 				return new Boolean(false);
-			else if (variable.getTypeName() == "double")
-				return new Double(0);
-			else if (variable.getTypeName() == "integer")
-				return new Integer(0);
+				
+			case ProxyVariable.DOUBLE_TYPE:
+				return new Double(0.0);
+			}
 
 			// TODO: do we need to throw an exception?
 			return new Double(0);
@@ -440,7 +486,7 @@ public class Parameter extends SpinnerNumberModel implements ChangeListener, Act
 	 */
 	@Override
 	public Object getNextValue() {
-		if (variable.getTypeName() == "boolean") {
+		if (variable.getType() == ProxyVariable.BOOL_TYPE) {
 			if ( ((Boolean) variable.getValue()).booleanValue() )
 				return false;
 			else
@@ -456,7 +502,7 @@ public class Parameter extends SpinnerNumberModel implements ChangeListener, Act
 	 */
 	@Override
 	public Object getPreviousValue() {
-		if (variable.getTypeName() == "boolean") {
+		if (variable.getType() == ProxyVariable.BOOL_TYPE) {
 			return getNextValue();
 		}
 		

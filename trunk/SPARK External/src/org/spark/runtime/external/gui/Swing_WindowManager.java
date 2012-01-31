@@ -32,6 +32,20 @@ public class Swing_WindowManager extends WindowManager {
 			
 			mainWindow = new Swing_SparkWindow(null);
 			mainWindow.setVisible(true);
+			
+			// Name changed event
+			mainWindow.addNameChangeEvent(new SparkWindow.NameChangeEvent() {
+				@Override
+				public String nameChanging(SparkWindow win, String newName) {
+					String name = getGoodName(newName);
+					return name;
+				}
+				
+				@Override
+				public void nameChanged(SparkWindow win, String newName) {
+					updateWindowMenu();
+				}
+			});			
 		}
 		
 		

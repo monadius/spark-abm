@@ -85,7 +85,7 @@ public class VariableSet {
 		for (int i = 0; i < pars.length; i++) {
 			Parameter p = pars[i];
 			
-			String varName = p.variable.getName();
+			String varName = p.getVariable().getName();
 			
 			// If a variable is already in the set,
 			// then do nothing
@@ -96,7 +96,7 @@ public class VariableSet {
 			
 			// Otherwise, create a new variable-value pair
 			// for the parameter
-			VariableValue vv = new VariableValue(p.variable);
+			VariableValue vv = new VariableValue(p.getVariable());
 			vars.add(vv);
 		}
 	}
