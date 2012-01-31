@@ -15,8 +15,6 @@ class ParameterAnnotation extends VariableAnnotation {
 	protected ParameterAnnotation() {
 		super(PARAMETER_ANNOTATION);
 		
-		// TODO: what to do with other types?
-//		items.put("default", new DoubleElement("default"));
 		items.put("default", new ValueElement("default"));
 		items.put("min", new DoubleElement("min", 0.0));
 		items.put("max", new DoubleElement("max", 10.0));
@@ -24,15 +22,13 @@ class ParameterAnnotation extends VariableAnnotation {
 		items.put("name", new StringElement("name"));
 		items.put("values", new StringElement("values"));
 		items.put("$type", new StringElement("type"));
-		items.put("$widget", new StringElement("widget"));
 		items.put("$variable", new StringElement("variable"));
 		
 		items.get("default").optional = true;
 		items.get("values").optional = true;
 		
-		// TODO: think about other numerical types
+		// Set up the default type
 		items.get("$type").value = "Double";
-		items.get("$widget").value = "Slider";
 	}
 	
 	
@@ -46,7 +42,6 @@ class ParameterAnnotation extends VariableAnnotation {
 				}
 				else if (variable.type == SparkModel.getInstance().getType(new Id("boolean"))) {
 					items.get("$type").value = "Boolean";
-					items.get("$widget").value = "OnOff";
 				}
 				else {
 					// Unsupported variable type
