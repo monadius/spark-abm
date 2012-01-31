@@ -1,0 +1,11 @@
+<spark-project>
+	<name>Terrain</name>
+	<project-directory>C:\Work\My Projects\SPARK\SparkLogo\samples\Terrain</project-directory>
+	<output-directory>output</output-directory>
+
+	<files>
+		<file>Model.spark</file>
+		<file>MountAgent.spark</file>
+		<file>RiverAgent.spark</file>
+	</files>
+</spark-project>

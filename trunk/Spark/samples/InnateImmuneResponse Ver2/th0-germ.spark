@@ -1,0 +1,19 @@
+agent TH0-germ : turtle
+
+
+to step
+	th0-germ-function
+end
+
+
+to th0-germ-function
+	if random 100 < 1
+	[
+		ask hatch-one TH0
+		[
+			color = violet
+			th0-age = 100
+			activation = 0
+		]
+	]
+end

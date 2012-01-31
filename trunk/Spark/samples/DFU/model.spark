@@ -1,0 +1,269 @@
+model DFUModel
+
+
+space GridSpace -60 60 -60 60 true true
+
+
+@parameter(default = 16, min = 0, max = 30)
+global magnitude
+
+
+global total-mac
+global total-neu
+
+@dataset(name = "Total AM")
+@chart
+global total-am
+
+@dataset
+@chart
+global total-an
+global total-fibroblasts
+
+@chart
+global total-af
+
+@chart
+global total-TNF
+
+@chart
+global total-IL1-beta
+
+@chart
+global total-collagen
+
+@chart
+global total-TGF
+
+@chart
+global total-dam
+
+@chart
+global total-IL-10
+global damage-distance : number
+global step : number
+global hour : number
+
+@chart
+global day
+global time : number
+global damage-size : number
+global prob : number
+global p1 : number
+global p2 : number
+global prob-dam-die : number
+global repeat-dam : number
+
+
+global add-TGF = 1
+@parameter(min = 0, max = 2, step = 0.01, default = 1)
+global TNF-affector
+
+global TNF : grid
+global TGF : grid
+global IL1-beta : grid
+global IL-10 : grid
+global platelet : grid
+global damage : grid
+global dam-number : grid
+global collagen-number : grid
+global collagen-number2 : grid
+
+
+to setup
+	; create patches
+	for x = space-xmin + 0.5 : space-xmax - 0.5
+	[
+		for y = space-ymin + 0.5 : space-ymax - 0.5
+		[
+			ask create-one patch
+			[
+				move-to create-vector x y 0
+			]
+		]
+	]
+
+	total-mac = 80
+	total-neu = 80
+	total-fibroblasts = 30
+	total-am = 0
+	total-an = 0
+
+	step = 0
+	day = 0
+	hour = 0
+	prob = 50
+	
+	; amount for platelet that needed to activate macrophages, choose 1.5 for increased by 129%, choose 1.4 for increased by 95%, 
+	; choose 1.3 for increased by 69%, choose 1.2 for increased by 44%, choose 1.1 for increased by 22%
+	p1 = 1
+	
+	; the amount for platelet that needed to activate neutrophils,  choose 1.3 for increased by 59%,  choose 1.2 for increased by 39%, 
+	; choose 1.15 for increased by 30%, choose 1.1 for increased by 19% 
+	p2 = 1	
+	
+	; the probabily for damage to die
+	prob-dam-die = 75
+	
+	TGF.set-value 0
+	IL1-beta.set-value 0
+	damage.set-value 100
+	TNF.set-value 0
+	collagen-number.set-value 0
+	dam-number.set-value 0
+	
+	ask agents patch
+	[
+		ifelse position.length < 55
+			[ color = green ]
+			[ color = red ]
+			
+		platelet.value = 100 / (1 + position.length * position.length)
+	]
+	
+	
+	ask create mac total-mac
+	[
+		color = brown
+		jump 20
+		jump random 30
+		age = random 40 + 50
+	]
+	
+	
+	ask create neu total-neu
+	[
+		color = blue
+		jump 40
+		jump random 30
+		age = random 20 + 25
+	]
+	
+	
+	ask create fibroblast total-fibroblasts
+	[
+		color = white
+		jump 20
+		jump random 25
+		age = random 30 + 60
+	]
+end
+
+
+
+to begin-step
+	repeat 5
+	[
+		diffuse TNF 1
+		diffuse TGF 1
+		diffuse IL1-beta 1
+		diffuse platelet 1
+		diffuse IL-10 1
+	]
+	
+	ask agents neu [ neu-function ]
+	
+	if step < 20
+	[
+	ask agents-at patch [0,0,0] 0
+	[
+		ask hatch neu (2 * (1 + total-dam / 1500))
+		[
+			color = blue
+			jump 20
+			jump random 30
+			age = random 20 + 25
+		] 
+	]
+	]
+	
+	if tick % 4 == 0
+	[
+		step += 1
+		if step < 150
+		[
+		ask agents-at patch [0,0,0] 0
+		[
+			ask hatch mac (1 * (1 + total-dam / 15000))
+			[
+				color = brown
+				jump 20
+				jump random 30
+				age = random 40 + 50
+			] 
+		]
+		]
+	]
+	
+	if tick % 8 == 0
+	[
+		if total-dam > 0
+		[
+			ask agents-at patch [0,0,0] 0
+			[
+				ask hatch fibroblast 2
+				[
+					color = white
+					jump 20
+					jump random 30
+					age = random 30 + 60
+				]
+			]
+		]
+	]
+	
+	
+	if tick % 2 == 0
+	[
+		ask agents mac [ mac-function ]
+		ask agents fibroblast [ fib-function ]
+		ask agents am [ am-function ]
+		ask agents an [ an-function ]
+		ask agents af [ af-function ]
+		ask agents dam [ dam-function ]
+		
+		; evaporate
+		evaporate TGF 0.95
+		evaporate TNF 0.95
+		evaporate IL1-beta 0.95
+		evaporate IL-10 0.95
+		
+		ask agents patch
+		[
+			cause-damage
+		]
+		
+		day += 0.0692840
+
+		update-system
+	]
+	
+	; debridment
+end
+
+
+
+to update-system
+	total-TNF = sum TNF / 100
+	total-IL1-beta = sum IL1-beta / 100
+	total-TGF = sum TGF / 100
+	total-dam = sum dam-number
+	total-collagen = sum collagen-number2
+	total-IL-10 = sum IL-10 / 100
+	
+	total-am = agents-number am
+	total-an = agents-number an
+	total-af = agents-number af
+end
+
+
+@external
+to add-damage
+	ask create dam (magnitude * magnitude)
+	[
+		jump random magnitude
+		damage.value = 0
+		dam-number.add-value-here 1
+		hide
+	]
+end

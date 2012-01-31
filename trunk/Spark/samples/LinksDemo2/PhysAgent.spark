@@ -1,0 +1,113 @@
+agent PhysAgent : SpaceAgent
+
+
+var force : vector
+var velocity : vector
+var mass : double
+
+; agents of the same group do not affect each other during collision
+var group : double
+
+; used for automatic group assignment
+shared var group-counter
+
+to create
+        super 0.5 circle
+        color = green
+        mass = 1
+
+        group = group-counter
+        group-counter += 1
+end
+
+
+to apply-collision-force [a : SpaceAgent]
+                var d = position - a.position
+                var dist = d.length
+
+                ; unstable?
+                if dist < 1e-6 [dist = 1e-6]
+
+                var r = radius + a.radius - dist
+
+                ; no intersection
+                if r < 0 [ exit ]
+
+                d *= r / dist * collision-coefficient
+                force += d
+end
+
+
+to apply-collision-forces
+        ask agents-here-as PhysAgent
+        [
+;                if myself == self [ continue ]
+                if myself.group == group [ continue ]
+                myself.apply-collision-force self
+        ]
+
+end
+
+
+to apply-separation-forces
+        var f
+
+        ask agents-at-as PhysAgent position 2
+        [
+                 if group == myself.group [ continue ]
+                  var v = distance self myself
+                  var d = v.length
+                  if d < 1e-6 [ continue ]
+                  f += v / d^2 * separation-coefficient
+        ]
+
+;        f += random-vector-of-length 1
+        apply-force f
+end
+
+
+
+to integrate [dt]
+        velocity += force * (dt / mass)
+        move velocity * dt
+end
+
+
+
+to apply-force [f]
+        force += f
+end
+
+
+
+to clear-forces
+        force = [0,0,0]
+end
+
+
+to make-step [dt]
+        if  collision-coefficient > 0
+                [ apply-collision-forces ]
+
+        if separation-coefficient > 0
+                [ apply-separation-forces ]
+
+        integrate dt
+
+        velocity *= velocity-coefficient
+        clear-forces
+end
+
+
+
+to one-step
+        if central-force-coefficient > 0
+        [
+                apply-force -position.normalize * central-force-coefficient
+        ]
+
+        if random-coefficient > 0
+        [
+                apply-force random-vector-of-length random-coefficient
+        ]
+end

@@ -1,0 +1,27 @@
+agent Block : SpaceAgent
+
+
+to create
+	super 0.5 square
+end
+
+
+to become-fixed
+	ask hatch-one FixedBlock
+	[
+		color = this.color
+	]
+	die
+end
+
+
+to step
+	data.add-value-here 1
+end
+
+
+agent FixedBlock : Block
+
+
+to step
+end

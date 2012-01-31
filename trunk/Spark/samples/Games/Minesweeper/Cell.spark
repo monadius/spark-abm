@@ -1,0 +1,67 @@
+agent Cell : SpaceAgent
+
+var label-name : string
+var opened : boolean
+var flagged : boolean
+
+to get-data : AgentData
+	var data = create-one AgentData
+	data.add "tile-set" "cells"
+	data.add "tile-name" label-name
+	
+	return data
+end
+
+
+to create
+	super 0.5 square
+	color = [180,180,180] / 255
+	label-name = "closed"
+end
+
+
+to open
+	if opened [ exit ]
+	if flagged [ exit ]
+	opened = true
+	
+	if count agents-here Bomb > 0
+	[
+		state = 1
+		ask agents Bomb
+		[
+			kill agents-here Cell
+		]
+		
+		exit
+	]
+
+	var bombs = neighbors Bomb
+	if count bombs == 0
+	[
+		var cells = neighbors Cell
+		ask cells
+		[
+			open
+		]
+	]
+
+	label-name = "" + count bombs
+;	die
+end
+
+
+to flag
+	if opened [ exit ]
+	ifelse flagged
+	[
+		label-name = "closed"
+		flagged = false
+	]
+	[
+		label-name = "flagged"
+		flagged = true
+	]
+end
+
+

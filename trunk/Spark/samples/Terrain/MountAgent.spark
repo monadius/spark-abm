@@ -1,0 +1,64 @@
+agent MountAgent : SpaceAgent
+
+
+var age : number
+
+to create
+	radius = 0.3
+	color = green
+	age = 10 + random 10
+end
+
+
+to step
+	height-map.add-value-here 1
+	
+	age -= 1
+	if age <= 0 [ die ]
+end
+
+
+agent RainAgent : Agent
+
+var counter = 50
+
+to step
+	ask create RainDrop 100
+	[
+		set-random-position
+	]
+	
+	counter -= 1
+	if counter <= 0 [ die ]
+end
+
+
+agent RainDrop : SpaceAgent
+
+var age : number
+
+to create
+	radius = 0.1
+	color = blue
+	age = random 5
+end
+
+
+to step
+	water-map.add-value-here 0.1
+	age -= 1
+	if age <= 0 [ die ]
+end
+
+
+agent WaterSource : SpaceAgent
+
+to create
+	radius = 0.5
+	color = blue
+end
+
+
+to step
+	water-map.add-value-here 0.1
+end

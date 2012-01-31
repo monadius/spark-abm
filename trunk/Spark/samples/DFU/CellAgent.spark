@@ -1,0 +1,56 @@
+agent CellAgent : SpaceAgent
+
+
+
+var age : double
+var heading : double
+
+
+to create
+	super 0.5 circle
+  	heading = random 360
+  	color = black
+end
+
+
+
+
+
+to jump [number : double]
+  move vector-in-direction number heading
+end
+
+
+
+to wiggle [size]
+  heading += random-in-interval -45 45
+  jump size
+end
+
+
+to sniff [data:grid jump-size]
+  var ahead = 0
+  var right = 0
+  var left = 0
+
+  var v = vector-in-direction 1.0 heading
+  v += position
+  ahead = data.value-at v
+
+  v = vector-in-direction 1.0 (heading - 90) + position
+  right = data.value-at v
+
+  v = vector-in-direction 1.0 (heading + 90) + position
+  left = data.value-at v
+
+  ifelse right >= ahead and right >= left
+  [
+   heading -= 90
+  ]
+  [
+   if (left >= ahead)
+   [ heading += 90]
+  ]
+
+  jump jump-size
+end

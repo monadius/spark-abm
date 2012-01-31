@@ -1,0 +1,39 @@
+agent SimpleAgent : SpaceAgent
+
+to create
+	super 0.4 circle
+	color = red
+end
+
+
+to step
+	var x = position.x
+	var y = position.y
+	
+	equations
+	[
+		Dt x = y
+		Dt y = -k * sin x
+	]
+	
+	move-to create-vector x y 0
+end
+
+
+
+model Model
+
+space StandardSpace -10 10 -10 10 true true
+
+@parameter(default = 0.1, min = 0.01, max = 1, step = 0.01)
+global dt : number
+
+@parameter(default = 1, min = 0, max = 100)
+global k : number
+
+to setup
+	ask create-one SimpleAgent
+	[
+		move-to [0, 6, 0]
+	]
+end

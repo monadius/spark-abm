@@ -1,0 +1,11 @@
+<spark-project>
+	<name>Fire</name>
+	<project-directory>C:\Help\Alexey\My New Projects\Eclipse Projects\SparkLogo\samples\Fire</project-directory>
+	<output-directory>output</output-directory>
+
+	<files>
+		<file>Model.spark</file>
+		<file>Particle.spark</file>
+		<file>ParticleEmitter.spark</file>
+	</files>
+</spark-project>

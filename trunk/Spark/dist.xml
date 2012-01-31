@@ -48,7 +48,7 @@
 	</fileset>
 
 	<!-- Samples -->
-	<fileset dir="${spark-pl}" id="samples">
+	<fileset dir="${spark}" id="samples">
 		<include name="samples/**/**" />
 		<include name="samples/**/output/*.xml" />
 		<include name="samples/**/output/*.png" />

@@ -1,0 +1,18 @@
+agent SimpleAgent : SpaceAgent
+
+
+var v : vector
+
+
+to create
+	color = green
+	radius = 0.5
+end
+
+
+to step
+	v += random-vector -0.03 0.03
+	v = truncate v -0.2 0.2
+	
+	move v
+end

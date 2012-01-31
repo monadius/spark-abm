@@ -1,0 +1,18 @@
+agent WeakLink : Link
+
+
+to create
+	color = black
+	width = 0.1
+end
+
+
+to step
+	; Break the link when the distance is quite big
+	if distance.length > 2.3
+	[
+		die
+	]
+end
+
+

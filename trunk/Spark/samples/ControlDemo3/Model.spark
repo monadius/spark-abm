@@ -1,0 +1,155 @@
+agent TestAgent : SpaceAgent
+
+to create
+	super 0.2 static-circle
+	color = black
+	remove-collision-mask 0
+	remove-collision-mask 1
+	remove-collision-mask 2
+end
+
+
+; SimpleAgent
+agent SimpleAgent : SpaceAgent
+
+
+to create
+        super 0.4 dynamic-circle
+        color = blue
+
+        shape = create-rect 0.4 0.3
+;        shape = create-circle 0.5
+
+        set-collision-category 2
+end
+
+to step
+	apply-force [0, -20, 0]
+end
+
+
+; Model
+model TestModel
+
+space PhysicalSpace2d -10 10 -10 10 false false
+
+
+to create-agent1 [p1:vector p2:vector dx:number w:number]
+	var p = (p1 + p2) / 2
+	var d = (p2 - p1).length
+	
+	if d < 1e-3 [ exit ]
+	
+	ask create-one Agent1
+	[
+;		set-collision-category 1
+;		remove-collision-mask 1
+
+		var alpha = (p1 - p) * [1,0,0] / (p1 - p).length
+		var phi = acos alpha
+		
+		if p1.y < p.y 
+			[ phi = 2 * pi - phi ]
+		
+		shape = create-rect (d / 2 + dx) (w / 2)
+
+		move-to p
+		rotation = phi
+	]
+end
+
+
+; Connects agents of type Agent1 at the given point
+to connect-agents [p:vector]
+	var a = agents-at Agent1 p 0.1
+	var n = count a
+	
+	for i = 0 : n - 1
+	[
+		var a0 = get a i
+	
+		for j = i + 1 : n - 1
+		[
+			var a1 = get a j
+			ask create-one MyLink
+			[
+				anchor = p
+				connect a0 a1
+			]
+		]
+	]
+
+	var b = agents-at TestAgent p 0.1
+	
+	ask a
+	[
+		var a0 = self
+	
+		ask b
+		[
+			var a1 = self
+		
+			ask create-one MyLink
+			[
+				anchor = p
+				connect a0 a1
+			]
+		]
+	]
+end
+
+
+
+
+to begin-step
+        var event = next-mouse-event
+
+        if event == null [ return false ]
+        if event.event-type == "LBUTTON_DOWN"
+        [
+                ask create-one SimpleAgent
+                [
+                    move-to event.position
+                ]
+        ]
+
+   
+end
+
+
+
+to setup
+	var points = create-list vector
+	
+	for i = -8 : 1 : 8
+	[
+		var y = 0.5 * sqrt (8^2 - i^2)
+		var p = create-vector i y 0
+		points.add p
+	]
+	
+	var n = count points
+	var p0 = get points 0
+	
+	for i = 1 : n - 1
+	[
+		var p = get points i
+		create-agent1 p0 p 0.1 0.3
+		p0 = p
+	]
+
+	var p1 = get points 0
+	var p2 = get points (n - 1)
+	
+	ask create-one TestAgent [ move-to p1 ]
+	ask create-one TestAgent [ move-to p2 ]
+	
+	ask points
+	[
+		this.connect-agents self
+	]
+end
+
+
+
+

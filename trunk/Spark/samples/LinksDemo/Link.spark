@@ -1,0 +1,15 @@
+; Right now links are declared with the 'agent' keyword but they have type 'Link'
+agent SimpleLink : Link
+
+
+to create
+	; 'color' is link's color
+	color = red
+	; 'width' is link's width
+	width = 0.2
+end
+
+
+; All links are also agents so they have the standard 'step' method
+to step
+end
