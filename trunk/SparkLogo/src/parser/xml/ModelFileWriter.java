@@ -4,14 +4,13 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
 import main.annotation.InterfaceAnnotation;
 import main.annotation.ObserverAnnotation;
 import main.type.AgentType;
 
 import org.spark.modelfile.ModelFileLoader;
+import org.spark.utils.Version;
+import org.spark.utils.XmlDocUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -24,6 +23,9 @@ import static org.spark.utils.XmlDocUtils.*;
  * @author Monad
  */
 public class ModelFileWriter {
+	// The version of the created document
+	private static final Version VERSION = new Version(1, 1);
+	
 	/* xml document */
 	private Document doc;
 	private File file;
@@ -87,16 +89,15 @@ public class ModelFileWriter {
 	 * @return
 	 */
 	private Document createNewDocument() throws Exception {
-		DocumentBuilder db = DocumentBuilderFactory.newInstance()
-										.newDocumentBuilder();
-		Document doc = db.newDocument();
-		Node root = doc.createElement("spark");
-		addAttr(doc, root, "version", 1);
-		doc.appendChild(root);
+		Document doc = XmlDocUtils.createNewDocument("spark", VERSION);
+		if (doc == null)
+			throw new Exception("Cannot create a new xml-document");
 		
 		filesNode = doc.createElement("files");
 		modelNode = doc.createElement("model");
 		interfaceNode = doc.createElement("interface");
+		
+		Node root = doc.getFirstChild();
 		
 		root.appendChild(filesNode);
 		root.appendChild(modelNode);
