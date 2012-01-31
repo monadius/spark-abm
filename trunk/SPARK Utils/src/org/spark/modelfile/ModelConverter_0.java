@@ -12,21 +12,21 @@ class ModelConverter_0 extends ModelConverter {
 	/**
 	 * Creates a 0-level model converter
 	 */
-	public ModelConverter_0() {
+	ModelConverter_0() {
 		super(null);
 	}
 
 	@Override
-	public boolean checkDocument(Document doc) {
+	public CheckResult checkDocument(Document doc) {
 		Node root = doc.getFirstChild();
 		
 		if (root == null)
-			return false;
+			return CheckResult.OLDER_VERSION;
 		
 		if (!"model".equals(root.getNodeName()))
-			return false;
+			return CheckResult.OLDER_VERSION;
 		
-		return true;
+		return CheckResult.GOOD_VERSION;
 	}
 
 	@Override

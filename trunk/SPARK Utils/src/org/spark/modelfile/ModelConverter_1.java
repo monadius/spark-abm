@@ -5,9 +5,7 @@ import static org.spark.utils.XmlDocUtils.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
+import org.spark.utils.Version;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -19,41 +17,38 @@ import org.w3c.dom.NodeList;
  * 
  */
 class ModelConverter_1 extends ModelConverter {
-	public ModelConverter_1() {
+	private static final Version VERSION = new Version(1, 0);
+	
+	ModelConverter_1() {
 		super(new ModelConverter_0());
 	}
 
 	@Override
-	public boolean checkDocument(Document doc) {
+	public CheckResult checkDocument(Document doc) {
 		Node root = doc.getFirstChild();
 
 		if (root == null)
-			return false;
+			return CheckResult.OLDER_VERSION;
 
 		if (!"spark".equals(root.getNodeName()))
-			return false;
+			return CheckResult.OLDER_VERSION;
 
-		int version = getIntegerValue(root, "version", 0);
-		if (version != 1)
-			return false;
+		Version version = getNodeVersion(root);
+		int cmp = VERSION.compare(version);
 
-		return true;
+		if (cmp < 0)
+			return CheckResult.NEWER_VERSION;
+		if (cmp > 0)
+			return CheckResult.OLDER_VERSION;
+		
+		return CheckResult.GOOD_VERSION;
 	}
 
 	@Override
 	protected Document convert0(Document doc) throws Exception {
 		// Create a new document
-		DocumentBuilder db = DocumentBuilderFactory.newInstance()
-				.newDocumentBuilder();
-		Document result = db.newDocument();
-
-		// Create a new root node
-		Node newRoot = result.createElement("spark");
-		Node nameAttr = result.createAttribute("version");
-		nameAttr.setNodeValue("1");
-
-		newRoot.getAttributes().setNamedItem(nameAttr);
-		result.appendChild(newRoot);
+		Document result = createNewDocument("spark", VERSION);
+		Node newRoot = result.getFirstChild();
 		
 		// Create 'files' node
 		Node files = result.createElement("files");

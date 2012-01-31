@@ -2,13 +2,7 @@ package org.spark.modelfile;
 
 import java.io.File;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
+import org.spark.utils.XmlDocUtils;
 import org.w3c.dom.Document;
 
 /**
@@ -25,11 +19,16 @@ public class ModelFileLoader {
 	 * @param fileName
 	 * @return
 	 */
-	public static Document loadModelFile(File fileName) throws Exception {
-		Document doc = DocumentBuilderFactory.newInstance()
-							.newDocumentBuilder().parse(fileName);
+	public static Document loadModelFile(File file) throws Exception {
+		Document doc = XmlDocUtils.loadXmlFile(file);
+		if (doc == null)
+			throw new Exception("Error: cannot open xml-file " + file);
 		
-		return converter.convert(doc);
+		Document doc2 = converter.convert(doc);
+		if (converter.checkDocument(doc2) != ModelConverter.CheckResult.GOOD_VERSION)
+			throw new Exception("Unsupported xml-file " + file);
+		
+		return doc2;
 	}
 	
 	
@@ -38,20 +37,11 @@ public class ModelFileLoader {
 	 * @param modelDoc
 	 * @param fileName
 	 */
-	public static void saveModelFile(Document modelDoc, File fileName) throws Exception {
-		if (modelDoc == null || fileName == null)
+	public static void saveModelFile(Document modelDoc, File file) throws Exception {
+		if (modelDoc == null || file == null)
 			return;
 		
 		modelDoc = converter.convert(modelDoc);
-
-		TransformerFactory tFactory = TransformerFactory.newInstance();
-		Transformer transformer = tFactory.newTransformer();
-		
-		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-		transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-
-		DOMSource source = new DOMSource(modelDoc);
-		StreamResult result = new StreamResult(fileName);
-		transformer.transform(source, result);		
+		XmlDocUtils.saveDocument(modelDoc, file);
 	}
 }
