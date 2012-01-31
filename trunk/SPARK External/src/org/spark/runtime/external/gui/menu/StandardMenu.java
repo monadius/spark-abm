@@ -11,6 +11,7 @@ import org.spark.runtime.external.gui.WindowManager;
 import org.spark.runtime.external.gui.dialogs.BatchRunDialog;
 import org.spark.runtime.external.gui.dialogs.DataLayersDialog;
 import org.spark.runtime.external.gui.dialogs.ModelPropertiesDialog;
+import org.spark.runtime.external.gui.dialogs.NewChartDialog;
 import org.spark.runtime.external.gui.dialogs.SparkPreferencesDialog;
 import org.spark.runtime.external.gui.dialogs.WindowsDialog;
 import org.spark.utils.FileUtils;
@@ -209,13 +210,13 @@ public class StandardMenu {
 		SparkMenu window = factory.createMenu("Window", 0);
 		
 		SparkMenuItem newView = factory.createItem("New View", 0);
+		SparkMenuItem newChart = factory.createItem("New Chart...", 0);
 		SparkMenuItem tile = factory.createItem("Tile Windows", 0);
 		SparkMenuItem manageWindows = factory.createItem("Windows...", 0);
 		
 		// New view
 		newView.setActionListener(new ISparkMenuListener() {
 			public void onClick(SparkMenuItem item) {
-				// TODO: do not create a new window when a model is not loaded
 				Coordinator c = Coordinator.getInstance();
 				
 				if (c == null || !c.isModelLoaded())
@@ -224,6 +225,24 @@ public class StandardMenu {
 				SparkWindow win = manager.getWindowFactory().createWindow("View", 100, 100, 300, 300);
 				new SparkViewPanel(win, c.getConfiguration().getRenderType());
 				win.setVisible(true);
+			}
+		});
+		
+		// New chart
+		newChart.setActionListener(new ISparkMenuListener() {
+			private NewChartDialog dialog;
+			
+			public void onClick(SparkMenuItem item) {
+				Coordinator c = Coordinator.getInstance();
+				if (c == null || !c.isModelLoaded())
+					return;
+				
+				if (dialog == null) {
+					dialog = new NewChartDialog(null);
+				}
+				
+				dialog.init();
+				dialog.setVisible(true);
 			}
 		});
 		
@@ -244,6 +263,7 @@ public class StandardMenu {
 		
 		// Add items to the menu
 		window.addItem(newView);
+		window.addItem(newChart);
 		window.addItem(tile);
 		window.addItem(manageWindows);
 		
