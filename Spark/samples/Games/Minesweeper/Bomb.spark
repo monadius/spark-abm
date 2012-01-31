@@ -1,0 +1,6 @@
+agent Bomb : SpaceAgent
+
+to create
+	super 0.4 circle
+	color = black
+end

@@ -1,0 +1,34 @@
+agent Hole : SpaceAgent
+
+
+var v : vector
+
+
+to create
+	color = black
+end
+
+
+var destination-space : Space
+var destination-position : vector
+
+
+to init [ destination-space : Space
+		  destination-position : vector
+		]
+	self.destination-space = destination-space
+	self.destination-position = destination-position	
+end
+
+
+to teleport [ object : SpaceAgent ]
+	object.move-to-space destination-space destination-position
+end
+
+
+to step
+	v += random-vector3 -0.01 0.01
+	v = truncate v -0.05 0.05
+	
+	move v
+end

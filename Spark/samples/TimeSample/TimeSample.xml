@@ -1,0 +1,12 @@
+<spark-project>
+	<name>TimeSample</name>
+	<project-directory>C:\Help\Alexey\My New Projects\Eclipse Projects\SparkLogo\samples\TimeSample</project-directory>
+	<output-directory>output</output-directory>
+
+	<files>
+		<file>FastAgent.spark</file>
+		<file>SlowAgent.spark</file>
+		<file>TimeModel.spark</file>
+		<file>Cell.spark</file>
+	</files>
+</spark-project>

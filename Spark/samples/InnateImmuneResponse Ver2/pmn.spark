@@ -1,0 +1,70 @@
+agent pmn : turtle
+
+
+to step
+	pmn-function
+end
+
+
+to pmn-function
+	ifelse wbc-migrate > 0
+	[ pmn-burst ]
+	[
+		ifelse ec-roll.value > 3 and wbc-roll == 1
+			[ pmn-sniff ]
+			[ repeat 2 [ pmn-sniff ] ]
+		
+		if tnf.value + paf.value > 1
+		[
+			wbc-stick = il-1.value
+			il-1ra.add-value-here 1
+		]
+		
+		if wbc-stick >= 1 and ec-stick.value >= 100
+		[
+			wbc-migrate = tnf.value + il-1.value + gcsf.value - il-10.value
+			color = yellow
+		]
+		
+		pmn-age -= 1
+		if pmn-age < 0
+			[ die ]
+	]
+end
+
+
+to pmn-burst
+	cytotox.add-value-here (max 10 tnf.value)
+	oxy.value = 100
+	ec-roll.value = 0
+	ec-stick.value = 0
+	ec-migrate.value = 0
+	tnf.add-value-here 1
+	il-1.add-value-here 1
+	pmn-age = pmn-pcd
+	pmn-pcd = pmn-pcd - 1 + 
+		max 0 ((tnf.value + inf-g.value + gcsf.value - il-10.value) / 100)
+	
+	if pmn-age < 0
+		[ die ]
+end
+
+
+to pmn-sniff
+	var pmn-ahead = 0
+	var pmn-right = 0
+	var pmn-left = 0
+
+	var p = position	
+	pmn-ahead = il-8.value-at (p + vector-in-direction 1 heading)
+	pmn-right = il-8.value-at (p + vector-in-direction 1 (heading - 45))
+	pmn-left = il-8.value-at (p + vector-in-direction 1 (heading + 45))
+	
+	ifelse pmn-right >= pmn-ahead and pmn-right >= pmn-left
+		[ rt 45 ]
+		[ if pmn-left >= pmn-ahead
+			[ lt 45 ]
+		]
+	
+	jump 1
+end

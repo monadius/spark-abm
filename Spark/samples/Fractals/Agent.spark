@@ -1,0 +1,46 @@
+agent Mandelbrot : SpaceAgent
+
+
+var iteration : number
+var z : complex
+var c : complex
+
+var active : boolean
+
+
+to create
+	radius = 0.1
+	color = red
+end
+
+
+to init
+	iteration = 0
+	c = complex position.x position.y
+	c = c / 100
+	active = true
+end
+
+
+to step
+	if not active
+	[
+		exit
+	]
+
+	z = z * z + c
+	iteration += 1
+
+	if z.abs > 2
+	[
+		data.value = iteration
+		active = false
+	]	
+	
+	if iteration >= max-iteration
+	[
+		data.value = 0
+		active = false
+	]
+end
+

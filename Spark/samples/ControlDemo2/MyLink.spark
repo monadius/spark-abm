@@ -1,0 +1,6 @@
+agent MyLink : DistanceJoint
+
+
+to create
+  color = red
+end

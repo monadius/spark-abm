@@ -1,0 +1,37 @@
+agent Spring : Agent
+
+
+var end1 : PhysAgent
+var end2 : PhysAgent
+
+var k : double
+var l : double
+
+
+to create
+end
+
+
+to init [a : PhysAgent b : PhysAgent k : number]
+	end1 = a
+	end2 = b
+	self.k = k
+	
+	l = (distance a b).length
+end
+
+
+to apply-forces
+	var d = distance end1 end2
+	var dist = d.length
+	
+	d.normalize
+	d *= (dist - l) * k
+	end1.apply-force d
+	end2.apply-force -d  
+end
+
+
+to step
+	apply-forces
+end 

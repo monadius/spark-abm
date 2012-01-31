@@ -1,0 +1,31 @@
+model LinksDemoModel
+
+
+space StandardSpace3d -10 10 -10 10 -10 10 false false false
+
+
+@parameter(default = 2, values = "1,2,3,4,10,20")
+global init-number
+
+
+to setup
+	var a = create SimpleAgent init-number
+	
+	ask a
+	[
+		set-random-position
+	]
+	
+	for i = 1 : init-number - 1
+	[
+		var end1 = get a (i - 1)
+		var end2 = get a i
+		
+		; Links are created in the usual way
+		ask create-one SimpleLink
+		[
+			; Method 'connect' of a link connects two agents by the link 
+			connect end1 end2
+		]
+	]
+end

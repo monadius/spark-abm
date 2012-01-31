@@ -1,0 +1,198 @@
+agent Figure : Agent
+
+
+var elements
+var color : vector
+
+
+to create
+	elements = create-list Block
+	down-flag-block = true
+
+	ifelse random 100 > 50
+		[ create-F ]
+		[ create-L ]
+	
+	ask elements
+	[
+		color = this.color
+	]
+end
+
+
+to create-L
+	var b1 = create-one Block
+	var b2 = create-one Block
+	var b3 = create-one Block
+	var b4 = create-one Block
+	
+	b1.move-to [5,5,0]
+	b2.move-to b1.position - [0,1,0]
+	b3.move-to b2.position - [0,1,0]
+	b4.move-to b3.position + [1,0,0]
+	
+	elements.add b1
+	elements.add b2
+	elements.add b3
+	elements.add b4
+	
+	color = green
+end
+
+
+to create-F
+	var b1 = create-one Block
+	var b2 = create-one Block
+	var b3 = create-one Block
+	var b4 = create-one Block
+	
+	b1.move-to [5,5,0]
+	b2.move-to b1.position + [1,0,0]
+	b3.move-to b2.position + [1,0,0]
+	b4.move-to b3.position - [1,1,0]
+	
+	elements.add b1
+	elements.add b2
+	elements.add b3
+	elements.add b4
+	
+	color = red	
+end
+
+
+to check [ dp : vector ] : boolean
+	ask elements
+	[
+		if count agents-at FixedBlock (position + dp) 0.1 > 0
+		[
+			return true
+		]
+	]
+	
+	return false
+end
+
+
+to move-to [ p : vector ]
+	if count elements == 0 [ exit ]
+	
+	var dp = p - (get elements 0).position
+	
+	ask elements
+	[
+		move dp
+	]
+end
+
+
+to move [ dp : vector ]
+	ask elements
+	[
+		move dp
+	]
+end
+
+
+to fix
+	ask elements
+	[
+		become-fixed
+	]
+end
+
+
+to rotate
+	if count elements <= 2 [ exit ]
+	
+	var p0 = (get elements 1).position
+	
+	; Check the rotation first
+	ask elements
+	[
+		var dp = position - p0
+		var dx = -dp.y
+		var dy = dp.x
+		
+		if count agents-at FixedBlock (p0 + create-vector dx dy 0) 0.1 > 0
+			[ exit ]
+	]
+	
+	; Rotate
+	ask elements
+	[
+		var dp = position - p0
+		var dx = -dp.y
+		var dy = dp.x
+		
+		move-to p0 + create-vector dx dy 0
+	]
+end
+
+
+var down-flag : boolean
+var down-flag-block : boolean
+
+
+to update [ tick : number ]
+	if not down-flag
+	[
+		if tick % speed != 0 [ exit ]
+	]
+	
+	down-flag = false
+
+	ask elements
+	[
+		var p = position
+		p.y -= 1
+		
+		if count (agents-at FixedBlock p 0.1) > 0
+		[
+			state = 1
+			this.fix
+			this.die
+			exit
+		]
+	]
+
+	move [0,-1,0]
+end
+
+
+to control
+	var dp = [0,0,0]
+
+	var cmd = next-key-event
+	var cmd-name = ""
+	if cmd != null and cmd.pressed
+		[ cmd-name = cmd.name ]
+
+	if cmd-name == "4" or cmd-name == "left"
+		[ dp = [-1,0,0] ]
+	if cmd-name == "6" or cmd-name == "right"
+		[ dp = [1,0,0] ]
+	if cmd-name == "8" or cmd-name == "up"
+		[ rotate ]
+	if cmd-name == "2" or cmd-name == "5" or cmd-name == "down"
+	[
+		down-flag-block = false
+	]
+		
+	
+	if not down-flag-block
+	[
+		if is-key-pressed "2" or is-key-pressed "5" or is-key-pressed "down"
+			[ down-flag = true ]
+	]
+		
+	if not check dp
+	[
+		move dp
+	]
+end
+
+
+to step [ time ]
+	control
+	update time
+end

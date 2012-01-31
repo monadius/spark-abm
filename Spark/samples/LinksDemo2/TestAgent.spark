@@ -1,0 +1,30 @@
+agent TestAgent : PhysAgent
+
+
+to step [tick]
+        parent.one-step
+
+        ; 'links-of-type type' returns all links connected to the current agent
+        ; and of a specific type
+        if count links-of-type WeakLink > 0
+        [
+                exit
+        ]
+
+        var close-neighbors = agents-at TestAgent position 2
+
+        ask close-neighbors
+        [
+                if self == this [ continue ]
+
+                ; 'link a' returns a link if the active agent is connected to 'a'
+                if (link this == null) and (count links-of-type WeakLink == 0)
+                [
+                        ask create-one WeakLink
+                        [
+                                connect this myself
+                                exit
+                        ]
+                ]
+        ]
+end

@@ -1,0 +1,9 @@
+<spark-project>
+	<name>Equations</name>
+	<project-directory>C:\Work\My Projects\SPARK\SparkLogo\samples\Equations</project-directory>
+	<output-directory>output</output-directory>
+
+	<files>
+		<file>Model.spark</file>
+	</files>
+</spark-project>

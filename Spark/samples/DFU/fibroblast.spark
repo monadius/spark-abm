@@ -1,0 +1,24 @@
+agent fibroblast : CellAgent
+
+
+to fib-function
+	wiggle 1
+	sniff TGF 0
+	
+	if damage.value < 100 or TGF.value > 0.2
+	[
+		ask hatch-one af
+		[
+			age = myself.age
+			color = yellow
+			af-step = 0
+		]
+		
+		die
+		exit
+	]
+	
+	age -= 1
+	if age < 0
+		[ die ]
+end

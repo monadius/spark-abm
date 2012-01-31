@@ -1,0 +1,19 @@
+agent mono-marrow : turtle
+
+
+to mono-marrow-function
+	if random 100 < 1
+	[
+		ask hatch-one mono
+		[
+			color = green
+			wbc-roll = 1
+			wbc-stick = 0
+			wbc-migrate = 0
+			mono-age = 50
+			tnfr = 1000
+			il-1r = 1000
+			jump random 100
+		]
+	]
+end

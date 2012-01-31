@@ -1,0 +1,146 @@
+model TestModel
+
+
+space StandardSpace -10 10 -10 10 false false
+
+
+@parameter(name = "Velocity Decay", default = 0.6, min = 0.1 max = 1, step = 0.1)
+global velocity-coefficient = 0.6
+
+@parameter(name = "Separation Coefficient", default = 0.1, min = 0, max = 10, step = 0.1)
+global separation-coefficient = 0.1
+
+@parameter(name = "Central Force", default = 2.5, min = 0, max = 10, step = 0.1)
+global central-force-coefficient : number
+
+@parameter(name = "Collision Coefficient", default = 50, min = 0, max = 100, step = 1)
+global collision-coefficient
+
+@parameter(name = "dt", min = 0.01, max = 0.2, step = 0.01, default = 0.05)
+global dt : double
+
+@parameter(default = 15, min = 10, max = 100, step = 1)
+global initial-agent-number
+
+
+to begin-step
+end
+
+
+to end-step
+        ask agents PhysAgent
+        [
+                make-step dt
+        ]
+end
+
+
+to setup
+        repeat initial-agent-number
+        [
+                var d = random-in-interval 0.4 0.7
+                var r = random-in-interval 0.3 0.5
+                var p = random-vector -10 10
+                var c = random-vector 0 0.8
+                c.z = random-in-interval 0 0.8
+                var k = random-in-interval 1 10
+
+                var angle = random 360
+                var p = vector-in-direction (random-in-interval 5 10) angle
+
+;                create-square 0.4 0.6 c p 6
+                create-circle 6 0.5 0.25 c p 5
+        ]
+
+        for i = 0 : 9
+        [
+                ask create-one Obstacle
+                [
+                        move-to vector-in-direction 3 (360 / 10 * i)
+                ]
+        ]
+end
+
+
+to create-circle [number radius dr color p k]
+        var r = pi * radius / number + dr
+
+        var all = create PhysAgent number
+        var g = (get all 0).group
+
+        for i = 0 : number - 1
+        [
+                var angle = 360 / number * i
+                ask get all i
+                [
+                        move-to p + vector-in-direction radius angle
+                        self.radius = r
+                        self.color = color
+                        group = g
+                ]
+        ]
+
+        for i = 0 : number - 1
+        [
+                var agent1 = get all i
+
+                for j = 0 : number - 1
+                [
+                        if j == i [ continue ]
+                        var agent2 = get all j
+
+                        ask create-one Spring [ init agent1 agent2 k ]
+                ]
+        ]
+
+
+end
+
+
+to create-square [d radius color p k]
+        ; create several agents connected by springs
+        var a1 = create-one PhysAgent
+        var a2 = create-one PhysAgent
+        var a3 = create-one PhysAgent
+        var a4 = create-one PhysAgent
+
+        var g
+
+        ask a1 [
+                self.color = color
+                self.radius = radius
+                move-to p + create-vector d d 0
+                g = group
+        ]
+        ask a2 [
+                self.color = color
+                self.radius = radius
+                move-to p + create-vector -d d 0
+                group = g
+        ]
+        ask a3 [
+                self.color = color
+                self.radius = radius
+                move-to p + create-vector -d -d 0
+                group = g
+        ]
+        ask a4 [
+                self.color = color
+                self.radius = radius
+                move-to p + create-vector d -d 0
+                group = g
+        ]
+
+        var s1 = create-one Spring
+        var s2 = create-one Spring
+        var s3 = create-one Spring
+        var s4 = create-one Spring
+
+        s1.init a1 a2 k
+        s2.init a2 a3 k
+        s3.init a3 a4 k
+        s4.init a4 a1 k
+
+        ask create-one Spring [ init a1 a3 k ]
+        ask create-one Spring [ init a2 a4 k ]
+end

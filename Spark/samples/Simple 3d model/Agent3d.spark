@@ -1,0 +1,16 @@
+agent Agent3d : SpaceAgent
+
+
+var v : vector
+
+
+to create
+	color = green
+end
+
+
+to step
+	v += random-vector3 -0.1 0.1
+	v = truncate v -1 1
+	move v
+end

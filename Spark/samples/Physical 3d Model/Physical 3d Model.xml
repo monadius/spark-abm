@@ -1,0 +1,12 @@
+<spark-project>
+	<name>Physical 3d Model</name>
+	<project-directory>C:\Help\Alexey\My New Projects\Eclipse Projects\SparkLogo\samples\Physical 3d Model</project-directory>
+	<output-directory>output</output-directory>
+
+	<files>
+		<file>Model.spark</file>
+		<file>Obstacle.spark</file>
+		<file>PhysAgent.spark</file>
+		<file>Spring.spark</file>
+	</files>
+</spark-project>

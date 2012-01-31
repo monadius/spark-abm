@@ -1,0 +1,24 @@
+model FireModel
+
+
+space StandardSpace -5 5 -5 5 true true
+
+
+@chart
+global number-of-particles
+
+; For controlling the background color
+global black-background = create-grid "black-background" 1 1
+
+
+to setup
+	ask create-one ParticleEmitter
+	[
+		init 40 5 1 2.0 [1, 1, 0.2] [0.5, 0, 0] 1 0.25
+	]
+end
+
+
+to end-step
+	number-of-particles = agents-number Particle
+end

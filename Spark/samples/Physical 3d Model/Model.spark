@@ -1,0 +1,67 @@
+model PhysicalModel3d
+
+
+space StandardSpace3d -10 10 -10 10 -10 10 false false false
+
+
+@parameter(name = "Velocity Decay", default = 0.6, min = 0.1 max = 1, step = 0.1)
+global velocity-coefficient = 0.6
+
+@parameter(name = "Separation Coefficient", default = 0.1, min = 0, max = 10, step = 0.1)
+global separation-coefficient = 0.1
+
+@parameter(name = "Central Force", default = 2.5, min = 0, max = 10, step = 0.1)
+global central-force-coefficient : number
+
+@parameter(name = "Collision Coefficient", default = 50, min = 0, max = 100, step = 1)
+global collision-coefficient
+
+@parameter(name = "dt", min = 0.01, max = 0.2, step = 0.01, default = 0.05)
+global dt : double
+
+
+@parameter(default = 100, min = 0, max = 1000)
+global initial-agent-number
+
+
+@parameter(default = 10, min = 0, max = 100)
+global obstacles-number
+
+
+to begin-step
+end
+
+
+to end-step
+    ask agents PhysAgent
+    [
+    	make-step dt
+    ]
+end
+
+
+to setup
+	repeat initial-agent-number
+    [
+    	var a = create-one PhysAgent
+    	a.set-random-position
+    ]
+    
+    
+    repeat obstacles-number
+    [
+    	var obstacle = create-one Obstacle
+    
+    	for i = 0 : 100
+    	[
+    		ask obstacle
+    		[
+    			set-random-position
+    			if count agents-here Obstacle <= 1
+    			[
+    				break
+    			]
+    		]
+    	]
+    ]
+end

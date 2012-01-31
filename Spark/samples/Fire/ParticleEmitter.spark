@@ -1,0 +1,69 @@
+agent ParticleEmitter : Agent
+
+
+var last-creation-time
+var birth-period
+
+var color1, color2 : vector
+var alpha1, alpha2
+
+var start-radius
+var speed
+var min-size, max-size
+var dispersion
+var life-time
+
+
+to init [	particles-per-second : number
+			the-life-time : number
+			radius : number
+			the-speed : number
+			color1 : vector
+			color2 : vector
+			alpha1 : number
+			alpha2 : number ]
+	
+	ifelse particles-per-second > 0
+		[ birth-period = 1 / particles-per-second ]
+		[ birth-period = 10000 ]
+
+	last-creation-time = 0
+	
+	start-radius = radius
+	speed = the-speed
+	self.color1 = color1
+	self.color2 = color2
+	self.alpha1 = alpha1
+	self.alpha2 = alpha2
+	
+	life-time = the-life-time
+	dispersion = 0.3
+	min-size = 0.4
+	max-size = 0.8
+end
+
+
+to step [ tick ]
+	var cur-time = tick / 10.0
+		
+	if last-creation-time + birth-period < cur-time
+	[
+		create-particle last-creation-time
+		for time = last-creation-time : birth-period : cur-time - birth-period
+		[
+			create-particle time
+		]
+	]
+	
+	last-creation-time = cur-time
+end
+
+
+to create-particle [ time ]
+	var particle = create-one Particle
+	
+	particle.init start-radius min-size max-size 
+				  color1 color2 alpha1 alpha2 
+			      dispersion speed
+			      life-time time
+end
