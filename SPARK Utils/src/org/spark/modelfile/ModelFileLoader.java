@@ -11,7 +11,7 @@ import org.w3c.dom.Document;
  */
 public class ModelFileLoader {
 	/* Current model converter */
-	private static final ModelConverter converter = new ModelConverter_1();
+	private static final ModelConverter converter = new ModelConverter_1_1();
 	
 	
 	/**
