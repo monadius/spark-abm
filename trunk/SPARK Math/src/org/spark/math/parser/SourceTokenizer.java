@@ -66,7 +66,7 @@ class SourceTokenizer {
 
 		for (; pos < src.length; pos++) {
 			char ch = src[pos];
-			if (Character.isLetter(ch) || Character.isDigit(ch) || ch == '-')
+			if (Character.isLetter(ch) || Character.isDigit(ch) || ch == '-' || ch == '$')
 				val.append(ch);
 			else
 				break;
