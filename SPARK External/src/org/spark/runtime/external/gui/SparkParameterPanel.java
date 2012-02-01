@@ -26,46 +26,25 @@ import org.w3c.dom.Node;
  */
 @SuppressWarnings("serial")
 public class SparkParameterPanel extends JPanel implements ActionListener, ISparkPanel {
-	private final JPanel parameterPanel;
-	private final JPanel setPanel;
+	private JPanel parameterPanel;
+	private JPanel setPanel;
 	private final HashMap<String, Parameter> parameters = new HashMap<String, Parameter>();
 
+	// Commands
+	private static final String CMD_NEW_SET = "new-set";
+	private static final String CMD_SELECT_SET = "select-set";
+	private static final String CMD_AUTO_SAVE = "auto-save";
+	private static final String CMD_SAVE_SET = "save-set";
+	
+	
+	// Currently selected variable set
 	private VariableSet selectedSet = null;
 	// TODO: depends on a selected set
 	private boolean autoSaveFlag = false;
 	
-	private JComboBox setsBox;
+	private JComboBox variableSetBox;
 	
 	
-/*	private class SetsModel extends AbstractListModel {
-		public final ArrayList<String> names = new ArrayList<String>();
-
-		public void addElement(String name) {
-			for (int i = 0; i < names.size(); i++) {
-				if (names.get(i).equals(name))
-					return;
-			}
-			
-			int n = getSize();
-			names.add(name);
-			fireIntervalAdded(this, n, n);
-		}
-		
-		public Object getElementAt(int index) {
-			if (index < 0 || index >= names.size())
-				return null;
-			
-			return names.get(index);
-		}
-
-		public int getSize() {
-			return names.size();
-		}
-	}
-	
-	// TODO: use this model
-	private final SetsModel setsModel = new SetsModel();
-*/	
 
 	/**
 	 * Default constructor
@@ -73,6 +52,16 @@ public class SparkParameterPanel extends JPanel implements ActionListener, ISpar
 	 * @param node
 	 */
 	public SparkParameterPanel(WindowManager manager, Node node) {
+		init();
+		String location = XmlDocUtils.getValue(node, "location", null);
+		manager.setLocation(this, location);
+	}
+	
+	
+	/**
+	 * Initializes the parameter panel
+	 */
+	private void init() {
 		// Set layout
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 
@@ -102,11 +91,12 @@ public class SparkParameterPanel extends JPanel implements ActionListener, ISpar
 				parameters.values().size() + 1, 3, 
 				5, 5, 15, 5);
 		
-		String location = XmlDocUtils.getValue(node, "location", null);
-		manager.setLocation(this, location);
 	}
 	
 	
+	/**
+	 * Creates controls for variable sets
+	 */
 	private void loadVariableSets() {
 		String[] tmp = VariableSetFactory.getNames();
 		String[] names = new String[tmp.length + 1];
@@ -115,26 +105,50 @@ public class SparkParameterPanel extends JPanel implements ActionListener, ISpar
 		for (int i = 0; i < tmp.length; i++)
 			names[i + 1] = tmp[i];
 		
+		// Get the initially selected set
+		VariableSet firstSet = VariableSetFactory.getFirstSet();
+		if (firstSet != null) {
+			try {
+				firstSet.loadVariablesFromSet();
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+				firstSet = null;
+			}
+		}
+		
+		// New
 		JButton newButton = new JButton("New");
-		newButton.setActionCommand("new-set");
+		newButton.setActionCommand(CMD_NEW_SET);
 		newButton.addActionListener(this);
 		
-		setsBox = new JComboBox(names);
-		setsBox.setActionCommand("set");
-		setsBox.setSelectedIndex(0);
-		setsBox.addActionListener(this);
+		// Selection
+		variableSetBox = new JComboBox(names);
+		variableSetBox.setActionCommand(CMD_SELECT_SET);
 		
+		if (firstSet != null) {
+			variableSetBox.setSelectedItem(firstSet.getName());
+		}
+		else {
+			variableSetBox.setSelectedIndex(0);
+		}
+		
+		variableSetBox.addActionListener(this);
+		
+		// Auto save
 		JCheckBox autoBox = new JCheckBox("Auto save");
 		autoBox.setSelected(autoSaveFlag);
-		autoBox.setActionCommand("auto-set");
+		autoBox.setActionCommand(CMD_AUTO_SAVE);
 		autoBox.addActionListener(this);
 		
+		// Save
 		JButton saveButton = new JButton("Save");
-		saveButton.setActionCommand("save-set");
+		saveButton.setActionCommand(CMD_SAVE_SET);
 		saveButton.addActionListener(this);
 		
+		// Add controls to the panel
 		setPanel.add(newButton);
-		setPanel.add(setsBox);
+		setPanel.add(variableSetBox);
 		setPanel.add(autoBox);
 		setPanel.add(saveButton);
 		
@@ -143,6 +157,9 @@ public class SparkParameterPanel extends JPanel implements ActionListener, ISpar
 	}
 	
 	
+	/**
+	 * Creates controls for all parameters
+	 */
 	private void loadParameters() {
 		Parameter[] pars = Coordinator.getInstance().getParameters().getParameters();
 		
@@ -151,15 +168,10 @@ public class SparkParameterPanel extends JPanel implements ActionListener, ISpar
 	}
 	
 	
-	public int getParametersNumber() {
-		return parameters.size();
-	}
-	
-	
-
+	/**
+	 * Creates controls for the given parameter
+	 */
 	private void addParameter(Parameter p) {
-//		Parameter p = Parameter.createParameter(node);
-		
 		JLabel lname = new JLabel(p.getName());
 		
 		parameterPanel.add(lname);
@@ -192,12 +204,18 @@ public class SparkParameterPanel extends JPanel implements ActionListener, ISpar
 	}
 	
 	
-	
+
+	@Override
 	public void actionPerformed(ActionEvent e) {
-		String cmd = e.getActionCommand().intern();
+		String cmd = e.getActionCommand();
+		
+		if (cmd == null)
+			return;
+		
+		cmd = cmd.intern();
 		
 		// 'new-set' command
-		if (cmd == "new-set") {
+		if (cmd == CMD_NEW_SET) {
 			String setName = JOptionPane.showInputDialog("Input set name");
 			if (setName == null || setName.trim().equals(""))
 				return;
@@ -217,15 +235,15 @@ public class SparkParameterPanel extends JPanel implements ActionListener, ISpar
 			
 			newSet.saveVariablesIntoSet();
 
-			setsBox.addItem(setName);
+			variableSetBox.addItem(setName);
 			
 			// Select the new set
-			setsBox.setSelectedItem(setName);
+			variableSetBox.setSelectedItem(setName);
 			return;
 		}
 		
 		// 'save-set' command
-		if (cmd == "save-set") {
+		if (cmd == CMD_SAVE_SET) {
 			if (selectedSet == null)
 				return;
 			
@@ -234,14 +252,14 @@ public class SparkParameterPanel extends JPanel implements ActionListener, ISpar
 		}
 		
 		// 'auto-set' command
-		if (cmd == "auto-set") {
+		if (cmd == CMD_AUTO_SAVE) {
 			JCheckBox auto = (JCheckBox) e.getSource();
 			autoSaveFlag = auto.isSelected();
 			return;
 		}
 		
 		// 'set' command
-		if (cmd == "set") {
+		if (cmd == CMD_SELECT_SET) {
 			JComboBox box = (JComboBox) e.getSource();
 			
 			String setName = (String) box.getSelectedItem();
@@ -257,13 +275,17 @@ public class SparkParameterPanel extends JPanel implements ActionListener, ISpar
 				// TODO: implement
 				// ParameterFactory.loadDefaultValues();
 				selectedSet = null;
+				VariableSetFactory.setFirstSet(null);
 
 				return;
 			}
 			
 			selectedSet = VariableSetFactory.getVariableSet(setName);
+			VariableSetFactory.setFirstSet(selectedSet);
+
 			if (selectedSet == null)
 				return;
+			
 			
 			try {
 				selectedSet.loadVariablesFromSet();
