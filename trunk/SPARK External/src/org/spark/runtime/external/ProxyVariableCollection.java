@@ -16,6 +16,7 @@ import org.w3c.dom.Node;
  */
 public class ProxyVariableCollection {
 	private final HashMap<String, ProxyVariable> variables;
+	private final ArrayList<ProxyVariable> varList;
 	
 	
 	/**
@@ -25,11 +26,13 @@ public class ProxyVariableCollection {
 	 */
 	public ProxyVariableCollection(Node node) throws Exception {
 		variables = new HashMap<String, ProxyVariable>();
+		varList = new ArrayList<ProxyVariable>();
 		ArrayList<Node> list = XmlDocUtils.getChildrenByTagName(node, "variable");
 		
 		for (Node varNode : list) {
 			ProxyVariable var = ProxyVariable.loadVariable(varNode);
 			variables.put(var.getName(), var);
+			varList.add(var);
 		}
 	}
 	
@@ -50,14 +53,8 @@ public class ProxyVariableCollection {
 	 * @return
 	 */
 	public ProxyVariable[] getVariables() {
-		ProxyVariable[] result = new ProxyVariable[variables.size()];
-		
-		int i = 0;
-		for (ProxyVariable var : variables.values()) {
-			result[i++] = var;
-		}
-		
-		return result;
+		ProxyVariable[] result = new ProxyVariable[varList.size()];
+		return varList.toArray(result);
 	}
 	
 	
