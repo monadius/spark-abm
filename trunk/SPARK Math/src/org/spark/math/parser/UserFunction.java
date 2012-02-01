@@ -109,6 +109,22 @@ public class UserFunction {
 	public int getArgsNumber() {
 		return vars.length;
 	}
+	
+	/**
+	 * Returns the index of the given variable.
+	 * Returns -1 if the variable is not defined.
+	 */
+	public int getVarIndex(String varName) {
+		return tree.getVar(varName);
+	}
+	
+	/**
+	 * Returns names of all variables (arguments)
+	 */
+	public String[] getVarNames() {
+		String[] names = new String[vars.length];
+		return tree.vars.keySet().toArray(names);
+	}
 
 	/**
 	 * Returns the index of the built-in function or -1 if the function is not a
@@ -214,14 +230,7 @@ public class UserFunction {
 
 		return f.evaluate0();
 	}
-	
-	/**
-	 * Returns the index of the given variable.
-	 * Returns -1 if the variable is not defined.
-	 */
-	public int getVarIndex(String varName) {
-		return tree.getVar(varName);
-	}
+
 
 	/**
 	 * Sets values of variables. The number of values should be exactly the
@@ -368,6 +377,24 @@ public class UserFunction {
 		return pop();
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		
+		if (!(obj instanceof UserFunction))
+			return false;
+		
+		UserFunction f2 = (UserFunction) obj;
+		// TODO: more efficient tree comparison is better
+		return this.toString().equals(f2.toString());
+	}
+	
+	@Override
+	public int hashCode() {
+		return this.toString().hashCode();
+	}
+	
 	@Override
 	public String toString() {
 		return tree.toString();
