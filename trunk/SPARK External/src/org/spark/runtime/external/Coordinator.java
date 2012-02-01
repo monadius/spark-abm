@@ -682,6 +682,8 @@ public class Coordinator {
 		
 		/* Load charts */
 		list = XmlDocUtils.getChildrenByTagName(interfaceNode, "chart");
+		list.addAll(XmlDocUtils.getChildrenByTagName(interfaceNode, "user-chart"));
+		
 		// TODO: ad hoc implementation of multiple plots in one window
 		HashMap<String, SparkChartPanel> chartPanels = new HashMap<String, SparkChartPanel>();
 		
@@ -689,7 +691,7 @@ public class Coordinator {
 			String name = XmlDocUtils.getValue(chart, "name", null);
 			if (name != null) {
 				if (chartPanels.containsKey(name)) {
-					chartPanels.get(name).addChart(chart);
+					chartPanels.get(name).addSeries(chart);
 					continue;
 				}
 			}
