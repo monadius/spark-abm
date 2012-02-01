@@ -18,6 +18,7 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+import org.spark.math.parser.UserFunction;
 import org.spark.runtime.data.DataCollectorDescription;
 import org.spark.runtime.data.DataRow;
 import org.spark.runtime.external.Coordinator;
@@ -53,16 +54,117 @@ public class SparkChartPanel extends JPanel implements ActionListener, ISparkPan
 	// Main dataset
 	private XYSeriesCollection dataset;
 	
+	// Describes a function depending on SPARK variables
+	private static class Function {
+		private final UserFunction function;
+
+		// Describes an argument
+		private static class Argument {
+			String varName;
+			int index;
+			
+			Argument(String varName, int index) {
+				this.varName = varName;
+				this.index = index;
+			}
+		}
+		
+		private final int argsNumber;
+		private final Argument[] args;
+		private final double[] values;
+		
+		/**
+		 * Creates a function based on a user function
+		 */
+		public Function(UserFunction f) {
+			String[] names = f.getVarNames();
+
+			this.function = f;
+			this.argsNumber = names.length;
+			this.args = new Argument[argsNumber];
+			this.values = new double[argsNumber];
+			
+			for (int i = 0; i < argsNumber; i++) {
+				String name = names[i];
+				args[i] = new Argument(name, f.getVarIndex(name)); 
+			}
+		}
+
+		/**
+		 * Register variables
+		 */
+		public void register(DataFilter filter) {
+			for (Argument arg : args) {
+				filter.addData(DataCollectorDescription.VARIABLE, arg.varName);
+			}
+		}
+		
+		/**
+		 * Evaluates the function
+		 */
+		public double evaluate(DataRow data) throws Exception {
+			for (int i = 0; i < argsNumber; i++) {
+				Argument arg = args[i];
+				values[arg.index] = data.getVarDoubleValue(arg.varName);
+			}
+			
+			return function.evaluate(values);
+		}
+		
+		@Override
+		public String toString() {
+			return function.toString();
+		}
+	}
+	
 	// Information about plotted series
 	private static class SeriesInfo {
 		public final String varName;
 		public final String label;
 		public final XYSeries series;
+		public final Function function;
 		
-		public SeriesInfo(String varName, String label, XYSeries series) {
+		/**
+		 * Constructor
+		 */
+		public SeriesInfo(String varName, String label, XYSeries series, Function function) {
 			this.varName = varName;
 			this.label = label;
 			this.series = series;
+			this.function = function;
+		}
+		
+		
+		/**
+		 * Registers variables in the filter
+		 */
+		public void register(DataFilter filter) {
+			if (varName != null) {
+				filter.addData(DataCollectorDescription.VARIABLE, varName);
+			}
+			else if (function != null) {
+				function.register(filter);
+			}
+		}
+		
+		
+		/**
+		 * Reads a value from the data
+		 */
+		public Double getValue(DataRow data) throws Exception {
+			Double value;
+			
+			if (varName != null) {
+				value = data.getVarDoubleValue(varName);
+			}
+			else if (function != null) {
+				value = function.evaluate(data);
+			}
+			else {
+				return null;
+			}
+			
+			return value;
 		}
 	}
 	
@@ -110,56 +212,7 @@ public class SparkChartPanel extends JPanel implements ActionListener, ISparkPan
 		this.win = manager.setLocation(this, location);
 	}
 	
-
 	
-	
-	/**
-	 * Returns chart's data filter
-	 * @return
-	 */
-	public DataFilter getDataFilter() {
-		return dataFilter;
-	}
-	
-	
-	/**
-	 * Adds a chart information to the existing chart panel
-	 * @param node
-	 */
-	public void addSeries(Node node) {
-		String varNames = XmlDocUtils.getValue(node, "variable", null);
-		String label = XmlDocUtils.getValue(node, "label", "");
-
-		if (varNames != null) {
-			String[] names = varNames.split(",");
-			String[] labels = label.split(",");
-			int i = 0;
-			
-			for (String name : names) {
-				label = labels[i];
-				name = name.trim();
-
-				addSeries(name, label);
-				if (i < labels.length - 1)
-					i += 1;
-			}
-		}		
-	}
-	
-	
-	/**
-	 * Adds a series to the chart
-	 */
-	public void addSeries(String varName, String label) {
-		XYSeries s = new XYSeries(label, false);
-		
-		series.add(new SeriesInfo(varName, label, s));
-		dataset.addSeries(s);
-
-		dataFilter.addData(DataCollectorDescription.VARIABLE, varName);
-	}
-	
-
 	/**
 	 * Creates a JFreeChart
 	 */
@@ -200,14 +253,109 @@ public class SparkChartPanel extends JPanel implements ActionListener, ISparkPan
 		this.add(panel, BorderLayout.CENTER);
 		this.add(controlPanel, BorderLayout.SOUTH);
 	}
-
 	
-	protected void addValue(double x, double y, int index) {
-		addValue(x, y, this.series.get(index));
+	
+	/**
+	 * Returns chart's data filter
+	 * @return
+	 */
+	public DataFilter getDataFilter() {
+		return dataFilter;
 	}
 	
 	
-	protected void addValue(double x, double y, SeriesInfo info) {
+	/**
+	 * Adds a chart information to the existing chart panel
+	 * @param node
+	 */
+	public void addSeries(Node node) {
+		// TODO: everything could be done with expressions only
+		
+		String varNames = XmlDocUtils.getValue(node, "variable", null);
+		String label = XmlDocUtils.getValue(node, "label", "");
+		
+		String expressions = XmlDocUtils.getValue(node, "expressions", null);
+		String exprLabels = XmlDocUtils.getValue(node, "expr-labels", "");
+
+		// Single variables
+		if (varNames != null) {
+			String[] names = varNames.split(";");
+			String[] labels = label.split(";");
+			int i = 0;
+			
+			for (String name : names) {
+				if (name == null || name.length() == 0)
+					continue;
+				
+				label = labels[i];
+				name = name.trim();
+
+				addSeries(name, label);
+				if (i < labels.length - 1)
+					i += 1;
+			}
+		}
+		
+		// Expressions
+		if (expressions != null) {
+			String[] exprs = expressions.split(";");
+			String[] labels = exprLabels.split(";");
+			int i = 0;
+			
+			for (String expr : exprs) {
+				if (expr == null || expr.length() == 0)
+					continue;
+				
+				label = labels[i];
+				UserFunction f;
+				
+				try {
+					f = UserFunction.create(expr);
+				}
+				catch (Exception ex) {
+					ex.printStackTrace();
+					continue;
+				}
+
+				addSeries(f, label);
+				if (i < labels.length - 1)
+					i += 1;
+			}
+		}
+	}
+	
+	
+	/**
+	 * Adds a series to the chart
+	 */
+	public void addSeries(String varName, String label) {
+		XYSeries s = new XYSeries(label, false);
+		SeriesInfo info = new SeriesInfo(varName, label, s, null);
+		series.add(info);
+		dataset.addSeries(s);
+
+		info.register(dataFilter);
+	}
+	
+	/**
+	 * Adds a series to the chart
+	 */
+	public void addSeries(UserFunction uf, String label) {
+		XYSeries s = new XYSeries(label, false);
+		Function f = new Function(uf);
+		
+		SeriesInfo info = new SeriesInfo(null, label, s, f);
+		series.add(info);
+		dataset.addSeries(s);
+		
+		info.register(dataFilter);
+	}
+	
+
+	/**
+	 * Adds a value to the given series
+	 */
+	private void addValue(double x, double y, SeriesInfo info) {
 		synchronized (info.series) {
 			info.series.add(x, y);
 		}
@@ -359,14 +507,15 @@ public class SparkChartPanel extends JPanel implements ActionListener, ISparkPan
 		long tick = row.getState().getTick();
 		
 		for (SeriesInfo info : series) {
-			Double newValue = row.getVarDoubleValue(info.varName);
-			if (newValue == null)
-				continue;
-		
 			try {
+				Double newValue = info.getValue(row); 
+				if (newValue == null)
+					continue;
+	
 				addValue(tick, newValue, info);
 			}
 			catch (Exception e) {
+//				e.printStackTrace();
 			}
 		}
 	}
@@ -382,23 +531,44 @@ public class SparkChartPanel extends JPanel implements ActionListener, ISparkPan
 		if (xmlNode != null)
 			return;
 
-		// Get variable names and labels
+		// Variable names and labels
 		StringBuilder varNames = new StringBuilder();
 		StringBuilder labels = new StringBuilder();
+
+		// Expressions and their labels
+		StringBuilder exprs = new StringBuilder();
+		StringBuilder exprLabels = new StringBuilder();
 		
-		int n = series.size();
-		for (int i = 0; i < n; i++) {
-			SeriesInfo info = series.get(i);
-			varNames.append(info.varName);
-			labels.append(info.label);
-			
-			if (i < n - 1) {
-				varNames.append(',');
-				labels.append(',');
+		boolean firstVarFlag = true;
+		boolean firstExprFlag = true;
+		
+		for (SeriesInfo info : series) {
+			if (info.varName == null) {
+				if (!firstExprFlag) {
+					exprs.append(';');
+					exprLabels.append(';');
+				}
+				
+				exprs.append(info.function.toString());
+				exprLabels.append(info.label);
+				firstExprFlag = false;
+			}
+			else {
+				if (!firstVarFlag) {
+					varNames.append(';');
+					labels.append(';');
+				}
+				
+				varNames.append(info.varName);
+				labels.append(info.label);
+				firstVarFlag = false;
 			}
 		}
+
 		
+		// Create a new xml-node
 		xmlNode = xmlModelDoc.createElement("user-chart");
+
 		// location
 		XmlDocUtils.addAttr(xmlModelDoc, xmlNode, "location", location.getName());
 
@@ -411,6 +581,11 @@ public class SparkChartPanel extends JPanel implements ActionListener, ISparkPan
 		XmlDocUtils.addAttr(xmlModelDoc, xmlNode, "variable", varNames.toString());
 		// labels
 		XmlDocUtils.addAttr(xmlModelDoc, xmlNode, "label", labels.toString());
+		
+		if (exprs.length() > 0) {
+			XmlDocUtils.addAttr(xmlModelDoc, xmlNode, "expressions", exprs.toString());
+			XmlDocUtils.addAttr(xmlModelDoc, xmlNode, "expr-labels", exprLabels.toString());
+		}
 		
 		// Add this node to the document
 		interfaceNode.appendChild(xmlNode);
