@@ -12,6 +12,7 @@ import parser.xml.ModelFileWriter;
 import main.Id;
 import main.SparkModel;
 import main.Variable;
+import main.annotation.ExternalVariableAnnotation;
 import main.annotation.InterfaceAnnotation;
 import main.annotation.ModelAnnotation;
 import main.annotation.ObserverAnnotation;
@@ -177,12 +178,34 @@ public class ModelType extends Type {
 		// boolean begin(long tick) method
 		createBeginMethod();
 		
+		// Creates methods and fields for automatic agent counting
+		ArrayList<AgentType> agents = SparkModel.getInstance().getAgentTypes();
+		for (AgentType agent : agents) {
+			createAgentCountingMethod(agent);
+		}
 		
 		
 		// Call general parse routine
 		super.parseMethods();
 	}
 
+	
+	/**
+	 * Creates a method which returns the number of the given agents
+	 */
+	private void createAgentCountingMethod(AgentType agent) throws Exception {
+		String name = agent.getId().name;
+		Method count = new Method(new Id("count$" + name));
+		count.staticFlag = true;
+
+		count.setReturnType(SparkModel.getInstance().getType(new Id("double")));
+		String src = "return agents-number " + name;
+		SymbolList code = SparkLogoParser.stringToSymbols(src);
+		count.sourceCode.insertHere(code);
+
+		addMethod(count);
+	}
+	
 
 	/**
 	 * Creates the end method
@@ -357,6 +380,16 @@ outer:
 				else if (str.startsWith("<chart"))
 					charts.add(annotation);*/
 			}
+		}
+		
+		// Add counting variables
+		for (AgentType agent : agents) {
+			String name = agent.getId().name;
+			String getName = "count$" + name;
+			
+			ExternalVariableAnnotation varAnnotation = new ExternalVariableAnnotation(getName, "Double");
+			varAnnotation.setGetSetValues(getName, null);
+			variables.add(varAnnotation);
 		}
 		
 		for (Method method : methodList) {

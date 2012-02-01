@@ -33,6 +33,8 @@ public class Method {
 	protected boolean constructorFlag;
 	/* Indicates that the method is an abstract method */
 	protected boolean abstractFlag;
+	/* Indicates if the method is static */
+	protected boolean staticFlag;
 	/* Method's id */
 	protected Id id;
 	/* Source code of the method */
@@ -66,6 +68,7 @@ public class Method {
 		sourceCode = new SymbolList();
 		arguments = new ArrayList<Variable>();
 		annotations = new ArrayList<MethodAnnotation>();
+		staticFlag = false;
 	}
 	
 	
@@ -205,12 +208,15 @@ public class Method {
 			id = new Id("_init" + parentType.getId().toJavaName());
 		}
 
+		String modifiers = "public";
+		if (staticFlag)
+			modifiers += " static";
 		
 		java.clearTempVariables();
 		String typeName = returnType != null ? returnType.getTranslationString() : null;
 		if (constructorFlag)
 			typeName = "";
-		java.beginMethod("public", typeName, id.toJavaName(), arguments.size());
+		java.beginMethod(modifiers, typeName, id.toJavaName(), arguments.size());
 		
 		for (int i = 0; i < arguments.size(); i++) {
 			Variable arg = arguments.get(i);
