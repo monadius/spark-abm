@@ -246,7 +246,24 @@ public class SparkModel {
 		return cmd;
 	}
 	
+
+	/**
+	 * Returns a list of all agent types
+	 * @return
+	 */
+	public ArrayList<AgentType> getAgentTypes() {
+		ArrayList<AgentType> agents = new ArrayList<AgentType>();
+		
+		for (Type type : userTypes.values()) {
+			if (type instanceof AgentType)
+				agents.add((AgentType) type);
+		}
+		
+		return agents;
+	}
 	
+	
+
 	
 	/**
 	 * Returns a type by id
@@ -436,22 +453,13 @@ public class SparkModel {
 	}
 
 	
-	
 	/**
 	 * Creates xml model description files
 	 * @param outputPath
 	 * @throws Exception
 	 */
 	public void createXMLFiles(File outputPath) throws Exception {
-		ArrayList<AgentType> agents = new ArrayList<AgentType>();
-//		ArrayList<ModelType> models = new ArrayList<ModelType>();
-		
-		for (Type type : userTypes.values()) {
-			if (type instanceof AgentType)
-				agents.add((AgentType) type);
-//			else if (type instanceof ModelType)
-//				models.add((ModelType) type);
-		}
+		ArrayList<AgentType> agents = getAgentTypes();
 		
 		if (mainModel == null)
 			throw new Exception("No model file");

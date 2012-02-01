@@ -14,11 +14,20 @@ import org.w3c.dom.Node;
 public class ExternalVariableAnnotation extends VariableAnnotation {
 	public ExternalVariableAnnotation() {
 		super(EXTERNAL_VARIABLE_ANNOTATION);
-		
+
 		items.put("$get", new StringElement("get"));
 		items.put("$set", new StringElement("set"));
 		items.put("$name", new StringElement("name"));
 		items.put("$type", new StringElement("type"));
+	}
+	
+	/**
+	 * Creates an explicit annotation
+	 */
+	public ExternalVariableAnnotation(String name, String type) {
+		this();
+		items.get("$name").value = name;
+		items.get("$type").value = type;
 	}
 
 	

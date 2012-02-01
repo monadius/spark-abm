@@ -40,6 +40,10 @@ public class SymbolList {
 		list.addAll(position, symbols);
 	}
 	
+	public void insertHere(SymbolList list2) {
+		list.addAll(position, list2.list);
+	}
+	
 	
 	public void add(Symbol symbol) {
 		list.add(symbol);
