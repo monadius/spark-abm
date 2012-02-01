@@ -20,6 +20,8 @@ import javax.swing.event.ListSelectionListener;
 
 import org.spark.runtime.external.Coordinator;
 import org.spark.runtime.external.ProxyVariable;
+import org.spark.runtime.external.gui.SparkChartPanel;
+import org.spark.runtime.external.gui.WindowManager;
 
 public class NewChartDialog extends JDialog implements ActionListener, ListSelectionListener {
 	private static final long serialVersionUID = 1L;
@@ -178,7 +180,20 @@ public class NewChartDialog extends JDialog implements ActionListener, ListSelec
 	 * Creates a chart based on the selected variables
 	 */
 	private void createChart() {
+		Coordinator c = Coordinator.getInstance();
+		WindowManager win = c.getWindowManager();
+		String location = win.getGoodName("New chart");
 		
+		SparkChartPanel chartPanel = new SparkChartPanel(c.getWindowManager(), 1, location);
+		
+		// Add data series
+		for (Object obj : selectedModel.toArray()) {
+			String varName = (String) obj;
+			chartPanel.addSeries(varName, varName);
+		}
+		
+		// Register new chart panel as a data consumer
+		c.getDataReceiver().addDataConsumer(chartPanel.getDataFilter());
 	}
 	
 	@Override
