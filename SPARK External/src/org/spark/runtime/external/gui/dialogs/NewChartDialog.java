@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -29,6 +30,7 @@ import org.spark.runtime.external.Coordinator;
 import org.spark.runtime.external.ProxyVariable;
 import org.spark.runtime.external.gui.SparkChartPanel;
 import org.spark.runtime.external.gui.WindowManager;
+import org.spark.runtime.external.gui.SparkChartPanel.ChartType;
 
 import com.spinn3r.log5j.Logger;
 
@@ -53,6 +55,7 @@ public class NewChartDialog extends JDialog implements ActionListener,
 	private JButton createButton;
 	private JTextField chartName;
 	private JTextField expressionText;
+	private JCheckBox pieChart;
 
 	private DefaultListModel selectedModel;
 	private final ArrayList<String> allVarNames;
@@ -147,7 +150,7 @@ public class NewChartDialog extends JDialog implements ActionListener,
 
 		// Create additional controls
 		JPanel ctrlPanel = new JPanel();
-		ctrlPanel.setLayout(new GridLayout(1, 2));
+		ctrlPanel.setLayout(new GridLayout(0, 2));
 
 		// Chart name
 		chartName = new JTextField("New chart");
@@ -156,6 +159,14 @@ public class NewChartDialog extends JDialog implements ActionListener,
 
 		ctrlPanel.add(label);
 		ctrlPanel.add(chartName);
+		
+		// Pie chart check box
+		pieChart = new JCheckBox();
+		label = new JLabel("Pie chart: ");
+		label.setHorizontalAlignment(SwingConstants.RIGHT);
+
+		ctrlPanel.add(label);
+		ctrlPanel.add(pieChart);
 
 		// Add all components
 		JPanel panel2 = new JPanel(new BorderLayout());
@@ -230,9 +241,13 @@ public class NewChartDialog extends JDialog implements ActionListener,
 
 		String name = chartName.getText();
 		String location = win.getGoodName(name);
+		
+		ChartType chartType = ChartType.LINE_CHART;
+		if (pieChart.isSelected())
+			chartType = ChartType.PIE_CHART;
 
 		SparkChartPanel chartPanel = new SparkChartPanel(c.getWindowManager(),
-				1, location);
+				1, location, chartType);
 
 		// Add data series
 		for (Object obj : selectedModel.toArray()) {
