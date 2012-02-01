@@ -87,8 +87,8 @@ public class ModelVariable extends AbstractChangeEvent {
 		
 		// Read node's attributes
 		String name = (tmp = attributes.getNamedItem("name")) != null ? tmp.getNodeValue() : "???";
-		String sget = (tmp = attributes.getNamedItem("get")) != null ? tmp.getNodeValue() : "";
-		String sset = (tmp = attributes.getNamedItem("set")) != null ? tmp.getNodeValue() : "";
+		String sget = (tmp = attributes.getNamedItem("get")) != null ? tmp.getNodeValue() : null;
+		String sset = (tmp = attributes.getNamedItem("set")) != null ? tmp.getNodeValue() : null;
 		String stype = (tmp = attributes.getNamedItem("type")) != null ? tmp.getNodeValue() : "Double";
 
 		// Create a new variable and add it to the table
@@ -106,8 +106,16 @@ public class ModelVariable extends AbstractChangeEvent {
 //			var.setMethod = ModelManager.getInstance().getModel().getClass().getMethod(sset);
 //			var.getMethod = GUIModelManager.getModelClass().getMethod(sget);
 //			var.setMethod = GUIModelManager.getModelClass().getMethod(sset, var.type);
-			var.getMethod = model.getClass().getMethod(sget);
-			var.setMethod = model.getClass().getMethod(sset, var.type);
+			try {
+				if (sget != null)
+					var.getMethod = model.getClass().getMethod(sget);
+			}
+			catch (Exception e) { }
+			try {
+				if (sset != null)
+					var.setMethod = model.getClass().getMethod(sset, var.type);
+			}
+			catch (Exception e) { }
 		}
 		catch (Exception e) {
 			// TODO: do we need to process any exception here?
