@@ -1,12 +1,11 @@
 package org.spark.runtime.external;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.spark.utils.XmlDocUtils;
 import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import com.spinn3r.log5j.Logger;
 
@@ -21,6 +20,9 @@ public class VariableSetFactory {
 	/* Table containing all variable sets */
 	private static HashMap<String, VariableSet> variableSets = 
 		new HashMap<String, VariableSet>();
+	
+	// A set which is selected initially
+	private static String firstSetName;
 	
 	
 	/**
@@ -60,19 +62,44 @@ public class VariableSetFactory {
 	
 	
 	/**
+	 * Returns an initially selected set
+	 */
+	public static VariableSet getFirstSet() {
+		if (firstSetName == null)
+			return null;
+		
+		return variableSets.get(firstSetName);
+	}
+	
+	
+	/**
+	 * Sets the set which will be an initial set
+	 * @param set
+	 */
+	public static void setFirstSet(VariableSet set) {
+		if (set == null)
+			firstSetName = null;
+		else
+			firstSetName = set.getName();
+	}
+	
+	
+	/**
 	 * Loads all variable sets from a given xml-node
 	 * @param parent
 	 */
 	public static void loadVariableSets(Node parent) {
 		clear();
-		NodeList list = parent.getChildNodes();
 		
-		for (int i = 0; i < list.getLength(); i++) {
-			Node node = list.item(i);
-			
+		// Get the name of an initially selected set
+		firstSetName = XmlDocUtils.getValue(parent, "first-set", null);
+
+		// Get a list of all sets
+		ArrayList<Node> list = XmlDocUtils.getChildrenByTagName(parent, "variable-set");
+		
+		for (Node node : list) {
 			try {
-				if (node.getNodeName().equals("variable-set"))
-					createVariableSet(node);
+				createVariableSet(node);
 			}
 			catch (Exception e) {
 				e.printStackTrace();
@@ -111,43 +138,38 @@ public class VariableSetFactory {
 			return null;
 		}
 
-		NamedNodeMap attributes = node.getAttributes();
-		Node tmp;
-
-		String name = (tmp = attributes.getNamedItem("name")) != null ? tmp.getNodeValue() : "???";
+		// Name of the set
+		String name = XmlDocUtils.getValue(node, "name", "???");
 		
 		if (variableSets.containsKey(name)) {
 			throw new Exception("Variable set " + name + " is already defined");
 		}
 
+		// Create a new set
 		VariableSet set = new VariableSet(name);
 		variableSets.put(name, set);
 		
-		NodeList nodes = node.getChildNodes();
-		for (int i = 0; i < nodes.getLength(); i++) {
-			Node node2 = nodes.item(i);
+		// Load all variables
+		ArrayList<Node> nodes = XmlDocUtils.getChildrenByTagName(node, "variable");
+		for (Node varNode : nodes) {
+			String varName = XmlDocUtils.getValue(varNode, "name", null);
+			if (varName == null)
+				continue;
+			
+			String svalue = XmlDocUtils.getValue(varNode, "value", "0");
 
-			if (node2.getNodeName().equals("variable")) {
-				attributes = node2.getAttributes();
-
-				name = (tmp = attributes.getNamedItem("name")) != null ? tmp.getNodeValue() : "???";
-				String svalue = (tmp = attributes.getNamedItem("value")) != null ? tmp.getNodeValue() : "0";
-
-				ProxyVariable var = Coordinator.getInstance().getVariable(name);
+			ProxyVariable var = Coordinator.getInstance().getVariable(varName);
 				
-				// TODO: do we need to throw an exception?
-				// Or just ignore it
-				if (var == null) {
-					logger.error("Variable " + name + " is not found");
-					continue;
-				}
-
-				set.addVariable(var, svalue);
+			if (var == null) {
+				logger.error("Variable " + varName + " is not found");
+				continue;
 			}
+
+			set.addVariable(var, svalue);
 		}
 		
-		// TODO: we need this synchronization to avoid
-		// errors after removing/adding parameters
+		// Note: we need this synchronization to avoid
+		// errors after removing/adding parameters from a SPARK-PL code
 		set.synchronizeWithParameters(Coordinator.getInstance().getParameters());
 		
 		return set;
@@ -161,6 +183,10 @@ public class VariableSetFactory {
 	 */
 	public static void saveXML(Document doc, Node root) {
 		XmlDocUtils.removeChildren(root, "variable-set");
+		if (firstSetName != null)
+			XmlDocUtils.addAttr(doc, root, "first-set", firstSetName);
+		else
+			XmlDocUtils.removeAttr(root, "first-set");
 		
 		for (VariableSet set : variableSets.values()) {
 			Node node = set.createXML(doc);
