@@ -9,7 +9,7 @@
 	<classpathentry kind="lib" path="/Spark/lib/jogl.jar"/>
 	<classpathentry kind="lib" path="/Spark/lib/gluegen-rt.jar"/>
 	<classpathentry kind="lib" path="/Spark/lib/jcommon.jar"/>
-	<classpathentry kind="lib" path="/Spark/lib/jfreechart.jar"/>
+	<classpathentry kind="lib" path="/Spark/lib/jfreechart.jar" sourcepath="C:/Work/My Projects/Java Libraries/jfreechart-1.0.9/source"/>
 	<classpathentry kind="lib" path="/Spark/lib/colt.jar" sourcepath="C:/Help/Alexey/My New Projects/Java Libraries/colt/src"/>
 	<classpathentry kind="lib" path="/SPARK Utils/bin" sourcepath="/SPARK Utils/src"/>
 	<classpathentry kind="output" path="bin"/>
