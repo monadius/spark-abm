@@ -256,7 +256,9 @@ public class SparkViewPanel extends JPanel implements ISparkPanel,
 			if (Coordinator.getInstance().getWindowManager().removeWindow(win)) {
 				if (xmlNode != null)
 					xmlNode.getParentNode().removeChild(xmlNode);
-			
+
+				// TODO: clear data filter, etc.
+				
 				render = null;
 				renderDialog.dispose();
 			}
