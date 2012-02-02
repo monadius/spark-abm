@@ -77,7 +77,7 @@ public class ParameterEditDialog extends JDialog implements ActionListener {
 			case 0:
 				return "Name";
 			case 1:
-				return "User";
+				return "Use";
 			case 2:
 				return "Min";
 			case 3:
