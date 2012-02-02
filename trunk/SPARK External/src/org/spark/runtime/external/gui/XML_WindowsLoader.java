@@ -82,6 +82,7 @@ public class XML_WindowsLoader {
 		
 		// Remove junk as well
 		removeChildren(windowsNode, "#text");
+		removeChildren(interfaceNode, "#text");
 		
 		SparkWindow[] windows = windowManager.getWindows();
 		for (SparkWindow win : windows) {

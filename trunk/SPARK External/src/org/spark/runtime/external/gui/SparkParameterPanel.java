@@ -1,10 +1,11 @@
 package org.spark.runtime.external.gui;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.swing.*;
@@ -13,6 +14,8 @@ import org.spark.runtime.external.Coordinator;
 import org.spark.runtime.external.Parameter;
 import org.spark.runtime.external.VariableSet;
 import org.spark.runtime.external.VariableSetFactory;
+import org.spark.runtime.external.Parameter.Options;
+import org.spark.runtime.external.gui.dialogs.ParameterEditDialog;
 import org.spark.utils.SpringUtilities;
 import org.spark.utils.XmlDocUtils;
 import org.w3c.dom.Document;
@@ -29,12 +32,16 @@ public class SparkParameterPanel extends JPanel implements ActionListener, ISpar
 	private JPanel parameterPanel;
 	private JPanel setPanel;
 	private final HashMap<String, Parameter> parameters = new HashMap<String, Parameter>();
+	
+	// The corresponding xml-node
+	private Node xmlNode;
 
 	// Commands
 	private static final String CMD_NEW_SET = "new-set";
 	private static final String CMD_SELECT_SET = "select-set";
 	private static final String CMD_AUTO_SAVE = "auto-save";
 	private static final String CMD_SAVE_SET = "save-set";
+	private static final String CMD_EDIT = "edit";
 	
 	
 	// Currently selected variable set
@@ -44,6 +51,8 @@ public class SparkParameterPanel extends JPanel implements ActionListener, ISpar
 	
 	private JComboBox variableSetBox;
 	
+	// The dialog for editing parameter options
+	private ParameterEditDialog editDialog;
 	
 
 	/**
@@ -53,6 +62,12 @@ public class SparkParameterPanel extends JPanel implements ActionListener, ISpar
 	 */
 	public SparkParameterPanel(WindowManager manager, Node node) {
 		init();
+		this.xmlNode = node;
+		
+		// Load saved user options
+		if (node != null)
+			loadUserOptions(node);
+		
 		String location = XmlDocUtils.getValue(node, "location", null);
 		manager.setLocation(this, location);
 	}
@@ -63,20 +78,17 @@ public class SparkParameterPanel extends JPanel implements ActionListener, ISpar
 	 */
 	private void init() {
 		// Set layout
-        setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+		setLayout(new BorderLayout());
 
         // Create panel for variable sets
-        setPanel = new JPanel(new GridLayout(1, 4));
-		setPanel.setMinimumSize(new Dimension(100, 50));
+        setPanel = new JPanel();
+        setPanel.setLayout(new BoxLayout(setPanel, BoxLayout.LINE_AXIS));
+		setPanel.setMinimumSize(new Dimension(200, 50));
 		setPanel.setBorder(BorderFactory.createTitledBorder("Parameter set"));
         
         // Create panel for parameters		
 		parameterPanel = new JPanel(new SpringLayout());
 		JScrollPane scroll = new JScrollPane(parameterPanel);
-		
-		// Add panels to the main panel
-		add(setPanel);
-		add(scroll);
 		
 		// Heading
 		parameterPanel.add(new JLabel("Name"));
@@ -86,11 +98,36 @@ public class SparkParameterPanel extends JPanel implements ActionListener, ISpar
 		
 		loadVariableSets();
 		loadParameters();
+
+		// Set the preferred size based on the number of parameters
+		scroll.setPreferredSize(new Dimension(300, parameters.size() * 30));
+
+		
+		// Control panel
+		JPanel ctrlPanel = new JPanel();
+		ctrlPanel.setLayout(new BoxLayout(ctrlPanel, BoxLayout.LINE_AXIS));
+		
+		// Edit button
+		JButton editButton = new JButton("Edit");
+		editButton.setActionCommand(CMD_EDIT);
+		editButton.addActionListener(this);
+		
+		ctrlPanel.add(Box.createRigidArea(new Dimension(5, 0)));
+		ctrlPanel.add(editButton);
+
+		
+		// Add panels to the main panel
+		add(setPanel, BorderLayout.NORTH);
+		add(scroll, BorderLayout.CENTER);
+		add(ctrlPanel, BorderLayout.SOUTH);
 		
 		SpringUtilities.makeCompactGrid(parameterPanel, 
 				parameters.values().size() + 1, 3, 
 				5, 5, 15, 5);
-		
+
+		// Create the dialog for editing parameter options
+		editDialog = new ParameterEditDialog();
+		editDialog.setVisible(false);
 	}
 	
 	
@@ -125,12 +162,16 @@ public class SparkParameterPanel extends JPanel implements ActionListener, ISpar
 		// Selection
 		variableSetBox = new JComboBox(names);
 		variableSetBox.setActionCommand(CMD_SELECT_SET);
+		variableSetBox.setMinimumSize(new Dimension(100, 30));
+		variableSetBox.setPreferredSize(new Dimension(200, 30));
 		
 		if (firstSet != null) {
 			variableSetBox.setSelectedItem(firstSet.getName());
+			selectedSet = firstSet;
 		}
 		else {
 			variableSetBox.setSelectedIndex(0);
+			selectedSet = null;
 		}
 		
 		variableSetBox.addActionListener(this);
@@ -147,13 +188,15 @@ public class SparkParameterPanel extends JPanel implements ActionListener, ISpar
 		saveButton.addActionListener(this);
 		
 		// Add controls to the panel
+		setPanel.add(Box.createRigidArea(new Dimension(5, 0)));
 		setPanel.add(newButton);
+		setPanel.add(Box.createRigidArea(new Dimension(5, 0)));
 		setPanel.add(variableSetBox);
+		setPanel.add(Box.createRigidArea(new Dimension(5, 0)));
 		setPanel.add(autoBox);
+		setPanel.add(Box.createRigidArea(new Dimension(5, 0)));
 		setPanel.add(saveButton);
-		
-		// Load selected set from xml
-		selectedSet = null;
+		setPanel.add(Box.createRigidArea(new Dimension(5, 0)));
 	}
 	
 	
@@ -189,6 +232,11 @@ public class SparkParameterPanel extends JPanel implements ActionListener, ISpar
 		if (autoSaveFlag && selectedSet != null)
 			selectedSet.saveVariablesIntoSet();
 		
+		// Save user options
+		if (xmlNode != null)
+			saveUserOptions(xmlModelDoc, xmlNode);
+		
+		
 		Node root = null;
 		root = XmlDocUtils.getChildByTagName(interfaceNode, "variable-sets");
 
@@ -204,6 +252,54 @@ public class SparkParameterPanel extends JPanel implements ActionListener, ISpar
 	}
 	
 	
+	/**
+	 * Saves user options
+	 */
+	private void saveUserOptions(Document doc, Node node) {
+		XmlDocUtils.removeChildren(node, "user-parameter");
+		XmlDocUtils.removeChildren(node, "#text");
+		
+		for (Parameter p : parameters.values()) {
+			Node optNode = doc.createElement("user-parameter");
+			
+			// Add attributes
+			XmlDocUtils.addAttr(doc, optNode, "name", p.getName());
+			XmlDocUtils.addAttr(doc, optNode, "use", p.isUsingUserOptions());
+			
+			Options userOptions = p.getUserOptions();
+			userOptions.saveXml(doc, optNode);
+			
+			// Append the new node
+			node.appendChild(optNode);
+		}
+	}
+	
+	
+	/**
+	 * Loads user options
+	 */
+	private void loadUserOptions(Node node) {
+		ArrayList<Node> nodes = XmlDocUtils.getChildrenByTagName(node, "user-parameter");
+		
+		for (Node optNode : nodes) {
+			String name = XmlDocUtils.getValue(optNode, "name", null);
+			if (name == null)
+				continue;
+			
+			Parameter p = parameters.get(name);
+			// Silently ignore missing parameters
+			if (p == null)
+				continue;
+			
+			boolean useUserOptions = XmlDocUtils.getBooleanValue(optNode, "use", false);
+			Options userOptions = Options.loadXml(optNode);
+			
+			p.setUserOptions(userOptions);
+			p.activateUserOptions(useUserOptions);
+		}
+	}
+	
+	
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -213,6 +309,12 @@ public class SparkParameterPanel extends JPanel implements ActionListener, ISpar
 			return;
 		
 		cmd = cmd.intern();
+		
+		// 'edit' command
+		if (cmd == CMD_EDIT) {
+			editDialog.init(parameters.values());
+			editDialog.setVisible(true);
+		}
 		
 		// 'new-set' command
 		if (cmd == CMD_NEW_SET) {
