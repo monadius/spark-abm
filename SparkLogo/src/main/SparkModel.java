@@ -147,8 +147,8 @@ public class SparkModel {
 			
 			if (modelFlag ^ type instanceof ModelType)
 				throw new Exception("Model type " + id + " is extended by a non-model type: " + token);
-			
-			// TODO: simplify
+
+			// Verify that parent types are the same
 			boolean sameParentFlag = false;
 			Type parentType2 = type.getParentType();
 			
@@ -159,6 +159,8 @@ public class SparkModel {
 				if (parentId2 == null)
 					sameParentFlag = true;
 				else if (parentId2.equals(new Id("$Object")))
+					sameParentFlag = true;
+				else if (parentId2.equals(new Id("$model")))
 					sameParentFlag = true;
 			}
 			else {
