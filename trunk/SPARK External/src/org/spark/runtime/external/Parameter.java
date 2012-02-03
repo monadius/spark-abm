@@ -48,8 +48,8 @@ public class Parameter extends SpinnerNumberModel implements ChangeListener,
 		 * Constructor
 		 */
 		public Options(double min, double max, double step) {
-			if (min > max)
-				min = max;
+			if (max < min)
+				max = min;
 
 			if (step <= 0.0)
 				step = 1.0;
