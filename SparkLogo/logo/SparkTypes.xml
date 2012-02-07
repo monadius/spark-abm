@@ -237,6 +237,13 @@
                 		@@object.remove(@obj)
                 	</translation>
                 </method>
+
+                <method name = "remove-all">
+                	<argument name = "list" type = "ArrayList"/>
+                	<translation>
+                		@@object.removeAll(@list)
+                	</translation>
+                </method>
                 
                 <method name = "contains" type = "boolean">
                 	<argument name = "obj" type = "$Object"/>
@@ -409,7 +416,8 @@
 				</method>                
         </type>
         
-        
+
+		<!-- Reader -->        
         <type name = "Reader" parent = "$Object">
         	<javaname>java.io.BufferedReader</javaname>
         	
@@ -450,6 +458,55 @@
             		FileUtils.readVector(@@object, ";")
             	</translation>
             </method>
+            
+        </type>
+
+		<!-- Writer -->
+        <type name = "Writer" parent = "$Object">
+        	<javaname>java.io.PrintWriter</javaname>
+        	
+            <set>
+               @@id = @@value
+            </set>
+
+            <get>
+               @@id
+            </get>
+            
+            <method name = "close">
+            	<translation>
+            		FileUtils.close(@@object)
+            	</translation>
+            </method>
+            
+            <method name = "write-line">
+            	<argument name = "line" type = "string"/>
+            	<translation>
+            		FileUtils.writeDouble(@@object, @line)
+            	</translation>
+            </method>
+
+            <method name = "write-num">
+            	<argument name = "n" type = "number"/>
+            	<translation>
+            		FileUtils.writeLine(@@object, @n)
+            	</translation>
+            </method>
+            
+            <method name = "write-vector">
+            	<argument name = "v" type = "vector"/>
+            	<translation>
+            		FileUtils.writeVector(@@object, @v)
+            	</translation>
+            </method>
+            
+            <method name = "write-obj">
+            	<argument name = "obj" type = "$Object"/>
+            	<translation>
+            		FileUtils.writeLine(@@object, @obj == null ? "null" : @obj.toString())
+            	</translation>
+            </method>
+            
             
         </type>
         
