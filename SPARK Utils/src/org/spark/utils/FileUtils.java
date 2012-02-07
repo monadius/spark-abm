@@ -8,6 +8,7 @@ import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -76,6 +77,22 @@ public class FileUtils {
 			return null;
 		}
 	}
+	
+	
+	/**
+	 * Returns a file writer
+	 * @param fname
+	 * @return
+	 */
+	public static PrintWriter getPrintWriter(String fname) {
+		try {
+			return new PrintWriter(getFile(fname));
+		}
+		catch (Exception e) {
+			logger.error(e);
+			return null;
+		}
+	}
 
 	
 	/**
@@ -90,6 +107,23 @@ public class FileUtils {
 			r.close();
 		}
 		catch (IOException e) {
+			logger.error(e);
+		}
+	}
+	
+	
+	/**
+	 * Closes the file writer
+	 * @param w
+	 */
+	public static void close(PrintWriter w) {
+		if (w == null)
+			return;
+		
+		try {
+			w.close();
+		}
+		catch (Exception e) {
 			logger.error(e);
 		}
 	}
@@ -111,6 +145,21 @@ public class FileUtils {
 		}
 	}
 	
+	/**
+	 * Writes a line to the given writer
+	 */
+	public static void writeLine(PrintWriter w, String line) {
+		if (w == null)
+			return;
+		
+		try {
+			w.println(line);
+		}
+		catch (Exception e) {
+			logger.error(e);
+		}
+	}
+	
 	
 	/**
 	 * Reads a double number
@@ -126,6 +175,36 @@ public class FileUtils {
 		catch (IOException e) {
 			logger.error(e);
 			return 0.0;
+		}
+	}
+	
+	/**
+	 * Writes a double number to the given writer
+	 */
+	public static void writeDouble(PrintWriter w, double n) {
+		if (w == null)
+			return;
+		
+		try {
+			w.println(n);
+		}
+		catch (Exception e) {
+			logger.error(e);
+		}
+	}
+	
+	/**
+	 * Writes a boolean value to the given writer
+	 */
+	public static void writeBool(PrintWriter w, boolean b) {
+		if (w == null)
+			return;
+		
+		try {
+			w.println(b);
+		}
+		catch (Exception e) {
+			logger.error(e);
 		}
 	}
 	
@@ -162,6 +241,21 @@ public class FileUtils {
 		catch (IOException e) {
 			logger.error(e);
 			return null;
+		}
+	}
+	
+	/**
+	 * Writes a vector to the given writer
+	 */
+	public static void writeVector(PrintWriter w, Vector v) {
+		if (w == null)
+			return;
+		
+		try {
+			w.println(v);
+		}
+		catch (Exception e) {
+			logger.error(e);
 		}
 	}
 	
