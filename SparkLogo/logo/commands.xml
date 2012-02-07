@@ -1276,6 +1276,13 @@
 				FileUtils.getFileReader(@fname)
 			</translation>
 		</reporter>
+		
+		<reporter name = "create-file-writer" type = "Writer">
+			<argument name = "fname" type = "string"/>
+			<translation>
+				FileUtils.getPrintWriter(@fname)
+			</translation>
+		</reporter>
 		        
         
         <command name = "create-new-file">
