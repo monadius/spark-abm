@@ -23,7 +23,7 @@
 			and run your own SPARK models.
 		</para>
 		<para>
-			First of all you need to obtain a copy of SPARK-PL.
+			First of all, you need to obtain a copy of SPARK-PL.
 			It can be downloaded from the official SPARK site
 			at
 			<link xlink:href="http://www.pitt.edu/~cirm/spark">
@@ -32,14 +32,14 @@
 			in the Download section. There you need to select the latest version of
 			a SPARK-PL distribution for your operation system. Also
 			you can download a universal distribution which works
-			on any platform. This universal distribution is smaller
-			than other distributions but it lacks fast graphics.
+			on any platform. This universal distribution does not support
+			advanced graphical features of SPARK which are not essential
+			for model developing.
 		</para>
 		<para>  
 			You don't need to get anything
-			else except Java runtime of version 1.5 or higher. All
-			modern operation systems have this version of Java already
-			installed. You can test whether you have Java or not by
+			else except Java runtime of version 1.5 or higher. 
+			You can test whether you have Java or not by
 			visiting the Web page
 			<link xlink:href="http://java.com/en/download/help/testvm.xml">
 				http://java.com/en/download/help/testvm.xml
@@ -48,17 +48,18 @@
 		<para>
 			The installation process of SPARK-PL itself is very simple.
 			Extract the distribution archive into any folder on your computer
-			and you are done. After that you can run SPARK-PL by opening
+			and you are done. To start SPARK, open
 			'SPARK Manager.jar' in Explorer, Finder, or another
 			file manager.
 		</para>
 	</sect1>
 	
+	<!-- SPARK GUI -->
 	<sect1>
 		<title>SPARK GUI</title>
 		<para>
-			Before creating your own model, it is a good thing
-			to look at some sample models. After running the 'SPARK Manager.jar'
+			Before creating your own model, it is a good idea
+			to look at sample models. After running 'SPARK Manager.jar',
 			click 'Open project...' in the 'File' menu. Go to the 'samples'
 			folder, select any folder there, and open an xml file inside
 			the selected folder. Now click the 'Start' button and the SPARK
@@ -69,48 +70,182 @@
 				<title>SPARK GUI</title>
 				<mediaobject>
 					<imageobject>
-						<imagedata align="left" format="PNG" width = "5in"
+						<imagedata align="left" format="PNG" width = "10in"
 							fileref="images/WormsGUI.png" />
 					</imageobject>
 				</mediaobject>
 			</figure>
+			
+			The SPARK user interface consists of several windows. The main window with
+			simulation control elements is always shown. Other windows are
+			parameters, charts, additional views, model methods, and model data.
+			Some types of windows (charts, additional views) can be created directly
+			from the user interface. Other windows (parameters, methods, data) only appear if the
+			corresponding model has special elements.  
 		</para>
-		<sect2>
+		
+		<para>
+			You can move and resize windows. Closing any window except the main window will hide
+			the corresponding window. It can later be shown again by selecting its name in the
+			Window menu. Closing the main window will stop the simulation and exit the user
+			interface. Positions, sizes, and visibility of all windows are saved automatically when
+			the interface is closed. Next time the same model is run, all windows will be restored
+			to their saved positions. 
+		</para>
+		
+	<!-- Main Window -->
+	<sect2>
 		<title>Main Window</title>
 		<para>
-			The SPARK user interface consists of several windows.
-			First of all look at the main window with simulation control
-			elements inside it. 
 			
 			<figure>
 				<title>Main Window</title>
 				<mediaobject>
 					<imageobject>
-						<imagedata align="left" format="PNG" width = "4in"
+						<imagedata align="left" format="PNG" width = "6in"
 							fileref="images/WormsMainWindow.png" />
 					</imageobject>
 				</mediaobject>
 			</figure>
+		</para>
 			
-			The button 'Start' starts the simulation.
-			When this button is clicked, then it will become the 'Pause' button which
-			can be used for pausing the active simulation process.
-			The button 'Setup' stops the simulation and initializes the model
-			again. Also it resets all information gathered during the previous
-			simulation process. The slider on the left controls the simulation
-			speed. The 'Synchronized' check box changes the way
-			in which the simulation process and visualization interact.
-			If it is checked, then the simulation process will always wait
-			for visualization process to redraw everything completely before
-			starting a new simulation step. If it is unchecked, then the
-			simulation and visualization processes will work independently.
+		<para>
+			The main window contains the following elements: the main menu bar, the simulation control panel,
+			a graphical view control panel, a graphical view panel.
+		</para>
+	</sect2>
+		
+	<!-- Simulation Control Panel -->
+	<sect2>
+		<title>Simulation Control Panel</title>
+			<figure>
+				<title>Simulation Control Panel</title>
+				<mediaobject>
+					<imageobject>
+						<imagedata align="left" format="PNG" width = "6in"
+							fileref="images/SimulationControlPanel.png" />
+					</imageobject>
+				</mediaobject>
+			</figure>
+			
+		<para>
+			The left most label shows the number of simulation ticks. In SPARK, simulation time
+			is measured in simulation steps, ticks. Next is 'Start' button which starts a simulation.
+			When this button is clicked, then it will become 'Pause' button which
+			can pause an active simulation process.
+			The button 'Setup' stops a simulation and reinitializes a loaded model.
+			Also it resets all information gathered during the previous
+			simulation process. The center slider controls the simulation
+			speed. This slider specifies the amount of skipped frames and simulation delays. 
+			The right most slider also controls the simulation speed in terms of
+			simulation frequency. The precise meaning of the simulation speed and these sliders is
+			given below.
+		</para>  
+			
+		<para>
+			In SPARK, simulation and visualization processes are parallel. When the simulation speed is at the Normal position,
+			then the simulation process runs as fast as possible meanwhile visualization process tries
+			to visualize as much as it can. If the simulation process is faster than visualization, then
+			some frames will be skipped automatically. If the simulation speed is set to faster values
+			(on the left from the Normal position), then several frames will be always skipped (the label Fast
+			corresponds to 100 skipped frames). Slower values of the simulation speed affect the simulation process
+			by inserting a short delay after each simulation step. The length of this delay is constant.
 		</para>
 		<para>
-			The first menu of the main window is the 'File' menu. It has
-			only one item: Open. It is used for opening SPARK models directly
-			from the SPARK interface. Since you are using SPARK-PL, you don't
-			need to open SPARK models directly. 
+			The frequency slider (the right most one) can be only used to slow down the simulation process.
+			The purpose of this control is to fix the simulation frequency rate. The labels on the slider
+			correspond to desired frequency rates. 0 means that the frequency rate is not fixed. The frequency
+			rate is not guaranteed for slow simulations. 
 		</para>
+	</sect2> 
+	
+	<!-- Main Menu -->
+	<sect2>
+		<title>Main Menu</title>
+		<!-- File -->
+		<sect3>
+			<title>File</title>
+			<para>
+				Open. Opens a SPARK model directly form the SPARK user interface.
+				Warning: if you want to open a SPARK model directly from the user interface,
+				then do not confuse a SPARK project description file and a SPARK model descriptioin
+				file which both have the xml extension. Usually, a SPARK project description file
+				is located in the root folder of a SPARK project, meanwhile a SPARK model description
+				file is located in project's output folder (which is usually called 'output').
+			</para>
+			<para>
+				Close. Closes a loaded model. Not really useful.
+			</para>
+			<para>
+				Exit. Closes the SPARK user interface. All interface information is
+				automatically saved for the currently open model.
+			</para>
+			<para>
+				Below the 'Exit' item, names of recently open models are shown. Choosing one of them
+				will close the loaded model and open the selected one.
+			</para>
+			<para>
+				Preferences. Opens the SPARK preferences dialog.
+				<figure>
+					<title>Preferences Dialog</title>
+					<mediaobject>
+						<imageobject>
+							<imagedata align="left" format="PNG" width = "5in"
+								fileref="images/PreferencesDialog.png" />
+						</imageobject>
+					</mediaobject>
+				</figure>
+			
+				In the first tab, the visualization engine can be selected.
+				Note that JOGL can be selected only if you are using a version
+				of SPARK specific for your operation system (not a universal version).
+			</para>
+			<para>
+				In the second tab, the number of remembered recently open models can be specified.
+			</para>
+			<para>
+				The third tab specifies a directory where bitmap fonts can be found.
+				This is used in JOGL rendering mode and is a subject of another tutorial.
+			</para>
+		</sect3>
+		<!-- Model -->
+		<sect3>
+			<title>Model</title>
+			<para>
+				Model properties. Opens the model properties dialog.
+				<figure>
+					<title>Model Properties Dialog</title>
+					<mediaobject>
+						<imageobject>
+							<imagedata align="left" format="PNG" width = "5in"
+								fileref="images/ModelPropertiesDialog.png" />
+						</imageobject>
+					</mediaobject>
+				</figure>
+				
+				The check box and the next number field set the random generator seed
+				for the next simulation. If the check box is not selected, then
+				the seed in the number field is used for initializing the random number
+				generator for the next simulation. Different simulation processes with
+				the same simulation seed will give the same outcome.  
+			</para>
+			<para>
+				Last two parameters (Observer name and Execution mode) are experimental. It is not
+				recommended to change them from the default values.
+			</para>
+			<para>
+				Data layer properties. Opens the dialog for setting visualization properties of 
+				data layers.
+			</para>
+			<para>
+				Batch run. Opens the dialog for starting a batch run process.
+			</para>
+		</sect3>
+		
+		<sect3>
+			<title>Window</title>
+		
+				
 		<para>
 			The next menu is 'Options' menu.
 			The first item there is 'Graphics'. If you select this
@@ -174,6 +309,7 @@
 		<para>
 			The last menu 'Help' contains information about SPARK.
 		</para>
+		</sect3>		
 		</sect2>
 		
 		<sect2>
