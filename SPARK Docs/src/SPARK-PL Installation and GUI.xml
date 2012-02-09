@@ -217,7 +217,7 @@
 					<title>Model Properties Dialog</title>
 					<mediaobject>
 						<imageobject>
-							<imagedata align="left" format="PNG" width = "5in"
+							<imagedata align="left" format="PNG" width = "4in"
 								fileref="images/ModelPropertiesDialog.png" />
 						</imageobject>
 					</mediaobject>
@@ -244,34 +244,29 @@
 		
 		<sect3>
 			<title>Window</title>
-		
-				
-		<para>
-			The next menu is 'Options' menu.
-			The first item there is 'Graphics'. If you select this
-			item, then you get the following window
-			
-			<figure>
-				<title>Graphics options</title>
-				<mediaobject>
-					<imageobject>
-						<imagedata align="left" format="PNG" width = "4in"
-							fileref="images/GraphicsOptions.png" />
-					</imageobject>
-				</mediaobject>
-			</figure>
-			
-			Here you can select a library which will be used for performing
-			all visualization operations. OpenGL is a fast library, but
-			Java2D is more robust. If you have an universal SPARK-PL distribution,
-			then you cannot select OpenGL option here (in fact, you can do this,
-			but you get an error). If you have another version of SPARK-PL
-			and have some problems with graphics or get some errors referring
-			to 'jogl', then select Java2d here. In any case, after changing
-			a graphic library, you need to close the SPARK user interface and
-			run it again.
-		</para>
-		<para>
+			<para>
+				New View. Creates a new view window.
+			</para>
+			<para>
+				New Chart... Opens a chart creation dialog.
+			</para>
+			<para>
+				Tile Windows. Tiles windows on the screen in a non-overlapping way.
+			</para>
+			<para>
+				Windows... Opens a dialog where a selected window can be killed (removed).
+				This dialog could be useful if there is a window without context in the interface.
+				Such windows could appear as a result of some model modification, especially
+				when global variables used for charts are renamed. Note: it is possible to kill
+				even Parameters and other system windows. These windows will be recreated next time
+				the model is loaded.
+			</para>
+			<para>
+				A list of interface windows. Unchecked windows are invisible.
+			</para>
+		</sect3>
+	</sect2>
+<!-- 		<para>
 			The next item in the 'Options' menu is 'Batch Run Parameters'.
 			It is used for running the same model several times automatically
 			(see below about saving simulation data for more details).
@@ -308,9 +303,7 @@
 		</para>
 		<para>
 			The last menu 'Help' contains information about SPARK.
-		</para>
-		</sect3>		
-		</sect2>
+		</para>-->
 		
 		<sect2>
 			<title>Parameters window</title>
