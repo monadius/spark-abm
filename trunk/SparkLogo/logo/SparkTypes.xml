@@ -82,6 +82,9 @@
 				</translation>
 			</method>
 			
+			<method name = "length" type = "double">
+			</method>
+			
 			
 			<method name = "trim" type = "string">
 				<translation>
@@ -113,7 +116,14 @@
 				<argument name = "begin" type = "double"/>
 				<argument name = "end" type = "double"/>
 				<translation>
-					@@object.substring(@begin, @end)
+					@@object.substring((int)@begin, (int)@end)
+				</translation>
+			</method>
+			
+			<method name = "substring-end" type = "string">
+				<argument name = "begin" type = "double"/>
+				<translation>
+					@@object.substring((int)@begin)
 				</translation>
 			</method>
 			
@@ -444,6 +454,12 @@
             <method name = "read-num" type = "double">
             	<translation>
             		FileUtils.readDouble(@@object)
+            	</translation>
+            </method>
+
+            <method name = "read-bool" type = "boolean">
+            	<translation>
+            		FileUtils.readBool(@@object)
             	</translation>
             </method>
             
@@ -896,6 +912,9 @@
 			<javaname>Agent</javaname>
 
             <method name = "die">
+            </method>
+            
+            <method name = "is-dead" type = "boolean">
             </method>
             
             

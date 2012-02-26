@@ -2103,20 +2103,6 @@
         
         
         
-        <command name = "region">
-        	<argument name = "name" type = "string"/>
-        	<block/>
-        	
-        	<translation>
-        		<parameter name = "@name" type = "boolean" label = "par" group = "region"/>
-        		if (@par)
-        		{
-        			@block
-        		}
-        	</translation>
-        </command>
-
-
         <command name = "repeat">
                 <argument name = "number" type = "double"/>
                 <block/>
