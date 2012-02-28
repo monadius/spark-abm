@@ -251,13 +251,14 @@
 				New Chart... Opens a chart creation dialog.
 			</para>
 			<para>
-				Tile Windows. Tiles windows on the screen in a non-overlapping way.
+				Tile Windows. Tiles windows on the screen in a non-overlapping way. 
+				Only visible windows are rearranged.
 			</para>
 			<para>
 				Windows... Opens a dialog where a selected window can be killed (removed).
 				This dialog could be useful if there is a window without context in the interface.
 				Such windows could appear as a result of some model modification, especially
-				when global variables used for charts are renamed. Note: it is possible to kill
+				when a global variable used for a chart is renamed or removed. Note: it is possible to kill
 				even Parameters and other system windows. These windows will be recreated next time
 				the model is loaded.
 			</para>
@@ -266,50 +267,132 @@
 			</para>
 		</sect3>
 	</sect2>
-<!-- 		<para>
-			The next item in the 'Options' menu is 'Batch Run Parameters'.
-			It is used for running the same model several times automatically
-			(see below about saving simulation data for more details).
-			The last item is 'Data Layer Parameters'.
-			
+	
+	<!-- Data Layer parameters dialog -->
+	<sect2>
+		<title>Data Layer Parameters</title>
+		<para>
 			<figure>
 				<title>Data layers parameters</title>
 				<mediaobject>
 					<imageobject>
-						<imagedata align="left" format="PNG" width = "5in"
+						<imagedata align="left" format="PNG" width = "6in"
 							fileref="images/WormsDatalayerParameters.png" />
 					</imageobject>
 				</mediaobject>
 			</figure>
-			
-			Here you can specify the visualization properties of data layers
-			(whatever they are). You can change two values and colors
-			associated with that values. The first value corresponds to
+			The dialog for changing data layer parameters can be open from the main menu: 
+			Model -> Data Layer Properties. This dialog is used for setting visualization properties
+			of data layers. It is possible to change two values and colors
+			associated with these values. The first value corresponds to
 			the minimum value of a data layer and the second value corresponds
-			to the maximum value of a data layer. These values can be arbitrary,
-			they do not affect data layers but only used for their visualization.
-			If you want to get exact minimum and maximum values for a data layer,
+			to the maximum value of a data layer. These values can be arbitrary:
+			they do not affect the behavior of data layers and only used for their visualization.
+			If you want to get exact current minimum and maximum values for a data layer,
 			then click 'Normalize' button.
 		</para>
 		<para>
-			The next menu is 'Window' menu. The first item 'New view'
-			creates a new 'View' window where a simulation process
-			is visualized. In SPARK you can have several visualization
-			windows with different visualization parameters. Next items in
-			the 'Window' menu contain the names of all open windows. A check
-			box on the left for each window indicates whether the window is
-			visible or not. If you click on a window name, then you either
-			make it visible or hide depending on its current state.
+			The button 'Colors' opens a new dialog for adding more colors for visualization of a data layer.
+			<figure>
+				<title>Data layers parameters</title>
+				<mediaobject>
+					<imageobject>
+						<imagedata align="left" format="PNG" width = "3in"
+							fileref="images/WormsAdditionalDataLayerColors.png" />
+					</imageobject>
+				</mediaobject>
+			</figure>
+			The button 'Add' creates a new element for a color. Each element has two properties:
+			a value (in percents) and a color. The button 'Remove' removes the corresponding element.
 		</para>
-		<para>
-			The last menu 'Help' contains information about SPARK.
-		</para>-->
-		
-		<sect2>
-			<title>Parameters window</title>
+	</sect2>
+
+	<!-- Batch Run -->
+	<sect2>
+		<title>Batch Run Dialog</title>
 			<para>
-				The next window to look at is the parameters window.
+				Sometime it is required to run a model several times and save the
+				results after each run. To simplify this procedure, you can use
+				batch run features of SPARK. Go to 'Model' menu and click 'Batch run'.
 				
+				<figure>
+					<title>Batchrun Dialog</title>
+					<mediaobject>
+						<imageobject>
+							<imagedata align="left" format="PNG" width = "4in"
+								fileref="images/BatchrunDialog.png" />
+							</imageobject>
+					</mediaobject>
+				</figure>
+				
+				The first line in the batch run dialog is the number of steps (ticks)
+				in each run. The second line is the number of repetitions of each run.
+				The third line specifies the prefix of output file names. The fourth line
+				specifies how often data is sampled. The default value is 1, so data for
+				all ticks is saved by default.
+			</para>
+			<para>
+				The next flags control what kind of output is saved. If the 'Save data' flag is on,
+				then the simulation data is saved in comma separated (csv) files. The 'Save final snapshots'
+				flag indicates whether the final snapshot for all views will be saved or not.
+				If the 'Save snapshot' flag is activated, then snapshots will be saved for all views
+				at time points controlled by the 'Snapshot interval' parameter.
+			</para>
+			<para> 
+				All batch run data is saved in the project output folder. Each batch run will create
+				a unique folder inside the output folder with the name corresponding to the
+				time when the batch run process has been started. The output data file names have the
+				following structure: [prefix][number of run]-[number of repetition].csv. One run
+				corresponds to a model run with some fixed values of parameters. Different runs
+				correspond to different values of parameters. Each output data file contains all
+				values of parameters for the corresponding run and collected data.
+			</para>
+			<para>
+				All snapshots are saved as png files. The names of these png files have the following
+				structure: [number of run]-[number of repetition]-[view name]-[tick number].png.
+			</para>
+			<para>
+				The middle section of the batch run dialog is used for setting parameters
+				during batch runs. If a parameter is checked, then its value will be
+				changed from 'Start' to 'End' with the given 'Step'. If several parameters
+				are checked, then all possible values for all checked parameters are tried.
+				If a parameter is not selected, then its current value is used during
+				a batch run process.
+			</para>
+			<para>
+				Note: due to round-off errors, it is preferrable to make the 'End' value a
+				little higher than a required value. For example, if you want to change
+				some parameter from 1 to 2 with step 0.1, then it is better to set the end value
+				2.01.
+			</para>
+			<para>
+				The last section of the batch run dialog can be used to set up automatic data
+				analysis process. Data analysis feature is not fully implemented in SPARK yet, so
+				all parameters in this section must be ignored now.
+			</para>
+	</sect2>
+	
+	<!-- New Chart -->
+	<sect2>
+		<title>New Chart Dialog</title>
+		<para>
+			Charts can be created in the New Chart dialog (Window -> New Chart).
+			<figure>
+				<title>Batchrun Dialog</title>
+				<mediaobject>
+					<imageobject>
+						<imagedata align="left" format="PNG" width = "6in"
+							fileref="images/NewChartDialog.png" />
+						</imageobject>
+				</mediaobject>
+			</figure>
+		</para>
+	</sect2>
+
+	<!-- Parameters -->
+	<sect2>
+		<title>Parameters window</title>
+		<para>
 			<figure>
 				<title>Parameters window</title>
 				<mediaobject>
@@ -319,21 +402,38 @@
 					</imageobject>
 				</mediaobject>
 			</figure>
-
-				
-				It contains all parameters of the current model.
-				Parameters are model variables that can be changed
-				during a simulation process. You can change them before
-				starting a simulation or when a simulation runs in real time.
-				Some parameters represented by sliders (numerical parameters).
-				Other parameters represented by check boxes (boolean parameters).
-			</para>
-		</sect2>
+			It contains all parameters of the running model.
+			Parameters are model variables that can be changed
+			during a simulation process. You can change them before
+			starting a simulation or when a simulation runs in real time.
+			Some parameters represented by sliders (numerical parameters).
+			Other parameters represented by check boxes (boolean parameters).
+		</para>
+		<para>
+			Each numerical parameter is characterized by 3 options: its minimal and maximal values,
+			and its step size. There are two ways to set these options. One way is to do
+			it inside the model code using attributes (see the corresponding tutorial).
+			Another way is to edit parameter options inside the user interface. The 'Edit'
+			button opens a dialog for changing parameter options. Three options for
+			each parameter can be edited. To make activate changes, it is required to select
+			the check box at the 'Overwrite default' column. Default options are options
+			defined in the model code.
+		</para>
+		<para>
+			The upper section of the Parameters window contains controls for saving and
+			loading values of parameters. The button 'New' creates a new named set of parameter values.
+			When a new set is created, it can be selected in the combo box. To save the current
+			values of parameters it is required to select any valid set of values (not 'none')
+			and click the 'Save' button. If the 'Auto save' check box is activated, then
+			the current values of parameters will be saved in the selected set
+			when the SPARK user interface is closed (or when the model is closed).
+		</para>
+	</sect2>
 		
-		<sect2>
-			<title>Chart windows</title>
-			<para>
-				There could be several chart windows in a model.
+	<sect2>
+		<title>Chart windows</title>
+		<para>
+			There could be several chart windows in a model.
 				
 			<figure>
 				<title>A chart</title>
@@ -421,33 +521,6 @@
 				data file. All data will be saved as a plain text CSV file which can be
 				easily opened in Microsoft Excel. Note that the saved data
 				will also contain the current values of all parameters.			
-			</para>
-			<para>
-				Sometime it is required to run a model several times and save the
-				results after each run. To simplify this procedure, you can use
-				batch run feature of SPARK. Go to Options menu and click Batch Run Parameters.
-				
-				<figure>
-					<title>Batchrun Dialog</title>
-					<mediaobject>
-						<imageobject>
-							<imagedata align="left" format="PNG" width = "2in"
-								fileref="images/BatchrunDialog.png" />
-							</imageobject>
-					</mediaobject>
-				</figure>
-				
-				The first line in the batch run dialog is the number of steps (ticks)
-				in each run. The second line is the number of runs. And the third line
-				is the [name of file] where results will be saved. Batch run works as follows:
-				first you specify all parameters and click OK. Then you click Setup button
-				and Start button (you may also turn off synchronization and close some windows
-				for increasing simulation speed). After that the simulation will run exactly
-				specified number of steps. When the maximal number of steps is reached, the
-				results are automatically saved in the file named [name of file][#run].csv, where
-				[name of file] is the name specified in the batch run parameters and [#run] is
-				the number of the current run. After the results are saved, model is reseted
-				and a new simulation starts.
 			</para>
 		</sect2>
 	</sect1>
