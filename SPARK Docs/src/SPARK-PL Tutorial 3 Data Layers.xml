@@ -8,9 +8,7 @@
 		</author>
 		<abstract>
 			<para>
-				In this tutorial I'll present a concept of data layers
-				in SPARK. After that I'll show how to work with
-				data layers in SPARK-PL.
+				In this tutorial the concept of data layers is explained.
 			</para>
 		</abstract>
 	</info>
@@ -22,9 +20,6 @@
 			it defines a function on a space, that is, it assigns
 			a numerical value to each point in a space.
 		</para>
-		<para>
-			[To be written]
-		</para>
 	</section>
 	
 	<section>
@@ -33,7 +28,7 @@
 			There is one type for working with data layers in SPARK-PL
 			called 'grid'. Generally, all data layers in a model
 			should be available for all agents, so it is convenient
-			to have a global variable for each data layer. In this case
+			to have a global variable for each data layer. In this case,
 			the declaration of a new data layer is very simple
 <programlisting language = "SPARK">
 	global data-layer : grid
@@ -42,7 +37,7 @@
 			if there is no initialization then a default initialization
 			will be created. This default initialization creates a grid
 			in a space and its dimension equals to the integer dimension of
-			a space.
+			the space.
 		</para>
 		<para>
 			Another way to create a grid is to use 'create-grid' command.
@@ -54,7 +49,7 @@
 			in which case they will be rounded toward zero.
 		</para>
 		<para> 
-			Note: in current implementation only grids declared as global
+			Note: in the current implementation only grids declared as global
 			variables can be visualized during model simulation process;
 			if you are using 'create-grid' command to initialize a globally
 			defined grid then the name argument should be the same as
@@ -68,10 +63,10 @@
 <programlisting language="SPARK">
 model Model
 
-space NetLogoSpace -10 10 -10 10 true true
+space StandardSpace -10 10 -10 10 true true
 
 ; A default initialization is created for this
-; grid which is equivalent to a command
+; grid which is equivalent to the command
 ; create-grid "data-layer" 20 20
 global data-layer : grid
 
@@ -101,7 +96,7 @@ end
 			in further SPARK-PL releases). 
 		</para>
 		<para>
-			It is convenient to use 'create-grid' as an initialization
+			It is convenient to use 'create-grid' as an initialization command
 <programlisting language = "SPARK">
 	global data = create-grid "data" 11 2
 </programlisting>
@@ -148,7 +143,7 @@ end
 			methods with agent's position but there is a shorter way to
 			do this. There are methods 'value-here', 'set-value-here',
 			'add-value-here' which automatically use agent's position
-			to work with data values. Of course, only space agents
+			for working with data values. Of course, only space agents
 			can use these methods.
 <programlisting language="SPARK">
 agent SomeAgent : SpaceAgent
@@ -164,16 +159,14 @@ to step
 end
 </programlisting>
 			Instead of 'value-here' and 'set-value-here' methods, it is
-			more convenient to use a field 'value' of a grid. You can
+			more convenient to use the field 'value' of a grid. You can
 			work with this field as with a usual variable. The following
-			example do the same thing as the previous one.
+			example does the same thing as the previous one.
 <programlisting language="SPARK">
 to step
 	data.value = data.value * 4 + 5.5 
 end
 </programlisting>
-			Note: in the current SPARK-PL implementation it is not possible
-			to use operators '+=', '*=', etc., with fields.
 		</para>
 	</section>
 	
@@ -181,9 +174,9 @@ end
 	<section>
 		<title>Global grid methods</title>
 		<para>
-			By global methods I understand methods which depend (or affect)
-			grid as a whole. One such a method was already introduces:
-			it was 'set-value' method.
+			By global methods I understand methods which affect
+			a whole grid. One global method was already introduces:
+			'set-value' method.
 		</para>
 		<para> 
 			The method 'total-value' returns
@@ -207,7 +200,7 @@ end
 </programlisting>
 		</para>
 		<para>
-			Methods 'max' and 'min' return maximum and minimum values in
+			Methods 'max' and 'min' return maximum and minimum values stored in
 			a grid respectively.
 <programlisting language="SPARK">
 	var max-value = data.max
@@ -217,7 +210,7 @@ end
 		<para>
 			Method 'multiply' multiplies all grid values by a given number.
 			This method has an alias 'evaporate' which reflects one common
-			application of this method. Also there is command 'evaporate'
+			application of this method. Also there is a command 'evaporate'
 			with one argument (a grid) which does the same thing, and there
 			is an operator '*=' with a grid on the left and a number on the right
 			which is equivalent to the 'multiply' method.
@@ -239,8 +232,8 @@ end
 		</para>
 		<para>
 		This method works as follows. Each data layer cell gives
-		equal shares of (coefficient * 100) percent of its value to its eight neighbors.
-		Coefficient should be between 0 and 1 for well-defined behavior. 
+		equal shares of (coefficient * 100) percents of its value to its eight neighbors.
+		This diffusion coefficient should be between 0 and 1 for a well-defined behavior. 
 		</para>
 	</section>
 </article>
