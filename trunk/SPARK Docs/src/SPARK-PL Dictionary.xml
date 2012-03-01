@@ -876,178 +876,191 @@ end
 	</sect2>
 
 
-<sect2>
-<title>
-agents-at
-</title>
-<para>
+	<sect2>
+		<title>
+			agents-at
+		</title>
+		<para>
 <programlisting>
-agents-at type point radius : $ArrayList&lt;type>
+agents-at type point radius : List&lt;type>
 type : $type
 point : vector
 radius : number
 </programlisting>
-Returns all agents in the default space of a specific type at the specific circular region (given by its center ‘point’ and radius ‘radius’). Radius cannot be negative. Zero radius means that the agents at a point are requested.
-</para>
-<para>
-Example:
+			Returns all agents in the default space of a specific type at the 
+			specific circular region (given by its center ‘point’ and radius ‘radius’). 
+			The radius cannot be negative. Zero radius means that the agents at a point 
+			are requested.
+		</para>
+		<para>
+			Example:
 <programlisting>
 var good-agents-at-the-origin = agents-at GoodAgent [0,0,0] 0
 </programlisting>
-</para>
-</sect2>
+		</para>
+	</sect2>
 
 
-<sect2>
-<title>
-agents-at-as
-</title>
-<para>
+	<sect2>
+		<title>
+			agents-at-as
+		</title>
+		<para>
 <programlisting>
-agents-at-as type point radius : $ArrayList&lt;type>
+agents-at-as type point radius : List&lt;type>
 type : $type
 point : vector
 radius : number
 </programlisting>
-Returns all agents in the default space derived from a specific type at the specific circular region (given by its center ‘point’ and radius ‘radius’). Radius cannot be negative. Zero radius means that the agents at a point are requested.
-</para>
-</sect2>
-
-<sect2>
-<title>
-agents-here
-</title>
-<para>
+			Returns all agents in the default space derived from a specific type at 
+			the specific circular region (given by its center ‘point’ and radius ‘radius’). 
+			The radius cannot be negative. Zero radius means that the agents at a 
+			point are requested.
+		</para>
+	</sect2>
+	
+	<sect2>
+		<title>
+			agents-as
+		</title>
+		<para>
 <programlisting>
-agents-here type : $ArrayList&lt;type>
+agents-as type : List&lt;type>
 type : $type
 </programlisting>
-Returns all agents of a specific type intersecting with the current active agent.
-</para>
-<para>
-Note: only agents can call this function.
-</para>
-<para>
-Note: agents in the same space as a calling agent are returned.
-</para>
-<para>
-Note: calling agent may also be returned if its type is the same as requested one.
-</para>
-</sect2>
+			Returns all agents derived from a specific type. 
+		</para>
+	</sect2>
 
-
-<sect2>
-<title>
-agents-here-as
-</title>
-<para>
+	<sect2>
+		<title>
+			agents-here
+		</title>
+		<para>
 <programlisting>
-agents-here-as type : $ArrayList&lt;type>
+agents-here type : List&lt;type>
 type : $type
 </programlisting>
-Returns all agents derived from a specific type intersecting with the current active agent.
-</para>
-<para>
-Note: only agents can call this function.
-</para>
-<para>
-Note: agents in the same space as a calling agent are returned.
-</para>
-<para>
-Note: calling agent may also be returned if its type is derived form requested one.
-</para>
-</sect2>
+			Returns all agents of a specific type 
+			intersecting with the current active agent.
+		</para>
+		<para>
+			Note: only agents can call this function.
+		</para>
+		<para>
+			Note: agents in the same space as the calling agent are returned.
+		</para>
+		<para>
+			Note: the calling agent is also returned if its type is the same as 
+			the requested one.
+		</para>
+	</sect2>
+
+	<sect2>
+		<title>
+			agents-here-as
+		</title>
+		<para>
+<programlisting>
+agents-here-as type : List&lt;type>
+type : $type
+</programlisting>
+			Returns all agents derived from a specific type 
+			intersecting with the current active agent.
+		</para>
+		<para>
+			Note: only agents can call this function.
+		</para>
+		<para>
+			Note: agents in the same space as the calling agent are returned.
+		</para>
+		<para>
+			Note: the calling agent is also returned if its type is derived form 
+			the requested one.
+		</para>
+	</sect2>
 
 
-<sect2>
-<title>
-agents-number
-</title>
-<para>
+	<sect2>
+		<title>
+			agents-number
+		</title>
+		<para>
 <programlisting>
 agents-number type : number
 type : $type
 </programlisting>
-Returns the number of agents of a specific type.
-</para>
-</sect2>
+			Returns the number of agents of a specific type.
+		</para>
+	</sect2>
 
 
 
-<sect2>
-<title>
-agents-number-as
-</title>
-<para>
+	<sect2>
+		<title>
+			agents-number-as
+		</title>
+		<para>
 <programlisting>
 agents-number-as type : number
 type : $type
 </programlisting>
-Returns the number of agents derived from a specific type.
-</para>
-</sect2>
+			Returns the number of agents derived from a specific type.
+		</para>
+	</sect2>
 
 
-<sect2>
-<title>
-agents-as
-</title>
-<para>
+	<sect2>
+		<title>
+			all-agents-at
+		</title>
+		<para>
 <programlisting>
-agents-as type : $ArrayList&lt;type>
-type : $type
-</programlisting>
-Returns all agents which are derived from a given type.
-</para>
-</sect2>
-
-
-<sect2>
-<title>
-all-agents-at
-</title>
-<para>
-<programlisting>
-all-agents-at point radius : $ArrayList&lt;SpaceAgent>
+all-agents-at point radius : List&lt;SpaceAgent>
 point : vector
 radius : number
 </programlisting>
-Returns all agents in the default space at a given circular region. Type of all returned agents is SpaceAgent. Look at ‘as’ operation example to see how to convert this type to other types.
-</para>
-</sect2>
+			Returns all agents in the default space at a given circular region. 
+			Type of all returned agents is SpaceAgent. Look at 'as' operation example 
+			to see how to convert this type to other types.
+		</para>
+	</sect2>
 
-<sect2>
-<title>
-all-agents-here
-</title>
-<para>
+	<sect2>
+		<title>
+			all-agents-here
+		</title>
+		<para>
 <programlisting>
-all-agents-here : $ArrayList&lt;SpaceAgent>
+all-agents-here : List&lt;SpaceAgent>
 </programlisting>
-Returns all agents at the position of a calling agent.
-</para>
-<para>
-Note: agents in the same space as a calling agent are returned.
-</para>
-</sect2>
+			Returns all agents at the position of the calling agent.
+		</para>
+		<para>
+			Note: agents in the same space as the calling agent are returned.
+		</para>
+	</sect2>
 
 
-<sect2>
-<title>
-ask
-</title>
-<para>
+	<sect2>
+		<title>
+			ask
+		</title>
+		<para>
 <programlisting>
 ask list [commands]
-list : $ArrayList (or $Array, or a single object)
+list : List, Array, $Object
 </programlisting>
-Iterates through all objects in the list and performs commands for each object. Commands are given in brackets. ‘self’ inside command block refers to the currently processed object from the list. ‘myself’ inside command block refers to the object which called ‘ask’ command.
-</para>
-<para>
-Note: if list == null, then no commands will be executed.
-</para>
-<para>
-Example:
+			Iterates through all objects in the list and performs commands for each object. 
+			Commands are given in brackets. 'self' inside the command block refers to 
+			the currently processed object from the list. 'myself' inside the command block 
+			refers to the object which called 'ask' command.
+		</para>
+		<para>
+			Note: if list == null, then no commands will be executed.
+		</para>
+		<para>
+			Example:
 <programlisting>
 ask all-agents-here
 [
@@ -1059,32 +1072,35 @@ ask all-agents-here
 		; actually, the previous command do the same
 		; thing as	
 		; myself.color = blue
-		; because good-agent variable equals (in some sense) 
-		; to self variable from the outer ask command block.
+		; because good-agent variable refers to the same object as 
+		; self variable from the outer ask command block.
 	]
 ]
 </programlisting>
-Note: in the example above ‘as’ command could return null value, but it is not a problem since ‘ask’ command correctly works with null list argument.
-</para>
-</sect2>
+			Note: in the example above 'as' command could return null value, 
+			but it is not a problem since 'ask' command correctly works with null list
+			and object arguments.
+		</para>
+	</sect2>
 
 
 
-<sect2>
-<title>
-break
-</title>
-<para>
+	<sect2>
+		<title>
+			break
+		</title>
+		<para>
 <programlisting>
 break
 </programlisting>
-This command is equivalent to ‘break’ keyword in C, C++, Java, C#. It can be used only inside commands which iterate over some values. 
-This command tells to stop the current iterative process like
-'while', 'for', or 'repeat' and continue executing commands
-after that process.
-</para>
-<para>
-Example:
+			This command is equivalent to 'break' keyword in C, C++, Java, C#. 
+			It can be used only inside commands which iterate over some values. 
+			This command tells to stop the current iterative process
+			('while', 'for', 'repeat', or 'ask') and continue executing commands
+			after that process.
+		</para>
+		<para>
+			Example:
 <programlisting>
 repeat 100
 [
@@ -1097,22 +1113,35 @@ for x = 1:100
 	y += x
 ]
 </programlisting>
-</para>
-</sect2>
+		</para>
+	</sect2>
 
+	<sect2>
+		<title>complex</title>
+		<para>
+<programlisting>
+complex re im : complex
+re : double
+im : double
+</programlisting>
+			Creates a complex number with the given real and imaginary parts.
+		</para>
+	</sect2>
 
-<sect2>
-<title>
-continue
-</title>
-<para>
+	<sect2>
+		<title>
+			continue
+		</title>
+		<para>
 <programlisting>
 continue
 </programlisting>
-This command is equivalent to ‘continue’ keyword in C, C++, Java, C#. It can be used only inside commands which iterate over some values. This command tells to start the next iteration immediately.
-</para>
-<para>
-Example:
+			This command is equivalent to 'continue' keyword in C, C++, Java, C#. 
+			It can be used only inside commands which iterate over some values. 
+			This command tells to start the next iteration immediately.
+		</para>
+		<para>
+			Example:
 <programlisting>
 repeat 100
 [
@@ -1125,38 +1154,40 @@ for x = 1:100
 	y += x
 ]
 </programlisting>
-</para>
-</sect2>
+		</para>
+	</sect2>
 
 
-<sect2>
-<title>
-count
-</title>
-<para>
+	<sect2>
+		<title>
+			count
+		</title>
+		<para>
 <programlisting>
 count list : number
-list : $ArrayList (or $Array)
+list : List, Array
 </programlisting>
-Returns the number of elements in a list.
-</para>
-</sect2>
+			Returns the number of elements in a list (array).
+		</para>
+	</sect2>
 
 
-<sect2>
-<title>
-create
-</title>
-<para>
+	<sect2>
+		<title>
+			create
+		</title>
+		<para>
 <programlisting>
-create type number : $Array&lt;type>
+create type number : Array&lt;type>
 type : $type
 number : number
 </programlisting>
-Creates ‘number’ of objects of type ‘type’. Cannot be used with type ‘number’. Commonly used for creating new agents.
-</para>
-<para>
-Example:
+			Creates 'number' of objects of type 'type'. 
+			Cannot be used with types 'number' and 'boolean'. 
+			Commonly used for creating new agents.
+		</para>
+		<para>
+			Example:
 <programlisting>
 create GoodAgent 1000
 create BadAgent 1
@@ -1166,154 +1197,406 @@ ask create SomeAgent 20
 	set-random-position
 ]
 </programlisting>
-</para>
-</sect2>
+		</para>
+	</sect2>
 
 
+	<sect2>
+		<title>create-circle</title>
+		<para>
+<programlisting>
+create-circle radius : ShapeInfo
+radius : double
+</programlisting>
+			Creates a circular shape description. Used for changing
+			shapes of agents during a simulation process.
+		</para>
+		<para>
+			Note: this command works only for physical agents in a physical space.
+		</para>
+		<para>
+			Example
+<programlisting>
+; SimpleAgent
+agent SimpleAgent : SpaceAgent
 
-<sect2>
-<title>
-create-new-file
-</title>
-<para>
+to create
+        super 0.4 dynamic-circle
+        ; equivalent to
+        ; radius = 0.7
+        shape = create-circle 0.7
+end
+
+; Model
+model Demo
+
+space PhysicalSpace2d -10 10 -10 10 false false
+</programlisting>
+		</para>
+	</sect2>
+	
+	
+	<sect2>
+		<title>create-rect</title>
+		<para>
+<programlisting>
+create-rect hx hy : ShapeInfo
+hx : double
+hy : double
+</programlisting>
+			Creates a rectangular shape description. Used for changing
+			shapes of agents during a simulation process.
+		</para>
+		<para>
+			Note: this command works only for physical agents in a physical space.
+		</para>
+		<para>
+			Example
+<programlisting>
+; SimpleAgent
+agent SimpleAgent : SpaceAgent
+
+to create
+        super 0.4 dynamic-circle
+        shape = create-rect 0.2 1
+end
+
+; Model
+model Demo
+
+space PhysicalSpace2d -10 10 -10 10 false false
+</programlisting>
+		</para>
+	</sect2>
+
+
+	<sect2>
+		<title>
+			create-file-reader
+		</title>
+		<para>
+<programlisting>
+create-file-reader fname : Reader
+fname : string
+</programlisting>
+			Creates a reader object for the given text file. Returns
+			null if the file with the given name does not exist or
+			if it cannot be open.
+		</para>
+		<para>
+			Example
+<programlisting>
+var lines = create-list string 
+
+ask create-file-reader "data.txt"
+[
+	; Read all lines
+	while true
+	[
+		var line = read-line
+		if line == null
+			[ break ]
+
+		; Ignore comments
+		if line.starts-with "#"
+			[ continue ]
+
+		lines.add line				
+	]
+		
+	; Close the reader
+	close
+]
+</programlisting>
+		</para>
+	</sect2>
+	
+	
+	<sect2>
+		<title>
+			create-file-writer
+		</title>
+		<para>
+<programlisting>
+create-file-writer fname : Writer
+fname : string
+</programlisting>
+			Creates a writer object for the given text file. Returns
+			null if the file with the given name cannot be open. This command
+			creates a new file if there is no file with the given name.
+			Note: files are created in the output folder of a running SPARK model. 
+		</para>
+		<para>
+			Example
+<programlisting>
+ask create-file-writer "data.txt"
+[
+	write-num 1
+	write-num 2
+		
+	; Close the writer
+	close
+]
+</programlisting>
+		</para>
+	</sect2>
+	
+
+
+	<sect2>
+		<title>
+			create-new-file
+		</title>
+		<para>
 <programlisting>
 create-new-file file-name
 file-name : string
 </programlisting>
-Creates a new file with the given name. If a file with the given name exists, then it will be deleted and a new file with the same name will be created.
-Note: files are created in the folder from which SPARK was started. 
-</para>
-<para>
-Example
+			Creates a new file with the given name. 
+			If a file with the given name exists, then it will be deleted and a new file
+			with the same name will be created.
+			Note: files are created in the output folder of a running SPARK model. 
+		</para>
+		<para>
+			Example
 <programlisting>
 create-new-file "test.log"
 </programlisting>
-</para>
-</sect2>
-
-
-
-<sect2>
-<title>
-create-one
-</title>
-<para>
+		</para>
+	</sect2>
+	
+	<sect2>
+		<title>
+			create-unique-file
+		</title>
+		<para>
 <programlisting>
-create-one type : Type of this command equals to ‘type’
+create-unique-file name-prefix
+name-prefix : string
+</programlisting>
+			Creates a new file with the given name. If another file with the given
+			name exists, then the name is modified such that a new file has its
+			own unique name.
+			Note: files are created in the output folder of a running SPARK model. 
+		</para>
+		<para>
+			Example
+<programlisting>
+create-unique-file "test"
+</programlisting>
+		</para>
+	</sect2>
+
+
+
+	<sect2>
+		<title>
+			create-one
+		</title>
+		<para>
+<programlisting>
+create-one type : Type of this command equals to 'type'
 type : $type
 </programlisting>
-Creates one object of a specific type. The main difference form the previous command with number = 1 is that the type of this command is different.
-</para>
-<para>
-Example
+			Creates one object of a specific type. 
+			The main difference form the 'create' command with number = 1 is that 
+			the type of this command is different.
+		</para>
+		<para>
+			Example
 <programlisting>
 (create-one GoodAgent).color = red
 ; it is not possible to write the following
 ; (create GoodAgent 1).color = red
-; because the command in parentheses has type $Array
+; because the command in parentheses has type Array
 </programlisting>
-</para>
-</sect2>
+		</para>
+	</sect2>
 
 
-<sect2>
-<title>
-create-grid
-</title>
-<para>
+	<sect2>
+		<title>
+			create-grid
+		</title>
+		<para>
 <programlisting>
 create-grid name x-size y-size : grid
 name : string
 x-size : number
 y-size : number
 </programlisting>
-Creates a grid with a given name and of a given dimension in default space. This command can be used during grid declaration inside model class.
-</para>
-<para>
-Note: if no grid initialization is given for a grid, 
-then the default initialization will be created with the name 
-equals to the variable name and with the dimension of the default space.
-So the only use of this command is to create grids of different resolution.
-</para>
-<para>
-Note: in current implementation 'name' should be the same as variable's name.
-</para>
-<para>
-Example:
+			Creates a grid with a given name and of a given dimension in the default space. 
+			This command can be used in the grid declaration code inside a model class.
+		</para>
+		<para>
+			Note: if no grid initialization is given for a grid, 
+			then the default initialization will be created with the name 
+			equals to variable's name and with the dimension of the default space.
+			So the only use of this command is to create grids of different resolutions.
+		</para>
+		<para>
+			Note: in the current implementation 'name' should be the same as variable's name.
+		</para>
+		<para>
+			Example:
 <programlisting>
 model Model
-global data = create-grid “data” 10 10
+global data = create-grid "data" 10 10
 </programlisting>
-</para>
-</sect2>
-
-
-<sect2>
-<title>
-create-grid-in-space
-</title>
-<para>
+		</para>
+	</sect2>
+	
+	
+	
+	<sect2>
+		<title>
+			create-grid3d
+		</title>
+		<para>
+<programlisting>
+create-grid3d name x-size y-size z-size : grid3d
+name : string
+x-size : number
+y-size : number
+z-size : number
+</programlisting>
+			Creates a 3-dimensional grid. See create-grid for additional information. 
+		</para>
+	</sect2>
+	
+	
+	<sect2>
+		<title>
+			create-grid-in-space
+		</title>
+		<para>
 <programlisting>
 create-grid space name x-size y-size : grid
-space : Space (or string)
+space : Space, string
 name : string
 x-size : number
 y-size : number
 </programlisting>
-Creates a grid with a given name and of a given dimension in a given space. This command can be used during grid declaration inside model class.
-</para>
-<para>
-Note: space should be initialized before this command.
-</para>
-<para>
-Note: in current implementation 'name' should be the same as variable's name.
-</para>
-<para>
-Example:
+			Creates a grid with a given name and of a given dimension in a given space. 
+			This command can be used in the grid declaration code inside a model class.
+		</para>
+		<para>
+			Note: the space should be initialized before this command.
+		</para>
+		<para>
+			Note: in the current implementation 'name' should be the same as variable's name.
+		</para>
+		<para>
+			Example:
 <programlisting>
 model Model
 
 ; Default space
-space GridSpace -20 20 -20 20 true true
+space StandardSpace -20 20 -20 20 true true
 
 ; Additional space
 global space2 = add-standard-space "space2" (-10) 10 (-10) 10 true false
 
-; Grid will be created in default space
-global data = create-grid “data” 10 10
+; Grid will be created in the default space
+global data = create-grid "data" 10 10
 
 ; Grid will be created in space2
 global data2 = create-grid-in-space space2 "data2" 
                                     space2.x-size space2.y-size
 
-; Grid will be created in default space with default size
+; Grid will be created in the default space with the default size
 global data3 : grid                                  
 </programlisting>
-</para>
-</sect2>
+		</para>
+	</sect2>
 
 
-<sect2>
-<title>
-create-vector
-</title>
-<para>
+	<sect2>
+		<title>
+			create-list
+		</title>
+		<para>
+<programlisting>
+create-list type : List&lt;$type&gt;
+type : $type
+</programlisting>
+			Creates a list which can contain object of the given type. 
+		</para>
+		<para>
+			Example:
+<programlisting>
+; Create a list of strings
+var list = create-list string
+
+list.add "first"
+list.add "second" 
+</programlisting>
+		</para>
+	</sect2>
+
+
+	<sect2>
+		<title>
+			create-vector
+		</title>
+		<para>
 <programlisting>
 create-vector x y z : vector
 x : number
 y : number
 z : number
 </programlisting>
-Creates a new vector with the given components
-</para>
-</sect2>
+			Creates a new vector with the given components
+		</para>
+	</sect2>
 
 
-<sect2>
-<title>
-distance
-</title>
-<para>
+	<sect2>
+		<title>
+			current-time-millis
+		</title>
+		<para>
+<programlisting>
+current-time-millis : double
+</programlisting>
+			Returns the current system time in milliseconds.
+		</para>
+	</sect2>
+
+
+	<sect2>
+		<title>
+			delaunay-triangulation
+		</title>
+		<para>
+<programlisting>
+delaunay-triangulation list-of-agents link-type
+list-of-agents : List&lt;SpaceAgent&gt;
+link-type : $type (should be derived from SpaceLink)
+</programlisting>
+			Computes Delaunay triangulation of points representing
+			centers of agents in the list. Agents in the list
+			will be connected by links of the given type when
+			the triangulation is computed.
+		</para>
+		<para>
+			Example:
+<programlisting>
+; Kill all existing MyLink's
+kill agents MyLink
+; Compute Delaunay triangulation and connect agents with MyLink's
+delaunay-triangulation (agents TestAgent) MyLink
+</programlisting>			
+		</para>
+	</sect2>
+
+
+
+	<sect2>
+		<title>
+			distance
+		</title>
+		<para>
 <programlisting>
 distance agent1 agent2 : vector
 agent1 : SpaceAgent
@@ -1324,85 +1607,114 @@ distance pos1 pos2 : vector
 pos1 : vector
 pos2 : vector
 </programlisting>
-Returns the vector v equals to agent2.position – agent1.position (pos2 - pos1). It does more: in the torus topology the shortest vector-distance is returned.
-</para>
-<para>
-Example:
+			Returns the vector v equals to agent2.position – agent1.position (pos2 - pos1). 
+			It does more: in the torus topology the shortest vector-distance is returned.
+		</para>
+		<para>
+			Example:
 <programlisting>
 ; get the vector-distance between agents and then compute the length of this vector
 var distance-between-agents = (distance agent1 agent2).length
 </programlisting>
-</para>
-</sect2>
+		</para>
+	</sect2>
 
 
-
-
-<sect2>
-<title>
-diffuse
-</title>
-<para>
+	<sect2>
+		<title>
+			diffuse
+		</title>
+		<para>
 <programlisting>
 diffuse grid value
-grid : grid (DataLayer)
+grid : grid (DataLayer), grid3d
 value : number
 </programlisting>
-Performs a diffusion operation on a given grid. ‘value’ is a diffusion coefficient.
-</para>
-<para>
-	The diffusion operation is performed as follows. Each data layer cell gives
-	equal shares of (coefficient * 100) percent of its value to its eight neighbors.
-	Coefficient should be between 0 and 1 for well-defined behavior. 
-</para>
-</sect2>
+			Performs the diffusion operation on a given grid. 
+			'value' is the diffusion coefficient.
+		</para>
+		<para>
+			The diffusion operation is performed as follows. Each data layer cell shares
+		 	(coefficient * 100) percents of its value with its eight neighbors.
+			The coefficient should be between 0 and 1 for a well-defined behavior. 
+		</para>
+	</sect2>
 
-<sect2>
-<title>
-evaporate
-</title>
-<para>
+
+	<sect2>
+		<title>
+			evaporate
+		</title>
+		<para>
 <programlisting>
 evaporate grid value
-grid : grid (DataLayer)
+grid : grid (DataLayer), grid3d
 value : number
 </programlisting>
-Performs evaporation on a given grid. ‘value’ is an evaporation coefficient.
-</para>
-<para>
-Evaporation simply means multiplication of all data layer values by the given value.
-</para>
-</sect2>
+			Performs the evaporation operation on a given grid. 
+			'value' is the evaporation coefficient.
+		</para>
+		<para>
+			Evaporation simply means multiplication of all data layer values by 
+			the given value.
+		</para>
+	</sect2>
 
-<sect2>
-<title>
-exit
-</title>
-<para>
+
+	<sect2>
+		<title>
+			exit
+		</title>
+		<para>
 <programlisting>
 exit
 </programlisting> 
-This command ends the current method. Only methods that do not return any value can use this command. Other methods should call ‘return’.
-</para>
-</sect2>
+			This command ends the current method. 
+			Only methods that do not return any value can use this command. 
+			Other methods should use 'return'.
+		</para>
+	</sect2>
 
 
-<sect2>
-<title>
-fprint
-</title>
-<para>
+	<sect2>
+		<title>
+			for
+		</title>
+		<para>
+<programlisting>
+for var-name = from : step : to [] (a special syntax, not a type definition)
+for from : to [] (another form with step = 1 by default)
+from : double
+step : double
+to : double
+</programlisting>
+			A loop command for iterating values of the given variable from 'from' to 'to'
+			with the step size 'step'.
+		</para>
+		<para>
+			Note: var-name should be a unique name, no other local variables
+			with the same name should exist in the method using a 'for' loop. 
+		</para>
+	</sect2>
+
+
+	<sect2>
+		<title>
+			fprint
+		</title>
+		<para>
 <programlisting>
 fprint file-name object
 file-name : string
 object : $Object, string, number
 </programlisting>
-Prints a text representation of the given object into the given file.
-If a file with the given name doesn't exist, then a new file will be created.
-If a file with the given name exists, then a new line of text will be appended to the end of the file.
-</para>
-<para>
-Example
+			Prints a text representation of the given object into the given file.
+			If a file with the given name doesn't exist, then a new file will be created.
+			If a file with the given name exists, then a new text line 
+			will be appended to the end of this file.
+		</para>
+		<para>
+			Example
 <programlisting>
 fprint "test.log" "2 + 2 = "
 fprint "test.log" (2 + 2)
@@ -1410,441 +1722,684 @@ fprint "test.log" (2 + 2)
 ; 2 + 2 =
 ; 4
 </programlisting>
-</para>
-</sect2>
+		</para>
+		<para>
+			See create-writer and Writer object for another way of creating files in SPARK.
+		</para>
+	</sect2>
 
 
 
-<sect2>
-<title>
-get
-</title>
-<para>
+	<sect2>
+		<title>
+			get
+		</title>
+		<para>
 <programlisting>
 get list index
-list : $ArrayList (or $Array)
+list : List, Array
 index : number
 </programlisting>
-Returns an element from a list at the position specified by index.
-</para>
-</sect2>
+			Returns an element from the list at the position specified by the index.
+		</para>
+	</sect2>
 
 
-<sect2>
-<title>
-get-space
-</title>
-<para>
+	<sect2>
+		<title>
+			get-grid
+		</title>
+		<para>
 <programlisting>
-get-space name
+get-grid name : $DataLayer
 name : string
 </programlisting>
-Returns a space with a given name. Default space has name 'space'.
-</para>
-</sect2>
+			Returns a grid with the given name.
+		</para>
+	</sect2>
 
 
-<sect2>
-<title>
-if
-</title>
-<para>
+	<sect2>
+		<title>
+			get-space
+		</title>
+		<para>
+<programlisting>
+get-space name : Space
+name : string
+</programlisting>
+			Returns a space with the given name. Default space has name 'space'.
+		</para>
+	</sect2>
+
+
+<!-- I -->
+
+	<sect2>
+		<title>
+			if
+		</title>
+		<para>
 <programlisting>
 if condition [commands]
 condition : boolean
 </programlisting>
-Standard if control statement. If condition is true, then commands are executed.
-</para>
-</sect2>
+			A standard if control statement. If the condition is true, 
+			then the commands will be executed.
+		</para>
+	</sect2>
 
-<sect2>
-<title>
-ifelse
-</title>
-<para>
+
+	<sect2>
+		<title>
+			ifelse
+		</title>
+		<para>
 <programlisting>
 ifelse condition [commands1][command2]
 condition : boolean
 </programlisting>
-Standard if-else control statement. If condition is true, then commands from the first block are executed, otherwise commands from the second block are performed.
-</para>
-</sect2>
+			A standard if-else control statement. If the condition is true, 
+			then commands from the first block will be executed, 
+			otherwise commands from the second block will be performed.
+		</para>
+	</sect2>
 
 
-<sect2>
-<title>
-interpolate
-</title>
-<para>
+	<sect2>
+		<title>
+			interpolate
+		</title>
+		<para>
 <programlisting>
 interpolate v1 v2 t  : vector (number)
 v1 : vector (number)
 v2 : vector (number)
 t : number
 </programlisting>
-This command is an optimized version of v1 * (1 - t) + t * v2
-</para>
-</sect2>
+			This command is a slightly optimized version of v1 * (1 - t) + t * v2
+		</para>
+	</sect2>
 
 
-<sect2>
-<title>
-kill
-</title>
-<para>
+	<sect2>
+		<title>
+			is-key-pressed
+		</title>
+		<para>
+<programlisting>
+is-key-pressed key-name : boolean
+key-name : string
+</programlisting>
+			Returns true if the key with the given name is pressed.
+		</para>
+	</sect2>
+	
+	
+	<sect2>
+		<title>
+			is-mouse-button-pressed
+		</title>
+		<para>
+<programlisting>
+is-mouse-button-pressed button : boolean
+button : double
+</programlisting>
+			Returns true if the given mouse button is pressed (1 = left button,
+			2 = right button).
+		</para>
+	</sect2>	
+
+
+<!-- K -->
+	<sect2>
+		<title>
+			kill
+		</title>
+		<para>
 <programlisting>
 kill agent-list
-agent-list : $ArrayList (or $Array)
+agent-list : List, Array, $Object
 </programlisting>
-Kills all agents in the list, that is, calls ‘die’ method for each agent in the list. This command is a shortcut for
+			Kills all agents in the list, that is, this command 
+			calls 'die' for each agent in the list. This command is a shortcut for
 <programlisting>
 ask agent-list
 [
 	die
 ]
 </programlisting>
-</para>
-</sect2>
+		</para>
+	</sect2>
 
 
+<!-- M -->
 
-
-<sect2>
-<title>
-max
-</title>
-<para>
+	<sect2>
+		<title>
+			max
+		</title>
+		<para>
 <programlisting>
 max a b : number
 a : number
 b : number
 </programlisting>
-Returns the maximum of two numbers.
-</para>
-</sect2>
+			Returns the maximum of two numbers.
+		</para>
+	</sect2>
 
 
-<sect2>
-<title>
-min
-</title>
-<para>
+	<sect2>
+		<title>
+			min
+		</title>
+		<para>
 <programlisting>
 min a b : number
 a : number
 b : number
 </programlisting>
-Returns the minimum of two numbers.
-</para>
-</sect2>
+			Returns the minimum of two numbers.
+		</para>
+	</sect2>
 
 
-<sect2>
-<title>
-myself
-</title>
-<para>
+	<sect2>
+		<title>
+			mouse-position
+		</title>
+		<para>
+<programlisting>
+mouse-position : vector
+</programlisting>
+			Returns the current mouse position.
+		</para>
+	</sect2>
+
+
+	<sect2>
+		<title>
+			myself
+		</title>
+		<para>
 <programlisting>
 myself : $Object
 </programlisting>
-Returns a reference to the calling agent.
-</para>
-</sect2>
+			Returns a reference to the calling agent. See 'ask' for more information.
+		</para>
+	</sect2>
 
 
+<!-- N -->
+	<sect2>
+		<title>
+			next-key-event
+		</title>
+		<para>
+<programlisting>
+next-key-event : KeyEvent
+</programlisting>
+			Returns the next keyboard event from the keyboard event queue.
+			Returns null if the queue is empty.
+		</para>
+		<para>
+			Example
+<programlisting>
+var left-pressed : bool
+
+; Process all keyboard events
+while true
+[
+	var event = next-key-event
+	if event == null
+		[ break ]
+		
+	; Left arrow event
+	if event.name == "left"
+	[
+		left-pressed = event.pressed
+	]
+]
+</programlisting>
+		</para>
+	</sect2>
+	
+	
+	<sect2>
+		<title>
+			next-mouse-event
+		</title>
+		<para>
+<programlisting>
+next-mouse-event : MouseEvent
+</programlisting>
+			Returns the next mouse event from the mouse event queue.
+			Returns null if the queue is empty
+		</para>
+	</sect2>
 
 
+	<sect2>
+		<title>
+			normal-random
+		</title>
+		<para>
+<programlisting>
+normal-random mean std : double
+mean : double
+std : double
+</programlisting>
+			Returns a normally distributed random number.
+		</para>
+	</sect2>
 
-<sect2>
-<title>
-parent
-</title>
-<para>
+
+	<sect2>
+		<title>
+			num2int
+		</title>
+		<para>
+<programlisting>
+num2int n : $integer
+n : double
+</programlisting>
+			Converts the given floating point number to an integer number.
+		</para>
+	</sect2>
+
+
+<!-- O -->
+	<sect2>
+		<title>
+			one-of
+		</title>
+		<para>
+<programlisting>
+one-of list : Type of elements of list
+list : List, Array
+</programlisting>
+			Returns one randomly selected element of the given list.
+		</para>
+		<para>
+			Note: the list argument should be not null.
+		</para>
+	</sect2>
+
+
+<!-- P -->
+
+	<sect2>
+		<title>
+			parent
+		</title>
+		<para>
 <programlisting>
 parent : $Object
 </programlisting>
-Returns a reference to the parent class of the current class.
-</para>
-</sect2>
+			Returns a reference to the parent class of the current class.
+		</para>
+	</sect2>
 
 
-<sect2>
-<title>
-print
-</title>
-<para>
+	<sect2>
+		<title>
+			print
+		</title>
+		<para>
 <programlisting>
 print str
-str : string
+str : string, double, boolean, $Object
 </programlisting>
-Prints out a string
-</para>
-</sect2>
+			Prints out a string
+		</para>
+	</sect2>
 
 
-<sect2>
-<title>
-random-in-interval
-</title>
-<para>
+<!-- R -->
+	<sect2>
+		<title>
+			random-in-interval
+		</title>
+		<para>
 <programlisting>
 random-in-interval a b : number
 a : number
 b : number
 </programlisting>
-Returns a uniformly distributed random number in the interval [a,b).
-</para>
-</sect2>
+			Returns a uniformly distributed random number in the interval [a,b).
+		</para>
+	</sect2>
 
 
-<sect2>
-<title>
-random
-</title>
-<para>
+	<sect2>
+		<title>
+			random
+		</title>
+		<para>
 <programlisting>
 random a : number
 a : number
 </programlisting>
-Returns a uniformly distributed random number in the interval [0, a)
-</para>
-</sect2>
+			Returns a uniformly distributed random number in the interval [0, a)
+		</para>
+	</sect2>
 
 
-<sect2>
-<title>
-random-vector
-</title>
-<para>
+	<sect2>
+		<title>
+			random-vector
+		</title>
+		<para>
 <programlisting>
 random-vector a b : vector
 a : number
 b : number
 </programlisting>
-Returns a random vector with components in the interval [a, b).
-</para>
-<para>
-Note: now this function returns a random 2-d vector with the third component 0.
-</para>
-</sect2>
+			Returns a random vector with uniformly distributed components in 
+			the interval [a, b).
+		</para>
+		<para>
+			Note: this function returns a random 2-d vector with the third component 0.
+		</para>
+	</sect2>
+	
+	
+	<sect2>
+		<title>
+			random-vector3
+		</title>
+		<para>
+<programlisting>
+random-vector a b : vector
+a : number
+b : number
+</programlisting>
+			Returns a random vector with uniformly distributed components in 
+			the interval [a, b).
+		</para>
+		<para>
+			Note: this function returns a random 3-d vector.
+		</para>
+	</sect2>
 
 
-<sect2>
-<title>
-random-vector-of-length
-</title>
-<para>
+	<sect2>
+		<title>
+			random-vector-of-length
+		</title>
+		<para>
 <programlisting>
 random-vector-of-length length : vector
 length : number
 </programlisting>
-Returns a random vector of the given length.
-</para>
-<para>
-Note: now this function returns a random 2-d vector with the third component 0.
-</para>
-</sect2>
+			Returns a random vector of the given length.
+		</para>
+		<para>
+			Note: this function returns a random 2-d vector with the third component 0.
+		</para>
+	</sect2>
 
 
-<sect2>
-<title>
-repeat
-</title>
+	<sect2>
+		<title>
+			random-vector3-of-length
+		</title>
+		<para>
+<programlisting>
+random-vector-of-length length : vector
+length : number
+</programlisting>
+			Returns a random vector of the given length.
+		</para>
+		<para>
+			Note: this function returns a random 3-d vector.
+		</para>
+	</sect2>
+
+
+	<sect2>
+		<title>
+			repeat
+		</title>
 <para>
 <programlisting>
 repeat number [commands]
 number : number
 </programlisting>
-Repeats commands the given number of times.
-</para>
-</sect2>
+			Repeats commands the given number of times.
+		</para>
+	</sect2>
 
-<sect2>
-<title>
-return
-</title>
-<para>
+
+	<sect2>
+		<title>
+			return
+		</title>
+		<para>
 <programlisting>
 return value
 </programlisting>
-Returns the given ‘value’ as method’s value.
-</para>
-<para>
-Note: the type of ‘value’ should be compatible with method’s return type.
-</para>
-</sect2>
+			Returns the given 'value' as method’s value.
+		</para>
+		<para>
+			Note: the type of 'value' should be compatible with method’s return type.
+		</para>
+	</sect2>
 
 
+<!-- S -->
 
-<sect2>
-<title>
-self
-</title>
-<para>
+	<sect2>
+		<title>
+			self
+		</title>
+		<para>
 <programlisting>
 self : $Object
 </programlisting>
-Returns a reference to the active object (agent).
-</para>
-</sect2>
+			Returns a reference to the active object (agent).
+		</para>
+	</sect2>
 
 
-<sect2>
-<title>
-space-xmin
-</title>
-<para>
+	<sect2>
+		<title>
+			set
+		</title>
+		<para>
+<programlisting>
+set list index value
+list : List, Array
+index : number
+value : Type of elements of the list
+</programlisting>
+			Sets a new value for the element at the specific position of the list.
+		</para>
+	</sect2>
+
+
+	<sect2>
+		<title>
+			space-xmin
+		</title>
+		<para>
 <programlisting>
 space-xmin : number
 </programlisting>
-Returns the minimum x coordinate of space.
-</para>
-</sect2>
+			Returns the minimum x coordinate of the default space.
+		</para>
+	</sect2>
 
 
-<sect2>
-<title>
-space-xmax
-</title>
-<para>
+	<sect2>
+		<title>
+			space-xmax
+		</title>
+		<para>
 <programlisting>
 space-xmax : number
 </programlisting>
-Returns the maximum x coordinate of the default space.
-</para>
-</sect2>
+			Returns the maximum x coordinate of the default space.
+		</para>
+	</sect2>
 
 
-<sect2>
-<title>
-space-ymin
-</title>
-<para>
+	<sect2>
+		<title>
+			space-ymin
+		</title>
+		<para>
 <programlisting>
 space-ymin : number
 </programlisting>
-Returns the minimum y coordinate of the default space.
-</para>
-</sect2>
+			Returns the minimum y coordinate of the default space.
+		</para>
+	</sect2>
 
 
-<sect2>
-<title>
-space-ymax
-</title>
-<para>
+	<sect2>
+		<title>
+			space-ymax
+		</title>
+		<para>
 <programlisting>
 space-ymax : number
 </programlisting>
-Returns the maximum y coordinate of the default space.
-</para>
-</sect2>
+			Returns the maximum y coordinate of the default space.
+		</para>
+	</sect2>
 
 
-<sect2>
-<title>
-space-xsize
-</title>
-<para>
+	<sect2>
+		<title>
+			space-xsize
+		</title>
+		<para>
 <programlisting>
 space-xsize : number
 </programlisting>
-Returns the size of the default space along x-axis. That is, space-xmax – space-xmin.
-</para>
-</sect2>
+			Returns the size of the default space along x-axis. 
+			That is, space-xmax – space-xmin.
+		</para>
+	</sect2>
 
-<sect2>
-<title>
-space-ysize
-</title>
-<para>
+
+	<sect2>
+		<title>
+			space-ysize
+		</title>
+		<para>
 <programlisting>
 space-ysize : number
 </programlisting>
-Returns the size of the default space along y-axis. That is, space-ymax – space-ymin.
-</para>
-</sect2>
+			Returns the size of the default space along y-axis. 
+			That is, space-ymax – space-ymin.
+		</para>
+	</sect2>
 
 
-<sect2>
-<title>
-sum
-</title>
-<para>
+	<sect2>
+		<title>
+			sum
+		</title>
+		<para>
 <programlisting>
 sum list : number
-list : grid
+list : grid, grid3d
 </programlisting>
-Returns a sum of all data stored in a grid.
-</para>
-</sect2>
+			Returns a total sum of all data values stored in a grid.
+		</para>
+	</sect2>
 
 
-<sect2>
-<title>
-this
-</title>
-<para>
+<!-- T -->
+	<sect2>
+		<title>
+			this
+		</title>
+		<para>
 <programlisting>
 this : $Object
 </programlisting>
-Returns a reference to the current object.
-</para>
-</sect2>
+			Returns a reference to the current object.
+		</para>
+	</sect2>
+
+
+	<sect2>
+		<title>
+			to-string
+		</title>
+		<para>
+<programlisting>
+to-string arg : string
+n : number, boolean, $integer, vector, $Object
+</programlisting>
+			Converts the argument into a string.
+		</para>
+		<para>
+			Note: the argument should be not null.
+		</para>
+	</sect2>
 
 
 
-<sect2>
-<title>
-truncate
-</title>
-<para>
+	<sect2>
+		<title>
+			truncate
+		</title>
+		<para>
 <programlisting>
 truncate v min max : vector
 v : vector
 min : number
 max : number
 </programlisting>
-Truncates all components of a given vector.
-</para>
-</sect2>
+			Truncates all components of a given vector.
+		</para>
+	</sect2>
 
 
-<sect2>
-<title>
-vector-in-direction
-</title>
-<para>
+<!-- V -->
+	<sect2>
+		<title>
+			vector-in-direction
+		</title>
+		<para>
 <programlisting>
 vector-in-direction length angle : vector
 length : number
 angle : number
 </programlisting>
-Returns a vector of length ‘length’ in the direction specified by ‘angle’.
-</para>
-<para>
-Note: angle should be in degrees.
-</para>
-<para>
-Note: a 2-d vector is returned.
-</para>
-</sect2>
+			Returns a vector of length 'length' in the direction specified by 'angle'.
+		</para>
+		<para>
+			Note: the angle should be measured in degrees.
+		</para>
+		<para>
+			Note: a 2-d vector is returned.
+		</para>
+	</sect2>
 
 
-<sect2>
-<title>
-while
-</title>
-<para>
+<!-- W -->
+	<sect2>
+		<title>
+			while
+		</title>
+		<para>
 <programlisting>
 while condition [commands]
 </programlisting>
-Commands in the block are executed while condition is true.
-</para>
-</sect2> 
+			Commands in the block are executed while the condition is true.
+		</para>
+	</sect2> 
 
 </sect1>
 
+
+<!-- vector -->
 
 <sect1>
 <title>vector</title>
