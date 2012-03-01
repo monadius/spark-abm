@@ -74,7 +74,7 @@
 		</para>
 		<para>
 			These commands have the same arguments, so consider one of them.
-			<programlisting language="SPARK">
+<programlisting language="SPARK">
 	add-standard-space name x-min x-max y-min y-max wrap-x wrap-y
 </programlisting>
 			The first argument "name" is a name of a new space (a double quoted
@@ -99,7 +99,7 @@
 			However it is more
 			natural to add all spaces as global variables with initialization. 
 			Here is an example
-			<programlisting language="SPARK">
+<programlisting language="SPARK">
 model Model
 
 ; Default space
@@ -108,7 +108,7 @@ space StandardSpace -10 10 -10 10 true true
 ; Additional space
 global space2 = add-grid-space "space2" -20 20 -30 30 false false
 </programlisting>
-                                 <figure>
+			<figure>
 				<title></title>
 				<mediaobject>
 					<imageobject>
@@ -117,23 +117,18 @@ global space2 = add-grid-space "space2" -20 20 -30 30 false false
 					</imageobject>
 				</mediaobject>
 			</figure>
-                            </para>
+        </para>
 		<para>
 			In this example an additional grid space is created. Moreover,
-			a
-			reference to this space is stored in a global variable
-			'space2', so
-			this space can be accessed from any part of a
-			program using this
-			global variable. 
+			a reference to this space is stored in a global variable
+			'space2', so this space can be accessed from any part of a
+			program using this global variable. 
 		</para>
 		<para>
 			All spaces have type 'Space' and there are several methods
 			inside this type. The basic methods are: 'x-min', 'x-max',
-			'y-min',
-			'y-max', 'x-size', 'y-size' which return the dimension
-			of a space.
-			Other methods will be described in the next sections.
+			'y-min', 'y-max', 'x-size', 'y-size' which return the dimension
+			of a space.	Other methods will be described in the next sections.
 		</para>
 	</section>
 
@@ -141,12 +136,9 @@ global space2 = add-grid-space "space2" -20 20 -30 30 false false
 		<title>Working with agents</title>
 		<para>
 			Standard commands 'create' and 'create-one' create agents
-			in the
-			default space. In order to create agents in a specific
-			space, use
-			methods 'create' and 'create-one' of the 'Space' type.
-			Consider an
-			example:
+			in the default space. In order to create agents in a specific
+			space, use methods 'create' and 'create-one' of the 'Space' type.
+			Consider an	example:
 <programlisting language="SPARK">
 to setup
 	; Instead of a local variable a global variable can be used
@@ -154,8 +146,7 @@ to setup
 	
 	space2.create Agent1 100
 	
-	ask space2.create-one Agent
-2
+	ask space2.create-one Agent 2
 	[
 		set-random-position
 	]
@@ -175,17 +166,19 @@ to setup
 	]
 end
 </programlisting>
-                              <figure>
+		</para>
+		<para>
+           <figure>
 				<title></title>
 				<mediaobject>
 					<imageobject>
-						<imagedata align="left" format="PNG" 
+						<imagedata align="left" format="PNG" width = "4in" 
 							fileref="images/tutorial 7/fig2.png" />
 					</imageobject>
 				</mediaobject>
 			</figure>
-			</para>
-		      <para>
+		</para>
+		<para>
 			Be careful using the construction 'ask space [ create something ]'.
 			Only space agents (and derived agents) can be created inside 'ask
 			space' command. 
@@ -211,7 +204,7 @@ end
 				<title></title>
 				<mediaobject>
 					<imageobject>
-						<imagedata align="left" format="PNG" 
+						<imagedata align="left" format="PNG" width = "4in"
 							fileref="images/tutorial 7/fig3.png" />
 					</imageobject>
 				</mediaobject>
@@ -229,7 +222,7 @@ to setup
 	]
 end
 </programlisting>
-                                <figure>
+             <figure>
 				<title></title>
 				<mediaobject>
 					<imageobject>
@@ -271,8 +264,7 @@ to setup
 	
 	ask space2
 	[
-		create-one Agent
-5
+		create-one Agent 5
 	]
 end
 
@@ -302,17 +294,17 @@ to step
  
 end
 </programlisting>
-                    <figure>
+            <figure>
 				<title></title>
 				<mediaobject>
 					<imageobject>
-						<imagedata align="left" format="PNG"
+						<imagedata align="left" format="PNG" width = "4in"
 							fileref="images/tutorial 7/fig5.png" />
 					</imageobject>
 				</mediaobject>
 			</figure>
-                                           </para>
-		             <para>
+        </para>
+		<para>
 			In this example a method 'get-agent-space' was used. This
 			method returns a space in which a current agent is located.
 		</para>
@@ -329,8 +321,7 @@ end
 			with a command 'create-grid-in-space' is required. This
 			command has four arguments: space in which a grid is created,
 			name of a grid (should be the same as grid's variable name),
-			x-dimension, y-dimension.
- Be aware that the space should be initialized
+			x-dimension, y-dimension. Be aware that the space should be initialized
 			before you use it in 'create-grid-command' (see example).
 <programlisting language="SPARK">
 model Model

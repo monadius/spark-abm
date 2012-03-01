@@ -52,7 +52,7 @@ agent Agent2 : Agent
 agent Agent3 : Agent1
 </programlisting>
 			As all types in SPARK-PL, each agent can have a constructor
-			declared as a method with name 'create'. A constructor is
+			declared as a method with the name 'create'. A constructor is
 			called every time a new agent is created. It is not possible
 			to call a constructor for already existing object. It is often convenient
 			to set up some internal agent's variable inside this constructor
@@ -108,14 +108,14 @@ end
 			added to the observer. When an agent is destroyed, it is
 			removed from the observer. The observer can be used also
 			for retrieving all agents of a particular type or for counting
-			the number of agents of a given type. In SPARK-PL it is not
+			agents of a given type. In SPARK-PL it is not
 			required to know anything about the observer because it is
 			never used directly.
 		</para>
 		<para>
-			A command 'create' has two arguments: a type name and a number 
+			The command 'create' has two arguments: a type name and a number 
 			of agents to be created. A command 'create-one' has only
-			one argument: a type name (and it creates one agent of a given
+			one argument: a type name (and it creates one agent of the given
 			type).
 <programlisting language="SPARK">
 ; Create 100 agents of type Agent2
@@ -127,7 +127,7 @@ var agent2 = create-one Agent1
 ; Create 1 agent of type Agent1
 var agents2 = create Agent1 1
 </programlisting>
-			The last two commands in the previous example give the different
+			The last two commands in the previous example yield different
 			results. The command 'create' always returns an array of agents,
 			meanwhile the command 'create-one' always returns a direct reference
 			to a new agent.
@@ -147,7 +147,7 @@ var agents2 = create Agent1 1
 			at the given index.
 		</para>
 		<para>
-			Very often it is required to do something with all agents in
+			Often it is required to do something with all agents in
 			a list or an array. One way to do so is to use 'for' loop as
 			follows
 <programlisting language="SPARK">
@@ -198,7 +198,7 @@ to do-something
 	; do something	
 end
 </programlisting>
-			Very often it is required to know the number of agents
+			Often it is required to know the number of agents
 			of a specific type. It is possible to use the 'count'
 			command along with the 'agents' command, but it is more
 			convenient (and efficient) to use a special command
@@ -262,8 +262,7 @@ end
 	<section>
 		<title>Space in SPARK-PL</title>
 		<para>
-			In SPARK it is not required to have a space, but it is
-			necessary to have a space in SPARK-PL. A space is declared
+			It is necessary to declare a space in SPARK-PL. A space is declared
 			in a model type with the 'space' keyword
 <programlisting language="SPARK">
 model Model
@@ -271,25 +270,25 @@ model Model
 space StandardSpace -10 10 -20 20 true true
 </programlisting>
 			You can treat the 'space' keyword as a command with 7 arguments.
-			The first argument specifies a type of a space. There are two available
-			types now: StandardSpace and NetLogoSpace. The Standard space
-			is a continuous space where agents can occupy any position.
-			The NetLogo space is also a continuous space where agents can
+			The first argument specifies a type of a space. There are four 
+			types now: StandardSpace, GridSpace, StandardSpace3d, and PhysicalSpace2d.
+			The Standard space (including 3d space) is a continuous space 
+			where agents can occupy any position.
+			The Grid space is also a continuous space where agents can
 			occupy any position, but it also has a special discrete structure.
-			The NetLogo space is divided into square cells (1 by 1 each)
+			The Grid space is divided into square cells (1 by 1 each)
 			and all agents in the same cell are considered to be at the same
-			location for some commands ('agents-at', 'agents-here' commands,
-			see the next section for details). The advantage of NetLogo space
+			location for some space-related commands ('agents-at', 'agents-here' commands,
+			see the next section for details). The advantage of the Grid space
 			is that some operation work faster there but the results are
-			not very accurate sometimes. Also, the NetLogo space is not as
-			flexible as the Standard space and it is not used for some types
-			of models (for example, models with agents which behave
-			like rigid bodies in classical mechanics).
+			not accurate. The Grid space is not usually used. The Physical space
+			is not described in this tutorial.
 			</para>
 			<para>
-			Next four arguments specify the dimension of a space: minimum x
-			coordinate, maximum x coordinate, minimum y coordinate, maximum y coordinate.
-			The last two arguments determine a topology of a space. Each
+			Next four arguments (six arguments for the 3d space) specify the dimension of a space: 
+			minimum x coordinate, maximum x coordinate, minimum y coordinate, maximum y coordinate.
+			The last two arguments (three arguments for the 3d space)
+			determine a topology of a space. Each
 			space is a rectangle and the last two arguments specify whether
 			the opposite edges of this rectangle are glued together.
 			In other word, here are all possible combinations of these two
@@ -314,7 +313,7 @@ space StandardSpace -10 10 -20 20 true true
 				</tbody>
 			</table>
 			Note: in the current SPARK-PL implementation only constants
-			can be used for specifying the dimension of a space.
+			can be used for specifying the parameters of a space.
 		</para>
 		<para>
 			There are several commands for working with a space. Commands
@@ -409,7 +408,7 @@ to step
 	]
 end
 </programlisting>
-			There are methods 'hatch' and 'hatch-one' in SpaceAgent type
+			There are methods 'hatch' and 'hatch-one' of SpaceAgent type
 			which can do the same thing.
 <programlisting language="SPARK">
 agent Agent1 : SpaceAgent
@@ -447,7 +446,7 @@ end
 </programlisting>
 		</para>
 		<para>
-			Besides color, it is also possible to specify a shape of an agent.
+			Besides color, it is also possible to specify agent's shape.
 			In the current SPARK-PL implementation there is a significant
 			restriction for changing a standard circular shape. Only
 			agents derived from SpaceAgent can do this (it is quite natural). Moreover,
@@ -464,22 +463,20 @@ end
 			The 'super' command has two arguments: a radius of an agent
 			which determines a size of an agent and a shape. Shapes are
 			special constants with names. Available names are: 'circle'
-			(a standard shape), 'square', 'torus'.
-		</para>
-		<para>
-			Note: in the current SPARK implementation shapes only affect
-			the visual appearance of an agent, they do not change other
-			agent's properties. 
+			(a standard shape), 'square', 'square2', 'torus'. The difference
+			between 'square' and 'square2' shapes is that 'square' affects only
+			visual appearance of an agent meanwhile 'square2' also changes
+			the algorithm for determining if the agent collides with other agents or not.
 		</para>
 		<para>
 			All space agents can have different sizes. A size of a space
 			agent is determined by the 'radius' field which can be read
-			or assigned. In the NetLogo space the sizes of agents do not
-			play any role except for visualization purpose. In the Standard
+			or assigned. In the Grid space the sizes of agents do not
+			play any role except for visualization purposes. In the Standard
 			space sizes play an additional role which is explained below.
 		</para>
 		<para>
-			Using the 'agents' command it is possible to get all agents
+			With the 'agents' command, it is possible to get all agents
 			of a specific type but very often it is required to get agents
 			only in a specific region of a space. There are several commands
 			to do so. First of all, there are commands 'agents-at' and
@@ -490,13 +487,13 @@ end
 			The command 'agents-at' returns a list of all agents of a specific
 			type which intersect with a specific circular region. The command
 			'all-agents-at' returns all agents in a circular region. In fact,
-			in the NetLogo space this commands completely ignore a radius
-			of a circular region and return agents in a cell of the NetLogo
+			in the Grid space this commands completely ignores the radius
+			of a circular region and return agents in a cell of the Grid
 			space corresponding to a given point (center). It is the main
-			difference between Standard and Netlogo spaces.
+			difference between Standard and Grid spaces.
 		</para>
 		<para>
-			Sometimes it is necessary to get the agents intersecting (or
+			Sometimes it is necessary to get agents intersecting (or
 			at the same position) with an active agent. Then it is possible
 			to use commands 'agents-here' and 'all-agents-here'. The command
 			'agents-here' has one argument: a type name. The command 'all-agents-here'
@@ -525,7 +522,7 @@ to step
 
 	kill agents1
 	
-	; Changes radius of all agents of type Agent2
+	; Changes the radius of all agents of type Agent2
 	; at the current position (including the calling agent)
 	ask agents-here Agent2
 	[
@@ -536,7 +533,7 @@ end
 		</para>
 		<para>
 			Another thing to know about space agents is how to measure
-			a distance between two of them. Of course, it is always
+			the distance between two of them. Of course, it is always
 			possible to compute the difference between their positions
 			but it will not give a good result in the case of a topology
 			different from a rectangle. There is a command 'distance'
