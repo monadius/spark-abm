@@ -45,6 +45,16 @@ public class StringUtils {
 	
 	
 	/**
+	 * Returns a boolean value represented by the string
+	 * @param str
+	 * @return
+	 */
+	public static boolean stringToBoolean(String str) {
+		return Boolean.parseBoolean(str);
+	}
+	
+	
+	/**
 	 * Returns the integer number represented by the string. 
 	 * Returns 0 in a case of error.
 	 */
