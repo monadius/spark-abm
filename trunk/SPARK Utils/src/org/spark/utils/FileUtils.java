@@ -194,6 +194,23 @@ public class FileUtils {
 	}
 	
 	/**
+	 * Reads a boolean value
+	 */
+	public static boolean readBool(BufferedReader r) {
+		if (r == null)
+			return false;
+		
+		try {
+			String line = r.readLine();
+			return StringUtils.stringToBoolean(line);
+		}
+		catch (IOException e) {
+			logger.error(e);
+			return false;
+		}
+	}
+	
+	/**
 	 * Writes a boolean value to the given writer
 	 */
 	public static void writeBool(PrintWriter w, boolean b) {
