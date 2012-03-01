@@ -8,24 +8,22 @@
 		</author>
 		<abstract>
 			<para>
+				A quick description of the SPARK installation process and SPARK user interface.
 			</para>
 		</abstract>
 	</info>
 
 	<sect1>
-		<title>Installation of SPARK-PL</title>
+		<title>Installation of SPARK and SPARK-PL</title>
 		<para>
-			SPARK is a Java library for developing agent based models
-			in Java. SPARK-PL is a special programming language
-			which greatly facilitate the model developing process.
-			Each SPARK-PL distribution includes a copy of the latest
-			SPARK library along with all necessary tools to implement
-			and run your own SPARK models.
+			A SPARK distribution contains the SPARK library for developing agent based models
+			in Java, SPARK-PL, and a runtime environment with a user interface for running simulations. 
+			SPARK-PL is a special programming language
+			which greatly facilitates the model developing process.
 		</para>
 		<para>
-			First of all, you need to obtain a copy of SPARK-PL.
-			It can be downloaded from the official SPARK site
-			at
+			First of all, you need to obtain a distribution of SPARK.
+			It can be downloaded from the official SPARK site at
 			<link xlink:href="http://www.pitt.edu/~cirm/spark">
 				http://www.pitt.edu/~cirm/spark
 			</link>
@@ -46,9 +44,9 @@
 			</link>
 		</para>
 		<para>
-			The installation process of SPARK-PL itself is very simple.
+			The installation process of SPARK/SPARK-PL is very simple.
 			Extract the distribution archive into any folder on your computer
-			and you are done. To start SPARK, open
+			and everything is done. To start SPARK, open
 			'SPARK Manager.jar' in Explorer, Finder, or another
 			file manager.
 		</para>
@@ -256,7 +254,7 @@
 			</para>
 			<para>
 				Windows... Opens a dialog where a selected window can be killed (removed).
-				This dialog could be useful if there is a window without context in the interface.
+				This dialog could be useful if there is a window without content in the interface.
 				Such windows could appear as a result of some model modification, especially
 				when a global variable used for a chart is renamed or removed. Note: it is possible to kill
 				even Parameters and other system windows. These windows will be recreated next time
@@ -273,7 +271,7 @@
 		<title>Data Layer Parameters</title>
 		<para>
 			<figure>
-				<title>Data layers parameters</title>
+				<title>Data layer parameters</title>
 				<mediaobject>
 					<imageobject>
 						<imagedata align="left" format="PNG" width = "6in"
@@ -281,7 +279,7 @@
 					</imageobject>
 				</mediaobject>
 			</figure>
-			The dialog for changing data layer parameters can be open from the main menu: 
+			The dialog for changing data layer parameters can be opened from the main menu: 
 			Model -> Data Layer Properties. This dialog is used for setting visualization properties
 			of data layers. It is possible to change two values and colors
 			associated with these values. The first value corresponds to
@@ -311,12 +309,12 @@
 	<sect2>
 		<title>Batch Run Dialog</title>
 			<para>
-				Sometime it is required to run a model several times and save the
-				results after each run. To simplify this procedure, you can use
-				batch run features of SPARK. Go to 'Model' menu and click 'Batch run'.
+				If it is required to run a model several times and save the
+				results after each run, then the batch run feature of SPARK is useful
+				Go to 'Model' menu and click 'Batch run' to open the batch run dialog.
 				
 				<figure>
-					<title>Batchrun Dialog</title>
+					<title>Batch Run Dialog</title>
 					<mediaobject>
 						<imageobject>
 							<imagedata align="left" format="PNG" width = "4in"
@@ -360,7 +358,7 @@
 				a batch run process.
 			</para>
 			<para>
-				Note: due to round-off errors, it is preferrable to make the 'End' value a
+				Note: due to round off errors, it is preferrable to make the 'End' value a
 				little higher than a required value. For example, if you want to change
 				some parameter from 1 to 2 with step 0.1, then it is better to set the end value
 				2.01.
@@ -378,7 +376,7 @@
 		<para>
 			Charts can be created in the New Chart dialog (Window -> New Chart).
 			<figure>
-				<title>Batchrun Dialog</title>
+				<title>New Chart Dialog</title>
 				<mediaobject>
 					<imageobject>
 						<imagedata align="left" format="PNG" width = "6in"
@@ -386,6 +384,20 @@
 						</imageobject>
 				</mediaobject>
 			</figure>
+			The left column contains all available variables. Selecting variables in this column and then
+			pressing 'Select' will add selected variables to the right column. Variables in the right
+			column can be selected and then removed by pressing 'Remove'. The button 'Reset' removes
+			all variables from the right column. The button 'Create' creates a new chart window for
+			all variables in the right column. If 'Pie chart' check box is selected, then a pie chart
+			window is created. Otherwise a standard line plot is created. The upper part of the dialog
+			contains a text box for entering simple mathematical expressions involving model variables.
+			Any expression entered in this text box can be added to the right column and then
+			it will be plotted in a chart window.
+		</para>
+		<para>
+			The last variables in the left column have special name 'count$[agent name]'. These variables
+			are generated automatically for any SPARK model and they represent the number of 
+			corresponding agents in the model.
 		</para>
 	</sect2>
 
@@ -397,7 +409,7 @@
 				<title>Parameters window</title>
 				<mediaobject>
 					<imageobject>
-						<imagedata align="left" format="PNG" width="5in"
+						<imagedata align="left" format="PNG" width="7in"
 							fileref="images/WormsParameters.png" />
 					</imageobject>
 				</mediaobject>
@@ -406,8 +418,8 @@
 			Parameters are model variables that can be changed
 			during a simulation process. You can change them before
 			starting a simulation or when a simulation runs in real time.
-			Some parameters represented by sliders (numerical parameters).
-			Other parameters represented by check boxes (boolean parameters).
+			Some parameters are represented by sliders (numerical parameters).
+			Other parameters are represented by check boxes (boolean parameters).
 		</para>
 		<para>
 			Each numerical parameter is characterized by 3 options: its minimal and maximal values,
@@ -415,7 +427,7 @@
 			it inside the model code using attributes (see the corresponding tutorial).
 			Another way is to edit parameter options inside the user interface. The 'Edit'
 			button opens a dialog for changing parameter options. Three options for
-			each parameter can be edited. To make activate changes, it is required to select
+			each parameter can be edited. To activate changes, it is required to select
 			the check box at the 'Overwrite default' column. Default options are options
 			defined in the model code.
 		</para>
@@ -429,36 +441,36 @@
 			when the SPARK user interface is closed (or when the model is closed).
 		</para>
 	</sect2>
-		
+	
+	<!-- Chart windows -->	
 	<sect2>
 		<title>Chart windows</title>
 		<para>
-			There could be several chart windows in a model.
-				
+			There could be several chart windows in the user interface.
 			<figure>
 				<title>A chart</title>
 				<mediaobject>
 					<imageobject>
-						<imagedata align="left" format="PNG" width = "3in"
+						<imagedata align="left" format="PNG" width = "4in"
 							fileref="images/WormsChart.png" />
 					</imageobject>
 				</mediaobject>
 			</figure>
-				
-				
-				Each chart window shows a plot of some model variable.
-				If you click the 'Clear' button, then
-				the plot area will be cleared. If you click the 'Save'
-				button, then you can select a file in which to save
-				the numerical data of a plot.
-			</para>
-		</sect2>
+			Each chart window shows a plot of one or several model variables.
+			If you click the 'Clear' button, then
+			the plot area will be cleared. If you click the 'Save'
+			button, then you can select a file in which to save
+			the numerical data of the plot. The 'Remove' button destroys the
+			chart window.
+		</para>
+	</sect2>
 		
-		
-		<sect2>
-			<title>View windows</title>
-			<para>
-			
+	<!-- View windows -->
+	<sect2>
+		<title>View windows</title>
+		<para>
+			There is always one view located inside the main window. Additional
+			view windows can be created from Window -> New view.
 			<figure>
 				<title>A view window</title>
 				<mediaobject>
@@ -468,61 +480,140 @@
 					</imageobject>
 				</mediaobject>
 			</figure>
-			
-			</para>
-			<para>
-				These windows give the additional visualizations
-				of the running simulation. You can customize each view
-				window and the main window view by right clicking on them
-				and selecting 'Properties' from the pop-up menu. Also
-				you can remove any additional view window by selecting
-				'Remove view' from the same pop-up menu. 'Properties' opens
-				a visualization properties dialog.
-				
+		</para>
+		<para>
+			The upper part of each view window contains several control elements.
+			The first three controls specify how a view window reacts on user input.
+		</para>
+		<para>
+			If the 'select' mode is chosen, then left clicks inside the view will open
+			an inspector dialog for viewing internal variables of agents which are at
+			the position of the mouse cursor. The inspector dialog contains two columns:
+			the left column lists all agents at the position of the mouse cursor, the right column
+			shows variables and their values for a selected agent. In the 'select' mode it is also
+			possible to zoom in/out the view with mouse wheel or with '+' and '-' buttons.
+			Arrow keys can be used for moving the content of the view left/right and up/down.
+			'Enter' resets the original zoom and position of the view. Note: to make keyboard input
+			active for a view, it is required to left click inside it first. The right mouse button
+			opens a context menu when clicked inside the view (in the 'select' mode). This context
+			menu duplicates the functions of other view control elements.
+		</para>
+		<para>
+			The 'move' mode allows to move the content of a view with a mouse. To move the context
+			with a mouse, it is required to press and hold the left button inside the view and move a mouse.
+			Also the same keyboard control as in the 'select' mode is available. If the view works
+			in a 3d mode, then the right button can be used to rotate the view.
+		</para>
+		<para>
+			In the 'control' mode all user input inside a view window is processed by a running
+			model itself. This mode allows to run models which support an interactive control.
+		</para>
+		<para>
+			The button 'reset' sets the default zoom and position of the view content (the same
+			effect as 'Enter' key in 'select' and 'move' modes). 'snapshot' saves a snapshot of the view.
+			'rename' opens a dialog for renaming the view (note: even the main window can be renamed).
+			'props' opens a view properties dialog. 'remove' kills the corresponding view window (note:
+			the main window cannot be removed).
+		</para>
+		<para>
+			Each view can be customized. Press 'props' and the visualization properties dialog
+			will appear.
 			<figure>
 				<title>Visualization Properties dialog</title>
 				<mediaobject>
 					<imageobject>
-						<imagedata align="left" format="PNG" width = "4in"
+						<imagedata align="left" format="PNG" width = "5in"
 							fileref="images/WormsRenderParameters.png" />
 					</imageobject>
 				</mediaobject>
 			</figure>
 
-				
-				Here you can set visualization properties of agents: they
-				can be transparent, visible/invisible, with or without borders.
-				Also you specify the order in which agents will be visualized.
-				Agents on the top of the list are drawn atop of other agents.
-				In the 'Spaces' section you can select which space is visualized
-				in the given window. In the 'Data Layers' section you can select
-				a data layer to be visualized.
-			</para>
-		</sect2>
-	
+			The main visualization properties of agents are visibility, a border flag,
+			transparency, a label flag. The visibility controls whether agents of the selected
+			class are rendered or not. Rendered agents could be with or without border (a border flag).
+			Rendered agents can be transparent. The label flag specifies if the label is printed
+			for the selected class of agents. The order in which agents are arranged in the table
+			is important. The top most agents appear on the top during the visualization process.  
+			The buttons to the right from the visualization properties table can be used to 
+			change the order of agents in the table. Select a line in the table and then click
+			'Up' or 'Down' to move the selected agent up or down. 'Advanced' opens a dialog for
+			setting advanced visualization properties of a selected class of agents. These advanced
+			properties are not described in this tutorial.
+		</para>
+		<para>
+			In the 'Spaces' section, it is possible to select which space is visualized in the corresponding
+			view. SPARK models support multiple spaces and each view can visualize only one selected
+			space. The 'Rotate' flag can be used to rotate the visualization by 90 degrees.
+			If the 'Auto size' flag is turned off, then it is possible to specify how many pixels correspond
+			to a unit of the selected space in x and y directions. If 'Auto size' is active, then
+			these numbers are automatically computed such that the space completely fills up
+			the corresponding view.
+		</para>
+		<para>
+			Visualization properties of data layers can be set in the 'Data Layers' section.
+			It is possible to set which data layers should be visualized in the corresponding view.
+			No data layers can be selected ((none) option), one particular data layer can be selected
+			(option with the name of the corresponding data layer), several data layers can be selected
+			((special) option). If the (special) option is selected, then multiple data layers are rendered
+			inside the view window. Colors of all rendered data layers are mixed together. It is possible
+			to control the weight coefficients for mixing data layer colors. Only data layers with
+			positive weight coefficients are rendered in this mode. It is also possible to visualize
+			data layers as height maps. In order to do so, it is required to enter a positive number
+			for the corresponding height weight. This will work only when JOGL visualization is turned on.
+		</para>
+	</sect2>
 
-		<sect2>
-			<title>Dataset window</title>
-			<para>
-				It is possible to save the data collected during the simulation. Just
-				click the Save button in the Dataset window.
+	<!-- Dataset window -->	
+	<sect2>
+		<title>Data Window</title>
+		<para>
+			It is possible to save the data collected during a simulation. Just
+			click the 'Save' button in the Data window.
 				
-				<figure>
-				<title>Dataset window</title>
+			<figure>
+				<title>Data window</title>
 				<mediaobject>
 					<imageobject>
-						<imagedata align="left" format="PNG" width = "2in"
+						<imagedata align="left" format="PNG" width = "3in"
 							fileref="images/WormsDataset.png" />
 					</imageobject>
 				</mediaobject>
-				</figure>
+			</figure>
 				
-				The standard dialog will appear where you can specify the name of a 
-				data file. All data will be saved as a plain text CSV file which can be
-				easily opened in Microsoft Excel. Note that the saved data
-				will also contain the current values of all parameters.			
-			</para>
-		</sect2>
-	</sect1>
+			A standard dialog will appear where you can specify a name of a 
+			data file. All data will be saved as a plain text CSV file which can be
+			easily opened by any text editor or Microsoft Excel. Note that the saved data
+			will also contain the current values of all parameters.			
+		</para>
+		<para>
+			Note: only the variables which appear in the Data window can be used
+			for collecting data during a batch run process. These data variables can
+			be only created inside the model code by adding a special attribute to
+			global variables (see the tutotial on attributes in SPARK-PL). 
+		</para>
+	</sect2>
+
+	<!-- Methods window -->	
+	<sect2>
+		<title>Methods Window</title>
+		<para>
+			<figure>
+				<title>Methods window</title>
+				<mediaobject>
+					<imageobject>
+						<imagedata align="left" format="PNG" width = "3in"
+							fileref="images/WormsMethods.png" />
+					</imageobject>
+				</mediaobject>
+			</figure>
+			Some model functions can be manually called from the user interface.
+			All available functions are listed inside the Methods window.
+			These special external functions are created inside the model code by
+			setting a special attribute for functions (see the tutorial on attributes
+			in SPARK-PL).
+		</para>
+	</sect2>
+
+</sect1>
  
 </article>
