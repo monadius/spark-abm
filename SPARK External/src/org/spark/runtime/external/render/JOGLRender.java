@@ -825,6 +825,9 @@ public class JOGLRender extends Render implements GLEventListener {
 			gl.glColor4d(1, 1, 1, alpha);
 //			gl.glColor3d(1, 1, 1);
 
+		if (scale != 1.0f) {
+			gl.glPushMatrix();
+		}
 		// Scale
 		gl.glScalef(scale, scale, scale);
 		
@@ -839,6 +842,10 @@ public class JOGLRender extends Render implements GLEventListener {
 			gl.glTexCoord2f(xt0, yt1);
 			gl.glVertex2f(x0, y1);
 		gl.glEnd();
+		
+		if (scale != 1.0f) {
+			gl.glPopMatrix();
+		}
 		
 		// Disable special rendering features
 		if (alphaFunc >= 0) {
@@ -970,8 +977,9 @@ public class JOGLRender extends Render implements GLEventListener {
 			
 			// Compute the scale factor
 			float scale = baseScale;
+			float realSize = (float) radii[i];
 			if (modulateSize)
-				scale *= (float) radii[i];
+				scale *= realSize;
 			
 			boolean drawShape = true;
 			
@@ -991,10 +999,10 @@ public class JOGLRender extends Render implements GLEventListener {
 					gl.glColor3d(color.x, color.y, color.z);
 				
 				if (shapeInfo[i] != null) {
-					drawShape(gl, scale, shapeInfo[i], agentStyle.border);
+					drawShape(gl, realSize, shapeInfo[i], agentStyle.border);
 				}
 				else {
-					gl.glScalef(scale, scale, scale);
+					gl.glScalef(realSize, realSize, realSize);
 
 					switch (shapes[i]) {
 					// case SpaceAgent.CIRCLE:
