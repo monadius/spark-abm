@@ -23,11 +23,11 @@
 			All models written in SPARK-PL are translated into Java source code first, and 
 			then a Java compiler is used to produce the machine code which can be executed by the SPARK simulation engine. 
 			SPARK-PL has static type system which helps to eliminate many programmers’ errors concerning an incorrect 
-			use of variables of incompatible type. Type inference mechanism of SPARK-PL makes it possible to implement 
-			models in the way similar to languages with dynamic type system. 
+			use of variables of incompatible types. Type inference mechanism of SPARK-PL makes it easy to implement 
+			models in the way similar to languages with a dynamic type system. 
 			With type inference, it is not required to provide an explicit type for every new variable. 
-			The translator is capable to find the correct type of many variables automatically by looking at the expressions 
-			where a variable is used. 
+			The translator is capable to find the correct type in many cases automatically by looking at the expressions 
+			where variables are used. 
 		</para>
 		<para>
 			Every SPARK model written in
@@ -38,7 +38,7 @@
 				<title>The SPARK-PL Project Manager</title>
 				<mediaobject>
 					<imageobject>
-						<imagedata align="left" width="4in" format="PNG"
+						<imagedata align="left" width="6in" format="PNG"
 							fileref="images/ProjectManager.png" />
 					</imageobject>
 				</mediaobject>
@@ -50,7 +50,8 @@
 			The button 'Translate' is used for translation a SPARK-PL source code into 
 			a Java source code which then can be compiled by clicking the 'Compile' button. 
 			'Run in SPARK button' runs the compiled model in SPARK. 
-			'Start' button is a shortcut for all three main actions: translate, compile, and run in SPARK.
+			'Start' button is a shortcut for all three main actions: translate, compile, and then
+			run in SPARK.
 		</para>
 		<para>
 			Step by step instruction on creating new SPARK-PL projects.
@@ -67,7 +68,7 @@
 			correct it and click 'Translate' again. After elimination of
 			all translation errors and after successful translation,
 			click 'Compile' button. Again, there could be some compilation
-			errors which also can be corrected. After successful compilation
+			errors which also can be corrected. After a successful compilation
 			process, click 'Run in SPARK' button to run a model in SPARK.
 			It is always possible to use only 'Start' button instead of
 			three other buttons. But for the first time, it is better to
@@ -75,8 +76,8 @@
 			to simplify the error correction process.
 		</para>
 		<para>
-			To open the existing project description file, select 'Open project...'
-			item from the 'File' menu. Also, ten most recent projects are
+			To open an existing project description file, select 'Open project...'
+			item from the 'File' menu. Also, 10 most recently open projects are
 			available directly in the 'File' menu. If you later add some
 			new files to an existing project, do not forget to save
 			the description file again using 'Save project...' command.
@@ -140,7 +141,7 @@ model model-name : parent-type
 			a type definition follows. Everything written after a type
 			declaration is considered to be included inside that type.
 			But it is also possible to include several type declarations
-			in one source file. To do so, just simply start a new type
+			in one source file. To do so, just start a new type
 			declaration in any place of a source file. Then everything
 			before that new declaration belongs to the previously declared
 			type, and everything after will belong to a new type.
@@ -160,8 +161,39 @@ class Class3
 
 ; definition of Class3
 </programlisting>
-			</para>
-			<para>
+			Note that each SPARK model must contain one and only one
+			model class.
+		</para>
+		<para>
+			Several types (classes) can be defined in one file, but it is also
+			possible to split a declaration of one class into several files.
+			It can be achieved by adding the 'partial' keyword before declaring
+			the corresponding type:
+<programlisting language="SPARK">
+; Inside file1
+partial class Class1
+
+; definition of Class1
+
+partial class Class2 : Class1
+
+; definition of Class2
+
+; Inside file2
+partial class Class1
+
+; The parent type should be the same for all partial declarations
+partial class Class2 : Class1
+</programlisting>
+			Models, agents, and classes can be declared with the 'partial' keyword.
+			It is always recommended to completely declare one type in one file
+			unless there is a definite benefit of using partial declarations.
+			One possible usage of partial declarations is to split the main
+			model into two files: one file contains all model functions, another file contains
+			all global variables and parameters. In this way it is simpler to add
+			new parameters and to manage global variables.
+		</para>
+		<para>
 				SPARK-PL consists of commands, control structures and declarations. 
 				There are many globally defined commands, for example
 				'ask', 'create', 'random', 'random-vector', etc.
@@ -172,7 +204,7 @@ class Class3
 var x : number
 </programlisting>
 				Here 'var' is a keyword, 'number' is a type. 
-				Type can be omitted. In that case a variable is treated 
+				A type name can be omitted. In that case a variable is treated 
 				as a variable of unknown type. It is possible that the type
 				will be determined automatically later. 
 				For example, if we have a code
@@ -195,8 +227,8 @@ var x = 3
 				variables. These variables are available not only in
 				the type where they are declared but also in other types.
 				And you only need to know their name to access them in any
-				part of a code. Note that the global variables can be
-				declared only inside model types.
+				part of a code. Global variables can be declared inside any class or agent,
+				but it is a good practice to declare global variables only inside model types.
 <programlisting language="SPARK">
 model Model
 
@@ -207,7 +239,7 @@ global x = 30
 			<para>				
 				Methods are declared as follows
 <programlisting language="SPARK">
-to method-name [arg1 : type arg2 : type] : method-type
+to method-name [arg1:type arg2:type] : method-type
 ; Method's body
 end
 </programlisting>
@@ -218,7 +250,7 @@ end
 				In that case a method will have no return type. If a method
 				has a return type then its last command should be
 				'return some-value' where 'some-value' has the same
-				type as a method's type.
+				type as method's type.
 <programlisting language="SPARK">
 to add-numbers [a b] : number
 [
@@ -231,19 +263,21 @@ to add-numbers [a b] : number
 				There is one very important rule associated with SPARK-PL
 				commands and methods. If a command returns some value then 
 				it is required to use parentheses for all its arguments which
-				have complex structure. For commands without return value
+				have complex structure (not a single identifier or a constant). 
+				For commands without return value
 				it is not required. It seems to be confusing and not useful
 				but it helps to reduce the number of parentheses in
-				a program.
+				a program. In any case, it is always better to enter additional
+				parentheses in order to avoid unexpected compile errors.
 <programlisting language="SPARK">
 agent SomeAgent : SpaceAgent
 
 to some-method
 	var v : vector
 	; The next command is translated as
-	; var x = (ranodm 100) + 20
+	; var x = (random 100) + 20
 	; because 'random' returns a value so all its arguments
-	; cannot be complex
+	; must be inside parentheses of have a simple structure
 	var x = random 100 + 20
 	
 	v.x = x
@@ -258,7 +292,7 @@ end
 </programlisting>
 			</para>
 			<para>
-				Every SPARK model should have a main class. This class
+				Every SPARK model should have the main model class. This class
 				is declared using 'model' keyword. The minimal working
 				SPARK model written in SPARK-PL may look as follows
 <programlisting language="SPARK">
@@ -266,7 +300,7 @@ model Model
 
 space StandardSpace -10 10 -10 10 true true
 </programlisting>
-				Right now you may ignore the second line where a space
+				Right now you may ignore the second line where the model space
 				is declared. You will learn about spaces later. Now you
 				only need to know that it is a requirement to declare
 				a space.
@@ -274,12 +308,12 @@ space StandardSpace -10 10 -10 10 true true
 			<para>
 				This minimal model is not useful. To make it more interesting,
 				several methods should be added. The first method to add
-				is a 'setup' method. This method is called every time
+				is the 'setup' method. This method is called every time
 				when a model is initialized. Note that if you have an explicit
 				initialization for a global variable then this initialization
 				will be processed each time the 'setup' method is called. 
 				There are other two special
-				methods: 'begin-step' and 'end-step' inside a main model class.
+				methods: 'begin-step' and 'end-step' inside the main model class.
 				The method 'begin-step' is called before each simulation
 				step, the method 'end-step' is called after each simulation
 				step. The precise declarations of these methods are the following
@@ -338,8 +372,8 @@ if a > 2
 ]
 </programlisting>
 			There is a modification of this command 'ifelse' which
-			has additional code block argument which is executed
-			when the conidtion (the first argument) is false.
+			has an additional code block argument which is executed
+			when the condition (the first argument) is false.
 <programlisting language="SPARK">
 ifelse a > 2
 [
@@ -351,7 +385,7 @@ ifelse a > 2
 </programlisting>
 		</para>
 		<para>
-			The command 'repeat' allows to repeat a block of commands
+			The command 'repeat' repeats a block of commands
 			several times.
 <programlisting language = "SPARK">
 var n = 100
@@ -408,8 +442,7 @@ for i = 1 : 100
 			If a user method in SPARK-PL has return type then the command
 			'return value' can be used to exit from this method at any point.
 			For methods without return type this command is not available
-			because it always requires an argument. But if there is no
-			return type then there could be no return value. In that case,
+			because it always requires an argument. In that case,
 			the command 'exit' can be used. 
 		</para>
 		<para>
@@ -432,17 +465,15 @@ for i = 1 : 100
 			represents a numerical value. It corresponds to a double
 			type in many other programming languages. So it can be used
 			for representing both integers and floating point numbers.
-			And of course, it has all problems associated with numbers
-			in computer science.
 		</para>
 		<para>
-			By default, all numerical variables initialized with 0.
+			By default, all numerical variables are initialized with 0.
 			All usual arithmetical operations are available for numbers:
-			+, -, *, /. Also there is a unary minus for negating a number.
-			The operator '%' means finding a residual of a division.
+			+, - (binary and unary), *, /. 
+			The operator '%' finds a residual of a division.
 			The operator '^' raises its left hand side to the power
 			from the right hand size.
-			There are several operators which combines assignment with
+			There are several operators which combines the assignment with
 			an arithmetic operation: +=, -=, *=, /=. These operators are
 			explained in the following example.
 <programlisting language="SPARK">
@@ -462,22 +493,23 @@ x *= y
 			There are all usual mathematical functions in SPARK-PL like
 			'sin', 'cos', 'exp'. Commands 'floor', 'ceil', and 'round' are
 			used for rounding a number (see SPARK-PL dictionary for
-			full description). The command 'random a' returns a random number
-			in the interval [0,a). The command 'random-in-interval a b' returns a
+			a full description). The command 'random a' returns a random number uniformly
+			distributed in the interval [0,a) (the returned value is always less than a). 
+			The command 'random-in-interval a b' returns a uniformly distributed
 			random number in the interval [a, b).
 		</para>
 		</sect2>
 		<sect2>
 		<title>boolean</title>
 		<para>
-			The next basic type is 'boolean'. This is a logical
-			type. Variables of this type can have two values: true or false.
-			The default value is false. The operators for this boolean
+			The next basic type is 'boolean' (or 'bool'). This is a logical
+			type. Variables of this type have two values: true or false.
+			The default value is false. Operators for boolean
 			values are: 'and', 'or', 'not'. The meaning of these operators
-			is clear. There are several comparison operators for numbers
-			which yields a boolean result: &lt;, &gt;, &lt;=, &gt;=,
+			should be clear. There are several comparison operators for numbers
+			which yield a boolean result: &lt;, &gt;, &lt;=, &gt;=,
 			==, !=. The last two operators mean equality and inequality
-			respectively. Very often logic operators are used in 'if'
+			respectively. Logic operators are often used in 'if'
 			command for combining different conditions.
 <programlisting language="SPARK">
 if (x &gt; 30 and x &lt; 100) or y == 1
@@ -490,15 +522,17 @@ if (x &gt; 30 and x &lt; 100) or y == 1
 		<sect2>
 		<title>string</title>
 		<para>
-			Strings in SPARK-PL are represented by a 'string' type.
+			Strings in SPARK-PL are represented by the 'string' type.
 			Constants of this type should be always
 			written inside double quotes. There is a concatenation operation
-			for strings representing by a '+' operator. In SPARK-PL
-			strings are not used very often. One command which has one
-			string argument is 'print'. This command prints out its argument
+			for strings represented by the '+' operator. Note: operations and functions
+			in SPARK-PL can be overloaded. It means that the same operator or the same
+			function name can correspond to several actual functions. The right function
+			is choosen based on the types of arguments. An example of a command
+			taking a string argument is 'print'. This command prints out its argument
 			in the standard output stream. Also this command can be used
-			with numerical arguments to print out numbers or with
-			other types to print out information about that types.
+			with numerical arguments to print out numbers (or with
+			other types to print out information about that types).
 <programlisting language="SPARK">
 to do-something [x]
 	var str1 = "hello,"
@@ -537,7 +571,7 @@ var v3 = create-vector v1.x (v2.y + 3) v1.y
 </programlisting>
 		</para>
 		<para>
-			The vector type has some methods. The method 'length' returns
+			The vector type has special methods. The method 'length' returns
 			the length of a vector. The method 'normalize' normalizes a
 			vector (makes it of the unit length) and returns the result
 			of the normalization (it modifies the vector which called
@@ -557,39 +591,76 @@ v2.x = v1.length
 		<sect2>
 		<title>Arrays and lists</title>
 		<para>
-			All basic types discussed so far were usual SPARK-PL types.
-			Besides usual types there are some special types. These special
-			types cannot be declared directly but several SPARK-PL
-			commands yield results of these types. The most important
-			special types are arrays and lists. In SPARK-PL it is often
+			All basic types discussed so far were primitive SPARK-PL types.
+			Besides primitive types there are composite types. The most important
+			composite types are arrays and lists. In SPARK-PL it is often
 			not important whether a given object has an array or a list type
-			because there are primary technical differences between them.
-			Roughly speaking, lists are more flexible, meanwhile arrays
+			because there are commands which work with both types in the same way.
+			In general, lists are more flexible, meanwhile arrays
 			are more efficient. These types are used for storing several
-			objects of other type in the same variable. The command
-			'count' returns the number of objects inside a list or an array.
+			objects of another type in the same variable. To declare a variable
+			which has a list type, use the following syntax
+<programlisting language="SPARK">
+class TestClass
+
+; A list of vectors
+var x : List&lt;vector&gt;
+
+; An array of strings
+var strings : Array&lt;string&gt;
+
+; A list of TestClass objects
+var tests : List&lt;TestClass&gt;
+</programlisting>
+			Due to limitations of the current version of SPARK-PL, it is not possible
+			to use 'number' and 'bool' as a subtype of composite types. Also,
+			composite types cannot be used as arguments of other composite types.
+			If you need a list of numbers, then there are two simple solutions.
+			One is to create a list of vectors and then use only one component of
+			each vector. Another solution is to create a custom class 'NumberClass' with
+			one numeric field and use this class as the argument of composite types.
+			The same trick works for creating composite types which include other
+			composite types.
+		</para>
+		<para> 
+			The command	'count' returns the number of objects inside a list or an array.
 			The command 'create' creates an array of objects. This command
 			has two arguments: a type name of objects to be created and a
-			number of these objects. This operation cannot be used for numbers
-			and boolean values.
-			All objects in a created array are initialized by their default
+			number of objects in the new array. This operation cannot be used for numbers
+			and boolean values. All objects in a created array are initialized by their default
 			values. To get a particular element of an array (or a list)
 			use the 'get' command. It has two arguments: an array or a list and
-			the index of an element there (indices start from 0).
+			the index of an element there (indices start from 0). Lists are created with
+			the command 'create-list' which has one argument: a name of the subtype. Elements
+			can be added to a list with 'add' command, removed from a list with 'remove' command.
+			See the dictionary for all available list and array commands.
 <programlisting language="SPARK">
 ; Creates an array with 100 vectors
 var array = create vector 100
 
 ; Get the 4-th element in the array
 var v = get array 3
+
+; Create a list of strings
+var list = create-list string
+
+; Add several strings to the list
+list.add "first"
+list.add "second"
+
+; Remove an element from the list
+list.remove "first"
+
+; Prints "second"
+print (get list 0)
 </programlisting>
 		</para>
 		<para>
 			The most useful command which can be used with arrays
-			and lists is the 'ask' command. This command do several
+			and lists is the 'ask' command. This command does several
 			things. To understand it completely, first look at another
 			application of the 'ask' command. It can be used with
-			any object (only not for a number or a boolean value) as its argument.
+			any object (not with a number or a boolean value) as its argument.
 			When a method is executed there is always one implicit variable
 			named 'self'. This variable refers to an object for which the method
 			is executed. Very often it is used implicitly.
@@ -664,10 +735,9 @@ end
 			There is also the reference 'this' which returns a reference
 			to the object for which the current method is executed.
 			Another reference is 'parent' which returns a reference
-			to a parent type of a type of 'this'. In fact, 'this' and
-			'parent' references are quite rare. The main purpose of
+			to the parent object of 'this'. The main purpose of
 			the 'parent' reference is to call a parent class method that has the same
-			name as a method in a child class from this child class.
+			name as a method in a child class from the child class.
 <programlisting language = "SPARK">
 class Parent
 
@@ -704,6 +774,28 @@ to function
 			; Again we refer to Child.x
 			this.x = [3, 4, 5]
 		]
+	]
+end
+</programlisting>
+		</para>
+		<para>
+			The last note is about visibility of variables inside 'ask' blocks. All local variables
+			are visible inside 'ask' blocks. If there is a field in the object referred by 'self'
+			with the same name as a local variable, then the local variable always shadows the
+			field with the same name. Here is an example:
+<programlisting language = "SPARK">
+to some-method
+	var x = 1
+	var v : vector
+	v.x = 2
+	
+	ask v
+	[
+		; Prints 1  
+		print x
+		
+		; Prints 2
+		print self.x
 	]
 end
 </programlisting>
