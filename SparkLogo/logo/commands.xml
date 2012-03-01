@@ -36,6 +36,12 @@
 
 <spark-commands>
         <!-- Constants -->
+        <reporter name = "null" type = "$NullObject">
+        	<translation>
+        		null
+        	</translation>
+        </reporter>
+		
         <reporter name = "pi" type = "double">
                  <translation>
                          Math.PI
@@ -1801,32 +1807,44 @@
 
         <!-- K -->
         <command name = "kill">
-                <argument name = "agents" type = "ArrayList" subtype = "SpaceAgent"/>
+                <argument name = "agents" type = "ArrayList" subtype = "Agent"/>
                 <translation>
                         <temp name = "i"/>
                         <temp name = "tmp"/>
+                        <temp name = "current"/>
 
-                        ArrayList&lt;? extends SpaceAgent&gt; @tmp = @agents;
+                        ArrayList&lt;? extends Agent&gt; @tmp = @agents;
 
-                        for (int @i = 0; @i &lt; @tmp.size(); @i++)
-                        {
-                                @tmp.get(@i).die();
+						if (@tmp != null)
+						{
+                        	for (int @i = 0; @i &lt; @tmp.size(); @i++)
+                        	{
+                        		Agent @current = @tmp.get(@i);
+                        		if (@current != null)
+                        			@current.die();
+                        	}
                         }
                 </translation>
         </command>
 
 
         <command name = "kill">
-                <argument name = "agents" type = "Array" subtype = "SpaceAgent"/>
+                <argument name = "agents" type = "Array" subtype = "Agent"/>
                 <translation>
                         <temp name = "i"/>
                         <temp name = "tmp"/>
+                        <temp name = "current"/>
 
-                        SpaceAgent[] @tmp = @agents;
+                        Agent[] @tmp = @agents;
 
-                        for (int @i = 0; @i &lt; @tmp.length; @i++)
-                        {
-                                @tmp[@i].die();
+						if (@tmp != null)
+						{
+                        	for (int @i = 0; @i &lt; @tmp.length; @i++)
+                        	{
+                        		Agent @current = @tmp[@i];
+                        		if (@current != null)
+                        			@current.die();
+                        	}
                         }
                 </translation>
         </command>
@@ -1996,12 +2014,7 @@
         </reporter>
         
         
-        <!-- N -->
-        <reporter name = "null" type = "$NullObject">
-        	<translation>
-        		null
-        	</translation>
-        </reporter>
+
         
         
         <!-- P -->
