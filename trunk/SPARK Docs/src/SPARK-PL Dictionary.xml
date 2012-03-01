@@ -16,16 +16,39 @@
 	<sect1>
 		<title>Constants</title>
 		<sect2>
+			<title>
+				null
+			</title>
+			<para>
+<programlisting>
+null : $NullObject
+</programlisting>
+				The null object (reference). Can be used for testing results of some operations.
+			</para>
+			<para>
+				Example
+<programlisting>
+	var a = self as GoodAgent
+	if a != null
+	[
+		do-something
+	]
+</programlisting>
+			</para>
+		</sect2>
+		
+		
+		<sect2>
 			<title>pi</title>
 			<para>
 				Mathematical pi constant, 3.1415926…
-</para>
+			</para>
 		</sect2>
 
 		<sect2>
 			<title>
 				true
-</title>
+			</title>
 			<para>
 				Logical true value. Can be assigned only to a Boolean variable
 			</para>
@@ -34,34 +57,44 @@
 		<sect2>
 			<title>
 				false
-</title>
+			</title>
 			<para>
 				Logical false value.
-</para>
+			</para>
 		</sect2>
 
 		<sect2>
 			<title>
 				circle
-</title>
+			</title>
 			<para>
 				A circle shape.
-</para>
+			</para>
 		</sect2>
 
 		<sect2>
 			<title>
 				square
-</title>
+			</title>
 			<para>
-				A square shape.
-</para>
+				A square shape. Affects only visual appearance of the corresponding space agent.
+			</para>
+		</sect2>
+
+		<sect2>
+			<title>
+				square2
+			</title>
+			<para>
+				A square shape. Affects both visual appearance and the collision detection algorithm 
+				of the corresponding space agent.
+			</para>
 		</sect2>
 
 		<sect2>
 			<title>
 				torus
-</title>
+			</title>
 			<para>
 				A torus shape.
 
@@ -79,86 +112,70 @@
 				can be used without errors also only for SpaceAgent)
 				with two
 				arguments: radius and shape.
-</para>
+			</para>
 		</sect2>
 
 		<sect2>
 			<title>
 				Colors
-</title>
+			</title>
 			<para>
-				black
-				white
-				grey
-				red
-				green
-				blue
-				cyan
-				magenta
-				yellow
+				black,
+				white,
+				grey,
+				red,
+				green,
+				blue,
+				cyan,
+				magenta,
+				yellow,
+				brown,
+				orange,
+				violet,
+				pink.
 				Note: all colors are
 				treated as vectors. So, instead of colors it is
-				possible to use
-				vectors in the RGB format where each component is
-				between 0 and 1
-				(smaller and bigger values are ignored).
-</para>
-		</sect2>
-
-		<sect2>
-			<title>
-				agents-number
-</title>
-			<para>
-				<programlisting>
-agents-number type : number
-type : $type
-</programlisting>
-				Returns the number of all agents of a specific type.
+				possible to use vectors in the RGB format where each component is
+				between 0 and 1 (smaller and bigger values are ignored).
 			</para>
 		</sect2>
+
 
 	</sect1>
 
 	<sect1>
 		<title>
 			Operations
-</title>
+		</title>
 		<para>
 			Note: all operations (with few obvious exceptions) require two
-			arguments.
-			All operations are infix which means that the arguments are
-			written
-			from left and right sides from the operation symbol (e.g. 2 *
-			3).
+			arguments. All operations are infix which means that the arguments are
+			written from left and right sides from the operation symbol (e.g. 2 * 3).
 		</para>
 		<para>
 			Note: infix operations have precedence, that is, the order in
-			which they
-			are applied. The precedence is usual so no problems should
-			occur but
-			in any case it is possible to use parenthesis to change the
+			which they are applied. The precedence is usual so no problems should
+			occur but in any case it is possible to use parentheses to change the
 			precedence.
-</para>
+		</para>
 		<para>
 			Note: ignore type expressions after colons if you are not
-			familiar with
-			them, instead read description.
-</para>
+			familiar with them, instead read descriptions.
+		</para>
 
 		<sect2>
 			<title>
 				^
-</title>
+			</title>
 			<para>
-				<programlisting>
+<programlisting>
 ^ : double->double->double
 </programlisting>
 				Power. Works only for numbers.
 			</para>
 			<para>
 				Example:
-				<programlisting> 
+<programlisting> 
 a^b, 2^3.14, pi^pi
 </programlisting>
 			</para>
@@ -167,17 +184,18 @@ a^b, 2^3.14, pi^pi
 		<sect2>
 			<title>
 				*, /
-</title>
+			</title>
 			<para>
-				<programlisting>
+<programlisting>
 *,/ : double -> double -> double, double -> vector -> vector, vector -> double -> vector
+*,/ : double -> complex, complex -> double, complex -> complex
 </programlisting>
-				Multiplication, division. Works with numbers and with a vector one
-				side and a number on another side.
+				Multiplication, division. Works with real and complex numbers and with a vector on one
+				side and a real number on another side.
 			</para>
 			<para>
 				Example:
-				<programlisting>
+<programlisting>
 var x : double
 var v : vector
 x = x * 3
@@ -189,176 +207,194 @@ x = 2 * 2
 		</sect2>
 
 
-<sect2>
-<title>* (dot)</title>
-<para>
+		<sect2>
+			<title>* (dot)</title>
+			<para>
 <programlisting>
 * : vector -> vector -> number
 </programlisting>
-A dot product of two vectors.
-</para>
-</sect2>
+				A dot product of two vectors.
+			</para>
+		</sect2>
 
 
 		<sect2>
 			<title>
-%
-</title>
-<para>
+				%
+			</title>
+			<para>
 <programlisting>
 % : double -> double -> double
 </programlisting>
-Returns the residual of a division
-</para>
-<para>
-Example:
+				Returns the residual of a division
+			</para>
+			<para>
+				Example:
 <programlisting>
-if tick % 10 == 0 [ print “True if the tick is a multiple of ten” ]
+if tick % 10 == 0 [ print "True if the tick is a multiple of ten" ]
 </programlisting>
-</para>
-</sect2>
+			</para>
+		</sect2>
 
-<sect2>
-<title>
-+, -
-</title>
-<para>
+		<sect2>
+			<title>
+				+, -
+			</title>
+			<para>
 <programlisting>
-+, - : double -> double -> double, vector -> vector -> vector, string->string->string
++, - : double -> double -> double, vector -> vector -> vector
++, - : double -> complex -> complex, complex -> double -> complex, complex -> complex -> complex
 </programlisting>
 Addition, subtraction: work both for numbers and vectors.
-Also + can be used for string concatenation.
-</para>
-</sect2>
-
-<sect2>
-<title>
-&lt;, > , >=, &lt;=
-</title>
-<para>
+			</para>
+		</sect2>
+		
+		<sect2>
+			<title>
+				+ (string concatenation)
+			</title>
+			<para>
 <programlisting>
-&lt;, > , >=, &lt;=: double -> double -> Boolean
++ : string -> string -> string, string -> double -> string, string -> boolean -> string
++ : string -> vector -> string
 </programlisting>
-Comparison operations. Work for numbers only.
-</para>
-</sect2>
+				Concatenates two strings or a string and a primitive value.
+			</para>
+		</sect2>
 
-<sect2>
-<title>
-==, !=
-</title>
-<para>
+		<sect2>
+			<title>
+				&lt;, > , >=, &lt;=
+			</title>
+			<para>
 <programlisting>
-==, != : double -> double -> boolean, vector -> vector -> Boolean
+&lt;, > , >=, &lt;=: double -> double -> boolean
 </programlisting>
-Equality, inequality. Work for any types. The only condition is that the types are compatible (that is, do not compare a vector and a number, etc.)
-Advanced note: actually, it is possible to compare, for instance, a vector and a grid but they are always not equal.
-</para>
-</sect2>
+				Comparison operations. Work for numbers only.
+			</para>
+		</sect2>
 
-<sect2>
-<title>
-- (unary)
-</title>
-<para>
+		<sect2>
+			<title>
+				==, !=
+			</title>
+			<para>
 <programlisting>
-- (unary) : double -> double, vector -> vector
+==, != : double -> double -> boolean, boolean -> boolean -> boolean
+==, != : $NullObject -> $NullObject -> $NullObject
 </programlisting>
-Unary minus. Also works as a negation operation for vectors.
-</para>
-</sect2>
+				Equality, inequality. Work for any types. 
+				The only condition is that the types are compatible 
+				(that is, do not compare a vector and a number, etc.)
+				Advanced note: actually, it is possible to compare, for instance, a vector and a grid 
+				since both of them are objects of the type $NullObject.
+			</para>
+		</sect2>
 
-<sect2>
-<title>
-and, or
-</title>
-<para>
+		<sect2>
+			<title>
+				- (unary)
+			</title>
+			<para>
 <programlisting>
-and, or : boolean ->boolean -> Boolean
+- (unary) : double -> double, complex -> complex, vector -> vector
 </programlisting>
-Logical operators AND and OR. Can be applied only to Boolean arguments.
-</para>
-</sect2>
+				Unary minus. Also works as a negation operation for vectors.
+			</para>
+		</sect2>
 
-<sect2>
-<title>
-not
-</title>
-<para>
+		<sect2>
+			<title>
+				and, or
+			</title>
+			<para>
 <programlisting>
-not : boolean -> Boolean
+and, or : boolean ->boolean -> boolean
 </programlisting>
-Logical negation.
-</para>
-<para>
-Example:
-<programlisting>
-If not true == false [ print “OK” ]
-</programlisting>
-</para>
-</sect2>
+				Logical operators AND and OR. Can be applied only to boolean arguments.
+			</para>
+		</sect2>
 
-<sect2>
-<title>
+		<sect2>
+			<title>
+				not
+			</title>
+			<para>
+<programlisting>
+not : boolean -> boolean
+</programlisting>
+				Logical negation.
+			</para>
+			<para>
+				Example:
+<programlisting>
+If not true == false [ print "OK" ]
+</programlisting>
+			</para>
+		</sect2>
+
+		<sect2>
+			<title>
+				=, +=, *=, -=, /=
+			</title>
+			<para>
+<programlisting>
 =, +=, *=, -=, /=
-</title>
-<para>
-<programlisting>
-=, +=, *=, -=, /=
 </programlisting>
-Usual assignment operations from such programming languages as C++, Java, C#.
-</para>
-<para>
-+=, -= work with both numbers and vectors.
-</para>
-<para>
-*=, /= work with numbers and with a vector on LHS (the left hand side)  and a number on RHS.
-</para>
-<para>
-*= works with a grid on LHS and a number on RHS.
-</para>
-</sect2>
+				Assignment operations from programming languages like C++, Java, C#.
+			</para>
+			<para>
+				+=, -= work with both numbers and vectors.
+			</para>
+			<para>
+				*=, /= work with numbers and with a vector on LHS (the left hand side) 
+				and a number on RHS.
+			</para>
+			<para>
+				*= works with a grid on LHS and a number on RHS.
+			</para>
+		</sect2>
 
-
-<sect2>
-<title>
-is
-</title>
-<para>
+		<sect2>
+			<title>
+				is
+			</title>
+			<para>
 <programlisting>
 variable is type : boolean
 
 variable : $Object
 type : $type
 </programlisting>
-Operation that checks whether an object on LHS is of type on RHS. Returns a Boolean value.
-</para>
-<para>
-Example:
+				Checks whether an object on LHS is of type on RHS. Returns a boolean value.
+			</para>
+			<para>
+				Example:
 <programlisting>
 var v : vector
-if v is vector [ print “A vector is a vector”]
-if v is grid [print “A vector is a grid”]
+if v is vector [ print "A vector is a vector"]
+if v is grid [print "A vector is a grid"]
 </programlisting>
-In this example only the first sentence will be printed out.
-</para>
-</sect2>
+				In this example only the first sentence will be printed out.
+			</para>
+		</sect2>
 
-<sect2>
-<title>
-as
-</title>
-<para>
+		<sect2>
+			<title>
+				as
+			</title>
+			<para>
 <programlisting>
 variable as type : extends $Object
 
 variable : $Object
 type : $type
 </programlisting>
-Converts a given variable to a given type and returns a conversion result. If the conversion is not possible then the special null value is returned.
-</para>
-<para>
-Example:
+				Converts a given variable to a given type and returns a conversion result. 
+				If the conversion is not possible then the special null value is returned.
+			</para>
+			<para>
+				Example:
 <programlisting>
 var agent-list = all-agents-here
 ask agent-list
@@ -368,205 +404,220 @@ ask agent-list
 	; do something with good-agent
 ]
 </programlisting>
-In this example a list of all agents at the position of a calling (current) agent is obtained. By default, the type of each agent in this list is SpaceAgent. Then all agents in the list are processed (by ask command). New variable ‘good-agent’ is created with the value of the currently processed agent converted to GoodAgent type. If the conversion was unsuccessful then continue with the next agent in the list.
-</para>
-</sect2>
-
-
+				In this example a list of all agents at the position of the calling 
+				(current) agent is obtained. By default, the type of each agent in this list is 
+				SpaceAgent. Then all agents in the list are processed (by ask command). 
+				New variable 'good-agent' is created with the value of the currently processed 
+				agent converted to GoodAgent type. If the conversion was unsuccessful then 
+				continue with the next agent in the list.
+			</para>
+		</sect2>
 </sect1>
 
 
 
 <!-- Math commands -->
 <sect1>
-<title>
-Math commands
-</title>
+	<title>
+		Math commands
+	</title>
 
-<sect2>
-<title>
-abs
-</title>
-<para>
+	<sect2>
+		<title>
+			abs
+		</title>
+		<para>
 <programlisting>
 abs value : number
-value : number
+value : number, complex
 </programlisting>
-Returns the absolute value of a given number.
-</para>
-</sect2>
+			Returns the absolute value of a given number.
+		</para>
+	</sect2>
 
-<sect2>
-<title>
-acos
-</title>
-<para>
+	<sect2>
+		<title>
+			acos
+		</title>
+		<para>
 <programlisting>
 acos value : number
 value : number
 </programlisting>
-Returns the arc cosine of an angle.
-</para>
-</sect2>
+			Returns the arccosine of the argument measured in radians.
+		</para>
+	</sect2>
 
-<sect2>
-<title>
-asin
-</title>
-<para>
+	<sect2>
+		<title>
+			asin
+		</title>
+		<para>
 <programlisting>
 asin value : number
 value : number
 </programlisting>
-Returns the arc sine of an angle.
-</para>
-</sect2>
+			Returns the arcsine of the argument measured in radians.
+		</para>
+	</sect2>
 
-<sect2>
-<title>
-atan
-</title>
-<para>
+	<sect2>
+		<title>
+			atan
+		</title>
+		<para>
 <programlisting>
 atan value : number
 value : number
 </programlisting>
-Returns the arc tangent of an angle.
-</para>
-</sect2>
+			Returns the arctangent of the argument measured in radians.
+		</para>
+	</sect2>
 
-<sect2>
-<title>
-atan2
-</title>
-<para>
+	<sect2>
+		<title>
+			atan2
+		</title>
+		<para>
 <programlisting>
 atan2 x y : number
 x : number
 y : number
 </programlisting>
-Converts rectangular coordinates (x,y) to polar (r, theta) and returns theta.
-</para>
-</sect2>
+			Converts rectangular coordinates (x,y) to polar (r, theta) and returns theta.
+		</para>
+	</sect2>
 
-<sect2>
-<title>
-ceil
-</title>
-<para>
+	<sect2>
+		<title>
+			ceil
+		</title>
+		<para>
 <programlisting>
 ceil value : number
 value : number
 </programlisting>
-Returns the smallest value that is not less than the argument and is equal to an integer.
-</para>
-</sect2>
+			Returns the smallest value that is not less than the argument and is equal to an integer.
+		</para>
+	</sect2>
 
-<sect2>
-<title>
-cos
-</title>
-<para>
+	<sect2>
+		<title>
+			cos
+		</title>
+		<para>
 <programlisting>
-cos value : number
-value : number
+cos value : number, complex
+value : number, complex
 </programlisting>
-Returns the cosine of an angle.
-</para>
-</sect2>
+			Returns the cosine of the argument measured in radians.
+		</para>
+	</sect2>
 
-<sect2>
-<title>
-exp
-</title>
-<para>
+	<sect2>
+		<title>
+			exp
+		</title>
+		<para>
 <programlisting>
-exp value : number
-value : number
+exp value : number, complex
+value : number, complex
 </programlisting>
-Returns the exponent of an argument.
-</para>
-</sect2>
+			Returns the exponent of the argument.
+		</para>
+	</sect2>
 
-<sect2>
-<title>
-floor
-</title>
-<para>
+	<sect2>
+		<title>
+			floor
+		</title>
+		<para>
 <programlisting>
 floor number : number
 number : number
 </programlisting>
-Rounds number towards zero.
-</para>
-</sect2>
+			Rounds the number towards zero.
+		</para>
+	</sect2>
 
-<sect2>
-<title>
-log
-</title>
-<para>
+	<sect2>
+		<title>
+			log
+		</title>
+		<para>
 <programlisting>
 log value : number
 value : number
 </programlisting>
-Returns the natural logarithm of an argument.
-</para>
-</sect2>
+			Returns the natural logarithm of the argument.
+		</para>
+	</sect2>
 
-<sect2>
-<title>
-round
-</title>
-<para>
+	<sect2>
+		<title>
+			round
+		</title>
+		<para>
 <programlisting>
 round number : number
 number : number
 </programlisting>
-Rounds a number.
-</para>
-</sect2>
+			Rounds a number.
+		</para>
+	</sect2>
 
-<sect2>
-<title>
-sin
-</title>
-<para>
+	<sect2>
+		<title>
+			sgn
+		</title>
+		<para>
 <programlisting>
-sin value : number
-value : number
+sgn number : number
+number : number
 </programlisting>
-Returns the sine of an angle.
-</para>
-</sect2>
+			Returns the sign of the argument.
+		</para>
+	</sect2>
+
+	<sect2>
+		<title>
+			sin
+		</title>
+		<para>
+<programlisting>
+sin value : number, complex
+value : number, complex
+</programlisting>
+			Returns the sine of the argument measured in radians.
+		</para>
+	</sect2>
 
 
-<sect2>
-<title>
-sqrt
-</title>
-<para>
+	<sect2>
+		<title>
+			sqrt
+		</title>
+		<para>
 <programlisting>
 sqrt number : number
 number : number
 </programlisting>
-Returns the square root of a number.
-</para>
-</sect2>
+			Returns the square root of a number.
+		</para>
+	</sect2>
 
-<sect2>
-<title>
-tan
-</title>
-<para>
+	<sect2>
+		<title>
+			tan
+		</title>
+		<para>
 <programlisting>
-tan number : number
-number : number
+tan number : number, complex
+number : number, complex
 </programlisting>
-Returns the tangent root of a number.
-</para>
-</sect2>
-
+			Returns the tangent root of the argument measured in radians.
+		</para>
+	</sect2>
 
 </sect1>
 
@@ -574,61 +625,76 @@ Returns the tangent root of a number.
 
 <!-- Commands -->
 <sect1>
-<title>
-Commands
-</title>
-<para>
-Note: command descriptions are in the following format:
-Command name followed by arguments separated by whitespaces. If the command has a return value then after a colon the type of the return value is given. On the next lines arguments listed with their types after colons.
-</para>
-<para>
-Note: special types (types which cannot be declared explicitly) are started with $ sign.
-</para>
-<para>
-List of special types:
-<variablelist>
-<varlistentry>
-<term>
-$type
-</term>
-<listitem>
-<para>
-A name of any type (except number/double).
-</para>
-</listitem>
-</varlistentry>
-<varlistentry>
-<term>
-$ArrayList&lt;type> 
-</term>
-<listitem>
-<para>
-list of objects of type ‘type’
-</para>
-</listitem>
-</varlistentry>
-<varlistentry>
-<term>
-$Array&lt;type>
-</term>
-<listitem>
-<para>
-array of objects of type ‘type’, array and list are different types
-</para>
-</listitem>
-</varlistentry>
-</variablelist>
-</para>
+	<title>
+		Commands
+	</title>
+	<para>
+		Note: command descriptions are in the following format:
+		Command name followed by arguments separated by whitespaces. 
+		If a command has a return value then after the colon the type of the return value is 
+		given. On the next lines arguments listed with their types after colons.
+	</para>
+	<para>
+		Note: special types (types which cannot be declared explicitly) 
+		are started with $ symbol.
+	</para>
+	<para>
+		List of special types:
+	<variablelist>
+		<varlistentry>
+			<term>
+				$type
+			</term>
+			<listitem>
+				<para>
+					A name of any type (except number/double).
+				</para>
+			</listitem>
+		</varlistentry>
+		
+		<varlistentry>
+			<term>
+				$integer
+			</term>
+			<listitem>
+				<para>
+					Type of integer numbers.
+				</para>
+			</listitem>
+		</varlistentry>
+		
+		<varlistentry>
+			<term>
+				$NullObject
+			</term>
+			<listitem>
+				<para>
+					Any object type which can assume the null value.
+				</para>
+			</listitem>
+		</varlistentry>
+		
+		<varlistentry>
+			<term>
+				$Object : $NullObject
+			</term>
+			<listitem>
+				<para>
+					Any object type (not 'double' or 'boolean').
+				</para>
+			</listitem>
+		</varlistentry>
+	</variablelist>
+	</para>
 
 
-
-<sect2>
-<title>
-add-netlogo-space
-</title>
-<para>
+	<sect2>
+		<title>
+			add-grid-space
+		</title>
+		<para>
 <programlisting>
-add-netlogo-space name x-min x-max y-min y-max wrap-x wrap-y : Space
+add-grid-space name x-min x-max y-min y-max wrap-x wrap-y : Space
 name : string
 x-min : number
 y-min : number
@@ -637,28 +703,56 @@ y-max : number
 wrap-x : boolean
 wrap-y : boolean
 </programlisting>
-Adds a new NetLogo space into a model. Call it in the model setup
-method. 'name' is a name of a new space. It can be used for getting
-a reference to this space with 'get-space' command.
-</para>
-<para>
-Note: it is required to have one space declared with 'space' keyword.
-That space is considered to be default space and is always used when
-no explicit reference to a space is given. Also, that default space has
-name 'space' so it is prohibited to use name 'space' for additional spaces.
-</para>
-<para>
-Example: see 'add-standard-space'
-</para>
-</sect2>
+			Adds a new Grid space into a model. Call it in the model setup
+			method. 'name' is the name of a new space. It can be used for getting
+			a reference to this space with 'get-space' command.
+		</para>
+		<para>
+			Note: it is required to have one space declared with 'space' keyword.
+			That space is considered to be the default space and is always used when
+			no explicit reference to a space is given. Also, that default space has
+			the name 'space' so it is prohibited to use the name 'space' for additional spaces.
+		</para>
+		<para>
+			Example: see 'add-standard-space'
+		</para>
+	</sect2>
 
+	<sect2>
+		<title>
+			add-physical-space
+		</title>
+		<para>
+<programlisting>
+add-physical-space name x-min x-max y-min y-max wrap-x wrap-y : Space
+name : string
+x-min : number
+y-min : number
+x-max : number
+y-max : number
+wrap-x : boolean
+wrap-y : boolean
+</programlisting>
+			Adds a new Physical space into a model. Call it in the model setup
+			method. 'name' is the name of a new space. It can be used for getting
+			a reference to this space with 'get-space' command.
+		</para>
+		<para>
+			Note: it is required to have one space declared with 'space' keyword.
+			That space is considered to be the default space and is always used when
+			no explicit reference to a space is given. Also, that default space has
+			the name 'space' so it is prohibited to use the name 'space' for additional spaces.
+		</para>
+		<para>
+			Example: see 'add-standard-space'
+		</para>
+	</sect2>
 
-
-<sect2>
-<title>
-add-standard-space
-</title>
-<para>
+	<sect2>
+		<title>
+			add-standard-space
+		</title>
+		<para>
 <programlisting>
 add-standard-space name x-min x-max y-min y-max wrap-x wrap-y : Space
 name : string
@@ -669,21 +763,21 @@ y-max : number
 wrap-x : boolean
 wrap-y : boolean
 </programlisting>
-Adds a new standard space into a model. Call it in the model setup
-method. 'name' is a name of a new space. It can be used for getting
-a reference to this space with 'get-space' command.
-</para>
-<para>
-Note: it is required to have one space declared with 'space' keyword.
-That space is considered to be default space and is always used when
-no explicit reference to a space is given. Also, that default space has
-name 'space' so it is prohibited to use name 'space' for additional spaces.
-</para>
-<para>
-Example:
+			Adds a new standard space into a model. Call it in the model setup
+			method. 'name' is the name of a new space. It can be used for getting
+			a reference to this space with 'get-space' command.
+		</para>
+		<para>
+			Note: it is required to have one space declared with 'space' keyword.
+			That space is considered to be the default space and is always used when
+			no explicit reference to a space is given. Also, that default space has
+			the name 'space' so it is prohibited to use the name 'space' for additional spaces.
+		</para>
+		<para>
+			Example:
 <programlisting>
 ; Default space
-space NetLogoSpace -20 20 -20 20 true true
+space GridSpace -20 20 -20 20 true true
 
 global another-space : Space
 
@@ -706,39 +800,67 @@ to setup
 	]
 end
 </programlisting>
-In this example a new space is created inside setup method.
-In this case grids cannot be created inside that new space.
-See 'create-grid-in-space' command to resolve this issue.
-</para>
-</sect2>
+			In this example a new space is created inside setup method.
+			In this case grids cannot be created inside that new space.
+			See 'create-grid-in-space' command to resolve this issue.
+		</para>
+	</sect2>
 
 
-
-
-
-
-
-<sect2>
-<title>
-agents
-</title>
-<para>
+	<sect2>
+		<title>
+			add-standard3d-space
+		</title>
+		<para>
 <programlisting>
-agents type : $ArrayList&lt;type>
+add-grid-space name x-min x-max y-min y-max z-min z-max wrap-x wrap-y wrap-z : Space
+name : string
+x-min : number
+y-min : number
+z-min : number
+x-max : number
+y-max : number
+z-max : number
+wrap-x : boolean
+wrap-y : boolean
+wrap-z : boolean
+</programlisting>
+			Adds a new Standard3d space into a model. Call it in the model setup
+			method. 'name' is the name of a new space. It can be used for getting
+			a reference to this space with 'get-space' command.
+		</para>
+		<para>
+			Note: it is required to have one space declared with 'space' keyword.
+			That space is considered to be the default space and is always used when
+			no explicit reference to a space is given. Also, that default space has
+			the name 'space' so it is prohibited to use the name 'space' for additional spaces.
+		</para>
+		<para>
+			Example: see 'add-standard-space'
+		</para>
+	</sect2>
+
+	<sect2>
+		<title>
+			agents
+		</title>
+		<para>
+<programlisting>
+agents type : List&lt;type>
 type : $type
 </programlisting>
-Returns a list of all agents of a specific type.
-</para>
-<para>
-Example:
+			Returns a list of all agents of a specific type.
+		</para>
+		<para>
+			Example:
 <programlisting>
 var all-good-agents = agents GoodAgent
 var number-of-macrophages = count agents Macrophage
 </programlisting>
-There is a better way to get the number of specific agents, that is, use agents-number command
-</para>
-<para>
-Note: only the agents which have precisely the requested type are returned.
+			There is a better way to get the number of specific agents, that is, use agents-number command.
+		</para>
+		<para>
+			Note: only the agents which have precisely the requested type are returned.
 <programlisting>
 agent Agent1 : Agent
 
@@ -750,8 +872,8 @@ to get-agents1
 	var agents1 = agents Agent1
 end
 </programlisting>
-</para>
-</sect2>
+		</para>
+	</sect2>
 
 
 <sect2>
@@ -849,6 +971,7 @@ type : $type
 Returns the number of agents of a specific type.
 </para>
 </sect2>
+
 
 
 <sect2>
@@ -1151,7 +1274,7 @@ Example:
 model Model
 
 ; Default space
-space NetLogoSpace -20 20 -20 20 true true
+space GridSpace -20 20 -20 20 true true
 
 ; Additional space
 global space2 = add-standard-space "space2" (-10) 10 (-10) 10 true false
@@ -1429,27 +1552,7 @@ Returns a reference to the calling agent.
 </sect2>
 
 
-<sect2>
-<title>
-null
-</title>
-<para>
-<programlisting>
-null
-</programlisting>
-A null object. Can be used for testing results of some operations.
-</para>
-<para>
-Example
-<programlisting>
-	var a = self as GoodAgent
-	if a != null
-	[
-		do-something
-	]
-</programlisting>
-</para>
-</sect2>
+
 
 
 <sect2>

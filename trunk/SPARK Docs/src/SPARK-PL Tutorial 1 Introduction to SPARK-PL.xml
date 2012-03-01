@@ -622,6 +622,10 @@ var tests : List&lt;TestClass&gt;
 			The same trick works for creating composite types which include other
 			composite types.
 		</para>
+		<para>
+			Another limitation of the current version of SPARK is that it is not possible
+			to use composite types as return types of methods.
+		</para>
 		<para> 
 			The command	'count' returns the number of objects inside a list or an array.
 			The command 'create' creates an array of objects. This command
