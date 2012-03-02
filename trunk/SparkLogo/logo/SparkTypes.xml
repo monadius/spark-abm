@@ -1101,6 +1101,7 @@
        	</type>
 		
 		
+		<!-- SpaceAgent -->
         <type name = "SpaceAgent" parent = "Agent">
                 <javaname>SpaceAgent</javaname>
 

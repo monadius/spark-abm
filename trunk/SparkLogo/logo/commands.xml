@@ -2265,6 +2265,13 @@
         		String.valueOf(@n)
         	</translation>
         </reporter>
+		
+		<reporter name = "to-string" type = "string">
+        	<argument name = "n" type = "boolean"/>
+        	<translation>
+        		Boolean.valueOf(@n)
+        	</translation>
+        </reporter>
 
         <reporter name = "to-string" type = "string">
         	<argument name = "n" type = "$integer"/>
@@ -2284,7 +2291,7 @@
 
 
         <reporter name = "to-string" type = "string">
-        	<argument name = "obj" type = "$object"/>
+        	<argument name = "obj" type = "$Object"/>
         	<translation>
         		@obj.toString()
         	</translation>
