@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<spark version="1">
+<spark version="1.1">
   <files all="true" path="."/>
   <model tick="1">
     <setup>ControlDemo.ControlDemo</setup>
     <variables>
       <variable get="get_numberOfAgents" name="number-of-agents" set="set_numberOfAgents" type="Double"/>
+      <variable get="count$SimpleAgent" name="count$SimpleAgent" set="" type="Double"/>
     </variables>
     <agents>
       <agent name="SimpleAgent">ControlDemo.SimpleAgent</agent>
@@ -14,19 +15,14 @@
     <about path="readme.txt"/>
     <windows>
       <window height="452" name="number-of-agents" visible="true" width="459" x="0" y="0"/>
-      <window height="719" main="true" name="Main Window" visible="true" width="715" x="480" y="64"/>
+      <window height="719" main="true" name="Main Window" visible="true" width="715" x="325" y="27"/>
     </windows>
     <mainframe control-state="2" dx="0.0" dy="0.0" location="Main Window" rot-x="20.0" rot-y="30.0" zoom="1.0">
       <spacestyle auto-size="true" cell-xsize="10" cell-ysize="10" name="space" selected="true" swapXY="false"/>
       <agentstyle alpha-function="4" alpha-function-value="0.0" bitmap-font-size="1.0" border="true" color-blending="false" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0;1.0" label-height="100.0" label-width="100.0" modulate-label-color="false" modulate-label-size="false" modulate-size="true" name="SimpleAgent" position="0" scale="1.0" stencil-function="0" stencil-mask="65535" stencil-ref="0" text-alignment="Left" texture-env="0" transparency-coefficient="0.5" transparent="false" visible="true"/>
     </mainframe>
-    
     <data-layers/>
     <chart interval="0" label="number-of-agents" location="number-of-agents" name="number-of-agents" variable="number-of-agents"/>
-  
-  
-  
-  
-  <control-panel delay="8" freq="4"/>
+    <control-panel delay="8" freq="4"/>
   </interface>
 </spark>

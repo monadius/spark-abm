@@ -31,14 +31,17 @@ global number-of-agents
 
 
 to begin-step
-	var event = next-mouse-event
-	
-	if event == null [ return false ]
-	if event.event-type == "LBUTTON_DOWN"
+	while true
 	[
-		ask create-one SimpleAgent
+		var event = next-mouse-event
+	
+		if event == null [ return false ]
+		if event.event-type == "LBUTTON_DOWN"
 		[
-			move-to event.position
+			ask create-one SimpleAgent
+			[
+				move-to event.position
+			]
 		]
 	]
 	

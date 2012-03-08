@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<spark version="1">
+<spark version="1.1">
   <files all="true" path="."/>
   <model tick="1">
     <setup>ControlDemo3.TestModel</setup>
@@ -9,6 +9,12 @@
       <agent name="TestAgent">ControlDemo3.TestAgent</agent>
       <agent name="MyLink">ControlDemo3.MyLink</agent>
     </agents>
+    <variables>
+      <variable get="count$SimpleAgent" name="count$SimpleAgent" set="" type="Double"/>
+      <variable get="count$Agent1" name="count$Agent1" set="" type="Double"/>
+      <variable get="count$TestAgent" name="count$TestAgent" set="" type="Double"/>
+      <variable get="count$MyLink" name="count$MyLink" set="" type="Double"/>
+    </variables>
   </model>
   <interface>
     <about path="readme.txt"/>
@@ -17,13 +23,12 @@
     </windows>
     <mainframe control-state="2" dx="0.0" dy="0.0" location="Main Window" rot-x="20.0" rot-y="30.0" zoom="1.0">
       <spacestyle auto-size="true" cell-xsize="10" cell-ysize="10" name="space" selected="true" swapXY="false"/>
-      <agentstyle alpha-function-value="0.0" border="true" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0" name="MyLink" position="0" texture-env="0" transparent="false" visible="true"/>
-      <agentstyle alpha-function-value="0.0" border="true" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0" name="Agent1" position="1" texture-env="0" transparent="false" visible="true"/>
-      <agentstyle alpha-function-value="0.0" border="true" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0" name="TestAgent" position="2" texture-env="0" transparent="false" visible="true"/>
-      <agentstyle alpha-function-value="0.0" border="true" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0" name="SimpleAgent" position="3" texture-env="0" transparent="false" visible="true"/>
+      <agentstyle alpha-function="4" alpha-function-value="0.0" bitmap-font-size="1.0" border="true" color-blending="false" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0;0.0" label-height="100.0" label-width="100.0" modulate-label-color="false" modulate-label-size="false" modulate-size="true" name="MyLink" position="0" scale="1.0" stencil-function="0" stencil-mask="65535" stencil-ref="0" text-alignment="Left" texture-env="0" transparency-coefficient="0.5" transparent="false" visible="true"/>
+      <agentstyle alpha-function="4" alpha-function-value="0.0" bitmap-font-size="1.0" border="true" color-blending="false" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0;0.0" label-height="100.0" label-width="100.0" modulate-label-color="false" modulate-label-size="false" modulate-size="true" name="Agent1" position="1" scale="1.0" stencil-function="0" stencil-mask="65535" stencil-ref="0" text-alignment="Left" texture-env="0" transparency-coefficient="0.5" transparent="false" visible="true"/>
+      <agentstyle alpha-function="4" alpha-function-value="0.0" bitmap-font-size="1.0" border="true" color-blending="false" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0;0.0" label-height="100.0" label-width="100.0" modulate-label-color="false" modulate-label-size="false" modulate-size="true" name="TestAgent" position="2" scale="1.0" stencil-function="0" stencil-mask="65535" stencil-ref="0" text-alignment="Left" texture-env="0" transparency-coefficient="0.5" transparent="false" visible="true"/>
+      <agentstyle alpha-function="4" alpha-function-value="0.0" bitmap-font-size="1.0" border="true" color-blending="false" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0;0.0" label-height="100.0" label-width="100.0" modulate-label-color="false" modulate-label-size="false" modulate-size="true" name="SimpleAgent" position="3" scale="1.0" stencil-function="0" stencil-mask="65535" stencil-ref="0" text-alignment="Left" texture-env="0" transparency-coefficient="0.5" transparent="false" visible="true"/>
     </mainframe>
-    
     <data-layers/>
-  <control-panel delay="8" freq="4"/>
+    <control-panel delay="8" freq="4"/>
   </interface>
 </spark>

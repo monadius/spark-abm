@@ -105,9 +105,13 @@ end
 
 
 to begin-step
+	; Process all control events
+
+	while true
+	[
         var event = next-mouse-event
 
-        if event == null [ return false ]
+        if event == null [ break ]
         if event.event-type == "LBUTTON_DOWN"
         [
                 ask create-one SimpleAgent
@@ -116,7 +120,7 @@ to begin-step
                 ]
         ]
 
-   
+	]
 end
 
 
