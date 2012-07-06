@@ -2181,7 +2181,8 @@
 		<command name = "set-seed">
 			<argument name = "seed" type = "double"/>
 			<translation>
-				Random.setSeed((long)(@seed))
+				RandomHelper.setSeed((int)(@seed));
+				RandomHelper.reset(false)
 			</translation>
 		</command>
 
