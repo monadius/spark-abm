@@ -2617,7 +2617,6 @@ list.add "first"
 		</para>
 	</sect2>
 	
-	
 	<sect2>
 		<title>
 			add-all
@@ -2644,6 +2643,45 @@ list.add-all list2
 		</para>
 	</sect2>
 
+	<sect2>
+		<title>
+			add-all-at
+		</title>
+	
+		<para>
+<programlisting>
+add-all-at index list
+index : number
+list : List&lt;type&gt; (the type should be compatible with the list subtype)
+</programlisting>
+			Adds all objects from the argument to the list object starting at the specified
+			position.
+		</para>
+	</sect2>
+
+
+	<sect2>
+		<title>
+			add-at
+		</title>
+	
+		<para>
+<programlisting>
+add-at index object
+index : number
+object : $Object (the type should be compatible with the list subtype)
+</programlisting>
+			Inserts an object to the list at the specific location. 
+		</para>
+		<para>
+			Example
+<programlisting>
+var list = create-list string
+list.add "second"
+list.add-at 0 "first"
+</programlisting>
+		</para>
+	</sect2>
 
 	<sect2>
 		<title>
