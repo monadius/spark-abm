@@ -1,5 +1,7 @@
 package parser.tree;
 
+import java.util.regex.Matcher;
+
 import parser.Symbol;
 import parser.sym;
 import main.Constant;
@@ -34,7 +36,10 @@ public class ConstantNode extends TreeNode {
 		}
 		else if (s.id == sym.STRING) {
 			type = SparkModel.getInstance().getType(new Id("string"));
-			s.value = "\"" + s.value + "\"";
+			String str = (String) s.value;
+			String replacement = Matcher.quoteReplacement("\\\"");
+			str = str.replaceAll("\"", replacement);
+			s.value = "\"" + str + "\"";
 		}
 		
 		if (type == null)
