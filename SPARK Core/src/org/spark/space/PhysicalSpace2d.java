@@ -497,7 +497,7 @@ public class PhysicalSpace2d extends StandardSpace {
 			node.rotation = angle;
 
 			if (!node.position.equals(node.newPosition)) {
-				// If the position of the node was corrected
+				// If the position of the node was corrected (due to the topology)
 				node.newPosition.set(node.position);
 				
 				Vec2 pos = new Vec2((float)node.position.x, (float)node.position.y);
