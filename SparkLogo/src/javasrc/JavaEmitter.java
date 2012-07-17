@@ -3,6 +3,7 @@ package javasrc;
 import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Stack;
+import java.util.regex.Matcher;
 
 import main.Id;
 import main.SparkModel;
@@ -199,7 +200,7 @@ public class JavaEmitter {
 	
 	
 	/**
-	 * Clears substituion buffers
+	 * Clears substitution buffers
 	 */
 	public void clearBuffers() {
 		activeFrame.buffers.clear();
@@ -365,12 +366,14 @@ public class JavaEmitter {
 			Stack<LineBuffer> stack = globalBuffers.get(key);
 			if (stack.size() > 0) {
 				LineBuffer buffer = stack.peek();
-				str = str.replaceAll(key, buffer.toString());
+				String repl = Matcher.quoteReplacement(buffer.toString());
+				str = str.replaceAll(key, repl);
 			}
 		}
 		
 		for (String key : activeFrame.buffers.keySet()) {
-			str = str.replaceAll(key, activeFrame.buffers.get(key).toString());
+			String repl = Matcher.quoteReplacement(activeFrame.buffers.get(key).toString());
+			str = str.replaceAll(key, repl);
 		}
 		
 		return str;

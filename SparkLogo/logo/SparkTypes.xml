@@ -211,11 +211,27 @@
                 	<argument name = "object" type = "$Object"/>
                 </method>
                 
+                <method name = "add-at">
+                	<argument name = "i" type = "number"/>
+                	<argument name = "obj" type = "$Object"/>
+                	<translation>
+                		@@object.add((int)@i, @obj)
+                	</translation>
+                </method>
+                
                 
                 <method name = "add-all">
                 	<argument name = "list" type = "ArrayList"/>
                 	<translation>
                 		@@object.addAll(@list)
+                	</translation>
+                </method>
+
+                <method name = "add-all-at">
+                	<argument name = "i" type = "number"/>
+                	<argument name = "list" type = "ArrayList"/>
+                	<translation>
+                		@@object.addAll((int)@i, @list)
                 	</translation>
                 </method>
                 
@@ -889,6 +905,8 @@
                         </return>
                 </translation>
         	</method>
+        	
+        	<method name = "process-nodes"/>
 		</type>
 
 
