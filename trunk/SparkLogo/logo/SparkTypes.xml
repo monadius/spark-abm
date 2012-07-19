@@ -1202,6 +1202,13 @@
                 	<set>((PhysicalNode)@@object.getNode()).changeShape(@@value)</set>
                 </field>
                 
+                <field name = "density" type = "double">
+                	<set>((PhysicalNode)@@object.getNode()).setDensity((float)@@value)</set>
+                </field>
+                
+                <field name = "bullet-flag" type = "boolean">
+                	<set>((PhysicalNode)@@object.getNode()).setBullet(@@value)</set>
+                </field>
                 
                 <method name = "update-proxy">
                 	<translation>
