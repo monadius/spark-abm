@@ -20,6 +20,8 @@ public class PhysicalNode extends CircleNode {
 	
 	// Shape information
 	protected ShapeInfo shape;
+	// Density of the node (body)
+	protected float density;
 	
 	// Static or dynamic
 	protected boolean dynamicFlag;
@@ -63,6 +65,7 @@ public class PhysicalNode extends CircleNode {
 	protected PhysicalNode(Space space, double radius, int type) {
 		super(space, radius);
 		this.body = null;
+		this.density = 1.0f;
 		this.dynamicFlag = (type == SpaceAgent.DYNAMIC_CIRCLE) ? true : false;
 	}
 	
@@ -112,7 +115,7 @@ public class PhysicalNode extends CircleNode {
 		case ShapeInfo.CIRCLE:
 			CircleDef cd = new CircleDef();
 			cd.radius = newShape.hx;
-			cd.density = 1.0f;
+			cd.density = density;
 			sd = cd;
 			break;
 			
@@ -120,7 +123,7 @@ public class PhysicalNode extends CircleNode {
 		case ShapeInfo.RECTANGLE:
 			PolygonDef pd = new PolygonDef();
 			pd.setAsBox(newShape.hx, newShape.hy);
-			pd.density = 1.0f;
+			pd.density = density;
 			sd = pd;
 			break;
 		}
@@ -153,6 +156,31 @@ public class PhysicalNode extends CircleNode {
 		
 		super.setRadius(r);
 		changeShape(ShapeInfo.createCircle(getRelativeSize()));		
+	}
+	
+	
+	/**
+	 * Sets the node density
+	 * @param density
+	 */
+	public void setDensity(float density) {
+		this.density = density;
+		if (shape == null)
+			return;
+		
+		changeShape(shape);
+	}
+	
+	
+	/**
+	 * Sets the continuous collision detection flag for the body
+	 * @param bulletFlag
+	 */
+	public void setBullet(boolean bulletFlag) {
+		if (body == null)
+			return;
+		
+		body.setBullet(bulletFlag);
 	}
 	
 	
