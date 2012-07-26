@@ -31,8 +31,11 @@ public class PrismaticJointLink extends SpaceLink {
 	
 	@Override
 	public void die() {
-		if (joint != null)
+		if (joint != null) {
 			space.destroyJoint(joint);
+		}
+		
+		super.die();
 	}
 	
 	
