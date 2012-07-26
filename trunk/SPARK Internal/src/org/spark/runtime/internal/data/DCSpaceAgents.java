@@ -119,6 +119,9 @@ public class DCSpaceAgents extends DataCollector {
 
 			SpaceAgent end1Agent = link.getEnd1();
 			
+			if (end1Agent == null)
+				continue;
+			
 			Vector end1 = link.getPoint1(); 
 			Vector end2 = link.getPoint2();
 			
