@@ -34,6 +34,8 @@ public class RevoluteJointLink extends SpaceLink {
 			space.destroyJoint(joint);
 			joint = null;
 		}
+		
+		super.die();
 	}
 	
 	
