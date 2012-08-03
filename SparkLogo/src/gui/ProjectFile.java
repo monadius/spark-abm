@@ -181,9 +181,9 @@ public class ProjectFile {
 		}
 		
 		// Print out project directory
-		if (projectDirectory != null) {
-			printTag(out, "project-directory", projectDirectory.getAbsolutePath(), 1);
-		}
+//		if (projectDirectory != null) {
+//			printTag(out, "project-directory", projectDirectory.getAbsolutePath(), 1);
+//		}
 		
 		// Print out output directory
 		if (outputDirectory != null) {
@@ -194,7 +194,12 @@ public class ProjectFile {
 		out.println("\t<files>");
 		
 		for (int i = 0; i < files.size(); i++) {
-			printTag(out, "file", files.get(i).getPath(), 2);
+			String path = files.get(i).getPath();
+			if (path != null) {
+				// Use '/' as the separator even on windows machines
+				path = path.replace('\\', '/');
+				printTag(out, "file", path, 2);
+			}
 		}
 
 		out.println("\t</files>");
