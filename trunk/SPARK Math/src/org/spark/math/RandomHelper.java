@@ -27,19 +27,31 @@ public class RandomHelper {
 	// If true then the operations are synchronized
 	private static boolean synchronizedFlag = false;
 	
-	// The random number generator
-	private static RandomEngine generator;
+	// The random number generators
+	private static RandomEngine generator1;
+	private static RandomEngine generator2;
 	
-	// The generator for normally distributed numbers
-	private static Normal normalGenerator;
+	private static RandomEngine generator0;
+	
+	
+	// The generators for normally distributed numbers
+	private static Normal normalGenerator1;
+	private static Normal normalGenerator2;
+	
+	private static Normal normalGenerator0;
 	
 	
     static
     {
     	logger.debug("Initializing RandomHelper class");
     	rngSeed = System.currentTimeMillis();
-        generator = new MersenneTwister((int) rngSeed);
-        normalGenerator = new Normal(0.0, 1.0, generator);
+        generator1 = new MersenneTwister((int) rngSeed);
+        generator2 = new MersenneTwister((int) rngSeed);
+        normalGenerator1 = new Normal(0.0, 1.0, generator1);
+        normalGenerator2 = new Normal(0.0, 1.0, generator2);
+        
+        generator0 = generator1;
+        normalGenerator0 = normalGenerator1;
     }
     
     
@@ -71,19 +83,42 @@ public class RandomHelper {
     
     
     /**
-     * Resets the random generator
+     * Resets the random generators
      */
     public static void reset(boolean synchronizedFlag) {
     	if (timeSeed) {
     		rngSeed = System.currentTimeMillis();
     	}
 
-    	System.err.println("Generator is resetted: " + (int)rngSeed);
+    	logger.debug("Generators are resetted: " + (int)rngSeed);
     	
     	RandomHelper.synchronizedFlag = synchronizedFlag;
-   		generator = new MersenneTwister((int) rngSeed);
+   		generator1 = new MersenneTwister((int) rngSeed);
+   		generator2 = new MersenneTwister((int) rngSeed);
+        normalGenerator1 = new Normal(0.0, 1.0, generator1);
+        normalGenerator2 = new Normal(0.0, 1.0, generator2);
+   		
+   		generator0 = generator1;
+        normalGenerator0 = normalGenerator1;
     }
     
+    
+    /**
+     * Activates the first generator 
+     */
+    public static void usePrimaryGenerator() {
+    	generator0 = generator1;
+    	normalGenerator0 = normalGenerator1;
+    }
+
+    /**
+     * Activates the second generator 
+     */
+    public static void useSecondaryGenerator() {
+    	generator0 = generator2;
+    	normalGenerator0 = normalGenerator2;
+    }
+
     
     /**
      * Returns the seed of the current random generator
@@ -102,11 +137,11 @@ public class RandomHelper {
 	public static double nextDoubleFromTo(double a, double b) {
 		if (synchronizedFlag) {
 			synchronized (RandomHelper.class) {
-				return generator.nextDouble() * (b - a) + a;
+				return generator0.nextDouble() * (b - a) + a;
 			}
 		}
 		
-		return generator.nextDouble() * (b - a) + a;
+		return generator0.nextDouble() * (b - a) + a;
 	}
 	
 	
@@ -118,11 +153,11 @@ public class RandomHelper {
 	public static double random(double number) {
 		if (synchronizedFlag) {
 			synchronized (RandomHelper.class) {
-				return generator.nextDouble() * number;
+				return generator0.nextDouble() * number;
 			}
 		}
 		
-		return generator.nextDouble() * number;
+		return generator0.nextDouble() * number;
 	}
 	
 	
@@ -133,11 +168,11 @@ public class RandomHelper {
 	public static double random() {
 		if (synchronizedFlag) {
 			synchronized (RandomHelper.class) {
-				return generator.nextDouble();
+				return generator0.nextDouble();
 			}
 		}
 		
-		return generator.nextDouble();
+		return generator0.nextDouble();
 	}
 	
 	
@@ -150,11 +185,11 @@ public class RandomHelper {
 	public static double random(double a, double b) {
 		if (synchronizedFlag) {
 			synchronized (RandomHelper.class) {
-				return generator.nextDouble() * (b - a) + a;
+				return generator0.nextDouble() * (b - a) + a;
 			}
 		}
 
-		return generator.nextDouble() * (b - a) + a;
+		return generator0.nextDouble() * (b - a) + a;
 	}
 
 	
@@ -165,11 +200,11 @@ public class RandomHelper {
 	public static double normal() {
 		if (synchronizedFlag) {
 			synchronized (RandomHelper.class) {
-				return normalGenerator.nextDouble();
+				return normalGenerator0.nextDouble();
 			}
 		}
 		
-		return normalGenerator.nextDouble();
+		return normalGenerator0.nextDouble();
 	}
 	
 	
@@ -180,11 +215,11 @@ public class RandomHelper {
 	public static double normal(double mean, double std) {
 		if (synchronizedFlag) {
 			synchronized (RandomHelper.class) {
-				return normalGenerator.nextDouble(mean, std);
+				return normalGenerator0.nextDouble(mean, std);
 			}
 		}
 
-		return normalGenerator.nextDouble(mean, std);
+		return normalGenerator0.nextDouble(mean, std);
 	}
 }
 
