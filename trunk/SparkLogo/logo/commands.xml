@@ -2309,6 +2309,21 @@
                         (new Vector(@v).truncate(@min, @max))
                 </translation>
         </reporter>
+        
+        
+        <!-- U -->
+        <command name = "use-primary-random-generator">
+        	<translation>
+        		RandomHelper.usePrimaryGenerator()
+        	</translation>
+        </command>
+        
+        <command name = "use-secondary-random-generator">
+        	<translation>
+        		RandomHelper.useSecondaryGenerator()
+        	</translation>
+        </command>
+        
 
         <!-- V -->
         <reporter name = "vector-in-direction" type = "vector">
