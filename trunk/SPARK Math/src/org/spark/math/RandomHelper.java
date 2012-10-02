@@ -78,6 +78,8 @@ public class RandomHelper {
     		rngSeed = System.currentTimeMillis();
     	}
 
+    	System.err.println("Generator is resetted: " + (int)rngSeed);
+    	
     	RandomHelper.synchronizedFlag = synchronizedFlag;
    		generator = new MersenneTwister((int) rngSeed);
     }
