@@ -85,7 +85,7 @@ public class ModelPropertiesDialog extends JDialog implements ActionListener {
 		checkTimeSeed.addActionListener(this);
 		
 		spinnerSeed = new JSpinner(
-				new SpinnerNumberModel(0, -20000000000l, 20000000000l, 1));
+				new SpinnerNumberModel(0, Long.MIN_VALUE, Long.MAX_VALUE, 1)); 
 		
 		panel.add(checkTimeSeed);
 		panel.add(spinnerSeed);
@@ -159,7 +159,7 @@ public class ModelPropertiesDialog extends JDialog implements ActionListener {
 	private void updateModelProperties() {
 		// Update random seed
 		boolean timeSeed = checkTimeSeed.isSelected();
-		int seed = ((Number) spinnerSeed.getValue()).intValue();
+		long seed = ((Number) spinnerSeed.getValue()).longValue();
 
 		Coordinator.getInstance().setRandomSeed(seed, timeSeed);
 		
