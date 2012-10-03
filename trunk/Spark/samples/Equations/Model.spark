@@ -1,39 +1,80 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;
+; Declare a simple agent
+;;;;;;;;;;;;;;;;;;;;;;;;;
 agent SimpleAgent : SpaceAgent
 
+; Constructor
 to create
+	; radius = 0.4
+	; shape = circle
 	super 0.4 circle
 	color = red
 end
 
 
+; The step function which is called each simulation tick
 to step
+	; Get coordinates of the current position of the agent
 	var x = position.x
 	var y = position.y
 	
+	; Update the coordinates using a simple ODE
 	equations
 	[
 		Dt x = y
 		Dt y = -k * sin x
 	]
 	
-	move-to create-vector x y 0
+	; Move the agent to a new position
+	move-to (create-vector x y 0)
+	
+	; Leave a trail by modifying the value of the data layer
+	; at the new position of the agent
+	data.value += 1
 end
 
-
-
+;;;;;;;;;;;;;
+; The model
+;;;;;;;;;;;;;
 model Model
 
+; Declare the main model space
 space StandardSpace -10 10 -10 10 true true
 
+; A global parameter which controls the update step
+; of the differential equations
 @parameter(default = 0.1, min = 0.01, max = 1, step = 0.01)
 global dt : number
 
-@parameter(default = 1, min = 0, max = 100)
+@parameter(default = 2, min = 0, max = 100)
 global k : number
 
+@parameter(name = "Initial number of agents", min = 0, max = 100, step = 1, default = 10)
+global n : number
+
+; A data layer for showing trails of agents
+global data = create-grid "data" 200 200
+
+; Initializes the model
 to setup
+	; Create one agent at a fixed position
 	ask create-one SimpleAgent
 	[
 		move-to [0, 6, 0]
 	]
+	
+	; Create more agents at random positions
+	ask create SimpleAgent n
+	[
+		move-to (random-vector -7 7)
+		; Select a random color
+		color = random-vector3 0.3 0.9
+	]
+end
+
+
+; This function is called at the end of every simulation tick
+to end-step
+	; Multiply all values of the data layer by some number which is less than 1
+	data *= 0.95
 end
