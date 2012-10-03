@@ -1,0 +1,31 @@
+SPARK 1.2.003
+
+-------------------------
+SPARK-PL
+-------------------------
+[new]
+use-primary-random-generator, use-secondary-random-generator
+
+[bug fix]
+'set-seed' works correctly with Long numbers
+
+[misc]
+DTD for SparkTypes.xml
+
+[BUG fix]
+Global variables are reseted before each simulation.
+Global variables which have @parameter attribute are not reseted.
+Shared variables of agents are not reseted (this issue will be addressed later).
+	
+
+-------------------------
+Math
+-------------------------
+[misc]
+Two random generators
+
+-------------------------
+External
+-------------------------
+[bug fix]
+A random seed can be set in the Model Properties dialog using Long numbers
