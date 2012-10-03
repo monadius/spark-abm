@@ -10,6 +10,8 @@ import main.type.Method;
 import main.type.Type;
 import main.type.UnresolvedType;
 
+import static org.spark.utils.XmlDocUtils.*;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -140,16 +142,16 @@ public class TypeLoader {
 	 * @param type
 	 */
 	private static void loadDeclarationConversion(Node node, Type type) throws Exception {
-		NodeList list = node.getChildNodes();
+		Node decl = getChildByTagName(node, "declaration");
+		if (decl == null)
+			return;
 		
-		// TODO: translations
-		for (int i = 0; i < list.getLength(); i++) {
-			Node node2 = list.item(i);
-			if (node2.getNodeName().equals("declaration")) {
-				String declaration = node2.getTextContent().trim();
-				type.setDeclarationTranslation(declaration);
-			}
-		}
+		Node lhsNode = getChildByTagName(decl, "lhs");
+		Node rhsNode = getChildByTagName(decl, "rhs");
+		
+		String lhs = (lhsNode != null ? lhsNode.getTextContent().trim() : null);
+		String rhs = (rhsNode != null ? rhsNode.getTextContent().trim() : null);
+		type.setDeclarationTranslation(lhs, rhs);
 	}
 
 	

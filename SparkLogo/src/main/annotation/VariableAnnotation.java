@@ -6,7 +6,7 @@ import main.Variable;
  * Annotation for (global) variables
  * @author Monad
  */
-public abstract class VariableAnnotation extends InterfaceAnnotation{
+public abstract class VariableAnnotation extends InterfaceAnnotation {
 	/* Associated variable */
 	protected Variable variable;
 	

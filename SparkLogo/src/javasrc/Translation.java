@@ -76,19 +76,19 @@ public class Translation {
 				continue;
 			}
 			
-			// Get prelude text
+			// Get a prelude text
 			if (node2.getNodeName().equals("prelude")) {
 				preludeString = node2.getTextContent().trim();
 				continue;
 			}
 
-			// Get prelude text
+			// Get a return text
 			if (node2.getNodeName().equals("return")) {
 				returnString = node2.getTextContent().trim();
 				continue;
 			}
 
-			// Get translation text
+			// Get a translation text
 			if (node2.getNodeName().equals("#text")) {
 				translationString = node2.getNodeValue().trim();
 				continue;
