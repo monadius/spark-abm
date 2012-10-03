@@ -98,6 +98,19 @@ public class ModelType extends Type {
 	}
 
 	/**
+	 * Creates the method for resetting static variables
+	 */
+	protected void createResetStaticVarsMethod() throws Exception {
+		Id id = new Id("$reset-static");
+		id.setJavaName("_resetStaticVariables");
+
+		Method reset = new Method(id);
+		addMethod(reset);
+		
+		// The method body is created in Method.translateToJave()
+	}
+	
+	/**
 	 * This method also creates default initialization for grids (globally defined)
 	 */
 	@Override
@@ -158,6 +171,9 @@ public class ModelType extends Type {
 	public void parseMethods() throws Exception {
 		if (spaceDeclarationSource == null)
 			throw new Exception("Space is not declared");
+
+		// void _resetStaticVariables() method
+		createResetStaticVarsMethod();
 		
 		// void setup() method
 		Method setup = getMethod(new Id("setup"), false);
@@ -170,8 +186,10 @@ public class ModelType extends Type {
 		for (int i = 0; i < spaceDeclarationSource.size(); i++) {
 			setup.sourceCode.insert(spaceDeclarationSource.get(i), i);
 		}
-
 		
+		// Reset static variables first
+		setup.sourceCode.insert(new Symbol("$reset-static", sym.IDENTIFIER, "$reset-static", -1, -1), 0);
+
 		// boolean end(long tick) method
 		createEndMethod();
 		

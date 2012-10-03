@@ -8,6 +8,7 @@ import main.Id;
 import main.Variable;
 import main.annotation.InterfaceAnnotation;
 import main.annotation.MethodAnnotation;
+import main.annotation.VariableAnnotation;
 
 import javasrc.JavaEmitter;
 import javasrc.Translation;
@@ -254,21 +255,45 @@ public class Method {
 			java.println("_create" + thisName + "();");
 		}
 		else if (parentType instanceof ModelType && id.name.equals("setup")) {
-			// FIXME: it is assumed that the first command is space creation
+			// FIXME: it is assumed that the first two commands are reset-static and
+			// space creation
 			AdhocImplementation.flag = true;
 			ArrayList<CommandNode> commands = methodCode.getCodeBlock().getCommands();
 
-			commands.add(1, 
+			commands.add(2, 
 					new CommandNode(null, parentType.getCommand("_init"))
 			);
 		}
+		else if (parentType instanceof ModelType && id.name.equals("$reset-static")) {
+			// FIXME: a better solution is required
+			AdhocImplementation.flag = true;
+			ArrayList<Variable> vars = parentType.getAllFields();
+			nextVar:
+			for (Variable var : vars) {
+				if (!var.global)
+					continue;
+				
+				// We must ignore global variables which are declared as parameters
+				for (VariableAnnotation ann : var.annotations) {
+					if (ann.getType() == InterfaceAnnotation.PARAMETER_ANNOTATION)
+						continue nextVar;
+				}
+				
+				String varName = var.getTranslationString(0);
+				String defaultValue = var.type.getDeclarationRHS();
+				
+				if (defaultValue == null)
+					continue;
+				
+				java.println(varName + " = " + defaultValue + ";");
+			}
+		}
+		
 		methodCode.translate(java, 0);
 		java.endMethod();
 	}
 	
 	
-	
-
 	/**
 	 * Parses the method's source code
 	 * @throws Exception

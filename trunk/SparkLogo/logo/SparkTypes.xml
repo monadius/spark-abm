@@ -1,24 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE spark-types [
+<!ELEMENT types (type*)>
+
+<!ELEMENT type (javaname?, declaration?, 
+				declaration_init?,
+				(get?, set?)*, get-convert?, set-convert?, 
+				(field | method)*)>
+<!ATTLIST type
+	name		CDATA	#REQUIRED
+	alias		CDATA	#IMPLIED
+	parent		CDATA	#IMPLIED
+	composite	(false | true)	#IMPLIED
+	interface	(false | true)	#IMPLIED
+>
+
+<!ELEMENT javaname (#PCDATA)>
+<!ELEMENT declaration (lhs, rhs)>
+
+<!ELEMENT method (argument*, (translation | translation2)?)>
+<!ATTLIST method
+	name		CDATA	#REQUIRED
+	type		CDATA	#IMPLIED
+	subtype		CDATA	#IMPLIED
+	abstract	(false | true) #IMPLIED
+>
+
+<!ELEMENT argument EMPTY>
+<!ATTLIST argument
+	name		CDATA	#REQUIRED
+	type		CDATA	#REQUIRED
+>
+
+<!ELEMENT translation (#PCDATA)>
+<!ELEMENT translation2 (temp*, prelude?, return?)>
+]>
+
 <types>
 		<!-- double (number) -->
         <type name = "double" alias = "number"> 
                 <javaname>double</javaname>
 
                 <declaration>
-                        double @@id = 0;
+                	<lhs>double @@id</lhs>
+                	<rhs>0</rhs>
                 </declaration>
 
                 <declaration_init>
                         double @@id = @@value
                 </declaration_init>
 
-                <set>
-                        @@id = @@value
-                </set>
-
                 <get>
                         @@id
                 </get>
+
+                <set>
+                        @@id = @@value
+                </set>
         </type>
 
 
@@ -27,22 +65,21 @@
                 <javaname>int</javaname>
 
                 <declaration>
-                        int @@id = 0;
+                	<lhs>int @@id</lhs>
+                	<rhs>0</rhs>
                 </declaration>
 
                 <declaration_init>
                         int @@id = @@value
                 </declaration_init>
 
-                <set>
-                        @@id = @@value
-                </set>
-
                 <get>
                         @@id
                 </get>
                 
-                
+                <set>
+                        @@id = @@value
+                </set>
                 <get-convert to = "double">
                 	<translation>
                 		(double)(@@this)
@@ -63,17 +100,17 @@
         	<javaname>String</javaname>
 
 			<declaration>
-				String @@id = "";
+				<lhs>String @@id</lhs>
+				<rhs>""</rhs>
 			</declaration>
-			
-			<set>
-				@@id = @@value
-			</set>
 			
 			<get>
 				@@id
 			</get>        	
-			
+
+			<set>
+				@@id = @@value
+			</set>
 			
 			<method name = "split" type = "ArrayList" subtype = "ArgumentType:regex">
 				<argument name = "regex" type = "string"/>
@@ -142,21 +179,21 @@
                 <javaname>long</javaname>
 
                 <declaration>
-                        long @@id = 0;
+                	<lhs>long @@id</lhs>
+                	<rhs>0</rhs>
                 </declaration>
 
                 <declaration_init>
                         long @@id = @@value
                 </declaration_init>
 
-                <set>
-                        @@id = @@value
-                </set>
-
                 <get>
                         @@id
                 </get>
 
+                <set>
+                        @@id = @@value
+                </set>
         </type>
         
         <!-- Simulation Time -->
@@ -182,7 +219,8 @@
                 <javaname>boolean</javaname>
 
                 <declaration>
-                        boolean @@id = false;
+                	<lhs>boolean @@id</lhs>
+                	<rhs>false</rhs>
                 </declaration>
 
                 <set>
@@ -309,7 +347,8 @@
                 <javaname>Vector</javaname>
 
                 <declaration>
-                        Vector @@id = new Vector();
+                	<lhs>Vector @@id</lhs>
+                	<rhs>new Vector()</rhs>
                 </declaration>
 
                 <declaration_init>
@@ -403,7 +442,8 @@
                 <javaname>Complex</javaname>
 
                 <declaration>
-                        Complex @@id = Complex.Zero;
+                	<lhs>Complex @@id</lhs>
+                	<rhs>Complex.Zero</rhs>
                 </declaration>
 
                 <declaration_init>
@@ -706,7 +746,7 @@
                 <argument name = "type" type = "NameType" />
                 <argument name = "number" type = "double" />
 
-                <translation>
+                <translation2>
                         <temp name = "nn"/>
                         <temp name = "agents"/>
                         <temp name = "i"/>
@@ -722,7 +762,7 @@
                         <return>
                                 @agents
                         </return>
-                </translation>
+                </translation2>
         	</method>
 
 
@@ -730,16 +770,16 @@
                <method name = "create-one" type = "ArgumentType:type">
                 	<argument name = "type" type = "NameType"/>
                 	
-                	<translation>
+                	<translation2>
+                		<temp name = "agent" type = "@type"/>
                 		<prelude>
                 			@agent = new @type();
                 			@agent.moveToSpace(@@object, new Vector());
                 		</prelude>
-                		<temp name = "agent" type = "@type"/>
                 		<return>
                		    	@agent
                		    </return>
-                	</translation>
+                	</translation2>
                 </method>
              
              
@@ -818,7 +858,7 @@
                 <argument name = "point" type = "vector"/>
                 <argument name = "radius" type = "double"/>
 
-                <translation>
+                <translation2>
                         <temp name = "result"/>
                         <prelude>
                                 ArrayList&lt;@type&gt; @result = @@object.getAgents(@point, @radius, @type.class);
@@ -826,7 +866,7 @@
                         <return>
                                 @result
                         </return>
-                </translation>
+                </translation2>
         	</method>
         	
         	
@@ -835,7 +875,7 @@
                 <argument name = "point" type = "vector"/>
                 <argument name = "radius" type = "double"/>
 
-                <translation>
+                <translation2>
                         <temp name = "result"/>
                         <prelude>
                                 ArrayList&lt;@type&gt; @result = @@object.getAgentsOfKind(@point, @radius, @type.class);
@@ -843,14 +883,14 @@
                         <return>
                                 @result
                         </return>
-                </translation>
+                </translation2>
         	</method>
 
 
     	    <method name = "agents-here" type = "ArrayList" subtype = "ArgumentType:type">
                 <argument name = "type" type = "NameType"/>
 
-                <translation>
+                <translation2>
                         <temp name = "result"/>
                         <prelude>
                                 ArrayList&lt;@type&gt; @result = @@object.getAgents(@@self, @type.class);
@@ -858,14 +898,14 @@
                         <return>
                                 @result
                         </return>
-                </translation>
+                </translation2>
 	        </method>
 
 
     	    <method name = "agents-here-as" type = "ArrayList" subtype = "ArgumentType:type">
                 <argument name = "type" type = "NameType"/>
 
-                <translation>
+                <translation2>
                         <temp name = "result"/>
                         <prelude>
                                 ArrayList&lt;@type&gt; @result = @@object.getAgentsOfKind(@@self, @type.class);
@@ -873,7 +913,7 @@
                         <return>
                                 @result
                         </return>
-                </translation>
+                </translation2>
 	        </method>
 
 
@@ -882,7 +922,7 @@
                 <argument name = "point" type = "vector"/>
                 <argument name = "radius" type = "double"/>
 
-                <translation>
+                <translation2>
                         <temp name = "result"/>
                         <prelude>
                                 ArrayList&lt;SpaceAgent&gt; @result = @@object.getAgents(@point, @radius);
@@ -890,12 +930,12 @@
                         <return>
                                 @result
                         </return>
-                </translation>
+                </translation2>
         	</method>
 
 
         	<method name = "all-agents-here" type = "ArrayList" subtype = "SpaceAgent">
-                <translation>
+                <translation2>
                         <temp name = "result"/>
                         <prelude>
                                 ArrayList&lt;SpaceAgent&gt; @result = @@object.getAgents(@@self);
@@ -903,7 +943,7 @@
                         <return>
                                 @result
                         </return>
-                </translation>
+                </translation2>
         	</method>
         	
         	<method name = "process-nodes"/>
@@ -941,7 +981,7 @@
             
             
             <method name = "all-links" type = "ArrayList" subtype = "AbstractLink">
-            	<translation>
+            	<translation2>
             		<temp name = "links"/>
             		<prelude>
             			ArrayList&lt;Link&gt; @links = @@object.getLinks();  
@@ -949,13 +989,13 @@
             		<return>
             			@links
             		</return>
-            	</translation>
+            	</translation2>
             </method>
 
 
             <method name = "links-of-type" type = "ArrayList" subtype = "ArgumentType:type">
             	<argument name = "type" type = "NameType"/>
-            	<translation>
+            	<translation2>
             		<temp name = "links"/>
     	        	<prelude>
 	            		ArrayList&lt;@type&gt; @links = @@object.getLinks(@type.class);  
@@ -963,7 +1003,7 @@
             		<return>
             			@links
             		</return>
-            	</translation>
+            	</translation2>
             </method>
             
             
@@ -1026,7 +1066,7 @@
             
             
             <method name = "distance" type = "vector">
-            	<translation>
+            	<translation2>
             		<temp name = "result" type = "vector"/>
             		<prelude>
             			@result = @@object.getVector();
@@ -1036,7 +1076,7 @@
             		<return>
             			@result
             		</return>
-            	</translation>
+            	</translation2>
             </method> 
        	</type>
        	
@@ -1267,23 +1307,23 @@
                 <method name = "hatch-one" type = "ArgumentType:type">
                 	<argument name = "type" type = "NameType"/>
                 	
-                	<translation>
+                	<translation2>
+                		<temp name = "agent" type = "@type"/>
                 		<prelude>
                 			@agent = new @type();
                 			@agent.moveToSpace(@@object.getSpace(), @@object.getPosition());
                 		</prelude>
-                		<temp name = "agent" type = "@type"/>
                 		<return>
                		    	@agent
                		    </return>
-                	</translation>
+                	</translation2>
                 </method>
                 
                 <method name = "hatch" type = "Array" subtype = "ArgumentType:type">
                 	<argument name = "type" type = "NameType"/>
                 	<argument name = "number" type = "double"/>
                 	
-                	<translation>
+                	<translation2>
                 		<temp name = "agents"/>
                 		<temp name = "nn"/>
                 		<temp name = "pos"/>
@@ -1303,7 +1343,7 @@
                 		<return>
                 			@agents
                 		</return>
-                	</translation>
+                	</translation2>
                 </method>
                 
                 
@@ -1356,11 +1396,13 @@
                 
                 <method name = "uphill">
                 	<argument name = "data" type = "grid"/>
-                	<translation>
+                	<translation2>
                 		<temp name = "v" type = "vector"/>
-                		@v = @data.getUphillDirection(@@object.getPosition());
-                		@@object.move(@v)
-                	</translation>
+                		<prelude>
+                			@v = @data.getUphillDirection(@@object.getPosition());
+                			@@object.move(@v)
+                		</prelude>
+                	</translation2>
                 </method>
         </type>
 
@@ -1417,7 +1459,6 @@
                 	</translation>
                </method>
                 
-                
                <method name = "multiply">
                 	<argument name = "value" type = "double"/>
                 	
@@ -1425,7 +1466,6 @@
                 		@@object.multiply(@value)
                 	</translation>
                </method>
-
 
                <method name = "evaporate">
                 	<argument name = "value" type = "double"/>
@@ -1435,8 +1475,6 @@
                 	</translation>
                </method>
 
-                
-                
                <method name = "diffuse">
                 	<argument name = "value" type = "double"/>
                 	
@@ -1445,13 +1483,11 @@
                 	</translation>
                </method>
                 
-                
                <field name = "value" type = "double">
                 	<set>@@object.setValue(@@self, @@value)</set>
                 	<get>@@object.getValue(@@self)</get>
                </field>
                 
-
 				<method name = "data-at" type = "double">
 					<argument name = "i" type = "double"/>
 					<argument name = "j" type = "double"/>
@@ -1516,7 +1552,8 @@
                 <javaname>Grid</javaname>
 
                 <declaration>
-                        Grid @@id = null;
+                	<lhs>Grid @@id</lhs>
+                	<rhs>null</rhs>
                 </declaration>
                 
                 <set>
@@ -1526,14 +1563,6 @@
                 <get>
                 	@@id
                 </get>
-
-                <set-convert context = "agent" to = "double">
-                	@@object.setValue(@@self, @@value)
-                </set-convert>
-
-                <get-convert context = "agent" to = "double">
-                    @@this.getValue(@@self)
-                </get-convert>
 
                 <set context = "model">
                         for (int i = 0; i &lt; xsize; i++)
@@ -1545,8 +1574,15 @@
                 <get context = "model">
                         @@this.getValue(i, j)
                 </get>
-                
-                
+
+                <get-convert context = "agent" to = "double">
+                    @@this.getValue(@@self)
+                </get-convert>
+
+                <set-convert context = "agent" to = "double">
+                	@@object.setValue(@@self, @@value)
+                </set-convert>
+
                 <method name = "get-smooth-gradient" type = "vector">
                 	<argument name = "point" type = "vector"/>
                 </method>
@@ -1612,7 +1648,8 @@
                 <javaname>Grid3d</javaname>
 
                 <declaration>
-                        Grid3d @@id = null;
+                	<lhs>Grid3d @@id</lhs>
+                	<rhs>null</rhs>
                 </declaration>
                 
                 <set>

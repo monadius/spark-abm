@@ -136,14 +136,15 @@ public class Loader {
 	 * Loads command description
 	 */
 	private static void loadArgumentsAndTranslation(Node node, Command cmd) throws Exception {
-		Node tmp;
 		NamedNodeMap attr;
 		
 		NodeList nodes2 = node.getChildNodes();
 		for (int j = 0; j < nodes2.getLength(); j++) {
-			tmp = nodes2.item(j);
+			final Node tmp = nodes2.item(j);
+			final String tmpName = tmp.getNodeName().intern();
+			
 			/* argument node */
-			if (tmp.getNodeName().equals("argument")) {
+			if (tmpName == "argument") {
 				attr = tmp.getAttributes();
 				String optional = "false";
 				if (attr.getNamedItem("optional") != null)
@@ -152,7 +153,7 @@ public class Loader {
 				cmd.addArgument(getVariable(tmp), Boolean.parseBoolean(optional));
 			}
 			/* block node */
-			else if (tmp.getNodeName().equals("block")) {
+			else if (tmpName == "block") {
 				attr = tmp.getAttributes();
 				String optional = "false";
 				if (attr.getNamedItem("optional") != null)
@@ -177,7 +178,7 @@ public class Loader {
 				cmd.addArgument(new Variable(new Id(name), type), Boolean.parseBoolean(optional));
 			}
 			/* translation node */
-			else if (tmp.getNodeName().equals("translation")) {
+			else if (tmpName == "translation" || tmpName == "translation2") {
 				cmd.setTranslation(new Translation(tmp));
 			}
 		}

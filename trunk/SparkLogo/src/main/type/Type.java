@@ -36,8 +36,9 @@ public class Type {
 	// If true, then it is possible to extend this type
 	private boolean partialFlag;
 
-	/* Declaration translation string */
-	protected String declarationTranslation;
+	/* Declaration translation strings */
+	private String declarationLHS;
+	private String declarationRHS;
 
 	/* Flag indicating whether the type were resolved or not */
 	protected boolean resolved = false;
@@ -121,21 +122,38 @@ public class Type {
 	}
 
 	/**
-	 * Returns declaration translation string
-	 * 
-	 * @return
+	 * Returns declaration LHS string (type)
 	 */
-	public String getDeclarationTranslation() {
-		return declarationTranslation;
+	public String getDeclarationLHS() throws Exception {
+		if (declarationLHS == null) {
+			// default: type id
+			declarationLHS = getTranslationString() + " @@id";
+		}
+
+		return declarationLHS;
 	}
+	
+	/**
+	 * Returns declaration RHS string (default value)
+	 */
+	public String getDeclarationRHS() {
+		if (declarationRHS == null) {
+			if (instanceOf(SparkModel.getInstance().getType(new Id("$Object"))))
+				declarationRHS = "null";
+		}
+		
+		return declarationRHS;
+	}
+	
 
 	/**
 	 * Sets declaration translation string
 	 * 
 	 * @param translation
 	 */
-	public void setDeclarationTranslation(String translation) {
-		declarationTranslation = translation;
+	public void setDeclarationTranslation(String lhs, String rhs) {
+		this.declarationLHS = lhs;
+		this.declarationRHS = rhs;
 	}
 
 	/**
@@ -313,7 +331,8 @@ public class Type {
 		method.parentType = this;
 		methods.put(method.id, method);
 		
-		if (method.id.name.equals("_init"))
+		// Put all special method at the beginning
+		if (method.id.name.startsWith("_") || method.id.name.startsWith("$"))
 			methodList.add(0, method);
 		else
 			methodList.add(method);

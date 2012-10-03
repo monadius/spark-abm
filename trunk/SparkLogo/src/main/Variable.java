@@ -148,20 +148,15 @@ public class Variable {
 		if (type == null || type instanceof UnknownType) 
 			throw new Exception("Type is not defined for: " + id);
 		
-		String declaration = type.getDeclarationTranslation();
-		if (declaration == null) {
-			declaration = type.getTranslationString() + " " + id.toJavaName();
-			if (type.instanceOf(SparkModel.getInstance().getType(new Id("$Object")))) {
-				declaration += " = null;";
-			}
-			else {
-				declaration += ";";
-			}
-		}
-		else {
-			declaration = declaration.replaceAll("@@id", id.toJavaName());
-		}
+		String lhs = type.getDeclarationLHS();
+		String rhs = type.getDeclarationRHS();
 		
+		String declaration = lhs;
+		if (rhs != null)
+			declaration += " = " + rhs;
+
+		declaration += ";";
+		declaration = declaration.replaceAll("@@id", id.toJavaName());
 		return declaration;
 	}
 	
