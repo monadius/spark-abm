@@ -9,6 +9,7 @@ import org.jfree.util.Log;
 
 import org.spark.runtime.external.Coordinator;
 import org.spark.runtime.external.Parameter;
+import org.spark.runtime.external.ParameterCollection;
 import org.spark.runtime.external.batchrun.BatchRunController;
 import org.spark.runtime.external.batchrun.BatchRunManager;
 import org.spark.runtime.external.batchrun.ParameterSweep;
@@ -142,8 +143,9 @@ class Batch {
 		 * @param sweep
 		 */
 		public void addParameter(ParameterSweep sweep) {
-			Parameter p = Coordinator.getInstance().getParameters()
-					.getParameter(name);
+			ParameterCollection pc = Coordinator.getInstance().getParameters();
+			Parameter p = pc.getParameter(name); 
+
 			if (p == null) {
 				logger.error("Undefined parameter " + name);
 				return;
