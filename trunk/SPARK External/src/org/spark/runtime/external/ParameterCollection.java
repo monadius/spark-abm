@@ -53,11 +53,8 @@ public class ParameterCollection {
 	 */
 	public Parameter getParameter(String name) {
 		for (String key : parameters.keySet()) {
-			String[] e = key.split(";");
-			if (e.length == 2) {
-				if (e[1].equals(name))
-					return parameters.get(key);
-			}
+			if (key.equals(name))
+				return parameters.get(key);
 		}
 		
 		return null;
