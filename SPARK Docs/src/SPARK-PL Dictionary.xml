@@ -2361,6 +2361,35 @@ max : number
 	</sect2>
 
 
+<!-- U -->
+	<sect2>
+		<title>
+			use-primary-random-generator
+		</title>
+		<para>
+			Tells the simulation engine to use the primary random generator for producing
+			random numbers.
+		</para>
+		<para>
+			Note: the primary random generator is used by default.
+		</para>
+	</sect2>
+
+	<sect2>
+		<title>
+			use-secondary-random-generator
+		</title>
+		<para>
+			Tells the simulation engine to use the secondary random generator for producing
+			random numbers.
+		</para>
+		<para>
+			Switching to the secondary generator is useful in cases when it is required
+			to generate some random numbers which should not affect a simulation output.
+		</para>
+	</sect2>
+
+
 <!-- V -->
 	<sect2>
 		<title>
