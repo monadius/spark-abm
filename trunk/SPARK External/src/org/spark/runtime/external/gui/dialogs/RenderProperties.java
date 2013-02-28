@@ -276,6 +276,8 @@ public class RenderProperties extends JDialog implements ActionListener, ChangeL
 		dataPanel = new JPanel(new SpringLayout());
 		dataPanel.setMinimumSize(new Dimension(100, 100));
 		dataPanel.setBorder(BorderFactory.createTitledBorder("Data Layers"));
+		JScrollPane dataPane = new JScrollPane(dataPanel);
+		
 
 		/////////////////////////
 		// Initialize spaces
@@ -290,7 +292,7 @@ public class RenderProperties extends JDialog implements ActionListener, ChangeL
 
         panel.add(agentPanel);
         panel.add(spacePanel);
-        panel.add(dataPanel);
+        panel.add(dataPane);
         
 		this.add(panel);
 		this.pack();

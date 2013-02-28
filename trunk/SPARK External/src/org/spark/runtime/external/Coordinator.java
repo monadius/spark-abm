@@ -753,23 +753,25 @@ public class Coordinator {
 	/**
 	 * Unloads the current model
 	 */
-	public synchronized void unloadModel() {
-		if (modelXmlDoc == null)
-			return;
+	public void unloadModel() {
+		synchronized (this) {
+			if (modelXmlDoc == null)
+				return;
 
-		// Stop a simulation
-		stopSimulation();
+			// Stop a simulation
+			stopSimulation();
 
-		// Save GUI changes
-		saveGUIChanges();
+			// Save GUI changes
+			saveGUIChanges();
 
-		// Clear variables
-		dataSet = null;
-		variables = null;
-		modelXmlDoc = null;
-		modelXmlFile = null;
+			// 	Clear variables
+			dataSet = null;
+			variables = null;
+			modelXmlDoc = null;
+			modelXmlFile = null;
 
-		renders.clear();
+			renders.clear();
+		}
 		receiver.removeAllConsumers();
 
 		if (windowManager != null)

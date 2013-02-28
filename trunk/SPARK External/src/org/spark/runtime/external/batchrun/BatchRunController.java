@@ -10,6 +10,7 @@ import org.spark.runtime.external.Coordinator;
 import org.spark.runtime.external.VariableSet;
 import org.spark.runtime.external.VariableSetFactory;
 import org.spark.runtime.external.data.DataSetTmp;
+import org.spark.runtime.external.render.DataLayerStyle;
 import org.spark.runtime.external.render.Render;
 
 /**
@@ -64,14 +65,8 @@ public class BatchRunController {
 	/* Error estimate of the data */
 	private double error;
 	
-	
-	/**
-	 * Creates a default batch run controller
-	 */
-	public BatchRunController() {
-		numberOfTicks = Long.MAX_VALUE;
-		numberOfRepetition = 1;
-	}
+	/* Data layer saver */
+	private final DataLayerSaver dataLayerSaver;
 	
 	
 	/**
@@ -89,6 +84,8 @@ public class BatchRunController {
 		
 		this.numberOfTicks = maxTicks;
 		this.numberOfRepetition = repetitionNumber;
+		
+		this.dataLayerSaver = new DataLayerSaver();
 	}
 
 	
@@ -210,12 +207,14 @@ public class BatchRunController {
 		repetition = 0;
 		counter = 0;
 		
+		Coordinator c = Coordinator.getInstance();
+		
 		if (parameterSweep != null) {
 			parameterSweep.setInitialValuesAndAdvance();
 		}
 		
 		currentParameters = VariableSetFactory.createVariableSet("batch@run@current@set");
-		currentParameters.synchronizeWithParameters(Coordinator.getInstance().getParameters());
+		currentParameters.synchronizeWithParameters(c.getParameters());
 		goodParameters = null;
 		
 		if (log != null) {
@@ -226,6 +225,19 @@ public class BatchRunController {
 		for (Render render : Coordinator.getInstance().getRenders()) {
 			render.setSnapshotNamePrefix("" + counter + "-" + repetition + "-");
 		}
+		
+		dataLayerSaver.setFileNamePrefix("" + counter + "-" + repetition + "-");
+		// TODO: set these parameters in a dialog
+		dataLayerSaver.setOneFileFlag(true);
+		dataLayerSaver.setPrecision(3);
+		dataLayerSaver.getFilter().setInterval(2);
+		
+		for (DataLayerStyle style : c.getDataLayerStyles().values()) {
+			dataLayerSaver.addDataLayer(style.getName());
+		}
+		
+		c.getDataReceiver().addDataConsumer(dataLayerSaver.getFilter());
+
 		
 		return numberOfTicks;
 	}
@@ -249,6 +261,9 @@ public class BatchRunController {
 	 * This function is called when all runs are done
 	 */
 	void stop() {
+		dataLayerSaver.clear();
+		Coordinator.getInstance().getDataReceiver().removeDataConsumer(dataLayerSaver.getFilter());
+		
 		if (goodParameters != null) {
 			if (log != null) {
 				log.println();
@@ -316,6 +331,8 @@ public class BatchRunController {
 			dataSet.clear();
 		}
 		
+		dataLayerSaver.clear();
+		
 		repetition++;
 		if (repetition >= numberOfRepetition) {
 			if (parameterSweep != null) {
@@ -339,6 +356,8 @@ public class BatchRunController {
 		for (Render render : Coordinator.getInstance().getRenders()) {
 			render.setSnapshotNamePrefix("" + counter + "-" + repetition + "-");
 		}
+
+		dataLayerSaver.setFileNamePrefix("" + counter + "-" + repetition + "-");
 		
 		return numberOfTicks;
 	}
