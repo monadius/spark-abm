@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V5.0//EN" "../DocBook/docbook-5.0/dtd/docbook.dtd">
+<article>
+	<info>
+		<title>SPARK-PL: Integration with Box2d</title>
+		<author>
+			<personname>Alexey Solovyev</personname>
+		</author>
+		<abstract>
+			<para>
+				Box2d is a widely used library for simple physical simulations in
+				a 2d environment.
+			</para>
+		</abstract>
+	</info>
+
+
+	<sect1>
+		<title>SPARK-PL Attributes</title>
+		<sect2>
+			<title>Introduction</title>
+			<para>
+			</para>
+			<para>
+				All attributes have the following syntax
+<programlisting language="SPARK">
+@attribute-name(parameter1 = value1, parameter2 = value2, ...)
+global some-variable
+; to some-method
+; agent some-agent
+; model some-model
+</programlisting>
+				Each attribute is declared immediately before a global
+				variable declaration. Each attribute has name and several parameters.
+				Parameters can have different values: strings or numbers.
+				All parameter values should be constants, it is not possible
+				to use variables in the parameter declaration.Often
+				parameters have default values. Parameters with default
+				values can be omitted in the attribute declaration.
+				It is possible to declare several attributes for the
+				same global variable.
+<programlisting language="SPARK">
+@attribute1(par = value)
+@attribute2(par1 = value1, par2 = value2)
+global some-variable
+</programlisting>
+			</para>
+		</sect2>
+		
+		
+	</sect1>
+
+</article>
