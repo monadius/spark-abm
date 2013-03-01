@@ -16,6 +16,7 @@ import org.spark.runtime.external.batchrun.BatchRunController;
 import org.spark.runtime.external.batchrun.BatchRunManager;
 import org.spark.runtime.external.batchrun.DataAnalyzer;
 import org.spark.runtime.external.batchrun.ParameterSweep;
+import org.spark.runtime.external.render.DataLayerStyle;
 import org.spark.utils.FileUtils;
 import org.spark.utils.SpringUtilities;
 
@@ -26,10 +27,19 @@ import org.spark.utils.SpringUtilities;
 @SuppressWarnings("serial")
 public class BatchRunDialog extends JDialog implements ActionListener {
 	/* Main panel */
-	private JPanel panel;
+	private final JPanel panel;
+	
+	/* Tabs */
+	private final JTabbedPane tabs;
 	
 	/* Parameters panel */
-	private JPanel parametersPanel;
+	private final JPanel parametersPanel;
+	
+	/* Data layers */
+	private final JPanel dataLayerPanel;
+	private JSpinner dataLayerInterval;
+	private JSpinner dataLayerPrecision;
+	private JCheckBox dataLayerOneFile;
 	
 	/* General controls */
 	private JSpinner spinnerMaxTicks;
@@ -43,11 +53,11 @@ public class BatchRunDialog extends JDialog implements ActionListener {
 	private JSpinner spinnerSnapshotInterval;
 	
 	/* Data variable for analysis */
-	private JComboBox comboVariable;
+	private JComboBox<String> comboVariable;
 	/* Experimental data file */
 	private JTextField textExperimentalData;
 	/* Data analysis method */
-	private JComboBox comboAnalysisMethod;
+	private JComboBox<String> comboAnalysisMethod;
 	
 
 	/* Buttons */
@@ -56,7 +66,7 @@ public class BatchRunDialog extends JDialog implements ActionListener {
 	/**
 	 * Auxiliary class
 	 */
-	private class ParameterWithOptions {
+	private static class ParameterWithOptions {
 		public Parameter parameter;
 		public JCheckBox use;
 		public JSpinner minValue;
@@ -67,6 +77,9 @@ public class BatchRunDialog extends JDialog implements ActionListener {
 	/* List of all parameters */
 	private final ArrayList<ParameterWithOptions> parameters;
 	
+	/* List of all data layers */
+	private final ArrayList<JCheckBox> dataLayers;
+	
 	/**
 	 * Default constructor
 	 * @param owner
@@ -75,22 +88,35 @@ public class BatchRunDialog extends JDialog implements ActionListener {
 		super(owner, true);
 		
 		parameters = new ArrayList<ParameterWithOptions>();
+		dataLayers = new ArrayList<JCheckBox>();
 		
 		this.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
 		
+		// Create the main panel
 		panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
 		
+		// Initialize general controls
 		initGeneralControls();
 
+		// Create tabs
+		tabs = new JTabbedPane();
+		panel.add(tabs);
+
+		// Create the parameter tab
 		parametersPanel = new JPanel();
-		parametersPanel.setBorder(BorderFactory.createTitledBorder("Parameters"));
 		parametersPanel.setMinimumSize(new Dimension(300, 100));
+		tabs.add("Parameters", parametersPanel);
+
+		// Create the data layer tab
+		dataLayerPanel = new JPanel();
+		dataLayerPanel.setMinimumSize(new Dimension(200, 50));
+		initDataLayerPanel();
 		
-		panel.add(parametersPanel);
+		// Create the data analysis tab
+		initDataAnalysisPanel();
 		
-		initDataPanel();
-		
+		// Create control buttons
 		JPanel buttons = new JPanel(new SpringLayout());
 		buttonStart = new JButton("Start");
 		buttonStart.setActionCommand("start");
@@ -108,6 +134,7 @@ public class BatchRunDialog extends JDialog implements ActionListener {
 		
 		JScrollPane scrollPane = new JScrollPane(panel);
 		this.add(scrollPane);
+//		this.add(panel);
 		this.pack();
 	}
 	
@@ -116,24 +143,26 @@ public class BatchRunDialog extends JDialog implements ActionListener {
 	/**
 	 * Creates a panel for data analysis
 	 */
-	private void initDataPanel() {
+	private void initDataAnalysisPanel() {
 		// Create panel
 		JPanel dataPanel = new JPanel(new SpringLayout());
-		dataPanel.setBorder(BorderFactory.createTitledBorder("Data Analysis"));
 		dataPanel.setMinimumSize(new Dimension(100, 100));
 		
 		// Create controls
-		comboVariable = new JComboBox();
+		comboVariable = new JComboBox<String>();
+		comboVariable.setMaximumSize(new Dimension(300, 50));
 		
 		textExperimentalData = new JTextField();
 		textExperimentalData.setEditable(false);
+		textExperimentalData.setMaximumSize(new Dimension(300, 50));
 		
 		JButton selectFile = new JButton("...");
 		selectFile.setActionCommand("select-file");
 		selectFile.addActionListener(this);
 		
-		comboAnalysisMethod = new JComboBox(new String[] {
+		comboAnalysisMethod = new JComboBox<String>(new String[] {
 				"Least Squares", "Correlation"});
+		comboAnalysisMethod.setMaximumSize(new Dimension(300, 50));
 		
 		// Add controls
 		dataPanel.add(new JLabel("Data variable"));
@@ -147,10 +176,58 @@ public class BatchRunDialog extends JDialog implements ActionListener {
 		dataPanel.add(new JLabel("Method"));
 		dataPanel.add(comboAnalysisMethod);
 		dataPanel.add(new JLabel(""));
-
-		SpringUtilities.makeCompactGrid(dataPanel, 3, 3, 5, 5, 5, 5);
 		
+		SpringUtilities.makeCompactGrid(dataPanel, 3, 3, 5, 5, 5, 5);
+	
+		tabs.add("Data Analysis", dataPanel);
+	}
+	
+	
+	/**
+	 * Creates the data layer tab
+	 */
+	private void initDataLayerPanel() {
+		JPanel dataPanel = new JPanel(new SpringLayout());
+		dataPanel.setMinimumSize(new Dimension(100, 100));
+//		dataPanel.setMaximumSize(new Dimension(100, 200));
+
+		// Create controls
+		
+		// Interval
+		dataLayerInterval = new JSpinner(
+				new SpinnerNumberModel(1, 1, 2000000000, 1));
+		dataLayerInterval.setName("data-layer-interval");
+		
+		// Precision
+		dataLayerPrecision = new JSpinner(
+				new SpinnerNumberModel(5, 1, 2000000000, 1));
+		dataLayerPrecision.setName("data-layer-precision");
+		
+		// One file
+		dataLayerOneFile = new JCheckBox();
+		dataLayerOneFile.setSelected(true);
+		
+		// Add controls
+		dataPanel.add(new JLabel("Save interval"));
+		dataPanel.add(dataLayerInterval);
+		
+		dataPanel.add(new JLabel("Numeric precision"));
+		dataPanel.add(dataLayerPrecision);
+		
+		dataPanel.add(new JLabel("One output file"));
+		dataPanel.add(dataLayerOneFile);
+
+		SpringUtilities.makeCompactGrid(dataPanel, 3, 2, 5, 5, 5, 5);
+		
+		// Create a global panel
+		JPanel panel = new JPanel();
+		panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
 		panel.add(dataPanel);
+		panel.add(dataLayerPanel);
+		
+//		JScrollPane scroll = new JScrollPane(panel);
+		
+		tabs.add("Data Layers", panel);
 	}
 	
 	
@@ -222,13 +299,40 @@ public class BatchRunDialog extends JDialog implements ActionListener {
 	}
 	
 	
-	
 	/**
 	 * Initializes the dialog
 	 */
 	public void init() {
 		initParameters();
 		initVariables();
+		initDataLayers();
+		this.pack();
+	}
+	
+	
+	/**
+	 * Initializes data layers
+	 */
+	private void initDataLayers() {
+		Coordinator c = Coordinator.getInstance();
+		
+		dataLayerPanel.removeAll();
+		dataLayers.clear();
+		
+		int index = 0;
+		
+		for (DataLayerStyle style : c.getDataLayerStyles().values()) {
+			String name = style.getName();
+			JCheckBox box = new JCheckBox(name);
+			
+			dataLayerPanel.add(box);
+			dataLayers.add(box);
+			
+			index++;
+		}
+		
+		dataLayerPanel.setLayout(new SpringLayout());
+		SpringUtilities.makeCompactGrid(dataLayerPanel, index, 1, 0, 0, 5, 5);
 	}
 	
 	
@@ -257,8 +361,9 @@ public class BatchRunDialog extends JDialog implements ActionListener {
 			}
 		}
 		
+		String[] tmp = new String[names.size()];
 		comboVariable.setModel( 
-				new DefaultComboBoxModel(names.toArray()) );
+				new DefaultComboBoxModel<String>(names.toArray(tmp)));
 	}
 	
 	
@@ -331,10 +436,93 @@ public class BatchRunDialog extends JDialog implements ActionListener {
 		parametersPanel.setLayout(new SpringLayout());
 		SpringUtilities.makeCompactGrid(parametersPanel, index, 8, 0, 0, 5, 5);
 		
-		this.pack();
+//		this.pack();
 	}
 	
 	
+	/**
+	 * Starts a batch run process
+	 */
+	private void startBatchProcess() {
+		// Create sweep controller
+		ParameterSweep sweep = new ParameterSweep();
+		
+		// Create data set
+		String varName = (String) comboVariable.getSelectedItem();
+		
+		// Create data analyzer
+		DataAnalyzer dataAnalyzer = null;
+		String fname = textExperimentalData.getText();
+		
+		if (fname != null) {
+			if (new File(fname).exists()) {
+				String method = (String) comboAnalysisMethod.getSelectedItem();
+				try {
+					dataAnalyzer = new DataAnalyzer(fname, method);
+				}
+				catch (Exception e) {
+					dataAnalyzer = null;
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		// Fill in the sweep controller
+		for (ParameterWithOptions pp : parameters) {
+			if (pp.use.isSelected()) {
+				double min = ((Number) pp.minValue.getValue()).doubleValue();
+				double max = ((Number) pp.maxValue.getValue()).doubleValue();
+				double step = ((Number) pp.stepValue.getValue()).doubleValue();
+				
+				sweep.addParameter(pp.parameter, min, max, step);
+			}
+		}
+		
+		// Create batch run controller
+		long ticks = ((Number) spinnerMaxTicks.getValue()).longValue();
+		int repetitions = ((Number) spinnerRepetitionNumber.getValue()).intValue();
+		String dataFileName = textDataFileName.getText();
+		int dataInterval = ((Number) spinnerDataInterval.getValue()).intValue();
+		boolean saveSnapshots = checkSaveSnapshots.isSelected();
+		int snapshotInterval = ((Number) spinnerSnapshotInterval.getValue()).intValue();
+		
+		
+		
+		BatchRunController batchRunController = new BatchRunController(
+								repetitions, ticks, dataFileName);
+		batchRunController.setSaveDataFlag(checkSaveData.isSelected());
+		batchRunController.setSaveDataInterval(dataInterval);
+		batchRunController.setSaveFinalSnapshotsFlag(checkSaveFinalSnapshots.isSelected());
+		
+		batchRunController.setParameterSweepController(sweep);
+		batchRunController.setDataAnalyzer(dataAnalyzer, varName);
+		
+		batchRunController.initOutputFolder(Coordinator.getInstance().getCurrentDir());
+		
+		// Initialize data layers
+		boolean oneFileFlag = dataLayerOneFile.isSelected();
+		int precision = ((Number) dataLayerPrecision.getValue()).intValue();
+		int interval = ((Number) dataLayerInterval.getValue()).intValue();
+		
+		ArrayList<String> names = new ArrayList<String>();
+		for (JCheckBox box : dataLayers) {
+			if (box.isSelected()) {
+				names.add(box.getText());
+			}
+		}
+		
+		String[] tmp = new String[names.size()];
+		tmp = names.toArray(tmp);
+		
+		batchRunController.setDataLayers(tmp, interval, precision, oneFileFlag);
+		
+		// Change parameters before setup method is called
+		sweep.setInitialValuesAndAdvance();
+		
+		// Start a batch run process
+		new BatchRunManager(batchRunController, varName).start(saveSnapshots, snapshotInterval);
+	}
+
 	/**
 	 * Action listener routine
 	 */
@@ -358,66 +546,7 @@ public class BatchRunDialog extends JDialog implements ActionListener {
 		
 		// Start batch run process
 		if (cmd == "start") {
-			// Create sweep controller
-			ParameterSweep sweep = new ParameterSweep();
-			
-			// Create data set
-			String varName = (String) comboVariable.getSelectedItem();
-			
-			// Create data analyzer
-			DataAnalyzer dataAnalyzer = null;
-			String fname = textExperimentalData.getText();
-			
-			if (fname != null) {
-				if (new File(fname).exists()) {
-					String method = (String) comboAnalysisMethod.getSelectedItem();
-					try {
-						dataAnalyzer = new DataAnalyzer(fname, method);
-					}
-					catch (Exception e) {
-						dataAnalyzer = null;
-						e.printStackTrace();
-					}
-				}
-			}
-			
-			// Fill in the sweep controller
-			for (ParameterWithOptions pp : parameters) {
-				if (pp.use.isSelected()) {
-					double min = ((Number) pp.minValue.getValue()).doubleValue();
-					double max = ((Number) pp.maxValue.getValue()).doubleValue();
-					double step = ((Number) pp.stepValue.getValue()).doubleValue();
-					
-					sweep.addParameter(pp.parameter, min, max, step);
-				}
-			}
-			
-			// Create batch run controller
-			long ticks = ((Number) spinnerMaxTicks.getValue()).longValue();
-			int repetitions = ((Number) spinnerRepetitionNumber.getValue()).intValue();
-			String dataFileName = textDataFileName.getText();
-			int dataInterval = ((Number) spinnerDataInterval.getValue()).intValue();
-			boolean saveSnapshots = checkSaveSnapshots.isSelected();
-			int snapshotInterval = ((Number) spinnerSnapshotInterval.getValue()).intValue();
-			
-			
-			
-			BatchRunController batchRunController = new BatchRunController(
-									repetitions, ticks, dataFileName);
-			batchRunController.setSaveDataFlag(checkSaveData.isSelected());
-			batchRunController.setSaveDataInterval(dataInterval);
-			batchRunController.setSaveFinalSnapshotsFlag(checkSaveFinalSnapshots.isSelected());
-			
-			batchRunController.setParameterSweepController(sweep);
-			batchRunController.setDataAnalyzer(dataAnalyzer, varName);
-			
-			batchRunController.initOutputFolder(Coordinator.getInstance().getCurrentDir());
-			
-			// Change parameters before setup method is called
-			sweep.setInitialValuesAndAdvance();
-			
-			// Start a batch run process
-			new BatchRunManager(batchRunController, varName).start(saveSnapshots, snapshotInterval);
+			startBatchProcess();
 			
 			// Hide the dialog
 			setVisible(false);
