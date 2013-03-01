@@ -107,6 +107,11 @@ class Batch {
 	private final int snapshotInterval;
 
 	private final ArrayList<ParameterInfo> parameters;
+	
+	private final int dataLayerInterval;
+	private final int dataLayerPrecision;
+	private final boolean dataLayerOneFile;
+	private final String[] dataLayerNames;
 
 	private final Object lock = new Object();
 
@@ -183,6 +188,29 @@ class Batch {
 				logger.error(e);
 			}
 		}
+		
+		// Load data layers
+		Node grids = XmlDocUtils.getChildByTagName(node, "datalayers");
+		
+		if (grids != null) {
+			dataLayerInterval = XmlDocUtils.getIntegerValue(grids, "interval", 1);
+			dataLayerPrecision = XmlDocUtils.getIntegerValue(grids, "precision", 5);
+			dataLayerOneFile = XmlDocUtils.getBooleanValue(grids, "one-file", true);
+			
+			String text = grids.getTextContent();
+			String[] tmp = text.split(",");
+			dataLayerNames = new String[tmp.length];
+
+			for (int i = 0; i < tmp.length; i++) {
+				dataLayerNames[i] = tmp[i].trim();
+			}
+		}
+		else {
+			dataLayerInterval = 1;
+			dataLayerPrecision = 5;
+			dataLayerOneFile = true;
+			dataLayerNames = new String[0];
+		}
 	}
 
 	/**
@@ -207,6 +235,10 @@ class Batch {
 
 		batchRunController.initOutputFolder(Coordinator.getInstance()
 				.getCurrentDir());
+		
+		// Set up data layers
+		batchRunController.setDataLayers(dataLayerNames, 
+				dataLayerInterval, dataLayerPrecision, dataLayerOneFile);
 
 		// Change parameters before setup method is called
 		sweep.setInitialValuesAndAdvance();
@@ -318,7 +350,7 @@ public class BatchRunner {
 		} catch (Exception e) {
 			Log.error(e);
 		} finally {
-			// FIXME: make good exit without sleeping for finishing work
+			// FIXME: make a good exit without sleeping for finishing the work
 			Thread.sleep(1000);
 			System.exit(0);
 		}
