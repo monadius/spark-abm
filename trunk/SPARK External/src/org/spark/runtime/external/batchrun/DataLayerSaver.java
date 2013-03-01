@@ -95,6 +95,17 @@ class DataLayerSaver implements IDataConsumer {
 	}
 	
 	/**
+	 * Removes all data layers
+	 */
+	public synchronized void removeAllDataLayers() {
+		for (String name : dataLayers) {
+			dataFilter.removeData(DataCollectorDescription.DATA_LAYER, name);
+		}
+		
+		dataLayers.clear();
+	}
+	
+	/**
 	 * Closes all open files
 	 */
 	public synchronized void clear() {
@@ -203,7 +214,9 @@ class DataLayerSaver implements IDataConsumer {
 		
 		if (tick > lastTick) {
 			lastTick = tick;
-			save(tick, data);
+			if (dataLayers.size() > 0) {
+				save(tick, data);
+			}
 		}
 	}
 }

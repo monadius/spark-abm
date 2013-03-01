@@ -10,7 +10,6 @@ import org.spark.runtime.external.Coordinator;
 import org.spark.runtime.external.VariableSet;
 import org.spark.runtime.external.VariableSetFactory;
 import org.spark.runtime.external.data.DataSetTmp;
-import org.spark.runtime.external.render.DataLayerStyle;
 import org.spark.runtime.external.render.Render;
 
 /**
@@ -142,6 +141,21 @@ public class BatchRunController {
 		this.saveFinalSnapshots = saveSnapshots;
 	}
 	
+	/**
+	 * Sets options for saving data layers
+	 */
+	public void setDataLayers(String[] names, int interval, int precision, boolean oneFileFlag) {
+		dataLayerSaver.removeAllDataLayers();
+		
+		dataLayerSaver.setOneFileFlag(oneFileFlag);
+		dataLayerSaver.setPrecision(precision);
+		dataLayerSaver.getFilter().setInterval(interval);
+		
+		for (String name : names) {
+			dataLayerSaver.addDataLayer(name);
+		}
+	}
+	
 	
 	/**
 	 * Sets a log file and initializes an output folder
@@ -225,17 +239,9 @@ public class BatchRunController {
 		for (Render render : Coordinator.getInstance().getRenders()) {
 			render.setSnapshotNamePrefix("" + counter + "-" + repetition + "-");
 		}
-		
+
+		// Register the data layer saver
 		dataLayerSaver.setFileNamePrefix("" + counter + "-" + repetition + "-");
-		// TODO: set these parameters in a dialog
-		dataLayerSaver.setOneFileFlag(true);
-		dataLayerSaver.setPrecision(3);
-		dataLayerSaver.getFilter().setInterval(2);
-		
-		for (DataLayerStyle style : c.getDataLayerStyles().values()) {
-			dataLayerSaver.addDataLayer(style.getName());
-		}
-		
 		c.getDataReceiver().addDataConsumer(dataLayerSaver.getFilter());
 
 		
