@@ -1,0 +1,74 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "SPARK-PL",
+	"patterns": [
+		{
+			"include": "#comments"
+		},
+		{
+			"include": "#strings"
+		},
+		{
+			"name": "constant.numeric.floating-point.sparkpl",
+			"match": "\\b-?[0-9][0-9]*((\\.([0-9][0-9_]*([eE][+-]??[0-9][0-9_]*)?)?)|([eE][+-]??[0-9][0-9_]*))"
+		},
+		{
+			"name": "constant.numeric.integer.nativeint.sparkpl",
+			"match": "\\b(-?((0(x|X)[0-9a-fA-F][0-9a-fA-F_]*)|(0(o|O)[0-7][0-7_]*)|(0(b|B)[01][01_]*)|([0-9][0-9_]*)))"
+		},
+		{
+			"name": "constant.other.sparkpl",
+			"match": "\\b(true|false|null)\\b"
+		},
+		{
+			"name": "entity.name.type",
+			"match": "\\b(grid|SpaceAgent)\\b"
+		},
+		{
+			"name": "markup.italic",
+			"match": "@\\w+"
+		},
+		{
+			"name": "markup.bold",
+			"match": "\\b(to|end|agent|space|var|model|global)\\b"
+		},
+		{
+			"name": "keyword.operator.new.sparkpl",
+			"match": "\\b(and|or)\\b"
+		},
+		{
+			"name": "keyword.control.sparkpl",
+			"match": "\\b(ask|if|ifelse|while|for|return|die|exit)\\b"
+		}
+	],
+	"repository": {
+		"comments": {
+			"patterns": [
+				{
+					"name": "comment.line.character",
+					"match": ";.*"
+				}
+			]
+		},
+		"keywords": {
+			"patterns": [
+				{
+					"name": "keyword.control.sparkpl",
+					"match": "\\b(if|ifelse|while|for|return|die|to|end|exit|var|agent|global|space|model)\\b"
+				}
+			]
+		},
+		"strings": {
+			"name": "string.quoted.double.sparkpl",
+			"begin": "\"",
+			"end": "\"",
+			"patterns": [
+				{
+					"name": "constant.character.escape.sparkpl",
+					"match": "\\\\."
+				}
+			]
+		}
+	},
+	"scopeName": "source.spark"
+}

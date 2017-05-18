@@ -1,0 +1,26 @@
+{
+    "name": "spark-pl",
+    "displayName": "SPARK-PL",
+    "description": "SPARK-PL syntax highlighting",
+    "version": "0.0.1",
+    "publisher": "monadius",
+    "engines": {
+        "vscode": "^1.12.0"
+    },
+    "categories": [
+        "Languages"
+    ],
+    "contributes": {
+        "languages": [{
+            "id": "sparkpl",
+            "aliases": ["SPARK-PL", "sparkpl"],
+            "extensions": [".spark"],
+            "configuration": "./language-configuration.json"
+        }],
+        "grammars": [{
+            "language": "sparkpl",
+            "scopeName": "source.spark",
+            "path": "./syntaxes/sparkpl.tmLanguage.json"
+        }]
+    }
+}
