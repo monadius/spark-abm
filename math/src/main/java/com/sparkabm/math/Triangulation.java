@@ -3,9 +3,7 @@
  * Date: 29/3/96
  */
 
-
-package org.spark.math;
-
+package com.sparkabm.math;
 
 /*
  * Triangulation class. A triangulation is represented as a set of points and

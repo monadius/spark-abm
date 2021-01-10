@@ -29,7 +29,7 @@
  *  tan(a)       = -6.685231390246571E-6 + 1.0000103108981198i
  *
  *************************************************************************/
-package org.spark.math;
+package com.sparkabm.math;
 
 
 public class Complex {

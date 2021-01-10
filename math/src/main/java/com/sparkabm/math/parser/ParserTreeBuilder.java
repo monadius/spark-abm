@@ -1,4 +1,4 @@
-package org.spark.math.parser;
+package com.sparkabm.math.parser;
 
 /**
  * Author: Solovyev Alexey

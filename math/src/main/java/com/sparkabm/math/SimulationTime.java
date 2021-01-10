@@ -1,4 +1,4 @@
-package org.spark.math;
+package com.sparkabm.math;
 
 import java.io.Serializable;
 

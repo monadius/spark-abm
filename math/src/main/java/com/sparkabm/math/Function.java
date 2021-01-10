@@ -4,9 +4,9 @@
   See the file "LICENSE" for more information
 */
 
-package org.spark.math;
+package com.sparkabm.math;
 
-import org.spark.math.Vector;
+import com.sparkabm.math.Vector;
 
 /**
  * A basic interface for a vector function 

@@ -4,7 +4,7 @@
   See the file "LICENSE" for more information
 */
 
-package org.spark.math;
+package com.sparkabm.math;
 
 import com.spinn3r.log5j.Logger;
 
