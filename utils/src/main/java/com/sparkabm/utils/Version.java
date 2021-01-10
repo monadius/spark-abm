@@ -1,4 +1,4 @@
-package org.spark.utils;
+package com.sparkabm.utils;
 
 /**
  * Represents a version in the format major.minor

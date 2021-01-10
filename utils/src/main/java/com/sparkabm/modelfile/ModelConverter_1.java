@@ -1,11 +1,11 @@
-package org.spark.modelfile;
+package com.sparkabm.modelfile;
 
-import static org.spark.utils.XmlDocUtils.*;
+import static com.sparkabm.utils.XmlDocUtils.*;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 
-import org.spark.utils.Version;
+import com.sparkabm.utils.Version;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;

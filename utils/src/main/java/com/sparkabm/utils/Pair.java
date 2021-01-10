@@ -1,4 +1,4 @@
-package org.spark.utils;
+package com.sparkabm.utils;
 
 public class Pair<T, U> {
 	private final T first;

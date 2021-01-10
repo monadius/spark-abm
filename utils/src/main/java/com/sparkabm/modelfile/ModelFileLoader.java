@@ -1,8 +1,8 @@
-package org.spark.modelfile;
+package com.sparkabm.modelfile;
 
 import java.io.File;
 
-import org.spark.utils.XmlDocUtils;
+import com.sparkabm.utils.XmlDocUtils;
 import org.w3c.dom.Document;
 
 /**

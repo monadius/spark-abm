@@ -5,7 +5,7 @@
  * SUN PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 
-package org.spark.utils;
+package com.sparkabm.utils;
 
 import java.util.*;
 import javax.swing.event.*;

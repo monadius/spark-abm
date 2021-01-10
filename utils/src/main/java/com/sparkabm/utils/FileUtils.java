@@ -1,4 +1,4 @@
-package org.spark.utils;
+package com.sparkabm.utils;
 
 import java.awt.Window;
 import java.io.BufferedReader;

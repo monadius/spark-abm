@@ -1,4 +1,4 @@
-package org.spark.modelfile;
+package com.sparkabm.modelfile;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
