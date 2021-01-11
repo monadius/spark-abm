@@ -24,9 +24,9 @@ import java.util.Queue;
 import org.sparkabm.data.DataLayer;
 import org.sparkabm.space.Space;
 
-import com.sparkabm.math.RationalNumber;
-import com.sparkabm.math.SimulationTime;
-import com.sparkabm.math.RandomHelper;
+import org.sparkabm.math.RationalNumber;
+import org.sparkabm.math.SimulationTime;
+import org.sparkabm.math.RandomHelper;
 
 import com.spinn3r.log5j.Logger;
 

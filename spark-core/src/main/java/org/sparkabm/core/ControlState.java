@@ -2,7 +2,7 @@ package org.sparkabm.core;
 
 import java.util.HashMap;
 
-import com.sparkabm.math.Vector;
+import org.sparkabm.math.Vector;
 
 /**
  * Describes a control event

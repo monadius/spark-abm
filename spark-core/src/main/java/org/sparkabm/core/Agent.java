@@ -12,7 +12,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import com.sparkabm.math.SimulationTime;
+import org.sparkabm.math.SimulationTime;
 
 
 // TODO: die immediately and die via adding to die queue

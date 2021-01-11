@@ -2,7 +2,7 @@ package org.sparkabm.core;
 
 import java.lang.reflect.Method;
 
-import com.sparkabm.utils.AbstractChangeEvent;
+import org.sparkabm.utils.AbstractChangeEvent;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
