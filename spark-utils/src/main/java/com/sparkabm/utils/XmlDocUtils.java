@@ -11,13 +11,13 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.spark.math.Vector;
-import org.spark.math.Vector4d;
+import com.sparkabm.math.Vector;
+import com.sparkabm.math.Vector4d;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
-
-import com.spinn3r.log5j.Logger;
 
 /**
  * Utilities for working with xml documents
@@ -26,7 +26,7 @@ import com.spinn3r.log5j.Logger;
  */
 public class XmlDocUtils {
 	// Log
-	private static final Logger logger = Logger.getLogger();
+	private static final Logger logger = LogManager.getLogger();
 	
 	/**
 	 * Loads an xml file

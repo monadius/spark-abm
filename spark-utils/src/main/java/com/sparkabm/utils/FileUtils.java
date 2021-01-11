@@ -15,13 +15,13 @@ import java.util.HashMap;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
-import org.spark.math.Vector;
-
-import com.spinn3r.log5j.Logger;
+import com.sparkabm.math.Vector;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 
 public class FileUtils {
-	private static final Logger logger = Logger.getLogger();
+	private static final Logger logger = LogManager.getLogger();
 	
 	/* Collection of all file writers */
 	private static final HashMap<String, PrintStream> writers = new HashMap<String, PrintStream>();

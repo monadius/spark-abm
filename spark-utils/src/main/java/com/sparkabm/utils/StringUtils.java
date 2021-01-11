@@ -2,8 +2,8 @@ package com.sparkabm.utils;
 
 import java.util.ArrayList;
 
-import org.spark.math.Vector;
-import org.spark.math.Vector4d;
+import com.sparkabm.math.Vector;
+import com.sparkabm.math.Vector4d;
 
 /**
  * Auxiliary operations on strings
