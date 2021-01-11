@@ -1,9 +1,9 @@
-package org.spark.space;
+package org.sparkabm.space;
 
-import org.spark.core.Agent;
-import org.spark.core.Link;
-import org.spark.math.Vector;
-import org.spark.math.Vector4d;
+import org.sparkabm.core.Agent;
+import org.sparkabm.core.Link;
+import org.sparkabm.math.Vector;
+import org.sparkabm.math.Vector4d;
 
 /**
  * Link for connecting space agents

@@ -4,13 +4,13 @@
   See the file "LICENSE" for more information
 */
 
-package org.spark.space;
+package org.sparkabm.space;
 
 import java.util.ArrayList;
 
-import org.spark.data.Grid;
-import org.spark.math.RandomHelper;
-import org.spark.math.Vector;
+import org.sparkabm.data.Grid;
+import org.sparkabm.math.RandomHelper;
+import org.sparkabm.math.Vector;
 
 public abstract class BoundedSpace extends Space {
 	private static final long serialVersionUID = 9016717038171133599L;

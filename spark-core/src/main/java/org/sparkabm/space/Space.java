@@ -4,7 +4,7 @@
   See the file "LICENSE" for more information
 */
 
-package org.spark.space;
+package org.sparkabm.space;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -13,11 +13,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.spark.core.ExecutionMode;
-import org.spark.core.Observer;
-import org.spark.data.DataLayer;
-import org.spark.data.Grid;
-import org.spark.math.Vector;
+import org.sparkabm.core.ExecutionMode;
+import org.sparkabm.core.Observer;
+import org.sparkabm.data.DataLayer;
+import org.sparkabm.data.Grid;
+import org.sparkabm.math.Vector;
 
 
 

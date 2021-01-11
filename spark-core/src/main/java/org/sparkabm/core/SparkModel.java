@@ -3,9 +3,9 @@ package org.sparkabm.core;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.spark.math.RationalNumber;
-
-import com.spinn3r.log5j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.sparkabm.math.RationalNumber;
 
 /**
  * Base class for any SPARK model
@@ -14,7 +14,7 @@ import com.spinn3r.log5j.Logger;
  */
 public abstract class SparkModel {
 	/* Logger */
-	private static final Logger logger = Logger.getLogger();
+	private static final Logger logger = LogManager.getLogger();
 	
 	/* Observer for this model */
 	private Observer modelObserver;

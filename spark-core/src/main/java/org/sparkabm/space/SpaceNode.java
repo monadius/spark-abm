@@ -4,12 +4,12 @@
   See the file "LICENSE" for more information
 */
 
-package org.spark.space;
+package org.sparkabm.space;
 
 import java.io.Serializable;
 
-import org.spark.math.Vector;
-import org.spark.math.Vector4d;
+import org.sparkabm.math.Vector;
+import org.sparkabm.math.Vector4d;
 
 
 /**

@@ -1,9 +1,9 @@
-package org.spark.data;
+package org.sparkabm.data;
 
-import org.spark.space.Space;
-import org.spark.space.SpaceAgent;
-import org.spark.space.SpaceNode;
-import org.spark.math.Vector;
+import org.sparkabm.space.Space;
+import org.sparkabm.space.SpaceAgent;
+import org.sparkabm.space.SpaceNode;
+import org.sparkabm.math.Vector;
 
 /**
  * Grid which respects the size of agents

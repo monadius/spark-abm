@@ -9,9 +9,9 @@ package org.sparkabm.core;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.spark.math.SimulationTime;
-
-import com.spinn3r.log5j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.sparkabm.math.SimulationTime;
 
 /**
  * Implementation of the abstract context.
@@ -19,7 +19,7 @@ import com.spinn3r.log5j.Logger;
  * are stored in the array list
  */
 class Observer1 extends ObserverImpl {
-	private static final Logger logger = Logger.getLogger();
+	private static final Logger logger = LogManager.getLogger();
 	// All agents and their types
 	private final HashMap<Class<? extends Agent>, ArrayList<Agent>>	agents;
 	// List of all types of agents
@@ -153,6 +153,7 @@ class Observer1 extends ObserverImpl {
 	/**
 	 * @deprecated
 	 */
+	@Deprecated
 	public void processAllAgents(long tick) {
 //		final Class<? extends Agent>[] types = agents.keySet().toArray(ctmp);
 //		if (types == null) return;

@@ -1,4 +1,4 @@
-package org.spark.data;
+package org.sparkabm.data;
 
 import java.io.Serializable;
 

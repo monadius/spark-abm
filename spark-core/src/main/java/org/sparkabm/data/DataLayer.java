@@ -4,14 +4,14 @@
   See the file "LICENSE" for more information
 */
 
-package org.spark.data;
+package org.sparkabm.data;
 
 import java.io.Serializable;
 
-import org.spark.math.Function;
-import org.spark.space.Space;
-import org.spark.space.SpaceAgent;
-import org.spark.math.Vector;
+import org.sparkabm.math.Function;
+import org.sparkabm.space.Space;
+import org.sparkabm.space.SpaceAgent;
+import org.sparkabm.math.Vector;
 
 /**
  * The basic interface for representing a data layer.

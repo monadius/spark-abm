@@ -4,7 +4,7 @@
   See the file "LICENSE" for more information
 */
 
-package org.spark.space;
+package org.sparkabm.space;
 
 /**
  * A square node which behaves like a circle node when collisions are computed

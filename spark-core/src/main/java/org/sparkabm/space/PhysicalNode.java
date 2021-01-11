@@ -1,4 +1,4 @@
-package org.spark.space;
+package org.sparkabm.space;
 
 import org.jbox2d.collision.CircleDef;
 import org.jbox2d.collision.FilterData;
@@ -9,7 +9,7 @@ import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.World;
-import org.spark.math.Vector;
+import org.sparkabm.math.Vector;
 
 @SuppressWarnings("serial")
 public class PhysicalNode extends CircleNode {

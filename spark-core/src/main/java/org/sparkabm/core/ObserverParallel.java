@@ -9,10 +9,10 @@ package org.sparkabm.core;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.spark.math.SimulationTime;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.sparkabm.math.SimulationTime;
 //import jsr166y.forkjoin.*;
-
-import com.spinn3r.log5j.Logger;
 
 import extra166y.ParallelArray;
 import extra166y.Ops.Procedure;
@@ -23,7 +23,7 @@ import extra166y.Ops.Procedure;
  * are stored in the array list
  */
 class ObserverParallel extends ObserverImpl {
-	private static final Logger logger = Logger.getLogger();
+	private static final Logger logger = LogManager.getLogger();
 
 	// All agents
 	private final HashMap<Class<? extends Agent>, ParallelArray<Agent>>	agents;
@@ -146,6 +146,7 @@ class ObserverParallel extends ObserverImpl {
 	 * Processes all agents
 	 * @param tick
 	 */
+	@Deprecated
 	@Override
 	public synchronized void processAllAgents(final long tick) {
 		// TODO: can anything be done with static agents?

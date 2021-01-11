@@ -1,6 +1,6 @@
-package org.spark.space;
+package org.sparkabm.space;
 
-import org.spark.math.Vector;
+import org.sparkabm.math.Vector;
 
 /**
  * A square node for which collision are computed correctly

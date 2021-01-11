@@ -4,7 +4,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
-import org.spark.math.SimulationTime;
+import org.sparkabm.math.SimulationTime;
 
 
 /**
@@ -93,6 +93,7 @@ abstract class ObserverImpl {
 	 * Processes all agents
 	 * @param tick a number representing time passed since the model start
 	 */
+	@Deprecated
 	public abstract void processAllAgents(long tick);
 	
 

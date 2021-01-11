@@ -1,10 +1,9 @@
-package org.spark.space;
+package org.sparkabm.space;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-
 
 /**
  * Basic implementation of an unbounded grid space

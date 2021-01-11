@@ -1,6 +1,6 @@
-package org.spark.space;
+package org.sparkabm.space;
 
-import org.spark.data.Grid;
+import org.sparkabm.data.Grid;
 
 /**
  * Abstract representation of an unbounded space

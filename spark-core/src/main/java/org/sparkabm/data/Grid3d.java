@@ -4,15 +4,15 @@
   See the file "LICENSE" for more information
  */
 
-package org.spark.data;
+package org.sparkabm.data;
 
-import org.spark.core.Observer;
-import org.spark.math.Function;
-import org.spark.math.Matrix;
-import org.spark.space.BoundedSpace3d;
-import org.spark.space.Space;
-import org.spark.space.SpaceAgent;
-import org.spark.math.Vector;
+import org.sparkabm.core.Observer;
+import org.sparkabm.math.Function;
+import org.sparkabm.math.Matrix;
+import org.sparkabm.space.BoundedSpace3d;
+import org.sparkabm.space.Space;
+import org.sparkabm.space.SpaceAgent;
+import org.sparkabm.math.Vector;
 
 /*
  * The basic implementation of the data layer interface

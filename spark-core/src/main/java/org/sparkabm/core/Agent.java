@@ -209,6 +209,7 @@ public abstract class Agent implements Serializable {
 	 * this function
 	 * @param tick a number of ticks passed since the model setup
 	 */
+	@Deprecated
 	public void step(long tick) {
 		
 	}

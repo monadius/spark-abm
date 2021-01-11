@@ -1,10 +1,10 @@
-package org.spark.space;
+package org.sparkabm.space;
 
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.joints.Joint;
 import org.jbox2d.dynamics.joints.PrismaticJointDef;
-import org.spark.core.Agent;
-import org.spark.math.Vector;
+import org.sparkabm.core.Agent;
+import org.sparkabm.math.Vector;
 
 /**
  * A prismatic joint for physical nodes

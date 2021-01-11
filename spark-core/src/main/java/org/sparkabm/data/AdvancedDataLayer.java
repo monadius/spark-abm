@@ -5,7 +5,7 @@
 */
 
 
-package org.spark.data;
+package org.sparkabm.data;
 
 
 /**

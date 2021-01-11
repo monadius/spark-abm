@@ -1,8 +1,8 @@
-package org.spark.data;
+package org.sparkabm.data;
 
-import org.spark.math.Function;
-import org.spark.space.Space;
-import org.spark.math.Vector;
+import org.sparkabm.math.Function;
+import org.sparkabm.space.Space;
+import org.sparkabm.math.Vector;
 
 /**
  * Implementation of the grid for the parallel execution mode

@@ -1,15 +1,15 @@
-package org.spark.data;
+package org.sparkabm.data;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import org.spark.math.Function;
-import org.spark.math.Matrix;
-import org.spark.space.BoundedSpace;
-import org.spark.space.Space;
-import org.spark.space.SpaceAgent;
-import org.spark.math.Vector;
+import org.sparkabm.math.Function;
+import org.sparkabm.math.Matrix;
+import org.sparkabm.space.BoundedSpace;
+import org.sparkabm.space.Space;
+import org.sparkabm.space.SpaceAgent;
+import org.sparkabm.math.Vector;
 
 /*
  * The basic implementation of the data layer interface

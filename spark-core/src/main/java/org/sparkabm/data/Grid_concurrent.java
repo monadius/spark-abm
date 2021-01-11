@@ -1,6 +1,6 @@
-package org.spark.data;
+package org.sparkabm.data;
 
-import org.spark.space.Space;
+import org.sparkabm.space.Space;
 
 
 /**

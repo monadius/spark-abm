@@ -4,9 +4,9 @@
   See the file "LICENSE" for more information
 */
 
-package org.spark.space;
+package org.sparkabm.space;
 
-import org.spark.math.Vector;
+import org.sparkabm.math.Vector;
 
 
 /**

@@ -4,7 +4,7 @@
   See the file "LICENSE" for more information
 */
 
-package org.spark.space;
+package org.sparkabm.space;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;

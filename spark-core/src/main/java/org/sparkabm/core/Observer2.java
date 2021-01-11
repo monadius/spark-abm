@@ -10,9 +10,9 @@ package org.sparkabm.core;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.spark.math.SimulationTime;
-
-import com.spinn3r.log5j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.sparkabm.math.SimulationTime;
 
 
 /**
@@ -26,7 +26,7 @@ import com.spinn3r.log5j.Logger;
 // The reason: Observer2 adds new agents at the beginning of the list,
 // meanwhile Observer1 adds new agents at the end
 class Observer2 extends ObserverImpl {
-	private final static Logger logger = Logger.getLogger();
+	private final static Logger logger = LogManager.getLogger();
 	// All agents and their types
 	private final HashMap<Class<? extends Agent>, DummyAgent>	agentsMap;
 	private final ArrayList<DummyAgent> agentsList; 
@@ -144,6 +144,7 @@ class Observer2 extends ObserverImpl {
 	 * @deprecated
 	 * Processes all agents
 	 */
+	@Deprecated
 	@Override
 	public void processAllAgents(long tick) {
 		// TODO: static agents

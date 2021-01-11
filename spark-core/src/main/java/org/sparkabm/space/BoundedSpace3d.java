@@ -4,11 +4,11 @@
   See the file "LICENSE" for more information
 */
 
-package org.spark.space;
+package org.sparkabm.space;
 
-import org.spark.data.Grid3d;
-import org.spark.math.RandomHelper;
-import org.spark.math.Vector;
+import org.sparkabm.data.Grid3d;
+import org.sparkabm.math.RandomHelper;
+import org.sparkabm.math.Vector;
 
 public abstract class BoundedSpace3d extends Space {
 	private static final long serialVersionUID = -1117772371480919688L;

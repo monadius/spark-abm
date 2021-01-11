@@ -1,7 +1,7 @@
-package org.spark.data;
+package org.sparkabm.data;
 
-import org.spark.core.Observer;
-import org.spark.space.Space;
+import org.sparkabm.core.Observer;
+import org.sparkabm.space.Space;
 
 public class QueueGrid extends Grid {
 

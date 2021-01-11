@@ -1,4 +1,4 @@
-package org.spark.space;
+package org.sparkabm.space;
 
 import java.util.ArrayList;
 
@@ -18,7 +18,7 @@ import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.World;
 import org.jbox2d.dynamics.joints.Joint;
 import org.jbox2d.dynamics.joints.JointDef;
-import org.spark.math.Vector;
+import org.sparkabm.math.Vector;
 
 /**
  * Experimental physical 2d space
@@ -377,7 +377,7 @@ public class PhysicalSpace2d extends StandardSpace {
 	/**
 	 * Gets all agents derived from the given type intersecting with the space node
 	 * @param node
-	 * @param type
+	 * @param kind
 	 * @return
 	 */
 	@Override

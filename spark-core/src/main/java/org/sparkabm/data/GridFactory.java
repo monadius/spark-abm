@@ -1,10 +1,10 @@
-package org.spark.data;
+package org.sparkabm.data;
 
-import org.spark.core.ExecutionMode;
-import org.spark.core.Observer;
-import org.spark.space.BoundedSpace;
-import org.spark.space.BoundedSpace3d;
-import org.spark.space.Space;
+import org.sparkabm.core.ExecutionMode;
+import org.sparkabm.core.Observer;
+import org.sparkabm.space.BoundedSpace;
+import org.sparkabm.space.BoundedSpace3d;
+import org.sparkabm.space.Space;
 
 /**
  * Creates instances of Grid and derived class

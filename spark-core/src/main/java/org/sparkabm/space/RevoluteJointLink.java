@@ -1,10 +1,10 @@
-package org.spark.space;
+package org.sparkabm.space;
 
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.joints.RevoluteJoint;
 import org.jbox2d.dynamics.joints.RevoluteJointDef;
-import org.spark.core.Agent;
-import org.spark.math.Vector;
+import org.sparkabm.core.Agent;
+import org.sparkabm.math.Vector;
 
 /**
  * A revolution joint for physical nodes

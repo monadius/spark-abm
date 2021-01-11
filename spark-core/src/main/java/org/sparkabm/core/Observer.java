@@ -21,6 +21,8 @@ import java.util.LinkedList;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.sparkabm.data.DataLayer;
 import org.sparkabm.space.Space;
 
@@ -28,19 +30,17 @@ import org.sparkabm.math.RationalNumber;
 import org.sparkabm.math.SimulationTime;
 import org.sparkabm.math.RandomHelper;
 
-import com.spinn3r.log5j.Logger;
-
 /**
  * Basic class for representing the context. All agents should belong to the
  * context. This class is abstract. There are several other classes implementing
  * all methods of the generic context.
  * 
- * @see org.spark.core.Observer1
- * @see org.spark.core.Observer2
+ * @see org.sparkabm.core.Observer1
+ * @see org.sparkabm.core.Observer2
  */
 public final class Observer {
 	// Log
-	private static final Logger logger = Logger.getLogger();
+	private static final Logger logger = LogManager.getLogger();
 
 	/**
 	 * Priority constants
@@ -319,6 +319,7 @@ public final class Observer {
 	 * @deprecated Gets the instance of the space
 	 * @return space a current model space
 	 */
+	@Deprecated
 	public static Space getSpace() {
 		return getDefaultSpace();
 	}
@@ -352,7 +353,7 @@ public final class Observer {
 	
 	/**
 	 * Adds a key event into a queue
-	 * @param cmd
+	 * @param keyEvent
 	 */
 	public void addKeyEvent(ControlState.KeyEvent keyEvent) {
 		keyState.changeState(keyEvent);
@@ -476,7 +477,7 @@ public final class Observer {
 	/**
 	 * Creates a definition of the specific type of agents
 	 * @param type
-	 * @param time
+	 * @param timeStep
 	 * @param priority
 	 */
 	synchronized void setAgentType(Class<? extends Agent> type, RationalNumber timeStep, int priority) {
@@ -527,6 +528,7 @@ public final class Observer {
 	 *             called before all other steps of the model initialization. It
 	 *             can be called only once
 	 */
+	@Deprecated
 	public void setSpace(Space space) {
 		addSpace("space", space);
 		setDefaultSpace("space");
@@ -597,6 +599,7 @@ public final class Observer {
 	 * @param data
 	 *            a data layer itself
 	 */
+	@Deprecated
 	public <T extends DataLayer> T addDataLayer(String name, T data) {
 		if (data.getSpace() != defaultSpace)
 			throw new Error("A data layer " + name + " is associated with "
@@ -613,6 +616,7 @@ public final class Observer {
 	 *            a name of the data layer
 	 * @return
 	 */
+	@Deprecated
 	public DataLayer getDataLayer(String name) {
 		return findDataLayer(name);
 	}
@@ -809,6 +813,7 @@ public final class Observer {
 	 * @param tick
 	 *  			a number representing time passed since the model start
 	 */
+	@Deprecated
 	public void processAllAgents(long tick) {
 		// TODO: execution mode works here
 		impl.processAllAgents(tick);
@@ -999,6 +1004,7 @@ public final class Observer {
 	 * @deprecated Returns all agents
 	 * @return
 	 */
+	@Deprecated
 	public Agent[] getAgents() {
 		return impl.getAgents();
 	}
@@ -1029,6 +1035,7 @@ public final class Observer {
 	 * @deprecated Returns the names of data layers in all spaces
 	 * @return names of all data layers
 	 */
+	@Deprecated
 	public String[] getDataLayers() {
 		ArrayList<String> names = new ArrayList<String>();
 		String[] tmp = new String[0];

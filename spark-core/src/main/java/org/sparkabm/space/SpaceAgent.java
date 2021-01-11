@@ -4,16 +4,16 @@
   See the file "LICENSE" for more information
 */
 
-package org.spark.space;
+package org.sparkabm.space;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import org.spark.core.Agent;
-import org.spark.core.Observer;
-import org.spark.math.Vector;
-import org.spark.math.Vector4d;
+import org.sparkabm.core.Agent;
+import org.sparkabm.core.Observer;
+import org.sparkabm.math.Vector;
+import org.sparkabm.math.Vector4d;
 
 
 
