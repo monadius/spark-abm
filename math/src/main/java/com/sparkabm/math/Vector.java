@@ -173,6 +173,7 @@ public class Vector implements Serializable {
 	 * @deprecated
 	 * @return
 	 */
+	@Deprecated
 	public double norm2() {
 		return x*x + y*y + z*z;
 	}

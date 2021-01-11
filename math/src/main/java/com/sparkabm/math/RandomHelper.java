@@ -6,7 +6,8 @@
 
 package com.sparkabm.math;
 
-import com.spinn3r.log5j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import cern.jet.random.Normal;
 import cern.jet.random.engine.MersenneTwister;
@@ -17,7 +18,7 @@ import cern.jet.random.engine.RandomEngine;
  */
 public class RandomHelper {
 	// Logger
-	private static final Logger logger = Logger.getLogger();
+	private static final Logger logger = LogManager.getLogger();
 	
 	// Random seed
 	private static long rngSeed;
