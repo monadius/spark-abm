@@ -4,7 +4,7 @@
   See the file "LICENSE" for more information
 */
 
-package org.spark.core;
+package org.sparkabm.core;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -12,7 +12,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import org.spark.math.SimulationTime;
+import com.sparkabm.math.SimulationTime;
 
 
 // TODO: die immediately and die via adding to die queue

@@ -1,1 +1,13 @@
+# Misc
 .DS_Store
+
+# Java
+*.class
+*.jar
+
+# Gradle
+.gradle
+**/build/
+!src/**/build
+!gradle-wrapper.jar
+

@@ -1,3 +1,4 @@
 rootProject.name = 'spark-abm'
 include 'spark-math'
 include 'spark-utils'
+include 'spark-core'

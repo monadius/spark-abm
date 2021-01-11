@@ -1,4 +1,4 @@
-package org.spark.core;
+package org.sparkabm.core;
 
 /**
  * Defines constants for different execution modes

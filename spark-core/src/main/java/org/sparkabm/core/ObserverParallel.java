@@ -4,7 +4,7 @@
   See the file "LICENSE" for more information
 */
 
-package org.spark.core;
+package org.sparkabm.core;
 
 import java.util.ArrayList;
 import java.util.HashMap;

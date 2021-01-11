@@ -1,4 +1,4 @@
-package org.spark.core;
+package org.sparkabm.core;
 
 //import com.spinn3r.log5j.Logger;
 

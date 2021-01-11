@@ -1,8 +1,8 @@
-package org.spark.core;
+package org.sparkabm.core;
 
 import java.util.HashMap;
 
-import org.spark.math.Vector;
+import com.sparkabm.math.Vector;
 
 /**
  * Describes a control event

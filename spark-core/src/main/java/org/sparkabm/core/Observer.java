@@ -4,7 +4,7 @@
   See the file "LICENSE" for more information
  */
 
-package org.spark.core;
+package org.sparkabm.core;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,11 +21,12 @@ import java.util.LinkedList;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
-import org.spark.data.DataLayer;
-import org.spark.math.RationalNumber;
-import org.spark.math.SimulationTime;
-import org.spark.space.Space;
-import org.spark.math.RandomHelper;
+import org.sparkabm.data.DataLayer;
+import org.sparkabm.space.Space;
+
+import com.sparkabm.math.RationalNumber;
+import com.sparkabm.math.SimulationTime;
+import com.sparkabm.math.RandomHelper;
 
 import com.spinn3r.log5j.Logger;
 

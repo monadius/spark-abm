@@ -1,8 +1,8 @@
-package org.spark.core;
+package org.sparkabm.core;
 
 import java.lang.reflect.Method;
 
-import org.spark.utils.AbstractChangeEvent;
+import com.sparkabm.utils.AbstractChangeEvent;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
