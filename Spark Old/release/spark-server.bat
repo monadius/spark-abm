@@ -1,1 +1,1 @@
-java -cp spark.jar org.spark.runtime.internal.TestSparkServer
+java -cp spark.jar TestSparkServer
