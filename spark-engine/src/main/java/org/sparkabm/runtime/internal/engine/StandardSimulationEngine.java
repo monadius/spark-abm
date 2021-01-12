@@ -10,7 +10,6 @@ import org.sparkabm.core.ObserverFactory;
 import org.sparkabm.math.SimulationTime;
 import org.sparkabm.core.SparkModel;
 import org.sparkabm.math.RationalNumber;
-import org.spark.runtime.commands.*;
 import org.sparkabm.runtime.commands.*;
 import org.sparkabm.runtime.data.DataObject_State;
 import org.sparkabm.runtime.data.DataRow;
@@ -48,9 +47,8 @@ public class StandardSimulationEngine extends AbstractSimulationEngine {
 	/**
 	 * Initializes the model
 	 * 
-	 * @param seed
 	 * @param observerName
-	 * @param serialMode
+	 * @param mode
 	 */
 	@Override
 	public void setup(String observerName, String mode)
@@ -119,7 +117,6 @@ public class StandardSimulationEngine extends AbstractSimulationEngine {
 	
 	/**
 	 * Processes all data
-	 * @param time
 	 */
 	private void processData(boolean paused, boolean specialFlag, 
 			int flags) throws Exception {
