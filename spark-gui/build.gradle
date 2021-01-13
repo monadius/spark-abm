@@ -27,7 +27,7 @@ dependencies {
 }
 
 application {
-    mainClassName = 'org.spark.runtime.external.Coordinator'
+    mainClassName = 'org.sparkabm.gui.Coordinator'
 }
 
 test {
