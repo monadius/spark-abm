@@ -18,10 +18,11 @@ import java.util.ArrayList;
 
 import javax.media.opengl.GL;
 
-import org.spark.math.Vector4d;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.sparkabm.math.Vector4d;
 import org.spark.runtime.external.render.font.BitmapCharacter.Kerning;
 
-import com.spinn3r.log5j.Logger;
 import com.sun.opengl.util.texture.Texture;
 import com.sun.opengl.util.texture.TextureIO;
 
@@ -30,7 +31,7 @@ import com.sun.opengl.util.texture.TextureIO;
  */
 public class BitmapFont {
 	// Log
-	private static final Logger log = Logger.getLogger();
+	private static final Logger log = LogManager.getLogger();
 	
 	// Font alignments
 	public enum Align {

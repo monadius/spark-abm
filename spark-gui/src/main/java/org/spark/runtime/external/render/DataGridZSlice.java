@@ -1,6 +1,6 @@
 package org.spark.runtime.external.render;
 
-import org.spark.runtime.data.DataObject_Grid;
+import org.sparkabm.runtime.data.DataObject_Grid;
 
 /**
  * Represents a Z-slice of a 3-dimensional grid data

@@ -25,19 +25,19 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.spark.math.parser.UserFunction;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.sparkabm.math.parser.UserFunction;
 import org.spark.runtime.external.Coordinator;
 import org.spark.runtime.external.ProxyVariable;
 import org.spark.runtime.external.gui.SparkChartPanel;
 import org.spark.runtime.external.gui.WindowManager;
 import org.spark.runtime.external.gui.SparkChartPanel.ChartType;
 
-import com.spinn3r.log5j.Logger;
-
 public class NewChartDialog extends JDialog implements ActionListener,
 		ListSelectionListener {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger.getLogger();
+	private static final Logger logger = LogManager.getLogger();
 
 	// Commands
 	private static final String CMD_SELECT = "select";

@@ -10,14 +10,14 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.spark.runtime.external.Coordinator;
 import org.spark.runtime.external.gui.dialogs.RenderProperties;
 import org.spark.runtime.external.render.Render;
-import org.spark.utils.XmlDocUtils;
+import org.sparkabm.utils.XmlDocUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
-
-import com.spinn3r.log5j.Logger;
 
 import javax.swing.*;
 
@@ -29,7 +29,7 @@ import javax.swing.*;
 @SuppressWarnings("serial")
 public class SparkViewPanel extends JPanel implements ISparkPanel,
 		ActionListener {
-	private static final Logger logger = Logger.getLogger();
+	private static final Logger logger = LogManager.getLogger();
 	
 	/* Render for this view */
 	private Render render;

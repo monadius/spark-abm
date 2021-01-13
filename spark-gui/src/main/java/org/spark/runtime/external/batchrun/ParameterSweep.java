@@ -2,11 +2,9 @@ package org.spark.runtime.external.batchrun;
 
 import java.util.ArrayList;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.spark.runtime.external.Parameter;
-
-import com.spinn3r.log5j.Logger;
-
-
 
 /**
  * Class for batch running and parameter sweep
@@ -14,7 +12,7 @@ import com.spinn3r.log5j.Logger;
  *
  */
 public class ParameterSweep {
-	private final static Logger logger = Logger.getLogger();
+	private final static Logger logger = LogManager.getLogger();
 	
 	/**
 	 * Auxiliary class with options for a parameter

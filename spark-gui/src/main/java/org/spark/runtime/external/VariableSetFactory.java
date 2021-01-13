@@ -3,11 +3,11 @@ package org.spark.runtime.external;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.spark.utils.XmlDocUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.sparkabm.utils.XmlDocUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
-
-import com.spinn3r.log5j.Logger;
 
 /**
  * Class for managing and creating sets of variables
@@ -15,7 +15,7 @@ import com.spinn3r.log5j.Logger;
  *
  */
 public class VariableSetFactory {
-	private static final Logger logger = Logger.getLogger();
+	private static final Logger logger = LogManager.getLogger();
 	
 	/* Table containing all variable sets */
 	private static HashMap<String, VariableSet> variableSets = 

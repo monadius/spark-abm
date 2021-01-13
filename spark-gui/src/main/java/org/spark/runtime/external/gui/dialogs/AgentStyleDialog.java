@@ -24,13 +24,13 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.spark.math.Vector4d;
+import org.sparkabm.math.Vector4d;
 import org.spark.runtime.external.Coordinator;
 import org.spark.runtime.external.render.AgentStyle;
 import org.spark.runtime.external.render.Render;
 import org.spark.runtime.external.render.font.BitmapFont;
 import org.spark.runtime.external.render.font.FontManager;
-import org.spark.utils.FileUtils;
+import org.sparkabm.utils.FileUtils;
 
 /**
  * The dialog for configuring advanced properties

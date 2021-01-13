@@ -5,20 +5,20 @@ import java.io.File;
 
 import javax.media.opengl.GL;
 
-import org.spark.math.Vector4d;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.sparkabm.math.Vector4d;
 import org.spark.runtime.external.render.font.BitmapFont;
 import org.spark.runtime.external.render.images.TileManager;
 import org.spark.runtime.external.render.images.TileManagerInfo;
-import org.spark.utils.FileUtils;
-import static org.spark.utils.XmlDocUtils.*;
+import org.sparkabm.utils.FileUtils;
+import static org.sparkabm.utils.XmlDocUtils.*;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import com.spinn3r.log5j.Logger;
-
 public class AgentStyle implements Comparable<AgentStyle> {
-	private static final Logger logger = Logger.getLogger();
+	private static final Logger logger = LogManager.getLogger();
 	
 	/* Agent's type name */
 	public String typeName;

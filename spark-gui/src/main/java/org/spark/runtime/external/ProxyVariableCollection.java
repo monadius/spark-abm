@@ -3,10 +3,10 @@ package org.spark.runtime.external;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.spark.runtime.data.DataCollectorDescription;
+import org.sparkabm.runtime.data.DataCollectorDescription;
 import org.spark.runtime.external.data.DataReceiver;
 import org.spark.runtime.external.data.DataFilter;
-import org.spark.utils.XmlDocUtils;
+import org.sparkabm.utils.XmlDocUtils;
 import org.w3c.dom.Node;
 
 /**

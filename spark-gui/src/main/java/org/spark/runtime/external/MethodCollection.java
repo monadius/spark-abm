@@ -2,7 +2,7 @@ package org.spark.runtime.external;
 
 import java.util.ArrayList;
 
-import org.spark.utils.XmlDocUtils;
+import org.sparkabm.utils.XmlDocUtils;
 import org.w3c.dom.Node;
 
 /**

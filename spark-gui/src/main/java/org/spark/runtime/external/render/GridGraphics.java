@@ -1,7 +1,7 @@
 package org.spark.runtime.external.render;
 
-import org.spark.runtime.data.DataObject_Grid;
-import org.spark.math.Vector;
+import org.sparkabm.runtime.data.DataObject_Grid;
+import org.sparkabm.math.Vector;
 
 /**
  * Auxiliary class for converting grid data into colors

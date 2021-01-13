@@ -13,7 +13,7 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.spark.utils.XmlDocUtils;
+import org.sparkabm.utils.XmlDocUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -185,7 +185,7 @@ public class Parameter extends SpinnerNumberModel implements ChangeListener,
 	/**
 	 * Sets a specific list of parameter's values
 	 * 
-	 * @param values
+	 * @param vals
 	 */
 	void setValues(String[] vals) {
 		values = new Double[vals.length];

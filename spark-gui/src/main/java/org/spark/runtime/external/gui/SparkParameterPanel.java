@@ -16,8 +16,8 @@ import org.spark.runtime.external.VariableSet;
 import org.spark.runtime.external.VariableSetFactory;
 import org.spark.runtime.external.Parameter.Options;
 import org.spark.runtime.external.gui.dialogs.ParameterEditDialog;
-import org.spark.utils.SpringUtilities;
-import org.spark.utils.XmlDocUtils;
+import org.sparkabm.utils.SpringUtilities;
+import org.sparkabm.utils.XmlDocUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 

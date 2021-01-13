@@ -1,6 +1,6 @@
 package org.spark.runtime.external.gui;
 
-import static org.spark.utils.XmlDocUtils.*;
+import static org.sparkabm.utils.XmlDocUtils.*;
 
 import java.awt.Rectangle;
 import java.io.File;

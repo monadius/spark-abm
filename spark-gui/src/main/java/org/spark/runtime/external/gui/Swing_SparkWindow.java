@@ -15,11 +15,11 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.spark.runtime.external.Coordinator;
 import org.spark.runtime.external.gui.menu.SparkMenu;
 import org.spark.runtime.external.gui.menu.Swing_SparkMenu;
-
-import com.spinn3r.log5j.Logger;
 
 /**
  * Swing implementation of the SparkWindow class
@@ -27,7 +27,7 @@ import com.spinn3r.log5j.Logger;
  *
  */
 public class Swing_SparkWindow extends SparkWindow {
-	private static final Logger logger = Logger.getLogger();
+	private static final Logger logger = LogManager.getLogger();
 	
 	/* References to Swing objects */
 	private JFrame frame;

@@ -1,5 +1,8 @@
 package org.spark.runtime.external.gui.menu;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -10,15 +13,13 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
 
-import com.spinn3r.log5j.Logger;
-
 /**
  * Swing implementation of the SPARK menu class
  * @author Monad
  *
  */
 public class Swing_SparkMenu extends SparkMenu implements SwingMenu {
-	private static final Logger logger = Logger.getLogger();
+	private static final Logger logger = LogManager.getLogger();
 	
 	/* Swing menu itself */
 	private final JMenu menu;

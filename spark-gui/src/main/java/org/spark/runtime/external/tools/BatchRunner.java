@@ -3,8 +3,10 @@ package org.spark.runtime.external.tools;
 import java.io.File;
 import java.util.ArrayList;
 
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.PropertyConfigurator;
+//import org.apache.log4j.BasicConfigurator;
+//import org.apache.log4j.PropertyConfigurator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jfree.util.Log;
 
 import org.spark.runtime.external.Coordinator;
@@ -14,13 +16,11 @@ import org.spark.runtime.external.batchrun.BatchRunController;
 import org.spark.runtime.external.batchrun.BatchRunManager;
 import org.spark.runtime.external.batchrun.ParameterSweep;
 import org.spark.runtime.external.data.DataReceiver;
-import org.spark.runtime.internal.manager.ModelManager_Basic;
-import org.spark.utils.XmlDocUtils;
+import org.sparkabm.runtime.internal.manager.ModelManager_Basic;
+import org.sparkabm.utils.XmlDocUtils;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
-
-import com.spinn3r.log5j.Logger;
 
 /**
  * Model description
@@ -29,7 +29,7 @@ import com.spinn3r.log5j.Logger;
  * 
  */
 class Model {
-	private static final Logger logger = Logger.getLogger();
+	private static final Logger logger = LogManager.getLogger();
 
 	private final File modelFile;
 	private final ArrayList<Batch> batches;
@@ -96,7 +96,7 @@ class Model {
  * 
  */
 class Batch {
-	private static final Logger logger = Logger.getLogger();
+	private static final Logger logger = LogManager.getLogger();
 
 	private final long ticks;
 	private final int repetitions;
@@ -282,7 +282,7 @@ class Batch {
  */
 public class BatchRunner {
 	/* Logger */
-	private static final Logger logger = Logger.getLogger();
+	private static final Logger logger = LogManager.getLogger();
 
 	/**
 	 * Test main method
@@ -296,18 +296,19 @@ public class BatchRunner {
 		}
 
 		// The first thing to do is to set up the logger
-		try {
-			if (new File("BatchRunner.properties").exists()) {
-				PropertyConfigurator.configure("BatchRunner.properties");
-			} else {
-				BasicConfigurator.configure();
-				logger
-						.error("File BatchRunner.properties is not found: using default output streams for log information");
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			BasicConfigurator.configure();
-		}
+		// TODO: logger
+//		try {
+//			if (new File("BatchRunner.properties").exists()) {
+//				PropertyConfigurator.configure("BatchRunner.properties");
+//			} else {
+//				BasicConfigurator.configure();
+//				logger
+//						.error("File BatchRunner.properties is not found: using default output streams for log information");
+//			}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			BasicConfigurator.configure();
+//		}
 
 		try {
 			// Initialize main objects

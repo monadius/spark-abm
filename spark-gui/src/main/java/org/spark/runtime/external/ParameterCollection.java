@@ -4,12 +4,12 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.spark.utils.XmlDocUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.sparkabm.utils.XmlDocUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import com.spinn3r.log5j.Logger;
 
 /**
  * Class for creating and managing model's parameters
@@ -18,7 +18,7 @@ import com.spinn3r.log5j.Logger;
  */
 // TODO: make all functionality non-static
 public class ParameterCollection {
-	private static final Logger logger = Logger.getLogger();
+	private static final Logger logger = LogManager.getLogger();
 	
 	/* All model parameters */
 	protected final HashMap<String, Parameter> parameters = 

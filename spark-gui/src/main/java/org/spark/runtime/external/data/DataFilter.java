@@ -2,8 +2,8 @@ package org.spark.runtime.external.data;
 
 import java.util.ArrayList;
 
-import org.spark.runtime.data.DataCollectorDescription;
-import org.spark.runtime.data.DataRow;
+import org.sparkabm.runtime.data.DataCollectorDescription;
+import org.sparkabm.runtime.data.DataRow;
 import org.spark.runtime.external.Coordinator;
 
 /**
@@ -153,7 +153,6 @@ public class DataFilter implements IDataConsumer {
 	
 	/**
 	 * Adds data for filtering
-	 * @param dcd
 	 */
 	public synchronized void addData(int type, String dataName, Object parameters) {
 		DataCollectorDescription dcd = new DataCollectorDescription(type, dataName, collectionInterval, parameters);

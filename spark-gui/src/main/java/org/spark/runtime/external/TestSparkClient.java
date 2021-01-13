@@ -7,16 +7,16 @@ import java.net.Socket;
 
 import javax.swing.JOptionPane;
 
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.PropertyConfigurator;
-import org.spark.runtime.commands.FileTransfer;
-import org.spark.runtime.commands.ModelManagerCommand;
-import org.spark.runtime.data.DataRow;
+//import org.apache.log4j.BasicConfigurator;
+//import org.apache.log4j.PropertyConfigurator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.sparkabm.runtime.commands.FileTransfer;
+import org.sparkabm.runtime.commands.ModelManagerCommand;
+import org.sparkabm.runtime.data.DataRow;
 import org.spark.runtime.external.data.DataReceiver;
-import org.spark.runtime.internal.manager.IModelManager;
+import org.sparkabm.runtime.internal.manager.IModelManager;
 import org.w3c.dom.Node;
-
-import com.spinn3r.log5j.Logger;
 
 /**
  * A test implementation of a SPARK client
@@ -24,7 +24,7 @@ import com.spinn3r.log5j.Logger;
  *
  */
 public class TestSparkClient {
-	private static final Logger logger = Logger.getLogger();
+	private static final Logger logger = LogManager.getLogger();
 	
 	
 	
@@ -36,17 +36,18 @@ public class TestSparkClient {
 	 */
 	public static void main(String[] args) throws Exception {
 		// The first thing to do is to set up the logger
-		try {
-			if (new File("spark.log4j.properties").exists()) {
-				PropertyConfigurator.configure("spark.log4j.properties");
-			} else {
-				BasicConfigurator.configure();
-				logger.error("File spark.log4j.properties is not found: using default output streams for log information");
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			BasicConfigurator.configure();
-		}
+		// TODO: update
+//		try {
+//			if (new File("spark.log4j.properties").exists()) {
+//				PropertyConfigurator.configure("spark.log4j.properties");
+//			} else {
+//				BasicConfigurator.configure();
+//				logger.error("File spark.log4j.properties is not found: using default output streams for log information");
+//			}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			BasicConfigurator.configure();
+//		}
 		
 		
 		Socket socket = null;

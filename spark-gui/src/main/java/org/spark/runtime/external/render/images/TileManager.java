@@ -5,9 +5,10 @@ import java.util.HashMap;
 
 import javax.media.opengl.GL;
 
-import com.spinn3r.log5j.Logger;
 import com.sun.opengl.util.texture.Texture;
 import com.sun.opengl.util.texture.TextureIO;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 
 /**
@@ -15,7 +16,7 @@ import com.sun.opengl.util.texture.TextureIO;
  * @author Alexey
  */
 public class TileManager {
-	private final static Logger logger = Logger.getLogger();
+	private final static Logger logger = LogManager.getLogger();
 	
 	/**
 	 * Describes a tile image

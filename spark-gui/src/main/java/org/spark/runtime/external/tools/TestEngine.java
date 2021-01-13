@@ -8,25 +8,25 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.PropertyConfigurator;
+//import org.apache.log4j.BasicConfigurator;
+//import org.apache.log4j.PropertyConfigurator;
 
-import org.spark.runtime.data.DataRow;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.sparkabm.runtime.data.DataRow;
 import org.spark.runtime.external.Coordinator;
 import org.spark.runtime.external.ProxyVariable;
 import org.spark.runtime.external.ProxyVariableCollection;
 import org.spark.runtime.external.data.DataFilter;
 import org.spark.runtime.external.data.DataReceiver;
 import org.spark.runtime.external.data.IDataConsumer;
-import org.spark.runtime.internal.manager.ModelManager_Basic;
+import org.sparkabm.runtime.internal.manager.ModelManager_Basic;
 
-import org.spark.utils.FileUtils;
-import org.spark.utils.XmlDocUtils;
+import org.sparkabm.utils.FileUtils;
+import org.sparkabm.utils.XmlDocUtils;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
-
-import com.spinn3r.log5j.Logger;
 
 /**
  * Auxiliary output stream class
@@ -79,7 +79,7 @@ class ModelTest implements IDataConsumer {
 	/**
 	 * Constructs a model test from the given xml node
 	 * 
-	 * @param xmlNode
+	 * @param node
 	 */
 	public ModelTest(Node node, File basePath) throws Exception {
 		// Load attributes with default values
@@ -108,7 +108,6 @@ class ModelTest implements IDataConsumer {
 	/**
 	 * Runs all tests for the given model
 	 * 
-	 * @param engine
 	 */
 	public void run() throws Exception {
 		Coordinator c = Coordinator.getInstance();
@@ -374,7 +373,7 @@ class ModelTest implements IDataConsumer {
  */
 public class TestEngine {
 	// Logger
-	private static Logger logger = Logger.getLogger();
+	private static Logger logger = LogManager.getLogger();
 	
 	// The stream for logging results
 	private static PrintStream out = null;
@@ -393,7 +392,7 @@ public class TestEngine {
 	/**
 	 * Loads all tests from the given xml file
 	 * 
-	 * @param fname
+	 * @param file
 	 */
 	public static void loadTestFile(File file) throws Exception {
 		// The path to the directory with tests (everything is relative to the test description file)
@@ -480,17 +479,18 @@ public class TestEngine {
 	 */
 	public static void main(String[] args) throws Exception {
 		// The first thing to do is to set up the logger
-		try {
-			if (new File("TestEngine.properties").exists()) {
-				PropertyConfigurator.configure("TestEngine.properties");
-			} else {
-				BasicConfigurator.configure();
-				logger.error("File TestEngine.properties is not found: using default output streams for log information");
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			BasicConfigurator.configure();
-		}
+		// TODO: logger
+//		try {
+//			if (new File("TestEngine.properties").exists()) {
+//				PropertyConfigurator.configure("TestEngine.properties");
+//			} else {
+//				BasicConfigurator.configure();
+//				logger.error("File TestEngine.properties is not found: using default output streams for log information");
+//			}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			BasicConfigurator.configure();
+//		}
 
 		// Select an xml file with tests
 		File file = selectXmlFile();

@@ -2,10 +2,10 @@ package org.spark.runtime.external;
 
 import java.util.HashMap;
 
-import org.spark.runtime.data.DataRow;
+import org.sparkabm.runtime.data.DataRow;
 import org.spark.runtime.external.data.IDataConsumer;
-import org.spark.utils.AbstractChangeEvent;
-import org.spark.utils.XmlDocUtils;
+import org.sparkabm.utils.AbstractChangeEvent;
+import org.sparkabm.utils.XmlDocUtils;
 import org.w3c.dom.Node;
 
 //import com.spinn3r.log5j.Logger;

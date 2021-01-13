@@ -19,19 +19,20 @@ import javax.media.opengl.GLPbuffer;
 import javax.media.opengl.glu.GLU;
 import javax.media.opengl.glu.GLUquadric;
 
-import org.spark.runtime.data.DataObject_AgentData;
-import org.spark.runtime.data.DataObject_SpaceAgents;
-import org.spark.runtime.data.DataObject_SpaceLinks;
-import org.spark.runtime.data.DataObject_Spaces;
-import org.spark.runtime.data.DataRow;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.sparkabm.runtime.data.DataObject_AgentData;
+import org.sparkabm.runtime.data.DataObject_SpaceAgents;
+import org.sparkabm.runtime.data.DataObject_SpaceLinks;
+import org.sparkabm.runtime.data.DataObject_Spaces;
+import org.sparkabm.runtime.data.DataRow;
 import org.spark.runtime.external.Coordinator;
 import org.spark.runtime.external.render.font.BitmapFont;
 import org.spark.runtime.external.render.font.FontManager;
 import org.spark.runtime.external.render.images.TileManager;
-import org.spark.math.Vector;
-import org.spark.math.Vector4d;
+import org.sparkabm.math.Vector;
+import org.sparkabm.math.Vector4d;
 
-import com.spinn3r.log5j.Logger;
 import com.sun.opengl.util.Screenshot;
 import com.sun.opengl.util.texture.Texture;
 
@@ -43,7 +44,7 @@ import com.sun.opengl.util.texture.Texture;
  */
 public class JOGLRender extends Render implements GLEventListener {
 	/* Logger */
-	private static final Logger logger = Logger.getLogger();
+	private static final Logger logger = LogManager.getLogger();
 
 	// private float mouse_x = 0.0f, mouse_y = 0.0f;
 //	private boolean rightButtonPressed = false;
@@ -461,7 +462,8 @@ public class JOGLRender extends Render implements GLEventListener {
 	 * Renders the given data layer
 	 * 
 	 * @param gl
-	 * @param grid
+	 * @param info
+	 * @param data
 	 * @param spaceIndex
 	 */
 	protected void renderDataLayer(GL gl, DataLayerGraphics info, DataRow data,

@@ -8,13 +8,16 @@ import java.util.Stack;
 
 import javax.swing.SwingUtilities;
 
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.PropertyConfigurator;
+//import org.apache.log4j.BasicConfigurator;
+//import org.apache.log4j.PropertyConfigurator;
 
-import org.spark.modelfile.ModelFileLoader;
-import org.spark.runtime.data.DataCollectorDescription;
-import org.spark.runtime.data.DataObject;
-import org.spark.runtime.data.DataObject_State;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.sparkabm.modelfile.ModelFileLoader;
+import org.sparkabm.runtime.commands.*;
+import org.sparkabm.runtime.data.DataCollectorDescription;
+import org.sparkabm.runtime.data.DataObject;
+import org.sparkabm.runtime.data.DataObject_State;
 import org.spark.runtime.external.data.DataReceiver;
 import org.spark.runtime.external.data.DataFilter;
 import org.spark.runtime.external.data.DataSetTmp;
@@ -24,17 +27,16 @@ import org.spark.runtime.external.gui.menu.StandardMenu;
 import org.spark.runtime.external.render.DataLayerStyle;
 import org.spark.runtime.external.render.Render;
 import org.spark.runtime.external.render.font.FontManager;
-import org.spark.runtime.internal.manager.IModelManager;
-import org.spark.runtime.internal.manager.ModelManager_Basic;
-import org.spark.utils.FileUtils;
-import org.spark.utils.XmlDocUtils;
+import org.sparkabm.runtime.internal.manager.IModelManager;
+import org.sparkabm.runtime.internal.manager.ModelManager_Basic;
+import org.sparkabm.utils.FileUtils;
+import org.sparkabm.utils.XmlDocUtils;
 
-import static org.spark.utils.XmlDocUtils.*;
+import static org.sparkabm.utils.XmlDocUtils.*;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import com.spinn3r.log5j.Logger;
 
 /**
  * Central external class which coordinates interactions between a model manager
@@ -45,7 +47,7 @@ import com.spinn3r.log5j.Logger;
  */
 public class Coordinator {
 	/* Logger */
-	private static final Logger logger = Logger.getLogger();
+	private static final Logger logger = LogManager.getLogger();
 
 	/* A single instance of the class */
 	private static Coordinator coordinator;
@@ -898,18 +900,19 @@ public class Coordinator {
 	 */
 	public static void main(final String[] args) throws Exception {
 		// The first thing to do is to set up the logger
-		try {
-			if (new File("spark.log4j.properties").exists()) {
-				PropertyConfigurator.configure("spark.log4j.properties");
-			} else {
-				BasicConfigurator.configure();
-				logger
-						.error("File spark.log4j.properties is not found: using default output streams for log information");
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			BasicConfigurator.configure();
-		}
+		// TODO: logger
+//		try {
+//			if (new File("spark.log4j.properties").exists()) {
+//				PropertyConfigurator.configure("spark.log4j.properties");
+//			} else {
+//				BasicConfigurator.configure();
+//				logger
+//						.error("File spark.log4j.properties is not found: using default output streams for log information");
+//			}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			BasicConfigurator.configure();
+//		}
 
 		final ModelManager_Basic manager = new ModelManager_Basic();
 		final DataReceiver receiver = new DataReceiver();

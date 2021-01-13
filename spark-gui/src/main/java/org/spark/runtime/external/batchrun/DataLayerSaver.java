@@ -4,21 +4,21 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
-import org.spark.runtime.data.DataCollectorDescription;
-import org.spark.runtime.data.DataObject_Grid;
-import org.spark.runtime.data.DataRow;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.sparkabm.runtime.data.DataCollectorDescription;
+import org.sparkabm.runtime.data.DataObject_Grid;
+import org.sparkabm.runtime.data.DataRow;
 import org.spark.runtime.external.Coordinator;
 import org.spark.runtime.external.data.DataFilter;
 import org.spark.runtime.external.data.IDataConsumer;
-
-import com.spinn3r.log5j.Logger;
 
 /**
  * Saves data layers
  * @author Monad
  */
 class DataLayerSaver implements IDataConsumer {
-	private final static Logger log = Logger.getLogger();
+	private final static Logger log = LogManager.getLogger();
 	
 	// Names of data layers
 	private final ArrayList<String> dataLayers;

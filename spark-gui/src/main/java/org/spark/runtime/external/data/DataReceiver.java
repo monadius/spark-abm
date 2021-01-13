@@ -2,12 +2,12 @@ package org.spark.runtime.external.data;
 
 import java.util.ArrayList;
 
-import org.spark.runtime.data.AbstractDataReceiver;
-import org.spark.runtime.data.DataObject;
-import org.spark.runtime.data.DataObject_State;
-import org.spark.runtime.data.DataRow;
-
-import com.spinn3r.log5j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.sparkabm.runtime.data.AbstractDataReceiver;
+import org.sparkabm.runtime.data.DataObject;
+import org.sparkabm.runtime.data.DataObject_State;
+import org.sparkabm.runtime.data.DataRow;
 
 /**
  * Base data receiver class
@@ -15,7 +15,7 @@ import com.spinn3r.log5j.Logger;
  *
  */
 public class DataReceiver extends AbstractDataReceiver {
-	private static final Logger logger = Logger.getLogger();
+	private static final Logger logger = LogManager.getLogger();
 	
 	/* List of all data consumers */
 	protected final ArrayList<DataFilter> consumers;

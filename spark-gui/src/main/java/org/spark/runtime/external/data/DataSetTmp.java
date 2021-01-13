@@ -4,14 +4,14 @@ import java.io.File;
 import java.io.PrintStream;
 import java.util.ArrayList;
 
-import org.spark.runtime.data.DataCollectorDescription;
-import org.spark.runtime.data.DataRow;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.sparkabm.runtime.data.DataCollectorDescription;
+import org.sparkabm.runtime.data.DataRow;
 import org.spark.runtime.external.Coordinator;
 import org.spark.runtime.external.ParameterCollection;
-import org.spark.utils.XmlDocUtils;
+import org.sparkabm.utils.XmlDocUtils;
 import org.w3c.dom.Node;
-
-import com.spinn3r.log5j.Logger;
 
 /**
  * Temporary data set class
@@ -20,7 +20,7 @@ import com.spinn3r.log5j.Logger;
  */
 // TODO: implement real data sets
 public class DataSetTmp implements IDataConsumer {
-	private static final Logger logger = Logger.getLogger();
+	private static final Logger logger = LogManager.getLogger();
 	
 	/* Data filter */
 	private final DataFilter dataFilter;
@@ -69,7 +69,6 @@ public class DataSetTmp implements IDataConsumer {
 	/**
 	 * Creates a data set from the given xml node
 	 * @param node
-	 * @param owner
 	 */
 	public DataSetTmp(Node node) {
 		// Create data filter and load data items

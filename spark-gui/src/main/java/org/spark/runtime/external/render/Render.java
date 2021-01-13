@@ -14,29 +14,29 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
-import org.spark.math.Vector;
-import org.spark.runtime.commands.Command_ControlEvent;
-import org.spark.runtime.data.DataCollectorDescription;
-import org.spark.runtime.data.DataObject_Inspection;
-import org.spark.runtime.data.DataObject_Spaces;
-import org.spark.runtime.data.DataRow;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.sparkabm.math.Vector;
+import org.sparkabm.runtime.commands.Command_ControlEvent;
+import org.sparkabm.runtime.data.DataCollectorDescription;
+import org.sparkabm.runtime.data.DataObject_Inspection;
+import org.sparkabm.runtime.data.DataObject_Spaces;
+import org.sparkabm.runtime.data.DataRow;
 import org.spark.runtime.external.Coordinator;
 import org.spark.runtime.external.data.DataFilter;
 import org.spark.runtime.external.data.DataReceiver;
 import org.spark.runtime.external.data.IDataConsumer;
 import org.spark.runtime.external.gui.SparkInspectionPanel;
 import org.spark.runtime.external.gui.SparkWindow;
-import org.spark.utils.XmlDocUtils;
+import org.sparkabm.utils.XmlDocUtils;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.spinn3r.log5j.Logger;
-
 public abstract class Render implements KeyListener, IDataConsumer, MouseWheelListener, MouseListener, MouseMotionListener {
 	// Logger
-	private static final Logger logger = Logger.getLogger();
+	private static final Logger logger = LogManager.getLogger();
 	
 	/* Types of renderers */
 	public static final int JOGL_RENDER = 0;

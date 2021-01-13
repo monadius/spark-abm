@@ -18,8 +18,8 @@ import javax.swing.event.ChangeListener;
 
 import org.spark.runtime.external.Coordinator;
 import org.spark.runtime.external.render.DataLayerStyle;
-import org.spark.utils.SpringUtilities;
-import org.spark.math.Vector;
+import org.sparkabm.utils.SpringUtilities;
+import org.sparkabm.math.Vector;
 
 
 /**

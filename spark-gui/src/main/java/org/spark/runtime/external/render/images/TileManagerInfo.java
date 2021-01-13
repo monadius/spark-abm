@@ -1,6 +1,6 @@
 package org.spark.runtime.external.render.images;
 
-import static org.spark.utils.XmlDocUtils.*;
+import static org.sparkabm.utils.XmlDocUtils.*;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -8,16 +8,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.spark.math.Vector;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.sparkabm.math.Vector;
 import org.w3c.dom.Node;
-
-import com.spinn3r.log5j.Logger;
 
 /**
  * Describes sources of all images
  */
 public class TileManagerInfo {
-	private static final Logger logger = Logger.getLogger();
+	private static final Logger logger = LogManager.getLogger();
 	
 	// Collection of all tile manager descriptions
 	private static final HashMap<File, TileManagerInfo> tileManagers = new HashMap<File, TileManagerInfo>();

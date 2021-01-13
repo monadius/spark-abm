@@ -11,14 +11,14 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.spark.runtime.external.Coordinator;
 import org.spark.runtime.external.data.DataSetTmp;
-import org.spark.utils.FileUtils;
-import org.spark.utils.XmlDocUtils;
+import org.sparkabm.utils.FileUtils;
+import org.sparkabm.utils.XmlDocUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
-
-import com.spinn3r.log5j.Logger;
 
 /**
  * A data set panel
@@ -26,7 +26,7 @@ import com.spinn3r.log5j.Logger;
  */
 @SuppressWarnings("serial")
 public class SparkDatasetPanel extends JPanel implements ISparkPanel, ActionListener {
-	private static final Logger logger = Logger.getLogger();
+	private static final Logger logger = LogManager.getLogger();
 	
 	/* Dataset name */
 //	private String name;
@@ -40,8 +40,8 @@ public class SparkDatasetPanel extends JPanel implements ISparkPanel, ActionList
 	
 	/**
 	 * Creates a data set panel from the data set
+	 * @param manager
 	 * @param node
-	 * @param owner
 	 */
 	public SparkDatasetPanel(WindowManager manager, Node node, DataSetTmp data) {
 		this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));

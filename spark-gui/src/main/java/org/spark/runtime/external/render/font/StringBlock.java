@@ -2,7 +2,7 @@ package org.spark.runtime.external.render.font;
 
 import java.awt.geom.Rectangle2D;
 
-import org.spark.math.Vector4d;
+import org.sparkabm.math.Vector4d;
 
 /**
  * Individual string to load into vertex buffer

@@ -4,16 +4,16 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
-import org.spark.utils.FileUtils;
-
-import com.spinn3r.log5j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.sparkabm.utils.FileUtils;
 
 /**
  * Loads and manages all fonts
  */
 public class FontManager {
 	// Log
-	private static final Logger log = Logger.getLogger();
+	private static final Logger log = LogManager.getLogger();
 	
 	// Font directories
 	private final ArrayList<File> dirs;

@@ -21,16 +21,16 @@ import java.io.File;
 
 import javax.imageio.ImageIO;
 
-import org.spark.runtime.data.DataObject_AgentData;
-import org.spark.runtime.data.DataObject_SpaceAgents;
-import org.spark.runtime.data.DataObject_SpaceLinks;
-import org.spark.runtime.data.DataObject_Spaces;
-import org.spark.runtime.data.DataRow;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.sparkabm.runtime.data.DataObject_AgentData;
+import org.sparkabm.runtime.data.DataObject_SpaceAgents;
+import org.sparkabm.runtime.data.DataObject_SpaceLinks;
+import org.sparkabm.runtime.data.DataObject_Spaces;
+import org.sparkabm.runtime.data.DataRow;
 import org.spark.runtime.external.render.images.TileManager;
-import org.spark.math.Vector;
-import org.spark.math.Vector4d;
-
-import com.spinn3r.log5j.Logger;
+import org.sparkabm.math.Vector;
+import org.sparkabm.math.Vector4d;
 
 /**
  * Render using Java2d
@@ -39,7 +39,7 @@ import com.spinn3r.log5j.Logger;
  * 
  */
 public class JavaRender extends Render {
-	private static final Logger logger = Logger.getLogger();
+	private static final Logger logger = LogManager.getLogger();
 
 	/* Canvas */
 	private JavaRenderCanvas canvas;
@@ -218,8 +218,9 @@ public class JavaRender extends Render {
 	 * Renders a grid
 	 * 
 	 * @param g
-	 * @param grid
-	 * @param space
+	 * @param info
+	 * @param data
+	 * @param spaceIndex
 	 */
 	protected void renderDataLayer(Graphics2D g, DataLayerGraphics info, DataRow data,
 			int spaceIndex) {

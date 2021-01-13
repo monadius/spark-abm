@@ -1,7 +1,7 @@
 package org.spark.runtime.external.render.images;
 
-import static org.spark.utils.XmlDocUtils.getIntegerValue;
-import static org.spark.utils.XmlDocUtils.getValue;
+import static org.sparkabm.utils.XmlDocUtils.getIntegerValue;
+import static org.sparkabm.utils.XmlDocUtils.getValue;
 
 import java.awt.image.BufferedImage;
 

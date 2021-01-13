@@ -2,14 +2,14 @@ package org.spark.runtime.external;
 
 import java.io.File;
 
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.PropertyConfigurator;
-import org.spark.runtime.data.DataRow;
+//import org.apache.log4j.BasicConfigurator;
+//import org.apache.log4j.PropertyConfigurator;
+import org.sparkabm.runtime.data.DataRow;
 import org.spark.runtime.external.data.DataFilter;
 import org.spark.runtime.external.data.DataReceiver;
 import org.spark.runtime.external.data.DataSetTmp;
 import org.spark.runtime.external.data.IDataConsumer;
-import org.spark.runtime.internal.manager.ModelManager_Basic;
+import org.sparkabm.runtime.internal.manager.ModelManager_Basic;
 
 /**
  * External SPARK interface
@@ -48,16 +48,17 @@ public class Interface {
 	 */
 	private void init() {
 		// The first thing to do is to set up the logger
-		try {
-			if (new File("BatchRunner.properties").exists()) {
-				PropertyConfigurator.configure("BatchRunner.properties");
-			} else {
-				BasicConfigurator.configure();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			BasicConfigurator.configure();
-		}
+		// TODO: update
+//		try {
+//			if (new File("BatchRunner.properties").exists()) {
+//				PropertyConfigurator.configure("BatchRunner.properties");
+//			} else {
+//				BasicConfigurator.configure();
+//			}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			BasicConfigurator.configure();
+//		}
 
 		// Initialize main objects
 		ModelManager_Basic manager = new ModelManager_Basic();

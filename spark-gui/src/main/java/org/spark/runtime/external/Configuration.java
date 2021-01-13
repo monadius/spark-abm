@@ -4,17 +4,17 @@ import java.io.File;
 import java.io.PrintStream;
 import java.util.ArrayList;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.spark.runtime.external.gui.menu.ISparkMenuListener;
 import org.spark.runtime.external.gui.menu.SparkMenu;
 import org.spark.runtime.external.gui.menu.SparkMenuFactory;
 import org.spark.runtime.external.gui.menu.SparkMenuItem;
 import org.spark.runtime.external.render.Render;
 import org.spark.runtime.external.render.font.FontManager;
-import org.spark.utils.XmlDocUtils;
+import org.sparkabm.utils.XmlDocUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
-
-import com.spinn3r.log5j.Logger;
 
 /**
  * Works with a SPARK config file
@@ -22,7 +22,7 @@ import com.spinn3r.log5j.Logger;
  *
  */
 public class Configuration {
-	private static final Logger logger = Logger.getLogger();
+	private static final Logger logger = LogManager.getLogger();
 
 	
 	/******* Recent projects *******/

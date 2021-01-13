@@ -17,8 +17,8 @@ import org.spark.runtime.external.batchrun.BatchRunManager;
 import org.spark.runtime.external.batchrun.DataAnalyzer;
 import org.spark.runtime.external.batchrun.ParameterSweep;
 import org.spark.runtime.external.render.DataLayerStyle;
-import org.spark.utils.FileUtils;
-import org.spark.utils.SpringUtilities;
+import org.sparkabm.utils.FileUtils;
+import org.sparkabm.utils.SpringUtilities;
 
 /**
  * The dialog for setting up batch run properties 
