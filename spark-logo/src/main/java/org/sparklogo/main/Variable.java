@@ -121,8 +121,6 @@ public class Variable {
 	
 	/**
 	 * Translates into the java code
-	 * @param java
-	 * @param lvalue
 	 */
 	public String getTranslationString(int flag) throws Exception {
 		// Set

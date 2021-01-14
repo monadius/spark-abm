@@ -16,8 +16,8 @@ public class ObserverFactory {
 	@SuppressWarnings("unchecked")
 	static Observer create(String observerName, int executionMode) throws Exception
 	{
-		if (!observerName.startsWith("org.spark"))
-			observerName = "org.spark.core." + observerName;
+		if (!observerName.startsWith("org.sparkabm"))
+			observerName = "org.sparkabm.core." + observerName;
 		
 		Class<ObserverImpl> cl = (Class<ObserverImpl>) Class.forName(observerName);
 		if (cl == null)

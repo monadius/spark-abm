@@ -11,3 +11,7 @@
 !src/**/build
 !gradle-wrapper.jar
 
+# Spark
+**/output/
+!src/**/output
+

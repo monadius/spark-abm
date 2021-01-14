@@ -1,7 +1,10 @@
 package org.sparklogo.gui;
 
 import java.io.*;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 import javax.swing.AbstractListModel;
 import javax.swing.ListModel;
@@ -369,10 +372,22 @@ public class Project {
 		compilerArgs.add("-Xlint:deprecation");
 		
 		compilerArgs.add("-target");
-		compilerArgs.add("1.5");
+		compilerArgs.add("8");
+
+		compilerArgs.add("-source");
+		compilerArgs.add("8");
 
 		compilerArgs.add("-classpath");
-		compilerArgs.add(sparkCorePath.getPath());
+		final String[] libs = {
+			"spark-core-1.0.jar", "spark-math-1.0.jar", "spark-utils-1.0.jar"
+		};
+		final String path = sparkCorePath.getParent();
+		String jars = Arrays.stream(libs)
+				.map(lib -> path + File.separator + lib)
+				.collect(Collectors.joining(":"));
+
+		//compilerArgs.add(sparkCorePath.getParent());
+		compilerArgs.add(jars);
 
 		for (int i = 0; i < javaFiles.size(); i++) {
 			compilerArgs.add(javaFiles.get(i).getPath());
@@ -480,22 +495,27 @@ public class Project {
 			throw new Exception("No model files in the output directory: "
 					+ output.getPath());
 
-		StringBuilder cmd = new StringBuilder(
-				"java -Xmx512m -Xms128m -jar ");
-		cmd.append('\"');
-		cmd.append(sparkExternalPath.getPath());
-		cmd.append('\"');
+//		StringBuilder cmd = new StringBuilder(
+//				"java -Xmx512m -Xms128m -jar ");
+//		cmd.append('"');
+//		cmd.append(sparkExternalPath.getPath());
+//		cmd.append('"');
+//
+//		cmd.append(" \"");
+//		cmd.append(xmlFiles.get(0).getPath());
+//		cmd.append('"');
 
-		cmd.append(" \"");
-		cmd.append(xmlFiles.get(0).getPath());
-		cmd.append('\"');
+//		System.out.println(cmd);
+		String[] cmd = {
+			String.join(File.separator, sparkExternalPath.getParentFile().getParent(), "bin", "spark-gui"),
+			xmlFiles.get(0).getPath()
+		};
+		System.out.println(String.join(" ", cmd));
 
-		System.out.println(cmd);
-
-		Process proc = Runtime.getRuntime().exec(
-				new String[] { "java", "-Xmx512m", "-Xms128m",
-						"-Dsun.java2d.d3d=false", "-jar", sparkExternalPath.getPath(),
-						xmlFiles.get(0).getPath() });
+		Process proc = Runtime.getRuntime().exec(cmd);
+//				new String[] { "java", "-Xmx512m", "-Xms128m",
+//						"-Dsun.java2d.d3d=false", "-jar", sparkExternalPath.getPath(),
+//						xmlFiles.get(0).getPath() });
 
 		InputStream inputStream = proc.getInputStream();
 		InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
