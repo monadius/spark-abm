@@ -5,10 +5,8 @@ package org.sparkabm.math.parser;
  * Date: 01.11.2005
  * Time: 23:44:46
  */
-public class Test
-{
-    public static void main(String[] args) throws Exception
-    {
+public class Test {
+    public static void main(String[] args) throws Exception {
         UserFunction ch = UserFunction.addUserFunction("ch", "(exp(x) + exp(-x))/2");
         UserFunction sh = UserFunction.addUserFunction("sh", "(exp(x) - exp(-x))/2");
 //        UserFunction.addUserFunction("chsh", "ch(x) + sh(y)", new String[] {"x", "y"});

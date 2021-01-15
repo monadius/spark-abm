@@ -7,14 +7,15 @@
 package org.sparkabm.math;
 
 /**
- * A basic interface for a vector function 
+ * A basic interface for a vector function
  */
 public interface Function {
-	/**
-	 * The only method of a vector function:
-	 * returns the value of the function at the point x 
-	 * @param x a point
-	 * @return a value of a function
-	 */
-	public double getValue(Vector x);
+    /**
+     * The only method of a vector function:
+     * returns the value of the function at the point x
+     *
+     * @param x a point
+     * @return a value of a function
+     */
+    public double getValue(Vector x);
 }

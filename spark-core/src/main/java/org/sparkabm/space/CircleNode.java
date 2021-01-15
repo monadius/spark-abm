@@ -13,90 +13,93 @@ import org.sparkabm.math.Vector;
  * The simplest space node
  */
 public class CircleNode extends SpaceNode {
-	/**
-	 * Default serialVersionUID
-	 */
-	private static final long serialVersionUID = 1L;
-	
-	// The radius of the circle
-	protected double radius;
-	
-	/**
-	 * Creates the circle node of the given radius
-	 * @param space
-	 * @param radius
-	 */
-	protected CircleNode(Space space, double radius) {
-		super(space);
-		
+    /**
+     * Default serialVersionUID
+     */
+    private static final long serialVersionUID = 1L;
+
+    // The radius of the circle
+    protected double radius;
+
+    /**
+     * Creates the circle node of the given radius
+     *
+     * @param space
+     * @param radius
+     */
+    protected CircleNode(Space space, double radius) {
+        super(space);
+
 //		if (radius <= 0.0)
 //			radius = 1.0;
-		
-		this.radius = radius;
-	}
-	
-	/**
-	 * Changes the radius
-	 * @param r
-	 */
-	public void setRadius(double r) {
-		if (r > space.maximumNodeRadius)
-			space.maximumNodeRadius = r;
-		
-		radius = r;
-	}
-	
-	
-	/**
-	 * For internal use only. Preserves maximumNodeRadius.
-	 * @param r
-	 */
-	void setRadius0(double r) {
-		radius = r;
-	}
 
-	
-	@Override
-	public boolean intersects(SpaceNode node) {
-		if (node.space != space)
-			return false;
-		
-		return node.intersectsWith(this);
-	}
-	
-	
-	@Override
-	public double getRelativeSize() {
-		return radius;
-	}
-	
-	
-	@Override
-	public int getShape() {
-		return SpaceAgent.CIRCLE;
-	}
-	
+        this.radius = radius;
+    }
 
-	@Override
-	protected boolean intersectsWith(CircleNode circle) {
-		Vector v = space.getVector(position, circle.position);
+    /**
+     * Changes the radius
+     *
+     * @param r
+     */
+    public void setRadius(double r) {
+        if (r > space.maximumNodeRadius)
+            space.maximumNodeRadius = r;
 
-		double d = radius + circle.radius;
-		if (d*d > v.lengthSquared())
-			return true;
-		
-		return false;
-	}
+        radius = r;
+    }
 
-	@Override
-	protected boolean intersectsWith(Square2Node node) {
-		return node.intersectsWith(this);
-	}
-	
-	
-	@Override
-	protected boolean intersectsWith(SquareNode node) {
-		return intersectsWith((CircleNode) node);
-	}
+
+    /**
+     * For internal use only. Preserves maximumNodeRadius.
+     *
+     * @param r
+     */
+    void setRadius0(double r) {
+        radius = r;
+    }
+
+
+    @Override
+    public boolean intersects(SpaceNode node) {
+        if (node.space != space)
+            return false;
+
+        return node.intersectsWith(this);
+    }
+
+
+    @Override
+    public double getRelativeSize() {
+        return radius;
+    }
+
+
+    @Override
+    public int getShape() {
+        return SpaceAgent.CIRCLE;
+    }
+
+
+    @Override
+    protected boolean intersectsWith(CircleNode circle) {
+        Vector v = space.getVector(position, circle.position);
+
+        double d = radius + circle.radius;
+        if (d * d > v.lengthSquared())
+            return true;
+
+        return false;
+    }
+
+    @Override
+    protected boolean intersectsWith(Square2Node node) {
+        return node.intersectsWith(this);
+    }
+
+
+    @Override
+    protected boolean intersectsWith(SquareNode node) {
+        return intersectsWith((CircleNode) node);
+    }
 
 }

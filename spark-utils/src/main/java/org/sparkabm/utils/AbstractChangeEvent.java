@@ -11,25 +11,23 @@ import java.util.*;
 import javax.swing.event.*;
 
 
-/** 
- * This class provides the ChangeListener part of the 
+/**
+ * This class provides the ChangeListener part of the
  * SpinnerModel interface that should be suitable for most concrete SpinnerModel
- * implementations.  Subclasses must provide an implementation of the 
+ * implementations.  Subclasses must provide an implementation of the
  * <code>setValue</code>, <code>getValue</code>, <code>getNextValue</code> and
  * <code>getPreviousValue</code> methods.
- * 
+ *
+ * @author Hans Muller
+ * @version 1.9 03/29/06
  * @see JSpinner
  * @see SpinnerModel
  * @see SpinnerListModel
  * @see SpinnerNumberModel
  * @see SpinnerDateModel
- * 
- * @version 1.9 03/29/06
- * @author Hans Muller
  * @since 1.4
  */
-public abstract class AbstractChangeEvent
-{
+public abstract class AbstractChangeEvent {
 
     /**
      * Only one ChangeEvent is needed per model instance since the
@@ -47,7 +45,7 @@ public abstract class AbstractChangeEvent
 
 
     /**
-     * Adds a ChangeListener to the model's listener list.  The 
+     * Adds a ChangeListener to the model's listener list.  The
      * ChangeListeners must be notified when the models value changes.
      *
      * @param l the ChangeListener to add
@@ -57,7 +55,7 @@ public abstract class AbstractChangeEvent
     public void addChangeListener(ChangeListener l) {
         listenerList.add(ChangeListener.class, l);
     }
-    
+
 
     /**
      * Removes a ChangeListener from the model's listener list.
@@ -76,37 +74,36 @@ public abstract class AbstractChangeEvent
      * to this AbstractSpinnerModel with addChangeListener().
      *
      * @return all of the <code>ChangeListener</code>s added or an empty
-     *         array if no listeners have been added
+     * array if no listeners have been added
      * @since 1.4
      */
     public ChangeListener[] getChangeListeners() {
-        return (ChangeListener[])listenerList.getListeners(
+        return (ChangeListener[]) listenerList.getListeners(
                 ChangeListener.class);
     }
 
 
-    /** 
-     * Run each ChangeListeners stateChanged() method.  
-     * 
+    /**
+     * Run each ChangeListeners stateChanged() method.
+     *
      * @see #setValue
      * @see EventListenerList
      */
-    protected void fireStateChanged() 
-    {
+    protected void fireStateChanged() {
         Object[] listeners = listenerList.getListenerList();
-        for (int i = listeners.length - 2; i >= 0; i -=2 ) {
+        for (int i = listeners.length - 2; i >= 0; i -= 2) {
             if (listeners[i] == ChangeListener.class) {
                 if (changeEvent == null) {
                     changeEvent = new ChangeEvent(this);
                 }
-                ((ChangeListener)listeners[i+1]).stateChanged(changeEvent);
-            }          
+                ((ChangeListener) listeners[i + 1]).stateChanged(changeEvent);
+            }
         }
-    }   
+    }
 
 
     /**
-     * Return an array of all the listeners of the given type that 
+     * Return an array of all the listeners of the given type that
      * were added to this model.  For example to find all of the
      * ChangeListeners added to this model:
      * <pre>
@@ -114,11 +111,11 @@ public abstract class AbstractChangeEvent
      * </pre>
      *
      * @param listenerType the type of listeners to return, e.g. ChangeListener.class
-     * @return all of the objects receiving <em>listenerType</em> notifications 
-     *         from this model
+     * @return all of the objects receiving <em>listenerType</em> notifications
+     * from this model
      */
-    public <T extends EventListener> T[] getListeners(Class<T> listenerType) { 
-	return listenerList.getListeners(listenerType); 
+    public <T extends EventListener> T[] getListeners(Class<T> listenerType) {
+        return listenerList.getListeners(listenerType);
     }
 }
 
