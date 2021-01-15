@@ -5,35 +5,35 @@ import org.w3c.dom.Node;
 
 /**
  * Defines the observer for the model
- * @author Monad
  *
+ * @author Monad
  */
 public class ObserverAnnotation extends ModelAnnotation {
 
-	protected ObserverAnnotation() {
-		super(OBSERVER_ANNOTATION);
-		
-		items.put("observer", new StringElement("observer"));
-		items.put("mode", new StringElement("mode"));
+    protected ObserverAnnotation() {
+        super(OBSERVER_ANNOTATION);
 
-		items.get("observer").optional = true;
-		items.get("mode").optional = true;
-	}
+        items.put("observer", new StringElement("observer"));
+        items.put("mode", new StringElement("mode"));
 
-	@Override
-	public String toString() {
-		String str = "<setup ";
-		
-		str += super.toString();
-		str += "/>";
-		
-		return str;
-	}
-	
-	
-	@Override
-	public Node toNode(Document doc) {
-		Node node = super.toNode(doc, "setup");
-		return node;
-	}
+        items.get("observer").optional = true;
+        items.get("mode").optional = true;
+    }
+
+    @Override
+    public String toString() {
+        String str = "<setup ";
+
+        str += super.toString();
+        str += "/>";
+
+        return str;
+    }
+
+
+    @Override
+    public Node toNode(Document doc) {
+        Node node = super.toNode(doc, "setup");
+        return node;
+    }
 }

@@ -9,16 +9,14 @@ import javax.swing.JTextArea;
 
 /**
  * Very simple graphical console
- * @author Monad
  *
+ * @author Monad
  */
 @SuppressWarnings("serial")
-public class Console extends JScrollPane
-{
-    private JTextArea   textArea;
+public class Console extends JScrollPane {
+    private JTextArea textArea;
 
-    public Console()
-    {
+    public Console() {
         textArea = new JTextArea(10, 10);
         setViewportView(textArea);
 
@@ -27,27 +25,22 @@ public class Console extends JScrollPane
         System.setErr(new PrintStream(new MyOutputStream()));
     }
 
-    public synchronized void clearText()
-    {
+    public synchronized void clearText() {
         textArea.setText("");
     }
 
-    public synchronized void printLine(String str)
-    {
+    public synchronized void printLine(String str) {
         textArea.append(str + "\n");
         textArea.setCaretPosition(textArea.getDocument().getLength());
     }
 
-    public synchronized void printChar(char ch)
-    {
+    public synchronized void printChar(char ch) {
         textArea.append(String.valueOf(ch));
         textArea.setCaretPosition(textArea.getDocument().getLength());
     }
 
-    class MyOutputStream extends OutputStream
-    {
-        public void write(int b) throws IOException
-        {
+    class MyOutputStream extends OutputStream {
+        public void write(int b) throws IOException {
             printChar((char) b);
         }
     }

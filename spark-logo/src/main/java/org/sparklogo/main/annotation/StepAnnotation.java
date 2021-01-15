@@ -5,35 +5,36 @@ import org.w3c.dom.Node;
 
 /**
  * Step annotation
+ *
  * @author Monad
  */
 class StepAnnotation extends AgentAnnotation {
 
-	protected StepAnnotation() {
-		super(STEP_ANNOTATION);
-		
-		items.put("priority", new IntegerElement("priority"));
-		items.put("time", new StringElement("time"));
+    protected StepAnnotation() {
+        super(STEP_ANNOTATION);
 
-		items.get("priority").optional = true;
-		items.get("time").optional = true;
-	}
+        items.put("priority", new IntegerElement("priority"));
+        items.put("time", new StringElement("time"));
 
-	@Override
-	public String toString() {
-		String str = "<agent ";
-		
-		str += super.toString();
-		str += "/>";
-		
-		return str;
-	}
-	
-	
-	@Override
-	public Node toNode(Document doc) {
-		Node node = super.toNode(doc, "agent");
-		return node;
-	}
+        items.get("priority").optional = true;
+        items.get("time").optional = true;
+    }
+
+    @Override
+    public String toString() {
+        String str = "<agent ";
+
+        str += super.toString();
+        str += "/>";
+
+        return str;
+    }
+
+
+    @Override
+    public Node toNode(Document doc) {
+        Node node = super.toNode(doc, "agent");
+        return node;
+    }
 }
 

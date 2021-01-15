@@ -12,75 +12,70 @@ import org.sparklogo.main.type.Type;
 import org.sparklogo.main.type.UnknownType;
 
 
-
 public class VariableNode extends TreeNode {
-	protected Variable var;
-	private boolean gridSpecialTranslationFlag;
-	
-	public VariableNode(Symbol symbol, Variable var) {
-		super(symbol);
-		this.var = var;
-	}
+    protected Variable var;
+    private boolean gridSpecialTranslationFlag;
 
-	
-	@Override
-	public void debugPrint(java.io.PrintStream out) throws Exception {
-		out.println("<variable name = \"" + var.id.name + "\" type = \"" + var.type.getId().name + "\" />");
-	}
+    public VariableNode(Symbol symbol, Variable var) {
+        super(symbol);
+        this.var = var;
+    }
 
-	
-	@Override
-	public Type getType() throws Exception {
-		return var.type;
-	}
-	
-	
-	@Override
-	public Type resolveType(Type expectedType, int flag) throws Exception {
-		Type myType = var.type;
 
-		// FIXME: remove this as soon as possible
-		// make natural implicit type conversion
-		AdhocImplementation.flag = false;
-		if (myType.getId() != null) {
-			Type doubleType = SparkModel.getInstance().getType(new Id("double"));
+    @Override
+    public void debugPrint(java.io.PrintStream out) throws Exception {
+        out.println("<variable name = \"" + var.id.name + "\" type = \"" + var.type.getId().name + "\" />");
+    }
 
-			// FIXME: hacking starts here...
-			if ((flag & GET_VALUE) != 0) {
-				if (doubleType.instanceOf(expectedType) || expectedType instanceof UnknownType) {
-					Type gridType = SparkModel.getInstance().getType(new Id("grid"));
-					if (myType.instanceOf(gridType) && (nodeFlags & 0x100) != 0) {
-						gridSpecialTranslationFlag = true;
-						return doubleType;
-					}
-				}
-			}
-			
-			// ...and ends here
-			
 
-			
+    @Override
+    public Type getType() throws Exception {
+        return var.type;
+    }
 
-			
-			// Always use double type for GET_VALUE
-			if ((flag & GET_VALUE) != 0) {
-				if (myType.getId().name.equals("$integer") ||
-					myType.getId().name.equals("$long") ||
-					myType.getId().name.equals("$time"))
-				{
-					myType = doubleType;
-					AdhocImplementation.flag = true;
-				}
-			}
-			
-			if (doubleType.instanceOf(expectedType))
-				if (myType.getId().name.equals("$integer") ||
-					myType.getId().name.equals("$long") ||
-					myType.getId().name.equals("$time")) {
-				
-					myType = doubleType;
-					AdhocImplementation.flag = true;
-				}
+
+    @Override
+    public Type resolveType(Type expectedType, int flag) throws Exception {
+        Type myType = var.type;
+
+        // FIXME: remove this as soon as possible
+        // make natural implicit type conversion
+        AdhocImplementation.flag = false;
+        if (myType.getId() != null) {
+            Type doubleType = SparkModel.getInstance().getType(new Id("double"));
+
+            // FIXME: hacking starts here...
+            if ((flag & GET_VALUE) != 0) {
+                if (doubleType.instanceOf(expectedType) || expectedType instanceof UnknownType) {
+                    Type gridType = SparkModel.getInstance().getType(new Id("grid"));
+                    if (myType.instanceOf(gridType) && (nodeFlags & 0x100) != 0) {
+                        gridSpecialTranslationFlag = true;
+                        return doubleType;
+                    }
+                }
+            }
+
+            // ...and ends here
+
+
+            // Always use double type for GET_VALUE
+            if ((flag & GET_VALUE) != 0) {
+                if (myType.getId().name.equals("$integer") ||
+                        myType.getId().name.equals("$long") ||
+                        myType.getId().name.equals("$time")) {
+                    myType = doubleType;
+                    AdhocImplementation.flag = true;
+                }
+            }
+
+            if (doubleType.instanceOf(expectedType))
+                if (myType.getId().name.equals("$integer") ||
+                        myType.getId().name.equals("$long") ||
+                        myType.getId().name.equals("$time")) {
+
+                    myType = doubleType;
+                    AdhocImplementation.flag = true;
+                }
 	/*		else if (myType.getId().name.equals("grid")) {
 				if (expectedType == null || expectedType instanceof UnknownType
 						|| expectedType.getId().name.equals("double"))
@@ -105,72 +100,72 @@ public class VariableNode extends TreeNode {
 					}
 			}
 	*/
-		}
-		
-		if (expectedType instanceof MethodType) {
-			expectedType = currentBlock().getMethod().getReturnType();
-			if (expectedType == null)
-				throw new Exception("Method " + currentBlock().getMethod() + " does not have return type: " + symbol);
-		}
-		
-		if (expectedType != null 
-			&& !(expectedType instanceof UnknownType)
-			&& !(expectedType instanceof NameType)) {
-			// TODO: types should be unique
-			if (myType instanceof UnknownType) {
-				myType = expectedType;
-			}
-			
-			if (!myType.instanceOf(expectedType))
-				throw new Exception("Types mismatch for variable " + var.id + 
-						" with type " + var.type.getId() + " and type " + expectedType.getId() + ": " + symbol);
-		}
+        }
 
-		if (!AdhocImplementation.flag)
-			var.type = myType;
-		
-		return myType;
-	}
-	
-	
-	@Override
-	public void translate(JavaEmitter java, int flag) throws Exception {
-		// FIXME: hack
-		if (gridSpecialTranslationFlag) {
-			gridSpecialTranslationFlag = false;
-			DotNode tmp = new DotNode(symbol);
-			Variable v = SparkModel.getInstance().getType(new Id("grid")).getField(new Id("data"));
-			tmp.addNode(this);
-			tmp.addNode(new VariableNode(symbol, v));
-			
-			tmp.translate(java, flag);
-			
-			return;
-		}
-		
-		// TODO: better implementation
-		
+        if (expectedType instanceof MethodType) {
+            expectedType = currentBlock().getMethod().getReturnType();
+            if (expectedType == null)
+                throw new Exception("Method " + currentBlock().getMethod() + " does not have return type: " + symbol);
+        }
+
+        if (expectedType != null
+                && !(expectedType instanceof UnknownType)
+                && !(expectedType instanceof NameType)) {
+            // TODO: types should be unique
+            if (myType instanceof UnknownType) {
+                myType = expectedType;
+            }
+
+            if (!myType.instanceOf(expectedType))
+                throw new Exception("Types mismatch for variable " + var.id +
+                        " with type " + var.type.getId() + " and type " + expectedType.getId() + ": " + symbol);
+        }
+
+        if (!AdhocImplementation.flag)
+            var.type = myType;
+
+        return myType;
+    }
+
+
+    @Override
+    public void translate(JavaEmitter java, int flag) throws Exception {
+        // FIXME: hack
+        if (gridSpecialTranslationFlag) {
+            gridSpecialTranslationFlag = false;
+            DotNode tmp = new DotNode(symbol);
+            Variable v = SparkModel.getInstance().getType(new Id("grid")).getField(new Id("data"));
+            tmp.addNode(this);
+            tmp.addNode(new VariableNode(symbol, v));
+
+            tmp.translate(java, flag);
+
+            return;
+        }
+
+        // TODO: better implementation
+
 //		java.print(var.id.toJavaName());
-		java.addBuffer("@@self");
-		java.setActiveBuffer("@@self");
-		java.print(currentBlock().getSelfVariable().id.toJavaName());
-		java.endBuffer();
+        java.addBuffer("@@self");
+        java.setActiveBuffer("@@self");
+        java.print(currentBlock().getSelfVariable().id.toJavaName());
+        java.endBuffer();
 
-		java.addBuffer("@@myself");
-		java.setActiveBuffer("@@myself");
-		java.print(currentBlock().getMyselfVariable().id.toJavaName());
-		java.endBuffer();
+        java.addBuffer("@@myself");
+        java.setActiveBuffer("@@myself");
+        java.print(currentBlock().getMyselfVariable().id.toJavaName());
+        java.endBuffer();
 
-		java.printText(var.getTranslationString(flag));
-		
-		java.clearBuffers();
-	}
-	
-	
-	public String toString() {
-		if (var == null)
-			return "(null variable)";
-		return var.toString();
-	}
+        java.printText(var.getTranslationString(flag));
+
+        java.clearBuffers();
+    }
+
+
+    public String toString() {
+        if (var == null)
+            return "(null variable)";
+        return var.toString();
+    }
 
 }

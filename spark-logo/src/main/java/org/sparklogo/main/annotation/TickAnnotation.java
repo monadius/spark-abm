@@ -5,38 +5,38 @@ import org.w3c.dom.Node;
 
 /**
  * Defines the length of a tick
- * @author Monad
  *
+ * @author Monad
  */
 public class TickAnnotation extends ModelAnnotation {
 
-	protected TickAnnotation() {
-		super(TICK_ANNOTATION);
-		
-		items.put("time", new StringElement("tick"));
+    protected TickAnnotation() {
+        super(TICK_ANNOTATION);
 
-		items.get("time").optional = true;
-	}
+        items.put("time", new StringElement("tick"));
 
-	@Override
-	public String toString() {
-		String str = "<model ";
-		
-		str += super.toString();
-		str += "/>";
-		
-		return str;
-	}
-	
-	
-	public String getTime() {
-		return (String) items.get("time").value;
-	}
-	
-	
-	@Override
-	public Node toNode(Document doc) {
-		Node node = super.toNode(doc, "model");
-		return node;
-	}
+        items.get("time").optional = true;
+    }
+
+    @Override
+    public String toString() {
+        String str = "<model ";
+
+        str += super.toString();
+        str += "/>";
+
+        return str;
+    }
+
+
+    public String getTime() {
+        return (String) items.get("time").value;
+    }
+
+
+    @Override
+    public Node toNode(Document doc) {
+        Node node = super.toNode(doc, "model");
+        return node;
+    }
 }
