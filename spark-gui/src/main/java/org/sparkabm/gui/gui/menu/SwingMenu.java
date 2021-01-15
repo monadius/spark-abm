@@ -4,9 +4,9 @@ import javax.swing.JMenuItem;
 
 /**
  * Implemented by swing-like menu classes
- * @author Monad
  *
+ * @author Monad
  */
 interface SwingMenu {
-	public JMenuItem getSwingItem();
+    public JMenuItem getSwingItem();
 }

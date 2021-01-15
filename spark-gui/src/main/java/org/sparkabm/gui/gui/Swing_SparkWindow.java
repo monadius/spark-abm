@@ -23,196 +23,193 @@ import org.sparkabm.gui.gui.menu.Swing_SparkMenu;
 
 /**
  * Swing implementation of the SparkWindow class
- * @author Monad
  *
+ * @author Monad
  */
 public class Swing_SparkWindow extends SparkWindow {
-	private static final Logger logger = LogManager.getLogger();
-	
-	/* References to Swing objects */
-	private JFrame frame;
-	private JDialog dialog;
-	private Window window;
-	
-	/* Component inside the window */
-	private JComponent component;
-	
-	/**
-	 * Protected constructor
-	 * @param owner
-	 */
-	protected Swing_SparkWindow(SparkWindow owner) {
-		super(owner);
-		
-		if (owner == null) {
-			frame = new JFrame();
-			window = frame;
-			// TODO: stop the simulation and save GUI changes first
-			frame.addWindowListener(new WindowAdapter() {
-				public void windowClosing(WindowEvent e) {
-					Coordinator.dispose();
-					System.exit(0);
-				}
-			});
-			
-			frame.setPreferredSize(new Dimension(500, 600));
-			frame.setMinimumSize(new Dimension(200, 200));
-			frame.pack();
-		}
-		else {
-			if (!(owner instanceof Swing_SparkWindow)) {
-				logger.error("An attempt to create a Swing window owned by a non-Swing window");
-				frame = new JFrame();
-				window = frame;
-				frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-			}
-			else {
-				Swing_SparkWindow o = (Swing_SparkWindow) owner;
-				if (o.frame != null)
-					dialog = new JDialog(o.frame);
-				else
-					dialog = new JDialog(o.dialog);
-				
-				window = dialog;
-				dialog.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
-				
-				dialog.addComponentListener(new ComponentAdapter() {
-					public void componentShown(ComponentEvent e) {
-						onVisibilityChanged();
-					}
+    private static final Logger logger = LogManager.getLogger();
 
-					public void componentHidden(ComponentEvent e) {
-						onVisibilityChanged();
-					}
-				});
-			}
-		}
-	}
-	
-	
-	@Override
-	public void pack() {
-		window.pack();
-	}
-	
+    /* References to Swing objects */
+    private JFrame frame;
+    private JDialog dialog;
+    private Window window;
 
-	@Override
-	public Rectangle getLocation() {
-		int x = window.getX();
-		int y = window.getY();
-		int w = window.getWidth();
-		int h = window.getHeight();
-		
-		return new Rectangle(x, y, w, h);
-	}
-	
+    /* Component inside the window */
+    private JComponent component;
 
-	@Override
-	public boolean isVisible() {
-		return window.isVisible();
-	}
-	
+    /**
+     * Protected constructor
+     *
+     * @param owner
+     */
+    protected Swing_SparkWindow(SparkWindow owner) {
+        super(owner);
 
-	@Override
-	public void setLocation(int x, int y, int width, int height) {
-		window.setBounds(x, y, width, height);
-		window.setPreferredSize(new Dimension(width, height));
-	}
-	
+        if (owner == null) {
+            frame = new JFrame();
+            window = frame;
+            // TODO: stop the simulation and save GUI changes first
+            frame.addWindowListener(new WindowAdapter() {
+                public void windowClosing(WindowEvent e) {
+                    Coordinator.dispose();
+                    System.exit(0);
+                }
+            });
 
-	@Override
-	public void setMenu(SparkMenu menu) {
-		// Menu can be defined only for frames
-		if (frame == null)
-			return;
-		
-		if (!(menu instanceof Swing_SparkMenu))
-			return;
+            frame.setPreferredSize(new Dimension(500, 600));
+            frame.setMinimumSize(new Dimension(200, 200));
+            frame.pack();
+        } else {
+            if (!(owner instanceof Swing_SparkWindow)) {
+                logger.error("An attempt to create a Swing window owned by a non-Swing window");
+                frame = new JFrame();
+                window = frame;
+                frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+            } else {
+                Swing_SparkWindow o = (Swing_SparkWindow) owner;
+                if (o.frame != null)
+                    dialog = new JDialog(o.frame);
+                else
+                    dialog = new JDialog(o.dialog);
 
-		Swing_SparkMenu m = (Swing_SparkMenu) menu;
-		JMenuBar menuBar = new JMenuBar();
-		m.addToMenuBar(menuBar);
-		
-		frame.setJMenuBar(menuBar);
-		frame.pack();
-	}
-	
+                window = dialog;
+                dialog.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
 
-	@Override
-	public void setVisible(boolean visible) {
-		window.setVisible(visible);
-	}
-	
-	
-	@Override
-	public void dispose() {
-		window.dispose();
-	}
-	
-	
-	@Override
-	public void setName(String name) {
-		super.setName(name);
-		if (frame != null)
-			frame.setTitle(getName());
-		else
-			dialog.setTitle(getName());
-	}
+                dialog.addComponentListener(new ComponentAdapter() {
+                    public void componentShown(ComponentEvent e) {
+                        onVisibilityChanged();
+                    }
+
+                    public void componentHidden(ComponentEvent e) {
+                        onVisibilityChanged();
+                    }
+                });
+            }
+        }
+    }
 
 
-	@Override
-	public boolean addPanel0(ISparkPanel panel) {
-		if (panel instanceof JComponent) {
-			Container c;
-			
-			if (frame != null)
-				c = frame.getContentPane();
-			else
-				c = dialog.getContentPane();
-
-			if (component != null)
-				c.remove(component);
-			
-			component = (JComponent) panel;
-			c.add(component, BorderLayout.CENTER);
-			window.pack();
-			
-			return true;
-		}
-		else {
-			logger.error("Cannot add the panel: " + panel);
-		}
-		
-		return false;
-	}
+    @Override
+    public void pack() {
+        window.pack();
+    }
 
 
-	@Override
-	public boolean addPanel0(ISparkPanel panel, String location) {
-		if (panel instanceof JComponent) {
-			Container c;
-			
-			if (frame != null)
-				c = frame.getContentPane();
-			else
-				c = dialog.getContentPane();
-			
-			c.add((JComponent) panel, location);
-			window.pack();
-			
-			return true;
-		}
-		else {
-			logger.error("Cannot add the panel: " + panel);
-		}
-		
-		return false;
-	}
-	
-	
-	@Override
-	public Dimension getPreferredSize() {
-		return window.getPreferredSize();
-	}
+    @Override
+    public Rectangle getLocation() {
+        int x = window.getX();
+        int y = window.getY();
+        int w = window.getWidth();
+        int h = window.getHeight();
+
+        return new Rectangle(x, y, w, h);
+    }
+
+
+    @Override
+    public boolean isVisible() {
+        return window.isVisible();
+    }
+
+
+    @Override
+    public void setLocation(int x, int y, int width, int height) {
+        window.setBounds(x, y, width, height);
+        window.setPreferredSize(new Dimension(width, height));
+    }
+
+
+    @Override
+    public void setMenu(SparkMenu menu) {
+        // Menu can be defined only for frames
+        if (frame == null)
+            return;
+
+        if (!(menu instanceof Swing_SparkMenu))
+            return;
+
+        Swing_SparkMenu m = (Swing_SparkMenu) menu;
+        JMenuBar menuBar = new JMenuBar();
+        m.addToMenuBar(menuBar);
+
+        frame.setJMenuBar(menuBar);
+        frame.pack();
+    }
+
+
+    @Override
+    public void setVisible(boolean visible) {
+        window.setVisible(visible);
+    }
+
+
+    @Override
+    public void dispose() {
+        window.dispose();
+    }
+
+
+    @Override
+    public void setName(String name) {
+        super.setName(name);
+        if (frame != null)
+            frame.setTitle(getName());
+        else
+            dialog.setTitle(getName());
+    }
+
+
+    @Override
+    public boolean addPanel0(ISparkPanel panel) {
+        if (panel instanceof JComponent) {
+            Container c;
+
+            if (frame != null)
+                c = frame.getContentPane();
+            else
+                c = dialog.getContentPane();
+
+            if (component != null)
+                c.remove(component);
+
+            component = (JComponent) panel;
+            c.add(component, BorderLayout.CENTER);
+            window.pack();
+
+            return true;
+        } else {
+            logger.error("Cannot add the panel: " + panel);
+        }
+
+        return false;
+    }
+
+
+    @Override
+    public boolean addPanel0(ISparkPanel panel, String location) {
+        if (panel instanceof JComponent) {
+            Container c;
+
+            if (frame != null)
+                c = frame.getContentPane();
+            else
+                c = dialog.getContentPane();
+
+            c.add((JComponent) panel, location);
+            window.pack();
+
+            return true;
+        } else {
+            logger.error("Cannot add the panel: " + panel);
+        }
+
+        return false;
+    }
+
+
+    @Override
+    public Dimension getPreferredSize() {
+        return window.getPreferredSize();
+    }
 
 }

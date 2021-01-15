@@ -18,8 +18,7 @@ public class BitmapCharacter implements Cloneable {
     /**
      * Kerning information
      */
-    public static class Kerning
-    {
+    public static class Kerning {
         public int Second;
         public int Amount;
     }
@@ -37,13 +36,13 @@ public class BitmapCharacter implements Cloneable {
         result.KerningList.addAll(KerningList);
         return result;
     }
-    
-	public Kerning FindKerningNode(int nextChar) {
-		for (Kerning node : KerningList) {
-			if (node.Second == nextChar)
-				return node;
-		}
-		
-		return null;
-	}
+
+    public Kerning FindKerningNode(int nextChar) {
+        for (Kerning node : KerningList) {
+            if (node.Second == nextChar)
+                return node;
+        }
+
+        return null;
+    }
 }

@@ -41,866 +41,877 @@ import org.w3c.dom.Node;
 /**
  * Central external class which coordinates interactions between a model manager
  * and a data receiver
- * 
+ *
  * @author Monad
- * 
  */
 public class Coordinator {
-	/* Logger */
-	private static final Logger logger = LogManager.getLogger();
+    /* Logger */
+    private static final Logger logger = LogManager.getLogger();
 
-	/* A single instance of the class */
-	private static Coordinator coordinator;
+    /* A single instance of the class */
+    private static Coordinator coordinator;
 
-	/**************** Two main components ********************/
-	/* Main model manager */
-	private IModelManager modelManager;
-	/* Main data receiver */
-	private DataReceiver receiver;
+    /**************** Two main components ********************/
+    /* Main model manager */
+    private IModelManager modelManager;
+    /* Main data receiver */
+    private DataReceiver receiver;
 
-	/**************** Files **********************************/
-	/* Current directory */
-	private File currentDir;
-	
-	/* Stack of output directories */
-	private final Stack<File> outputDir;
+    /**************** Files **********************************/
+    /* Current directory */
+    private File currentDir;
 
-	/* Loaded model xml file */
-	private File modelXmlFile;
-	/* Loaded model xml document */
-	private Document modelXmlDoc;
+    /* Stack of output directories */
+    private final Stack<File> outputDir;
 
-	/*************** Collections *****************************/
-	/* Collection of proxy variables */
-	private ProxyVariableCollection variables;
-	/* Collection of parameters in a loaded model */
-	private ParameterCollection parameters;
-	/* Collection of external methods */
-	private MethodCollection methods;
-	
-	/* Styles of all data layers */
-	private final HashMap<String, DataLayerStyle> dataLayerStyles;
-	private final HashMap<String, Node> dataLayerStyleNodes;
-	/* Type names and names of agents */
-	private final HashMap<String, String> agentTypesAndNames;
+    /* Loaded model xml file */
+    private File modelXmlFile;
+    /* Loaded model xml document */
+    private Document modelXmlDoc;
 
-	/********************* Model properties ********************/
-	/* Random generator properties (for the next run) */
-	private long randomSeed;
-	private boolean useTimeSeed = true;
+    /*************** Collections *****************************/
+    /* Collection of proxy variables */
+    private ProxyVariableCollection variables;
+    /* Collection of parameters in a loaded model */
+    private ParameterCollection parameters;
+    /* Collection of external methods */
+    private MethodCollection methods;
 
-	/* Observer parameters (for the next run) */
-	private String observerName = null;
-	private String executionMode = "serial";
-	
-	/* Initial delay time */
-	private int delayTime;
-	
-	/* Initial frequency */
-	private int frequency;
-	
-	/* Data set */
-	private DataSetTmp dataSet;
+    /* Styles of all data layers */
+    private final HashMap<String, DataLayerStyle> dataLayerStyles;
+    private final HashMap<String, Node> dataLayerStyleNodes;
+    /* Type names and names of agents */
+    private final HashMap<String, String> agentTypesAndNames;
 
-	
-	/*************** Configuration *****************/
-	private final Configuration configuration;
-	
-	
-	/*************** GUI ******************/
-	/* If true, then no GUI elements are created */
-	private final boolean noGUI;
-	
-	/* Bitmap font manager */
-	private final FontManager fontManager;
-	
-	/* Main window manager */
-	private final WindowManager windowManager;
-	
-	/* Control panel */
-	private SparkControlPanel controlPanel;
-	
-	/* List of all active renders */
-	private final ArrayList<Render> renders;
-	
-	/**
-	 * Private constructor
-	 * 
-	 * @param manager
-	 * @param receiver
-	 */
-	private Coordinator(IModelManager manager, DataReceiver receiver, boolean noGUI) {
-		this.modelManager = manager;
-		this.receiver = receiver;
-		this.currentDir = new File(".");
-		this.outputDir = new Stack<File>();
+    /********************* Model properties ********************/
+    /* Random generator properties (for the next run) */
+    private long randomSeed;
+    private boolean useTimeSeed = true;
 
-		this.dataLayerStyles = new HashMap<String, DataLayerStyle>();
-		this.dataLayerStyleNodes = new HashMap<String, Node>();
-		this.agentTypesAndNames = new HashMap<String, String>();
-		
-		this.noGUI = noGUI;
-		this.renders = new ArrayList<Render>();
-		this.fontManager = new FontManager();
-		
-		if (noGUI) {
-			this.windowManager = null;
-			this.configuration = new Configuration(null);
-		}
-		else {
-			this.windowManager = new Swing_WindowManager();
-			SparkMenu mainMenu = StandardMenu.create(windowManager);
-			windowManager.setMainMenu(mainMenu);
-		
-			this.configuration = new Configuration(mainMenu.getSubMenu("File"));
-		}
-	}
+    /* Observer parameters (for the next run) */
+    private String observerName = null;
+    private String executionMode = "serial";
 
-	
-	/**
-	 * Initialization
-	 */
-	private void init() {
-		if (!noGUI) {
-			// Initilize GUI
-			SparkWindow mainWindow = windowManager.getMainWindow();
-			mainWindow.setName("SPARK");
-		
-			controlPanel = new SparkControlPanel();
-			mainWindow.addPanel(controlPanel, BorderLayout.NORTH);
-		}
-		
-		// Load config file
-		configuration.readConfigFile();
-		configuration.loadFontManager(fontManager);
-	}
+    /* Initial delay time */
+    private int delayTime;
 
-	/**
-	 * Creates a coordinator
-	 * 
-	 * @param manager
-	 * @param receiver
-	 * @param noGUI
-	 */
-	public static void init(IModelManager manager, DataReceiver receiver, boolean noGUI) {
-		if (coordinator != null) {
-			logger.error("Coordinator is already created");
-			throw new Error("Illegal operation");
-		}
+    /* Initial frequency */
+    private int frequency;
 
-		coordinator = new Coordinator(manager, receiver, noGUI);
-		coordinator.init();
-	}
-	
-	
-	/**
-	 * Creates a coordinator with GUI
-	 * 
-	 * @param manager
-	 * @param receiver
-	 */
-	public static void init(IModelManager manager, DataReceiver receiver) {
-		init(manager, receiver, false);
-	}
-	
-	
-	/**
-	 * Disposes the coordinator: saves configuration changes, etc.
-	 */
-	public static void dispose() {
-		try {
-			if (coordinator != null) {
-				// TODO: wait until the simulation is completely stopped
-				coordinator.unloadModel();
-				coordinator.configuration.saveFontManager(coordinator.fontManager);
-				coordinator.configuration.saveConfigFile();
-			}
-		}
-		catch (Exception e) {
-			logger.error(e);
-			e.printStackTrace();
-		}
-	}
+    /* Data set */
+    private DataSetTmp dataSet;
 
-	
-	/**
-	 * Returns the instance of the class
-	 * 
-	 * @return
-	 */
-	public static Coordinator getInstance() {
-		return coordinator;
-	}
-	
-	
-	/**
-	 * Returns the configuration
-	 * @return
-	 */
-	public Configuration getConfiguration() {
-		return configuration;
-	}
-	
-	
-	/**
-	 * Returns the font manager
-	 */
-	public FontManager getFontManager() {
-		return fontManager;
-	}
-	
-	
-	/**
-	 * Returns the window manager
-	 * @return
-	 */
-	public WindowManager getWindowManager() {
-		return windowManager;
-	}
-	
-	
-	/**
-	 * Returns the data receiver
-	 * @return
-	 */
-	public DataReceiver getDataReceiver() {
-		return receiver;
-	}
-	
-	
-	/**
-	 * Sends a command to the model manager
-	 * @param cmd
-	 */
-	public void sendCommand(ModelManagerCommand cmd) {
-		modelManager.sendCommand(cmd);
-	}
-	
-	
-	/**
-	 * Returns true if a model is loaded
-	 * @return
-	 */
-	public synchronized boolean isModelLoaded() {
-		return modelXmlFile != null;
-	}
-	
-	
-	/**
-	 * Returns the most recently received data object of the given type
-	 * @param type
-	 * @param name
-	 * @return
-	 */
-	public DataObject getMostRecentData(int type, String name) {
-		return receiver.getMostRecentData(type, name);
-	}
-	
-	
-	/**
-	 * Returns the initial state of the current simulation
-	 * @return
-	 */
-	public DataObject_State getInitialState() {
-		return receiver.getInitialState();
-	}
-	
-	
-	/**
-	 * Returns the current data set
-	 * @return
-	 */
-	public DataSetTmp getDataSet() {
-		return dataSet;
-	}
-	
 
-	/**
-	 * Initial properties of random generator for the next simulation
-	 * 
-	 * @return
-	 */
-	public synchronized long getRandomSeed() {
-		if (receiver.getInitialState() != null)
-			return receiver.getInitialState().getSeed();
-		
-		return randomSeed;
-	}
+    /*************** Configuration *****************/
+    private final Configuration configuration;
 
-	public synchronized boolean getTimeSeedFlag() {
-		return useTimeSeed;
-	}
 
-	public synchronized void setRandomSeed(long randomSeed, boolean useTimeSeed) {
-		this.randomSeed = randomSeed;
-		this.useTimeSeed = useTimeSeed;
-	}
+    /*************** GUI ******************/
+    /* If true, then no GUI elements are created */
+    private final boolean noGUI;
 
-	
-	/**
-	 * Returns visual styles for data layers
-	 * @return
-	 */
-	public HashMap<String, DataLayerStyle> getDataLayerStyles() {
-		return dataLayerStyles;
-	}
-	
-	
-	/**
-	 * Returns types and names of agents in the loaded model
-	 * @return
-	 */
-	public HashMap<String, String> getAgentTypesAndNames() {
-		return agentTypesAndNames;
-	}
-	
+    /* Bitmap font manager */
+    private final FontManager fontManager;
 
-	/**
-	 * Sets parameters of the observer (for the next run)
-	 * 
-	 * @param observerName
-	 * @param executionMode
-	 */
-	public synchronized void setObserver(String observerName, String executionMode) {
-		this.observerName = observerName;
-		this.executionMode = executionMode;
-	}
+    /* Main window manager */
+    private final WindowManager windowManager;
 
-	public synchronized String getObserverName() {
-		return observerName;
-	}
+    /* Control panel */
+    private SparkControlPanel controlPanel;
 
-	public synchronized String getExecutionMode() {
-		return executionMode;
-	}
+    /* List of all active renders */
+    private final ArrayList<Render> renders;
 
-	/**
-	 * Sends a command for changing value of the given variable
-	 * 
-	 * @param varName
-	 * @param newValue
-	 */
-	public void changeVariable(String varName, Object newValue) {
-		modelManager
-				.sendCommand(new Command_SetVariableValue(varName, newValue));
-	}
-	
-	
-	/**
-	 * Invokes the given external model method
-	 * @param methodName
-	 */
-	public void invokeMethod(String methodName) {
-		modelManager.sendCommand(new Command_InvokeMethod(methodName));
-	}
-	
+    /**
+     * Private constructor
+     *
+     * @param manager
+     * @param receiver
+     */
+    private Coordinator(IModelManager manager, DataReceiver receiver, boolean noGUI) {
+        this.modelManager = manager;
+        this.receiver = receiver;
+        this.currentDir = new File(".");
+        this.outputDir = new Stack<File>();
 
-	/**
-	 * Adds a data collector
-	 * 
-	 * @param dcd
-	 */
-	public void addDataCollector(DataCollectorDescription dcd) {
-		modelManager.sendCommand(new Command_AddDataCollector(dcd));
-	}
+        this.dataLayerStyles = new HashMap<String, DataLayerStyle>();
+        this.dataLayerStyleNodes = new HashMap<String, Node>();
+        this.agentTypesAndNames = new HashMap<String, String>();
 
-	/**
-	 * Removes a data collector
-	 * 
-	 * @param dcd
-	 */
-	public void removeDataCollector(DataCollectorDescription dcd) {
-		modelManager.sendCommand(new Command_RemoveDataCollector(dcd));
-	}
-	
-	
-	/**
-	 * Sets a delay time for a simulation
-	 * @param delay
-	 */
-	public synchronized void setSimulationDelay(int delay) {
-		this.delayTime = delay;
-		
-		if (modelXmlFile != null && delay >= 0) {
-			modelManager.sendCommand(new Command_SetDelay(delay));
-			receiver.setCollectionInterval("render", 1);
-		}
-		
-		if (delay < 0) {
-			receiver.setCollectionInterval("render", -delay);
-			if (modelXmlFile != null)
-				modelManager.sendCommand(new Command_SetDelay(0));
-		}
-	}
+        this.noGUI = noGUI;
+        this.renders = new ArrayList<Render>();
+        this.fontManager = new FontManager();
 
-	
-	/**
-	 * Sets a frequency for a simulation
-	 * @param freq
-	 */
-	public synchronized void setSimulationFrequency(int freq) {
-		this.frequency = freq;
-		
-		if (modelXmlFile != null) {
-			modelManager.sendCommand(new Command_SetFrequency(freq));
+        if (noGUI) {
+            this.windowManager = null;
+            this.configuration = new Configuration(null);
+        } else {
+            this.windowManager = new Swing_WindowManager();
+            SparkMenu mainMenu = StandardMenu.create(windowManager);
+            windowManager.setMainMenu(mainMenu);
+
+            this.configuration = new Configuration(mainMenu.getSubMenu("File"));
+        }
+    }
+
+
+    /**
+     * Initialization
+     */
+    private void init() {
+        if (!noGUI) {
+            // Initilize GUI
+            SparkWindow mainWindow = windowManager.getMainWindow();
+            mainWindow.setName("SPARK");
+
+            controlPanel = new SparkControlPanel();
+            mainWindow.addPanel(controlPanel, BorderLayout.NORTH);
+        }
+
+        // Load config file
+        configuration.readConfigFile();
+        configuration.loadFontManager(fontManager);
+    }
+
+    /**
+     * Creates a coordinator
+     *
+     * @param manager
+     * @param receiver
+     * @param noGUI
+     */
+    public static void init(IModelManager manager, DataReceiver receiver, boolean noGUI) {
+        if (coordinator != null) {
+            logger.error("Coordinator is already created");
+            throw new Error("Illegal operation");
+        }
+
+        coordinator = new Coordinator(manager, receiver, noGUI);
+        coordinator.init();
+    }
+
+
+    /**
+     * Creates a coordinator with GUI
+     *
+     * @param manager
+     * @param receiver
+     */
+    public static void init(IModelManager manager, DataReceiver receiver) {
+        init(manager, receiver, false);
+    }
+
+
+    /**
+     * Disposes the coordinator: saves configuration changes, etc.
+     */
+    public static void dispose() {
+        try {
+            if (coordinator != null) {
+                // TODO: wait until the simulation is completely stopped
+                coordinator.unloadModel();
+                coordinator.configuration.saveFontManager(coordinator.fontManager);
+                coordinator.configuration.saveConfigFile();
+            }
+        } catch (Exception e) {
+            logger.error(e);
+            e.printStackTrace();
+        }
+    }
+
+
+    /**
+     * Returns the instance of the class
+     *
+     * @return
+     */
+    public static Coordinator getInstance() {
+        return coordinator;
+    }
+
+
+    /**
+     * Returns the configuration
+     *
+     * @return
+     */
+    public Configuration getConfiguration() {
+        return configuration;
+    }
+
+
+    /**
+     * Returns the font manager
+     */
+    public FontManager getFontManager() {
+        return fontManager;
+    }
+
+
+    /**
+     * Returns the window manager
+     *
+     * @return
+     */
+    public WindowManager getWindowManager() {
+        return windowManager;
+    }
+
+
+    /**
+     * Returns the data receiver
+     *
+     * @return
+     */
+    public DataReceiver getDataReceiver() {
+        return receiver;
+    }
+
+
+    /**
+     * Sends a command to the model manager
+     *
+     * @param cmd
+     */
+    public void sendCommand(ModelManagerCommand cmd) {
+        modelManager.sendCommand(cmd);
+    }
+
+
+    /**
+     * Returns true if a model is loaded
+     *
+     * @return
+     */
+    public synchronized boolean isModelLoaded() {
+        return modelXmlFile != null;
+    }
+
+
+    /**
+     * Returns the most recently received data object of the given type
+     *
+     * @param type
+     * @param name
+     * @return
+     */
+    public DataObject getMostRecentData(int type, String name) {
+        return receiver.getMostRecentData(type, name);
+    }
+
+
+    /**
+     * Returns the initial state of the current simulation
+     *
+     * @return
+     */
+    public DataObject_State getInitialState() {
+        return receiver.getInitialState();
+    }
+
+
+    /**
+     * Returns the current data set
+     *
+     * @return
+     */
+    public DataSetTmp getDataSet() {
+        return dataSet;
+    }
+
+
+    /**
+     * Initial properties of random generator for the next simulation
+     *
+     * @return
+     */
+    public synchronized long getRandomSeed() {
+        if (receiver.getInitialState() != null)
+            return receiver.getInitialState().getSeed();
+
+        return randomSeed;
+    }
+
+    public synchronized boolean getTimeSeedFlag() {
+        return useTimeSeed;
+    }
+
+    public synchronized void setRandomSeed(long randomSeed, boolean useTimeSeed) {
+        this.randomSeed = randomSeed;
+        this.useTimeSeed = useTimeSeed;
+    }
+
+
+    /**
+     * Returns visual styles for data layers
+     *
+     * @return
+     */
+    public HashMap<String, DataLayerStyle> getDataLayerStyles() {
+        return dataLayerStyles;
+    }
+
+
+    /**
+     * Returns types and names of agents in the loaded model
+     *
+     * @return
+     */
+    public HashMap<String, String> getAgentTypesAndNames() {
+        return agentTypesAndNames;
+    }
+
+
+    /**
+     * Sets parameters of the observer (for the next run)
+     *
+     * @param observerName
+     * @param executionMode
+     */
+    public synchronized void setObserver(String observerName, String executionMode) {
+        this.observerName = observerName;
+        this.executionMode = executionMode;
+    }
+
+    public synchronized String getObserverName() {
+        return observerName;
+    }
+
+    public synchronized String getExecutionMode() {
+        return executionMode;
+    }
+
+    /**
+     * Sends a command for changing value of the given variable
+     *
+     * @param varName
+     * @param newValue
+     */
+    public void changeVariable(String varName, Object newValue) {
+        modelManager
+                .sendCommand(new Command_SetVariableValue(varName, newValue));
+    }
+
+
+    /**
+     * Invokes the given external model method
+     *
+     * @param methodName
+     */
+    public void invokeMethod(String methodName) {
+        modelManager.sendCommand(new Command_InvokeMethod(methodName));
+    }
+
+
+    /**
+     * Adds a data collector
+     *
+     * @param dcd
+     */
+    public void addDataCollector(DataCollectorDescription dcd) {
+        modelManager.sendCommand(new Command_AddDataCollector(dcd));
+    }
+
+    /**
+     * Removes a data collector
+     *
+     * @param dcd
+     */
+    public void removeDataCollector(DataCollectorDescription dcd) {
+        modelManager.sendCommand(new Command_RemoveDataCollector(dcd));
+    }
+
+
+    /**
+     * Sets a delay time for a simulation
+     *
+     * @param delay
+     */
+    public synchronized void setSimulationDelay(int delay) {
+        this.delayTime = delay;
+
+        if (modelXmlFile != null && delay >= 0) {
+            modelManager.sendCommand(new Command_SetDelay(delay));
+            receiver.setCollectionInterval("render", 1);
+        }
+
+        if (delay < 0) {
+            receiver.setCollectionInterval("render", -delay);
+            if (modelXmlFile != null)
+                modelManager.sendCommand(new Command_SetDelay(0));
+        }
+    }
+
+
+    /**
+     * Sets a frequency for a simulation
+     *
+     * @param freq
+     */
+    public synchronized void setSimulationFrequency(int freq) {
+        this.frequency = freq;
+
+        if (modelXmlFile != null) {
+            modelManager.sendCommand(new Command_SetFrequency(freq));
 //			receiver.setCollectionInterval("render", 1);
-		}
-	}
+        }
+    }
 
-	
 
-	/**
-	 * Returns a variable by its name
-	 * 
-	 * @param varName
-	 * @return
-	 */
-	public ProxyVariable getVariable(String varName) {
-		if (variables == null)
-			return null;
+    /**
+     * Returns a variable by its name
+     *
+     * @param varName
+     * @return
+     */
+    public ProxyVariable getVariable(String varName) {
+        if (variables == null)
+            return null;
 
-		return variables.getVariable(varName);
-	}
-	
-	
-	/**
-	 * Returns all available variables
-	 * @return
-	 */
-	public ProxyVariableCollection getVariables() {
-		return variables;
-	}
-	
+        return variables.getVariable(varName);
+    }
 
-	/**
-	 * Returns a collection of all parameters
-	 * 
-	 * @return
-	 */
-	public ParameterCollection getParameters() {
-		return parameters;
-	}
 
-	/**
-	 * Returns the current directory (the base directory of a loaded model)
-	 * 
-	 * @return
-	 */
-	public synchronized File getCurrentDir() {
-		return currentDir;
-	}
-	
-	
-	/**
-	 * Returns the output directory
-	 * @return
-	 */
-	public synchronized File getOutputDir() {
-		if (outputDir.empty())
-			return getCurrentDir();
-		else
-			return outputDir.peek();
-	}
-	
-	
-	/**
-	 * Adds an output directory to the stack
-	 * @param file
-	 * @return
-	 */
-	public synchronized void pushOutputDir(File file) {
-		outputDir.push(file);
-	}
-	
-	
-	/**
-	 * Removes the last added output directory
-	 */
-	public synchronized void popOutputDir() {
-		if (!outputDir.empty())
-			outputDir.pop();
-	}
-	
-	
+    /**
+     * Returns all available variables
+     *
+     * @return
+     */
+    public ProxyVariableCollection getVariables() {
+        return variables;
+    }
 
-	/**
-	 * Loads the given model file
-	 * 
-	 * @param modelFile
-	 */
-	public synchronized void loadModel(File modelFile) {
-		try {
-			if (modelXmlFile != null)
-				unloadModel();
 
-			Document xmlDoc = ModelFileLoader.loadModelFile(modelFile);
-			currentDir = modelFile.getParentFile();
-			FileUtils.setBaseDir(currentDir);
-			
+    /**
+     * Returns a collection of all parameters
+     *
+     * @return
+     */
+    public ParameterCollection getParameters() {
+        return parameters;
+    }
+
+    /**
+     * Returns the current directory (the base directory of a loaded model)
+     *
+     * @return
+     */
+    public synchronized File getCurrentDir() {
+        return currentDir;
+    }
+
+
+    /**
+     * Returns the output directory
+     *
+     * @return
+     */
+    public synchronized File getOutputDir() {
+        if (outputDir.empty())
+            return getCurrentDir();
+        else
+            return outputDir.peek();
+    }
+
+
+    /**
+     * Adds an output directory to the stack
+     *
+     * @param file
+     * @return
+     */
+    public synchronized void pushOutputDir(File file) {
+        outputDir.push(file);
+    }
+
+
+    /**
+     * Removes the last added output directory
+     */
+    public synchronized void popOutputDir() {
+        if (!outputDir.empty())
+            outputDir.pop();
+    }
+
+
+    /**
+     * Loads the given model file
+     *
+     * @param modelFile
+     */
+    public synchronized void loadModel(File modelFile) {
+        try {
+            if (modelXmlFile != null)
+                unloadModel();
+
+            Document xmlDoc = ModelFileLoader.loadModelFile(modelFile);
+            currentDir = modelFile.getParentFile();
+            FileUtils.setBaseDir(currentDir);
+
 //			ModelFileLoader.saveModelFile(xmlDoc, new File("test.xml"));
 
-			modelManager.sendCommand(new Command_LoadModel(modelFile,
-					modelManager));
-			modelManager.sendCommand(new Command_AddDataReceiver(receiver));
+            modelManager.sendCommand(new Command_LoadModel(modelFile,
+                    modelManager));
+            modelManager.sendCommand(new Command_AddDataReceiver(receiver));
 
-			// Root node
-			Node root = xmlDoc.getFirstChild();
-			
-			Node modelNode = XmlDocUtils.getChildByTagName(root, "model");
-			Node interfaceNode = XmlDocUtils.getChildByTagName(root, "interface");
-			
-			ArrayList<Node> list;
+            // Root node
+            Node root = xmlDoc.getFirstChild();
 
-			/* Load variables (for parameters) */
-			list = XmlDocUtils.getChildrenByTagName(modelNode, "variables");
-			if (list.size() >= 1) {
-				variables = new ProxyVariableCollection(list.get(0));
-				variables.registerVariables(receiver);
-			}
+            Node modelNode = XmlDocUtils.getChildByTagName(root, "model");
+            Node interfaceNode = XmlDocUtils.getChildByTagName(root, "interface");
 
-			/* Load parameters and variable sets */
-			parameters = new ParameterCollection();
-			list = XmlDocUtils.getChildrenByTagName(modelNode, "parameters");
-			if (list.size() >= 1) {
-				parameters.loadParameters(list.get(0));
-			}
+            ArrayList<Node> list;
 
-			list = XmlDocUtils.getChildrenByTagName(interfaceNode, "variable-sets");
-			if (list.size() >= 1) {
-				VariableSetFactory.loadVariableSets(list.get(0));
-			}
-			
-			/* Load methods */
-			methods = new MethodCollection();
-			list = XmlDocUtils.getChildrenByTagName(modelNode, "methods");
-			if (list.size() >= 1) {
-				methods.loadMethods(list.get(0));
-			}
+            /* Load variables (for parameters) */
+            list = XmlDocUtils.getChildrenByTagName(modelNode, "variables");
+            if (list.size() >= 1) {
+                variables = new ProxyVariableCollection(list.get(0));
+                variables.registerVariables(receiver);
+            }
 
-			
-			/* Collect agents */
-			agentTypesAndNames.clear();
-			
-			Node agents = XmlDocUtils.getChildByTagName(modelNode, "agents");
-			if (agents != null) {
-				list = XmlDocUtils.getChildrenByTagName(agents, "agent");
-				for (int i = 0; i < list.size(); i++) {
-					Node node = list.get(i);
-					String typeName = node.getTextContent().trim();
-					String name = getValue(node, "name", null);
+            /* Load parameters and variable sets */
+            parameters = new ParameterCollection();
+            list = XmlDocUtils.getChildrenByTagName(modelNode, "parameters");
+            if (list.size() >= 1) {
+                parameters.loadParameters(list.get(0));
+            }
 
-					agentTypesAndNames.put(typeName, name);
-				}
-			}
+            list = XmlDocUtils.getChildrenByTagName(interfaceNode, "variable-sets");
+            if (list.size() >= 1) {
+                VariableSetFactory.loadVariableSets(list.get(0));
+            }
+
+            /* Load methods */
+            methods = new MethodCollection();
+            list = XmlDocUtils.getChildrenByTagName(modelNode, "methods");
+            if (list.size() >= 1) {
+                methods.loadMethods(list.get(0));
+            }
 
 
-			/* Load data layer styles */
-			dataLayerStyles.clear();
-			dataLayerStyleNodes.clear();
+            /* Collect agents */
+            agentTypesAndNames.clear();
 
-			Node dataLayersNode = XmlDocUtils.getChildByTagName(interfaceNode, "data-layers");
-			list = XmlDocUtils.getChildrenByTagName(dataLayersNode, "datalayer");
-			for (int i = 0; i < list.size(); i++) {
-				Node node = list.get(i);
-				loadDataLayer(node);
-			}
+            Node agents = XmlDocUtils.getChildByTagName(modelNode, "agents");
+            if (agents != null) {
+                list = XmlDocUtils.getChildrenByTagName(agents, "agent");
+                for (int i = 0; i < list.size(); i++) {
+                    Node node = list.get(i);
+                    String typeName = node.getTextContent().trim();
+                    String name = getValue(node, "name", null);
 
-			this.modelXmlFile = modelFile;
-			this.modelXmlDoc = xmlDoc;
-			
-			
-			if (interfaceNode != null) {
-				loadInterface(xmlDoc, interfaceNode);
-			}
-			
-			configuration.addRecentProject(modelFile);
-				
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-		
-		
-	/**
-	 * Loads interface from the given interface node
-	 * @param interfaceNode
-	 */
-	private void loadInterface(Document doc, Node interfaceNode) {
-		// TODO: load data set properly
-		Node datasetNode = XmlDocUtils.getChildByTagName(interfaceNode, "dataset");
-		if (datasetNode != null) {
-			dataSet = new DataSetTmp(datasetNode);
-			receiver.addDataConsumer(dataSet.getDataFilter());
-		}
-		
-		// Load control parameters
-		Node controlNode = XmlDocUtils.getChildByTagName(interfaceNode, "control-panel");
-		if (controlNode != null && controlPanel != null) {
-			controlPanel.init(controlNode);
-		}
-		
-		
-		// If windoManager == null (noGUI == true) then load renderers only
-		if (windowManager == null) {
-			ArrayList<Node> renders = XmlDocUtils.getChildrenByTagName(interfaceNode, "renderframe");
-			Node mainRender = XmlDocUtils.getChildByTagName(interfaceNode, "mainframe");
-			if (mainRender != null)
-				renders.add(mainRender);
-			
-			for (Node render : renders) {
-				createRender(render, configuration.getRenderType());
-			}
-			
-			return;
-		}
-		
-		XML_WindowsLoader.loadWindows(windowManager, interfaceNode);
-		
-		/* Load view panels */
-		ArrayList<Node> list = XmlDocUtils.getChildrenByTagName(interfaceNode, "renderframe");
-		for (Node render : list) {
-			new SparkViewPanel(windowManager, render, configuration.getRenderType());
-		}
-		
-		Node mainWindowRender = XmlDocUtils.getChildByTagName(interfaceNode, "mainframe");
-		if (mainWindowRender != null) {
-			new SparkViewPanel(windowManager, mainWindowRender, configuration.getRenderType());
-		}
-		
-		/* Load the parameter panel */
-		Node parameterNode = XmlDocUtils.getChildByTagName(interfaceNode, "parameterframe");
-		if (parameterNode == null && getParameters().size() > 0) {
-			// Create a parameter frame if there are some parameters in the model
-			parameterNode = doc.createElement("parameterframe");
-			XmlDocUtils.addAttr(doc, parameterNode, "location", "Parameters");
-			interfaceNode.appendChild(parameterNode);
-		}
-		
-		if (parameterNode != null) {
-			new SparkParameterPanel(windowManager, parameterNode);
-		}
-		
-		
-		/* Load charts */
-		list = XmlDocUtils.getChildrenByTagName(interfaceNode, "chart");
-		list.addAll(XmlDocUtils.getChildrenByTagName(interfaceNode, "user-chart"));
-		
-		// TODO: ad hoc implementation of multiple plots in one window
-		HashMap<String, SparkChartPanel> chartPanels = new HashMap<String, SparkChartPanel>();
-		
-		for (Node chart : list) {
-			String name = XmlDocUtils.getValue(chart, "name", null);
-			if (name != null) {
-				if (chartPanels.containsKey(name)) {
-					chartPanels.get(name).addSeries(chart);
-					continue;
-				}
-			}
-			
-			SparkChartPanel chartPanel = new SparkChartPanel(windowManager, chart);
-			receiver.addDataConsumer(chartPanel.getDataFilter());
-			
-			if (name != null)
-				chartPanels.put(name, chartPanel);
-		}
-		
-		/* Load methods */
-		Node methodsNode = XmlDocUtils.getChildByTagName(interfaceNode, "methods-panel");
-		if (methodsNode != null) {
-			new SparkMethodPanel(windowManager, methodsNode, methods.getNames());
-		}
+                    agentTypesAndNames.put(typeName, name);
+                }
+            }
 
-		/* Load a data set panel */
-		datasetNode = XmlDocUtils.getChildByTagName(interfaceNode, "dataset");
-		if (datasetNode != null) {
-			new SparkDatasetPanel(windowManager, datasetNode, dataSet);
-		}
 
-		
-		/* Set up control panel */
-		receiver.addDataConsumer(new DataFilter(controlPanel, "state"));
-	}
-	
+            /* Load data layer styles */
+            dataLayerStyles.clear();
+            dataLayerStyleNodes.clear();
 
-	/**
-	 * Starts the loaded model
-	 * 
-	 * @param simulationTime
-	 * @param paused
-	 */
-	public synchronized void startLoadedModel(long simulationTime, boolean paused) {
-		if (modelXmlDoc == null)
-			return;
+            Node dataLayersNode = XmlDocUtils.getChildByTagName(interfaceNode, "data-layers");
+            list = XmlDocUtils.getChildrenByTagName(dataLayersNode, "datalayer");
+            for (int i = 0; i < list.size(); i++) {
+                Node node = list.get(i);
+                loadDataLayer(node);
+            }
 
-		setSimulationDelay(delayTime);
-		setSimulationFrequency(frequency);
-		modelManager.sendCommand(new Command_SetSeed(randomSeed, useTimeSeed));
-		modelManager.sendCommand(new Command_Start(simulationTime, paused,
-				observerName, executionMode));
-	}
-	
+            this.modelXmlFile = modelFile;
+            this.modelXmlDoc = xmlDoc;
 
-	/**
-	 * Pauses/resumes the simulation
-	 */
-	public synchronized void pauseResumeLoadedModel() {
-		if (modelXmlDoc == null)
-			return;
 
-		modelManager.sendCommand(new Command_PauseResume());
-	}
-	
+            if (interfaceNode != null) {
+                loadInterface(xmlDoc, interfaceNode);
+            }
 
-	/**
-	 * Unloads the current model
-	 */
-	public void unloadModel() {
-		synchronized (this) {
-			if (modelXmlDoc == null)
-				return;
+            configuration.addRecentProject(modelFile);
 
-			// Stop a simulation
-			stopSimulation();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-			// Save GUI changes
-			saveGUIChanges();
 
-			// 	Clear variables
-			dataSet = null;
-			variables = null;
-			modelXmlDoc = null;
-			modelXmlFile = null;
+    /**
+     * Loads interface from the given interface node
+     *
+     * @param interfaceNode
+     */
+    private void loadInterface(Document doc, Node interfaceNode) {
+        // TODO: load data set properly
+        Node datasetNode = XmlDocUtils.getChildByTagName(interfaceNode, "dataset");
+        if (datasetNode != null) {
+            dataSet = new DataSetTmp(datasetNode);
+            receiver.addDataConsumer(dataSet.getDataFilter());
+        }
 
-			renders.clear();
-		}
-		receiver.removeAllConsumers();
+        // Load control parameters
+        Node controlNode = XmlDocUtils.getChildByTagName(interfaceNode, "control-panel");
+        if (controlNode != null && controlPanel != null) {
+            controlPanel.init(controlNode);
+        }
 
-		if (windowManager != null)
-			windowManager.disposeAll();
-	}
-	
-	
-	/**
-	 * Stops a simulation
-	 */
-	public synchronized void stopSimulation() {
-		modelManager.sendCommand(new Command_Stop());
-	}
-	
 
-	/**
-	 * Loads data layer styles
-	 * 
-	 * @param node
-	 */
-	private void loadDataLayer(Node node) {
-		DataLayerStyle style = DataLayerStyle.LoadXml(node);
-		String name = style.getName();
-		
-		dataLayerStyles.put(name, style); 
-		dataLayerStyleNodes.put(name, node);
-	}
-	
-	
-	/**
-	 * Called whenever a model is unloading
-	 * @throws Exception
-	 */
-	public void saveGUIChanges() {
-		if (noGUI)
-			return;
-		
-		if (modelXmlDoc == null || modelXmlFile == null)
-			return;
-		
-		try {
-			// Save data layers
-			saveDataLayerStyles(modelXmlDoc);
+        // If windoManager == null (noGUI == true) then load renderers only
+        if (windowManager == null) {
+            ArrayList<Node> renders = XmlDocUtils.getChildrenByTagName(interfaceNode, "renderframe");
+            Node mainRender = XmlDocUtils.getChildByTagName(interfaceNode, "mainframe");
+            if (mainRender != null)
+                renders.add(mainRender);
 
-			Node interfaceNode = XmlDocUtils.getChildByTagName(modelXmlDoc.getFirstChild(), "interface");
-			controlPanel.updateXML(windowManager.getMainWindow(), modelXmlDoc, interfaceNode, modelXmlFile);
-			XML_WindowsLoader.saveWindows(windowManager, modelXmlDoc, interfaceNode, modelXmlFile);
+            for (Node render : renders) {
+                createRender(render, configuration.getRenderType());
+            }
 
-			
-			ModelFileLoader.saveModelFile(modelXmlDoc, modelXmlFile);
+            return;
+        }
+
+        XML_WindowsLoader.loadWindows(windowManager, interfaceNode);
+
+        /* Load view panels */
+        ArrayList<Node> list = XmlDocUtils.getChildrenByTagName(interfaceNode, "renderframe");
+        for (Node render : list) {
+            new SparkViewPanel(windowManager, render, configuration.getRenderType());
+        }
+
+        Node mainWindowRender = XmlDocUtils.getChildByTagName(interfaceNode, "mainframe");
+        if (mainWindowRender != null) {
+            new SparkViewPanel(windowManager, mainWindowRender, configuration.getRenderType());
+        }
+
+        /* Load the parameter panel */
+        Node parameterNode = XmlDocUtils.getChildByTagName(interfaceNode, "parameterframe");
+        if (parameterNode == null && getParameters().size() > 0) {
+            // Create a parameter frame if there are some parameters in the model
+            parameterNode = doc.createElement("parameterframe");
+            XmlDocUtils.addAttr(doc, parameterNode, "location", "Parameters");
+            interfaceNode.appendChild(parameterNode);
+        }
+
+        if (parameterNode != null) {
+            new SparkParameterPanel(windowManager, parameterNode);
+        }
+
+
+        /* Load charts */
+        list = XmlDocUtils.getChildrenByTagName(interfaceNode, "chart");
+        list.addAll(XmlDocUtils.getChildrenByTagName(interfaceNode, "user-chart"));
+
+        // TODO: ad hoc implementation of multiple plots in one window
+        HashMap<String, SparkChartPanel> chartPanels = new HashMap<String, SparkChartPanel>();
+
+        for (Node chart : list) {
+            String name = XmlDocUtils.getValue(chart, "name", null);
+            if (name != null) {
+                if (chartPanels.containsKey(name)) {
+                    chartPanels.get(name).addSeries(chart);
+                    continue;
+                }
+            }
+
+            SparkChartPanel chartPanel = new SparkChartPanel(windowManager, chart);
+            receiver.addDataConsumer(chartPanel.getDataFilter());
+
+            if (name != null)
+                chartPanels.put(name, chartPanel);
+        }
+
+        /* Load methods */
+        Node methodsNode = XmlDocUtils.getChildByTagName(interfaceNode, "methods-panel");
+        if (methodsNode != null) {
+            new SparkMethodPanel(windowManager, methodsNode, methods.getNames());
+        }
+
+        /* Load a data set panel */
+        datasetNode = XmlDocUtils.getChildByTagName(interfaceNode, "dataset");
+        if (datasetNode != null) {
+            new SparkDatasetPanel(windowManager, datasetNode, dataSet);
+        }
+
+
+        /* Set up control panel */
+        receiver.addDataConsumer(new DataFilter(controlPanel, "state"));
+    }
+
+
+    /**
+     * Starts the loaded model
+     *
+     * @param simulationTime
+     * @param paused
+     */
+    public synchronized void startLoadedModel(long simulationTime, boolean paused) {
+        if (modelXmlDoc == null)
+            return;
+
+        setSimulationDelay(delayTime);
+        setSimulationFrequency(frequency);
+        modelManager.sendCommand(new Command_SetSeed(randomSeed, useTimeSeed));
+        modelManager.sendCommand(new Command_Start(simulationTime, paused,
+                observerName, executionMode));
+    }
+
+
+    /**
+     * Pauses/resumes the simulation
+     */
+    public synchronized void pauseResumeLoadedModel() {
+        if (modelXmlDoc == null)
+            return;
+
+        modelManager.sendCommand(new Command_PauseResume());
+    }
+
+
+    /**
+     * Unloads the current model
+     */
+    public void unloadModel() {
+        synchronized (this) {
+            if (modelXmlDoc == null)
+                return;
+
+            // Stop a simulation
+            stopSimulation();
+
+            // Save GUI changes
+            saveGUIChanges();
+
+            // 	Clear variables
+            dataSet = null;
+            variables = null;
+            modelXmlDoc = null;
+            modelXmlFile = null;
+
+            renders.clear();
+        }
+        receiver.removeAllConsumers();
+
+        if (windowManager != null)
+            windowManager.disposeAll();
+    }
+
+
+    /**
+     * Stops a simulation
+     */
+    public synchronized void stopSimulation() {
+        modelManager.sendCommand(new Command_Stop());
+    }
+
+
+    /**
+     * Loads data layer styles
+     *
+     * @param node
+     */
+    private void loadDataLayer(Node node) {
+        DataLayerStyle style = DataLayerStyle.LoadXml(node);
+        String name = style.getName();
+
+        dataLayerStyles.put(name, style);
+        dataLayerStyleNodes.put(name, node);
+    }
+
+
+    /**
+     * Called whenever a model is unloading
+     *
+     * @throws Exception
+     */
+    public void saveGUIChanges() {
+        if (noGUI)
+            return;
+
+        if (modelXmlDoc == null || modelXmlFile == null)
+            return;
+
+        try {
+            // Save data layers
+            saveDataLayerStyles(modelXmlDoc);
+
+            Node interfaceNode = XmlDocUtils.getChildByTagName(modelXmlDoc.getFirstChild(), "interface");
+            controlPanel.updateXML(windowManager.getMainWindow(), modelXmlDoc, interfaceNode, modelXmlFile);
+            XML_WindowsLoader.saveWindows(windowManager, modelXmlDoc, interfaceNode, modelXmlFile);
+
+
+            ModelFileLoader.saveModelFile(modelXmlDoc, modelXmlFile);
 //			ModelFileLoader.saveModelFile(modelXmlDoc, new File("test2.xml"));
-		}
-		catch (Exception e) {
-			logger.error(e);
-			e.printStackTrace();
-		}
-	}
+        } catch (Exception e) {
+            logger.error(e);
+            e.printStackTrace();
+        }
+    }
 
-	/**
-	 * Saves changes of data layers
-	 */
-	private void saveDataLayerStyles(Document doc) {
-		for (String name : dataLayerStyles.keySet()) {
-			DataLayerStyle style = dataLayerStyles.get(name);
-			Node node = dataLayerStyleNodes.get(name);
-			
-			style.SaveXml(doc, node);
-		}
-	}
-	
+    /**
+     * Saves changes of data layers
+     */
+    private void saveDataLayerStyles(Document doc) {
+        for (String name : dataLayerStyles.keySet()) {
+            DataLayerStyle style = dataLayerStyles.get(name);
+            Node node = dataLayerStyleNodes.get(name);
 
-	/**
-	 * Creates a renderer of the given type from the given xml-node with
-	 * parameters
-	 * 
-	 * @param node
-	 * @param renderType
-	 * @return
-	 */
-	public synchronized Render createRender(Node node, int renderType) {
+            style.SaveXml(doc, node);
+        }
+    }
+
+
+    /**
+     * Creates a renderer of the given type from the given xml-node with
+     * parameters
+     *
+     * @param node
+     * @param renderType
+     * @return
+     */
+    public synchronized Render createRender(Node node, int renderType) {
 //		if (noGUI)
 //			return null;
-		
-		int interval = (delayTime < 0) ? -delayTime : 1;
-		
-		Render render = Render.createRender(node, renderType, interval, dataLayerStyles,
-				agentTypesAndNames, currentDir, noGUI);
 
-		render.updateDataFilter();
-		render.register(receiver);
-		
-		renders.add(render);
+        int interval = (delayTime < 0) ? -delayTime : 1;
 
-		return render;
-	}
-	
-	
-	/**
-	 * Invokes the update method for all active renders
-	 */
-	public synchronized void updateAllRenders() {
+        Render render = Render.createRender(node, renderType, interval, dataLayerStyles,
+                agentTypesAndNames, currentDir, noGUI);
+
+        render.updateDataFilter();
+        render.register(receiver);
+
+        renders.add(render);
+
+        return render;
+    }
+
+
+    /**
+     * Invokes the update method for all active renders
+     */
+    public synchronized void updateAllRenders() {
 //		if (noGUI)
 //			return;
-		
-		for (Render render : renders) {
-			render.update();
-		}
-	}
-	
-	
-	/**
-	 * Returns an array of all renders
-	 */
-	public synchronized Render[] getRenders() {
-		Render[] result = new Render[renders.size()];
-		return renders.toArray(result);
-	}
-	
-	
-	
-	/**
-	 * Test main method
-	 * 
-	 * @param args
-	 */
-	public static void main(final String[] args) throws Exception {
-		// The first thing to do is to set up the logger
-		// TODO: logger
+
+        for (Render render : renders) {
+            render.update();
+        }
+    }
+
+
+    /**
+     * Returns an array of all renders
+     */
+    public synchronized Render[] getRenders() {
+        Render[] result = new Render[renders.size()];
+        return renders.toArray(result);
+    }
+
+
+    /**
+     * Test main method
+     *
+     * @param args
+     */
+    public static void main(final String[] args) throws Exception {
+        // The first thing to do is to set up the logger
+        // TODO: logger
 //		try {
 //			if (new File("spark.log4j.properties").exists()) {
 //				PropertyConfigurator.configure("spark.log4j.properties");
@@ -914,48 +925,47 @@ public class Coordinator {
 //			BasicConfigurator.configure();
 //		}
 
-		final ModelManager_Basic manager = new ModelManager_Basic();
-		final DataReceiver receiver = new DataReceiver();
+        final ModelManager_Basic manager = new ModelManager_Basic();
+        final DataReceiver receiver = new DataReceiver();
 
-		new Thread(manager).start();
+        new Thread(manager).start();
 
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				Coordinator.init(manager, receiver, false);
-				if (args.length == 1) {
-					final String modelPath = args[0];
-					try {
-						Coordinator.getInstance().loadModel(new File(modelPath));
-						Coordinator.getInstance().startLoadedModel(Long.MAX_VALUE, true);
-					}
-					catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		});
-		
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                Coordinator.init(manager, receiver, false);
+                if (args.length == 1) {
+                    final String modelPath = args[0];
+                    try {
+                        Coordinator.getInstance().loadModel(new File(modelPath));
+                        Coordinator.getInstance().startLoadedModel(Long.MAX_VALUE, true);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
 
-		/*
-		 * Coordinator c = Coordinator.getInstance(); c.loadModel(newFile(
-		 * "c:/help/alexey/my new projects/eclipse projects/spark/tests/models/rsv/RSVModel.xml"
-		 * )); c.startLoadedModel(); Thread.sleep(100); // c.loadModel(newFile(
-		 * "c:/help/alexey/my new projects/eclipse projects/spark/tests/models/rsv/RSVModel.xml"
-		 * )); c.loadModel(newFile(
-		 * "c:/help/alexey/my new projects/eclipse projects/spark/tests/models/basic/CreateDieA.xml"
-		 * )); c.startLoadedModel();
-		 */
-		// c.setRandomSeed(0, false);
-		// c.setObserver("Observer2", ExecutionMode.CONCURRENT_MODE);
-		// c.startLoadedModel();
-		// manager.sendCommand(new Command_SetSeed(0, false));
-		// manager.sendCommand(new Command_Start(1000, "Observer1",
-		// ExecutionMode.SERIAL_MODE));
-		// manager.runOnce();
-		// Thread.sleep(1);
-		// manager.sendCommand(new Command_Start(1000, "Observer2",
-		// ExecutionMode.CONCURRENT_MODE));
-		// c.startLoadedModel();
-	}
+
+        /*
+         * Coordinator c = Coordinator.getInstance(); c.loadModel(newFile(
+         * "c:/help/alexey/my new projects/eclipse projects/spark/tests/models/rsv/RSVModel.xml"
+         * )); c.startLoadedModel(); Thread.sleep(100); // c.loadModel(newFile(
+         * "c:/help/alexey/my new projects/eclipse projects/spark/tests/models/rsv/RSVModel.xml"
+         * )); c.loadModel(newFile(
+         * "c:/help/alexey/my new projects/eclipse projects/spark/tests/models/basic/CreateDieA.xml"
+         * )); c.startLoadedModel();
+         */
+        // c.setRandomSeed(0, false);
+        // c.setObserver("Observer2", ExecutionMode.CONCURRENT_MODE);
+        // c.startLoadedModel();
+        // manager.sendCommand(new Command_SetSeed(0, false));
+        // manager.sendCommand(new Command_Start(1000, "Observer1",
+        // ExecutionMode.SERIAL_MODE));
+        // manager.runOnce();
+        // Thread.sleep(1);
+        // manager.sendCommand(new Command_Start(1000, "Observer2",
+        // ExecutionMode.CONCURRENT_MODE));
+        // c.startLoadedModel();
+    }
 }

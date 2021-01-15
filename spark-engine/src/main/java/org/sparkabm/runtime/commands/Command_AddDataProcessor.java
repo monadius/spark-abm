@@ -6,22 +6,22 @@ import org.sparkabm.runtime.internal.engine.AbstractSimulationEngine;
 
 /**
  * Tells to add a data processor to a simulation engine
- * @author Monad
  *
+ * @author Monad
  */
 @SuppressWarnings("serial")
 public class Command_AddDataProcessor extends ModelManagerCommand {
-	private DataProcessor dp;
-	
-	
-	public Command_AddDataProcessor(DataProcessor dp) {
-		this.dp = dp;
-	}
-	
-	@Override
-	public void execute(SparkModel model, AbstractSimulationEngine engine)
-			throws Exception {
-		engine.addDataProcessor(dp);
-	}
+    private DataProcessor dp;
+
+
+    public Command_AddDataProcessor(DataProcessor dp) {
+        this.dp = dp;
+    }
+
+    @Override
+    public void execute(SparkModel model, AbstractSimulationEngine engine)
+            throws Exception {
+        engine.addDataProcessor(dp);
+    }
 
 }

@@ -6,28 +6,28 @@ import org.sparkabm.runtime.internal.engine.AbstractSimulationEngine;
 
 /**
  * Tells to add a data collector
- * @author Monad
  *
+ * @author Monad
  */
 @SuppressWarnings("serial")
 public class Command_AddDataCollector extends ModelManagerCommand {
-	private DataCollectorDescription dcd;
-	
-	
-	public Command_AddDataCollector(DataCollectorDescription dcd) {
-		this.dcd = dcd;
-	}
+    private DataCollectorDescription dcd;
 
 
-	@Override
-	public void execute(SparkModel model, AbstractSimulationEngine engine)
-			throws Exception {
-		engine.addDataCollector(dcd);
-	}
-	
-	
-	@Override
-	public String toString() {
-		return "AddDataCollector: " + dcd.toString();
-	}
+    public Command_AddDataCollector(DataCollectorDescription dcd) {
+        this.dcd = dcd;
+    }
+
+
+    @Override
+    public void execute(SparkModel model, AbstractSimulationEngine engine)
+            throws Exception {
+        engine.addDataCollector(dcd);
+    }
+
+
+    @Override
+    public String toString() {
+        return "AddDataCollector: " + dcd.toString();
+    }
 }

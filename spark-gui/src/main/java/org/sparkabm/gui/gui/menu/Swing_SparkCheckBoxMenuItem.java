@@ -8,57 +8,58 @@ import javax.swing.JMenuItem;
 
 /**
  * Swing implementation of the SparkCheckBoxMenuItem class
- * @author Monad
  *
+ * @author Monad
  */
 public class Swing_SparkCheckBoxMenuItem extends SparkCheckBoxMenuItem implements SwingMenu {
-	/* Swing menu item */
-	private final JCheckBoxMenuItem item;
-	
-	/**
-	 * Protected constructor
-	 * @param name
-	 * @param group
-	 */
-	protected Swing_SparkCheckBoxMenuItem(String name, int group) {
-		super(name, group);
-		item = new JCheckBoxMenuItem(name);		
-	}
-	
-	
-	@Override
-	public void setActionListener(final ISparkMenuListener listener) {
-		item.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				listener.onClick(Swing_SparkCheckBoxMenuItem.this);
-			}
-		});
-	}
-	
-	
-	@Override
-	public void setSelected(boolean value) {
-		item.setSelected(value);
-	}
-	
-	
-	@Override
-	public boolean isSelected() {
-		return item.isSelected();
-	}
+    /* Swing menu item */
+    private final JCheckBoxMenuItem item;
 
-	
-	@Override
-	protected void stateChanged() {
-		item.setText(getName());
-	}
+    /**
+     * Protected constructor
+     *
+     * @param name
+     * @param group
+     */
+    protected Swing_SparkCheckBoxMenuItem(String name, int group) {
+        super(name, group);
+        item = new JCheckBoxMenuItem(name);
+    }
 
-	
-	/**
-	 * SwingMenu interface implementation
-	 */
-	public JMenuItem getSwingItem() {
-		return item;
-	}
+
+    @Override
+    public void setActionListener(final ISparkMenuListener listener) {
+        item.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                listener.onClick(Swing_SparkCheckBoxMenuItem.this);
+            }
+        });
+    }
+
+
+    @Override
+    public void setSelected(boolean value) {
+        item.setSelected(value);
+    }
+
+
+    @Override
+    public boolean isSelected() {
+        return item.isSelected();
+    }
+
+
+    @Override
+    protected void stateChanged() {
+        item.setText(getName());
+    }
+
+
+    /**
+     * SwingMenu interface implementation
+     */
+    public JMenuItem getSwingItem() {
+        return item;
+    }
 
 }
