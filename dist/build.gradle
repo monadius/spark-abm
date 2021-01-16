@@ -1,0 +1,17 @@
+plugins {
+    id 'application'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    runtimeOnly project(':spark-logo')
+    runtimeOnly project(':spark-gui')
+}
+//
+//task uber {
+//    dependsOn ':spark-logo:uberJar'
+//    println "Uber"
+//}

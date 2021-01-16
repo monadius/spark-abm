@@ -25,3 +25,16 @@ application {
 test {
     useJUnitPlatform()
 }
+
+jar {
+    manifest {
+        attributes("Main-Class": application.mainClassName,
+                   "Class-Path": configurations.runtimeClasspath
+                           .findAll { it.name.endsWith('jar') }
+                           .collect { it.name }
+                           .join(" "))
+    }
+    doLast {
+        println "runtime = ${configurations.runtime.toString()}"
+    }
+}
