@@ -30,7 +30,7 @@ public class Main {
     public static void translate(File[] files) throws Exception {
         String name = "ToyInfectionModel";
 
-        SparkModel.init(name);
+        SparkModel.init(new File(""), name);
 
         SparkLogoParser parser = new SparkLogoParser(files);
         SparkModel model = parser.read();
@@ -41,7 +41,7 @@ public class Main {
 
     public static void main(String args[]) throws Exception {
         String name = "ToyInfectionModel";
-        SparkModel.init(name);
+        SparkModel.init(new File(""), name);
 
         SparkLogoParser parser = new SparkLogoParser(
                 readFileList(new File("../Spark Language/SparkLOGO/"), "files.xml")

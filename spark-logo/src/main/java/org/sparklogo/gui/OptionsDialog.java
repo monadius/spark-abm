@@ -12,19 +12,18 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-@SuppressWarnings("serial")
 public class OptionsDialog extends JDialog implements ActionListener {
     /* A reference to the main frame */
-    private MainFrame parent;
+    private final MainFrame parent;
 
-    /* spark-core.jar */
-    private File sparkCore;
+    /* SPARK/lib */
+    private File sparkLib;
 
     /* spark-external.jar */
-    private File sparkExternal;
+//    private File sparkExternal;
 
-    private JTextField sparkCoreTextField;
-    private JTextField sparkExternalTextField;
+    private final JTextField sparkLibTextField;
+//    private final JTextField sparkExternalTextField;
 
     /* rt.jar */
 /*	private File rtLibrary;
@@ -40,9 +39,6 @@ public class OptionsDialog extends JDialog implements ActionListener {
 		}
 	}*/
 
-    /* Main panel */
-    private JPanel panel;
-
     /**
      * Creates a new options dialog
      */
@@ -52,7 +48,8 @@ public class OptionsDialog extends JDialog implements ActionListener {
 
         setDefaultCloseOperation(HIDE_ON_CLOSE);
 
-        panel = new JPanel(new GridLayout(2, 3));
+        /* Main panel */
+        JPanel panel = new JPanel(new GridLayout(1, 3));
 
 //		rtTextField = new JTextField();
 //		rtTextField.setEditable(false);
@@ -60,31 +57,31 @@ public class OptionsDialog extends JDialog implements ActionListener {
 //		if (rtLibrary != null)
 //			rtTextField.setText(rtLibrary.getPath());
 
-        sparkCoreTextField = new JTextField();
-        sparkCoreTextField.setEditable(false);
+        sparkLibTextField = new JTextField();
+        sparkLibTextField.setEditable(false);
 
-        sparkExternalTextField = new JTextField();
-        sparkExternalTextField.setEditable(false);
+//        sparkExternalTextField = new JTextField();
+//        sparkExternalTextField.setEditable(false);
 
 //		rtChangeButton = new JButton("...");
 //		rtChangeButton.setActionCommand("rt-change");
 //		rtChangeButton.addActionListener(this);
 
-        JButton sparkCoreChangeButton = new JButton("...");
-        sparkCoreChangeButton.setActionCommand("spark-core");
-        sparkCoreChangeButton.addActionListener(this);
+        JButton sparkLibChangeButton = new JButton("...");
+        sparkLibChangeButton.setActionCommand("spark-lib");
+        sparkLibChangeButton.addActionListener(this);
 
-        JButton sparkExternalChangeButton = new JButton("...");
-        sparkExternalChangeButton.setActionCommand("spark-external");
-        sparkExternalChangeButton.addActionListener(this);
+//        JButton sparkExternalChangeButton = new JButton("...");
+//        sparkExternalChangeButton.setActionCommand("spark-external");
+//        sparkExternalChangeButton.addActionListener(this);
 
-        panel.add(new JLabel("spark-core.jar path:"));
-        panel.add(sparkCoreTextField);
-        panel.add(sparkCoreChangeButton);
+        panel.add(new JLabel("Path to SPARK/lib:"));
+        panel.add(sparkLibTextField);
+        panel.add(sparkLibChangeButton);
 
-        panel.add(new JLabel("spark-external.jar path:"));
-        panel.add(sparkExternalTextField);
-        panel.add(sparkExternalChangeButton);
+//        panel.add(new JLabel("spark-external.jar path:"));
+//        panel.add(sparkExternalTextField);
+//        panel.add(sparkExternalChangeButton);
 
 //		panel.add(new JLabel("rt.jar path:"));
 //		panel.add(rtTextField);
@@ -96,28 +93,24 @@ public class OptionsDialog extends JDialog implements ActionListener {
 
 
     /**
-     * Sets the path to spark-core.jar
-     *
-     * @param path
+     * Sets the path to SPARK/lib
      */
-    public void setSparkCorePath(File path) {
+    public void setSparkLibPath(File path) {
         if (path != null && path.exists()) {
-            sparkCore = path;
-            sparkCoreTextField.setText(sparkCore.getPath());
+            sparkLib = path;
+            sparkLibTextField.setText(sparkLib.getPath());
         }
     }
 
-    /**
-     * Sets the path to spark-external.jar
-     *
-     * @param path
-     */
-    public void setSparkExternalPath(File path) {
-        if (path != null && path.exists()) {
-            sparkExternal = path;
-            sparkExternalTextField.setText(sparkExternal.getPath());
-        }
-    }
+//    /**
+//     * Sets the path to spark-external.jar
+//     */
+//    public void setSparkExternalPath(File path) {
+//        if (path != null && path.exists()) {
+//            sparkExternal = path;
+//            sparkExternalTextField.setText(sparkExternal.getPath());
+//        }
+//    }
 
 
     /**
@@ -125,59 +118,59 @@ public class OptionsDialog extends JDialog implements ActionListener {
      *
      * @return null if no path specified
      */
-    public File getSparkCorePath() {
-        return sparkCore;
+    public File getSparkLibPath() {
+        return sparkLib;
     }
 
 
-    /**
-     * Returns a path to spark-external.jar
-     *
-     * @return null if no path specified
-     */
-    public File getSparkExternalPath() {
-        return sparkExternal;
-    }
+//    /**
+//     * Returns a path to spark-external.jar
+//     *
+//     * @return null if no path specified
+//     */
+//    public File getSparkExternalPath() {
+//        return sparkExternal;
+//    }
 
 
-    /**
-     * Sets a path to rt.jar
-     * @param path
-     */
-/*	public void setRtPath(File path) {
-		if (path != null && path.exists()) {
-			rtLibrary = path;
-			rtTextField.setText(rtLibrary.getPath());
-		}
-	}
-*/
+//    /**
+//     * Sets a path to rt.jar
+//     * @param path
+//     */
+//	public void setRtPath(File path) {
+//		if (path != null && path.exists()) {
+//			rtLibrary = path;
+//			rtTextField.setText(rtLibrary.getPath());
+//		}
+//	}
 
-    /**
-     * Returns a path to rt.jar
-     *
-     * @return null if no path specified
-     */
-/*	public File getRtPath() {
-		return rtLibrary;
-	}
-*/
+
+//    /**
+//     * Returns a path to rt.jar
+//     *
+//     * @return null if no path specified
+//     */
+//	public File getRtPath() {
+//		return rtLibrary;
+//	}
+
     public void actionPerformed(ActionEvent arg0) {
         String cmd = arg0.getActionCommand();
 
         try {
             /* Change spark-core path command */
-            if (cmd.equals("spark-core")) {
-                File file = parent.openFileDialog("jar");
-                setSparkCorePath(file);
-                return;
+            if (cmd.equals("spark-lib")) {
+                File file = parent.openFileDialog(null);
+                setSparkLibPath(file);
+//                return;
             }
 
-            /* Change spark-external path command */
-            if (cmd.equals("spark-external")) {
-                File file = parent.openFileDialog("jar");
-                setSparkExternalPath(file);
-                return;
-            }
+//            /* Change spark-external path command */
+//            if (cmd.equals("spark-external")) {
+//                File file = parent.openFileDialog("jar");
+//                setSparkExternalPath(file);
+//                return;
+//            }
 
 
             /* Change rt path command */

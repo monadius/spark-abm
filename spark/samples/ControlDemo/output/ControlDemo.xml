@@ -1,21 +1,33 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <spark version="1.1">
+    
   <files all="true" path="."/>
+    
   <model tick="1">
+        
     <setup>ControlDemo.ControlDemo</setup>
+        
     <variables>
+            
       <variable get="get_numberOfAgents" name="number-of-agents" set="set_numberOfAgents" type="Double"/>
+            
       <variable get="count$SimpleAgent" name="count$SimpleAgent" set="" type="Double"/>
+          
     </variables>
+        
     <agents>
+            
       <agent name="SimpleAgent">ControlDemo.SimpleAgent</agent>
+          
     </agents>
+      
   </model>
+    
   <interface>
     <about path="readme.txt"/>
     <windows>
-      <window height="452" name="number-of-agents" visible="true" width="459" x="0" y="0"/>
-      <window height="719" main="true" name="Main Window" visible="true" width="715" x="325" y="27"/>
+      <window height="452" name="number-of-agents" visible="true" width="459" x="61" y="25"/>
+      <window height="719" main="true" name="Main Window" visible="true" width="715" x="785" y="71"/>
     </windows>
     <mainframe control-state="2" dx="0.0" dy="0.0" location="Main Window" rot-x="20.0" rot-y="30.0" zoom="1.0">
       <spacestyle auto-size="true" cell-xsize="10" cell-ysize="10" name="space" selected="true" swapXY="false"/>
@@ -25,4 +37,5 @@
     <chart interval="0" label="number-of-agents" location="number-of-agents" name="number-of-agents" variable="number-of-agents"/>
     <control-panel delay="8" freq="4"/>
   </interface>
+  
 </spark>

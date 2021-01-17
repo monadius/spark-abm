@@ -10,6 +10,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.PrintStream;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 import javax.swing.*;
@@ -239,6 +240,19 @@ public class MainFrame extends JFrame implements ActionListener {
     }
 
     /**
+     * Sets the default path to SPARK/lib
+     */
+    private void setDefaultLibPath() {
+        try {
+            File path = new File(MainFrame.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParentFile();
+            options.setSparkLibPath(path);
+        }
+        catch (URISyntaxException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    /**
      * Reads a configuration file
      */
     private void readConfigFile() {
@@ -250,21 +264,31 @@ public class MainFrame extends JFrame implements ActionListener {
             doc = db.parse("config.xml");
         } catch (Exception e) {
             // No configure file or other problems
+            setDefaultLibPath();
             return;
         }
 
-
-        NodeList list = doc.getElementsByTagName("spark-core-path");
+        NodeList list = doc.getElementsByTagName("spark-lib-path");
         if (list != null && list.getLength() > 0) {
             String sparkPath = list.item(0).getTextContent();
-            options.setSparkCorePath(new File(sparkPath));
+            options.setSparkLibPath(new File(sparkPath));
+        }
+        else {
+            // Default path
+            setDefaultLibPath();
         }
 
-        list = doc.getElementsByTagName("spark-external-path");
-        if (list != null && list.getLength() > 0) {
-            String sparkPath = list.item(0).getTextContent();
-            options.setSparkExternalPath(new File(sparkPath));
-        }
+//        NodeList list = doc.getElementsByTagName("spark-core-path");
+//        if (list != null && list.getLength() > 0) {
+//            String sparkPath = list.item(0).getTextContent();
+//            options.setSparkCorePath(new File(sparkPath));
+//        }
+//
+//        list = doc.getElementsByTagName("spark-external-path");
+//        if (list != null && list.getLength() > 0) {
+//            String sparkPath = list.item(0).getTextContent();
+//            options.setSparkExternalPath(new File(sparkPath));
+//        }
 
 
         list = doc.getElementsByTagName("file");
@@ -293,21 +317,29 @@ public class MainFrame extends JFrame implements ActionListener {
 //			out.println();
 //		}
 
-        File sparkPath = options.getSparkCorePath();
+        File sparkPath = options.getSparkLibPath();
         if (sparkPath != null) {
-            out.print("\t<spark-core-path>");
+            out.print("\t<spark-lib-path>");
             out.print(sparkPath.getPath());
-            out.print("</spark-core-path>");
+            out.print("</spark-lib-path>");
             out.println();
         }
 
-        sparkPath = options.getSparkExternalPath();
-        if (sparkPath != null) {
-            out.print("\t<spark-external-path>");
-            out.print(sparkPath.getPath());
-            out.print("</spark-external-path>");
-            out.println();
-        }
+//        File sparkPath = options.getSparkCorePath();
+//        if (sparkPath != null) {
+//            out.print("\t<spark-core-path>");
+//            out.print(sparkPath.getPath());
+//            out.print("</spark-core-path>");
+//            out.println();
+//        }
+//
+//        sparkPath = options.getSparkExternalPath();
+//        if (sparkPath != null) {
+//            out.print("\t<spark-external-path>");
+//            out.print(sparkPath.getPath());
+//            out.print("</spark-external-path>");
+//            out.println();
+//        }
 
 
         out.println("\t<recent-projects>");
@@ -415,30 +447,35 @@ public class MainFrame extends JFrame implements ActionListener {
     public File openFileDialog(final String ext) throws Exception {
         final JFileChooser fc = new JFileChooser(currentDirectory);
 
-        // Create a filter
-        fc.setFileFilter(new FileFilter() {
-            // Accept all directories and all xml files
-            public boolean accept(File f) {
-                if (f.isDirectory()) {
-                    return true;
-                }
-
-                String extension = ProjectFile.getExtension(f);
-                if (extension != null && ext != null) {
-                    if (extension.equals(ext))
+        if (ext != null) {
+            // Create a filter
+            fc.setFileFilter(new FileFilter() {
+                // Accept all directories and all xml files
+                public boolean accept(File f) {
+                    if (f.isDirectory()) {
                         return true;
-                    else
-                        return false;
+                    }
+
+                    String extension = ProjectFile.getExtension(f);
+                    if (extension != null && ext != null) {
+                        if (extension.equals(ext))
+                            return true;
+                        else
+                            return false;
+                    }
+
+                    return false;
                 }
 
-                return false;
-            }
-
-            // The description of this filter
-            public String getDescription() {
-                return "*." + ext;
-            }
-        });
+                // The description of this filter
+                public String getDescription() {
+                    return "*." + ext;
+                }
+            });
+        }
+        else {
+            fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        }
 
         int returnVal = fc.showOpenDialog(this);
 
@@ -593,30 +630,30 @@ public class MainFrame extends JFrame implements ActionListener {
             /* Translate button */
             if (src == translateButton) {
                 console.clearText();
-                project.translate();
+                project.translate(options.getSparkLibPath());
                 return;
             }
 
             /* Compile button */
             if (src == compileButton) {
                 console.clearText();
-                project.compile(options.getSparkCorePath());
+                project.compile(options.getSparkLibPath());
                 return;
             }
 
             /* Run in SPARK button */
             if (src == runInSparkButton) {
                 console.clearText();
-                project.runInSpark(options.getSparkExternalPath());
+                project.runInSpark(options.getSparkLibPath());
                 return;
             }
 
             /* Start button */
             if (src == startButton) {
                 console.clearText();
-                project.translate();
-                project.compile(options.getSparkCorePath());
-                project.runInSpark(options.getSparkExternalPath());
+                project.translate(options.getSparkLibPath());
+                project.compile(options.getSparkLibPath());
+                project.runInSpark(options.getSparkLibPath());
                 return;
             }
 

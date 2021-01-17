@@ -20,6 +20,12 @@ import org.sparklogo.parser.SparkLogoParser;
  * @author Monad
  */
 public class Project {
+    // TODO: search libraries with patterns
+    private final static String[] LIBS = {
+            "spark-core-1.0.jar", "spark-math-1.0.jar", "spark-utils-1.0.jar"
+    };
+    private final static String SPARK_LIB = "spark-gui-1.0.jar";
+
     /* Project name */
     private String name;
 
@@ -35,11 +41,10 @@ public class Project {
     /**
      * Customized list model for user interface
      */
-    private class ProjectListModel extends AbstractListModel implements
-            ListModel {
-        private static final long serialVersionUID = 1L;
+    private class ProjectListModel extends AbstractListModel<File> implements
+            ListModel<File> {
 
-        public Object getElementAt(int n) {
+        public File getElementAt(int n) {
             if (n >= 0 && n < projectFiles.size())
                 return projectFiles.get(n);
 
@@ -70,9 +75,8 @@ public class Project {
     /**
      * Returns the list model associated with the project
      *
-     * @return
      */
-    public ListModel getListModel() {
+    public ListModel<File> getListModel() {
         return listModel;
     }
 
@@ -247,7 +251,7 @@ public class Project {
      *
      * @throws Exception
      */
-    public void translate() throws Exception {
+    public void translate(File sparkLibPath) throws Exception {
         if (projectFiles.size() == 0) {
             System.out.println("No files to translate");
             return;
@@ -266,7 +270,7 @@ public class Project {
             name = "SPARK Model";
 
         // Init spark model
-        SparkModel.init(name);
+        SparkModel.init(sparkLibPath == null ? new File("") : sparkLibPath.getParentFile(), name);
 
         // Read project files
 
@@ -316,21 +320,19 @@ public class Project {
 
     /**
      * Compiles java files into byte code inside the output directory
-     *
-     * @param sparkCorePath
      */
-    public void compile(File sparkCorePath) throws Exception {
+    public void compile(File sparkLibPath) throws Exception {
         /*
          * if (rtPath == null || !rtPath.exists()) { throw new Exception(
          * "Path to rt.jar is invalid: use options menu to set up this path"); }
          */
-        if (sparkCorePath == null || !sparkCorePath.exists()) {
+        if (sparkLibPath == null || !sparkLibPath.exists()) {
             throw new Exception(
-                    "Path to spark-core.jar is invalid: use options menu to set up this path");
+                    "Path to SPARK/lib is invalid: use options menu to set up this path");
         }
 
         // Arguments of the compiler
-        ArrayList<String> compilerArgs = new ArrayList<String>();
+        ArrayList<String> compilerArgs = new ArrayList<>();
 
         // Set up output directory
         File output;
@@ -377,13 +379,11 @@ public class Project {
         compilerArgs.add("8");
 
         compilerArgs.add("-classpath");
-        final String[] libs = {
-                "spark-core-1.0.jar", "spark-math-1.0.jar", "spark-utils-1.0.jar"
-        };
-        final String path = sparkCorePath.getParent();
-        String jars = Arrays.stream(libs)
-                .map(lib -> path + File.separator + lib)
+        final String path = sparkLibPath.getPath();
+        String jars = Arrays.stream(LIBS)
+                .map(lib -> Paths.get(path, lib).toAbsolutePath().toString())
                 .collect(Collectors.joining(":"));
+//        System.out.println("jars = " + jars);
 
         //compilerArgs.add(sparkCorePath.getParent());
         compilerArgs.add(jars);
@@ -396,16 +396,8 @@ public class Project {
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         if (compiler == null) {
             // Try to use the compiler as an external process
-            compilerArgs.add(0, "java");
-            compilerArgs.add(1, "-jar");
-            compilerArgs.add(2, "lib/javac.jar");
-            compilerArgs.add(3, "-verbose");
-			
-/*			Process proc = Runtime.getRuntime().exec(
-					new String[] { "java", "-jar lib/javac.jar",
-							 "-jar", sparkPath.getPath(),
-							xmlFiles.get(0).getPath() });
-*/
+            compilerArgs.add(0, "javac");
+
             try {
                 Process proc = Runtime.getRuntime().exec(
                         compilerArgs.toArray(new String[0]));
@@ -429,6 +421,7 @@ public class Project {
                 }
             } catch (Exception e) {
                 throw e;
+                // TODO: a meaningful error message (link to adoptopenjdk)
 //				throw new Exception("Java compiler is not found");
             }
         } else {
@@ -452,10 +445,10 @@ public class Project {
     /**
      * Runs the project in SPARK
      */
-    public void runInSpark(File sparkExternalPath) throws Exception {
-        if (sparkExternalPath == null || !sparkExternalPath.exists()) {
+    public void runInSpark(File sparkLibPath) throws Exception {
+        if (sparkLibPath == null || !sparkLibPath.exists()) {
             throw new Exception(
-                    "Path to spark-external.jar is invalid: use options menu to set up this path");
+                    "Path to SPARK/lib is invalid: use options menu to set up this path");
         }
 
         // Set up output directory
@@ -503,13 +496,19 @@ public class Project {
 //		cmd.append('"');
 
 //		System.out.println(cmd);
+//        String[] cmd = {
+//                String.join(File.separator, sparkExternalPath.getParentFile().getParent(), "bin", "spark-gui"),
+//                xmlFiles.get(0).getPath()
+//        };
         String[] cmd = {
-                String.join(File.separator, sparkExternalPath.getParentFile().getParent(), "bin", "spark-gui"),
+                "java", "-jar",
+                Paths.get(sparkLibPath.getPath(), SPARK_LIB).toAbsolutePath().toString(),
                 xmlFiles.get(0).getPath()
         };
-        System.out.println(String.join(" ", cmd));
 
+        System.out.println(String.join(" ", cmd));
         Process proc = Runtime.getRuntime().exec(cmd);
+
 //				new String[] { "java", "-Xmx512m", "-Xms128m",
 //						"-Dsun.java2d.d3d=false", "-jar", sparkExternalPath.getPath(),
 //						xmlFiles.get(0).getPath() });
@@ -530,7 +529,7 @@ public class Project {
     }
 
     private static class LineReader implements Runnable {
-        private BufferedReader reader;
+        private final BufferedReader reader;
 
         public LineReader(BufferedReader reader) {
             this.reader = reader;

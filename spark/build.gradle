@@ -36,9 +36,9 @@ task createStartScripts(type: CreateStartScripts) {
     classpath = files(new File('SPARK_Manager.jar'))
     doLast {
         def script = getWindowsScript()
-        script.text = script.text.replace('%APP_HOME%\\lib\\', '')
+        script.text = script.text.replace('%APP_HOME%\\lib\\', '%APP_HOME%\\')
         script = getUnixScript()
-        script.text = script.text.replace('$APP_HOME/lib/', '')
+        script.text = script.text.replace('$APP_HOME/lib/', '$APP_HOME/')
     }
 }
 
@@ -48,6 +48,9 @@ task sparkInstall(type: Sync) {
         from '../LICENSE'
         from 'README'
         from 'logo.jpg'
+    }
+    // The script should be copied to bin (or another subfolder)
+    into('bin') {
         from createStartScripts
     }
     into('') {
