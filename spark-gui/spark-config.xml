@@ -1,0 +1,6 @@
+<config>
+	<graphics render = "1"/>
+	<font/>
+	<recent-models max = "10">		<file>/Users/monad/Work/git/spark-abm/tmp/libs/model/output/ControlDemo.xml</file>
+	</recent-models>
+</config>
