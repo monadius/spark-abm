@@ -29,12 +29,26 @@ jar {
     }
 }
 
+task createStartScripts(type: CreateStartScripts) {
+    outputDir = file("$buildDir/scripts")
+    applicationName = "spark-manager"
+    mainClass.set(application.mainClassName)
+    classpath = files(new File('SPARK_Manager.jar'))
+    doLast {
+        def script = getWindowsScript()
+        script.text = script.text.replace('%APP_HOME%\\lib\\', '')
+        script = getUnixScript()
+        script.text = script.text.replace('$APP_HOME/lib/', '')
+    }
+}
+
 task sparkInstall(type: Sync) {
     into "$buildDir/spark"
     into('') {
         from '../LICENSE'
         from 'README'
         from 'logo.jpg'
+        from createStartScripts
     }
     into('') {
         from jar
