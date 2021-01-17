@@ -34,7 +34,4 @@ jar {
                            .collect { it.name }
                            .join(" "))
     }
-    doLast {
-        println "runtime = ${configurations.runtime.toString()}"
-    }
 }

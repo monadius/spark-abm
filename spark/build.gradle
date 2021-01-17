@@ -1,3 +1,5 @@
+import java.nio.file.Paths
+
 plugins {
     id 'application'
 }
@@ -9,8 +11,22 @@ repositories {
 }
 
 dependencies {
-    runtimeOnly project(':spark-logo')
+    implementation project(':spark-logo')
     runtimeOnly project(':spark-gui')
+}
+
+application {
+    mainClassName = 'org.sparklogo.SparkManager'
+}
+
+jar {
+    manifest {
+        attributes("Main-Class": application.mainClassName,
+                   "Class-Path": configurations.runtimeClasspath
+                           .findAll { it.name.startsWith('spark-logo') }
+                           .collect { Paths.get("lib", it.name as String) }
+                           .join(" "))
+    }
 }
 
 task sparkInstall(type: Sync) {
