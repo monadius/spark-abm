@@ -18,6 +18,12 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 }
 
+compileJava {
+    options.release.set 8
+    sourceCompatibility = 8
+    targetCompatibility = 8
+}
+
 application {
     mainClassName = 'org.sparklogo.gui.MainGUI'
 }

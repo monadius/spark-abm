@@ -15,6 +15,12 @@ dependencies {
     runtimeOnly project(':spark-gui')
 }
 
+compileJava {
+    options.release.set 8
+    sourceCompatibility = 8
+    targetCompatibility = 8
+}
+
 application {
     mainClassName = 'org.sparklogo.SparkManager'
 }
