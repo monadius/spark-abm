@@ -2,6 +2,8 @@ plugins {
     id 'application'
 }
 
+version = '1.3.0a'
+
 repositories {
     mavenCentral()
 }
@@ -10,8 +12,39 @@ dependencies {
     runtimeOnly project(':spark-logo')
     runtimeOnly project(':spark-gui')
 }
-//
-//task uber {
-//    dependsOn ':spark-logo:uberJar'
-//    println "Uber"
-//}
+
+task sparkInstall(type: Sync) {
+    into "$buildDir/spark"
+    into('') {
+        from '../LICENSE'
+        from 'README'
+        from 'logo.jpg'
+    }
+    into('') {
+        from jar
+        rename { 'SPARK_Manager.jar' }
+    }
+    into('lib') {
+        from configurations.runtimeClasspath
+    }
+    into('logo') {
+        from '../spark-logo/logo'
+        include 'commands.xml'
+        include 'SparkTypes.xml'
+    }
+    into('samples') {
+        from 'samples'
+        exclude '**/*.java'
+        exclude '**/*.class'
+    }
+    into('Licenses') {
+        from 'Licenses'
+    }
+}
+
+task sparkDist(type: Zip) {
+    dependsOn tasks.sparkInstall
+    archiveFileName = "SPARK_${project.version}_universal.zip"
+    destinationDirectory = file("$buildDir/sparkDist")
+    from "$buildDir/spark"
+}

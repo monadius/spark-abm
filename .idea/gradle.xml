@@ -10,7 +10,7 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/dist" />
+            <option value="$PROJECT_DIR$/spark" />
             <option value="$PROJECT_DIR$/spark-core" />
             <option value="$PROJECT_DIR$/spark-engine" />
             <option value="$PROJECT_DIR$/spark-gui" />
