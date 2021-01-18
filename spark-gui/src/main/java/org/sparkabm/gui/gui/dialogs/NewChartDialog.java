@@ -6,6 +6,8 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
@@ -25,8 +27,6 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.sparkabm.math.parser.UserFunction;
 import org.sparkabm.gui.Coordinator;
 import org.sparkabm.gui.ProxyVariable;
@@ -36,8 +36,7 @@ import org.sparkabm.gui.gui.SparkChartPanel.ChartType;
 
 public class NewChartDialog extends JDialog implements ActionListener,
         ListSelectionListener {
-    private static final long serialVersionUID = 1L;
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = Logger.getLogger(NewChartDialog.class.getName());
 
     // Commands
     private static final String CMD_SELECT = "select";
@@ -352,7 +351,7 @@ public class NewChartDialog extends JDialog implements ActionListener,
                 return;
             }
         } catch (Exception ex) {
-            logger.error(ex);
+            logger.log(Level.SEVERE, "exception", ex);
             JOptionPane.showMessageDialog(this, ex.toString());
         }
     }

@@ -5,14 +5,14 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Stack;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.SwingUtilities;
 
 //import org.apache.log4j.BasicConfigurator;
 //import org.apache.log4j.PropertyConfigurator;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.sparkabm.gui.data.DataFilter;
 import org.sparkabm.gui.data.DataReceiver;
 import org.sparkabm.gui.data.DataSetTmp;
@@ -46,7 +46,7 @@ import org.w3c.dom.Node;
  */
 public class Coordinator {
     /* Logger */
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = Logger.getLogger(Coordinator.class.getName());
 
     /* A single instance of the class */
     private static Coordinator coordinator;
@@ -182,7 +182,7 @@ public class Coordinator {
      */
     public static void init(IModelManager manager, DataReceiver receiver, boolean noGUI) {
         if (coordinator != null) {
-            logger.error("Coordinator is already created");
+            logger.severe("Coordinator is already created");
             throw new Error("Illegal operation");
         }
 
@@ -214,8 +214,7 @@ public class Coordinator {
                 coordinator.configuration.saveConfigFile();
             }
         } catch (Exception e) {
-            logger.error(e);
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "exception", e);
         }
     }
 
@@ -838,8 +837,7 @@ public class Coordinator {
             ModelFileLoader.saveModelFile(modelXmlDoc, modelXmlFile);
 //			ModelFileLoader.saveModelFile(modelXmlDoc, new File("test2.xml"));
         } catch (Exception e) {
-            logger.error(e);
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "exception", e);
         }
     }
 

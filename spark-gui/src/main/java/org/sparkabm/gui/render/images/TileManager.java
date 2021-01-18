@@ -2,13 +2,12 @@ package org.sparkabm.gui.render.images;
 
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
+import java.util.logging.Logger;
 
 import javax.media.opengl.GL;
 
 import com.sun.opengl.util.texture.Texture;
 import com.sun.opengl.util.texture.TextureIO;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 
 /**
@@ -17,7 +16,7 @@ import org.apache.logging.log4j.Logger;
  * @author Alexey
  */
 public class TileManager {
-    private final static Logger logger = LogManager.getLogger();
+    private final static Logger logger = Logger.getLogger(TileManager.class.getName());
 
     /**
      * Describes a tile image
@@ -104,7 +103,7 @@ public class TileManager {
      */
     public void addImage(String tileSet, String tileName, BufferedImage image, boolean xReflect, boolean yReflect) {
         if (image == null) {
-            logger.error("Image cannot be null");
+            logger.severe("Image cannot be null");
             return;
         }
 

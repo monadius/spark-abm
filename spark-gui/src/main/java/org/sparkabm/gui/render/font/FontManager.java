@@ -3,9 +3,9 @@ package org.sparkabm.gui.render.font;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.sparkabm.utils.FileUtils;
 
 /**
@@ -13,7 +13,7 @@ import org.sparkabm.utils.FileUtils;
  */
 public class FontManager {
     // Log
-    private static final Logger log = LogManager.getLogger();
+    private static final Logger log = Logger.getLogger(FontManager.class.getName());
 
     // Font directories
     private final ArrayList<File> dirs;
@@ -52,14 +52,14 @@ public class FontManager {
      */
     public void load(File dir) {
         if (dirs.contains(dir)) {
-            log.warn("Directory is already loaded: " + dir);
+            log.warning("Directory is already loaded: " + dir);
             return;
         }
 
         ArrayList<File> files = FileUtils.findAllFiles(dir, "fnt", false);
 
         if (files == null || files.size() == 0) {
-            log.warn("No font files in the directory: " + dir);
+            log.warning("No font files in the directory: " + dir);
             dirs.add(dir);
             return;
         }
@@ -70,13 +70,13 @@ public class FontManager {
                 BitmapFont font = new BitmapFont(file);
                 String name = file.getName();
                 if (fontTable.containsKey(name)) {
-                    log.warn("Two fonts with the same name: " + name);
+                    log.warning("Two fonts with the same name: " + name);
                 }
 
                 fonts.add(font);
                 fontTable.put(name, font);
             } catch (Exception e) {
-                log.error(e);
+                log.log(Level.SEVERE, "exception", e);
             }
         }
 

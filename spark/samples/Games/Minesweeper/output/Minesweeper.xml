@@ -1,36 +1,57 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<spark version="1">
+<spark version="1.1">
+    
   <files all="true" path="."/>
+    
   <model tick="1">
+        
     <setup>Minesweeper.Minesweeper</setup>
+        
     <variables>
+            
       <variable get="get_bombs" name="bombs" set="set_bombs" type="Double"/>
+            
       <variable get="get_state" name="state" set="set_state" type="Double"/>
+            
+      <variable get="count$Bomb" name="count$Bomb" set="" type="Double"/>
+            
+      <variable get="count$Cell" name="count$Cell" set="" type="Double"/>
+          
     </variables>
+        
+    <parameters>
+            
+      <parameter default="40.0" max="200.0" min="0.0" name="bombs" step="0.1" type="Double" variable="bombs"/>
+          
+    </parameters>
+        
     <agents>
-      <agent name="Cell">Minesweeper.Cell</agent>
+            
       <agent name="Bomb">Minesweeper.Bomb</agent>
+            
+      <agent name="Cell">Minesweeper.Cell</agent>
+          
     </agents>
+      
   </model>
+    
   <interface>
     <about path="readme.txt"/>
     <windows>
-      <window height="146" name="Parameters" visible="true" width="800" x="1352" y="72"/>
-      <window height="835" main="true" name="Main Window" visible="true" width="701" x="586" y="0"/>
+      <window height="200" name="Parameters" visible="true" width="800" x="1120" y="72"/>
+      <window height="835" main="true" name="Main Window" visible="true" width="701" x="408" y="25"/>
     </windows>
     <mainframe control-state="2" dx="0.5" dy="-0.5" location="Main Window" rot-x="20.0" rot-y="30.0" zoom="1.0">
       <spacestyle auto-size="false" cell-xsize="32" cell-ysize="32" name="space" selected="true" swapXY="false"/>
-      <agentstyle alpha-function-value="0.0" border="true" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0" name="Cell" position="0" texture-env="0" tile-manager="../Images/Tiles.xml" transparent="false" visible="true"/>
-      <agentstyle alpha-function-value="0.0" border="true" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0" name="Bomb" position="1" texture-env="0" tile-manager="../Images/Tiles.xml" transparent="false" visible="true"/>
+      <agentstyle alpha-function="4" alpha-function-value="0.0" bitmap-font-size="1.0" border="true" color-blending="false" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0;0.0" label-height="100.0" label-width="100.0" modulate-label-color="false" modulate-label-size="false" modulate-size="true" name="Cell" position="0" scale="1.0" stencil-function="0" stencil-mask="65535" stencil-ref="0" text-alignment="Left" texture-env="0" tile-manager="../Images/Tiles.xml" transparency-coefficient="0.5" transparent="false" visible="true"/>
+      <agentstyle alpha-function="4" alpha-function-value="0.0" bitmap-font-size="1.0" border="true" color-blending="false" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0;0.0" label-height="100.0" label-width="100.0" modulate-label-color="false" modulate-label-size="false" modulate-size="true" name="Bomb" position="1" scale="1.0" stencil-function="0" stencil-mask="65535" stencil-ref="0" text-alignment="Left" texture-env="0" tile-manager="../Images/Tiles.xml" transparency-coefficient="0.5" transparent="false" visible="true"/>
     </mainframe>
     <parameterframe location="Parameters">
-      <parameter default="40.0" max="200.0" min="0.0" name="bombs" step="0.0" type="Double" variable="bombs" widget="Slider"/>
+      <user-parameter max="200.0" min="0.0" name="bombs" step="0.1" use="false"/>
     </parameterframe>
     <variable-sets/>
-    
     <data-layers/>
-  
-  
-  <control-panel delay="8" freq="3"/>
+    <control-panel delay="8" freq="3"/>
   </interface>
+  
 </spark>

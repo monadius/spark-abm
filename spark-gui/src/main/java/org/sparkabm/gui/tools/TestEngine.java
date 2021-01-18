@@ -7,12 +7,12 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 //import org.apache.log4j.BasicConfigurator;
 //import org.apache.log4j.PropertyConfigurator;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.sparkabm.gui.data.DataFilter;
 import org.sparkabm.gui.data.DataReceiver;
 import org.sparkabm.gui.data.IDataConsumer;
@@ -367,7 +367,7 @@ class ModelTest implements IDataConsumer {
  */
 public class TestEngine {
     // Logger
-    private static Logger logger = LogManager.getLogger();
+    private static Logger logger = Logger.getLogger(TestEngine.class.getName());
 
     // The stream for logging results
     private static PrintStream out = null;
@@ -419,8 +419,7 @@ public class TestEngine {
             try {
                 test.run();
             } catch (Exception e) {
-                logger.error(e.getMessage());
-                e.printStackTrace();
+                logger.log(Level.SEVERE, "exception", e);
             }
         }
     }
@@ -514,8 +513,7 @@ public class TestEngine {
             // Run all tests
             runAllTests();
         } catch (Exception e) {
-            logger.error(e.getMessage());
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "exception", e);
         } finally {
             if (out != null)
                 out.close();

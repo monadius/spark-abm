@@ -18,11 +18,11 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.sparkabm.runtime.data.DataObject_AgentData;
 import org.sparkabm.runtime.data.DataObject_SpaceAgents;
 import org.sparkabm.runtime.data.DataObject_SpaceLinks;
@@ -38,7 +38,7 @@ import org.sparkabm.math.Vector4d;
  * @author Monad
  */
 public class JavaRender extends Render {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = Logger.getLogger(JavaRender.class.getName());
 
     /* Canvas */
     private JavaRenderCanvas canvas;
@@ -88,7 +88,7 @@ public class JavaRender extends Render {
         }
 
         if (w <= 0 || h <= 0) {
-            logger.warn("Width or height is negative");
+            logger.warning("Width or height is negative");
             return;
         }
 
@@ -106,7 +106,7 @@ public class JavaRender extends Render {
             File out = new File(dir, fname + ".png");
             ImageIO.write(image, "png", out);
         } catch (Exception e) {
-            logger.error(e);
+            logger.log(Level.SEVERE, "exception", e);
         }
     }
 
@@ -201,7 +201,7 @@ public class JavaRender extends Render {
         try {
             tr = tr.createInverse();
         } catch (Exception e) {
-            logger.error(e);
+            logger.log(Level.SEVERE, "exception", e);
             return new Vector(x, y, 0);
         }
 

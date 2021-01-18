@@ -2,9 +2,8 @@ package org.sparkabm.runtime.internal.data;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.logging.Logger;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.sparkabm.runtime.data.DataCollectorDescription;
 import org.sparkabm.runtime.data.DataObject_Inspection;
 
@@ -14,7 +13,7 @@ import org.sparkabm.runtime.data.DataObject_Inspection;
  * @author Monad
  */
 public class DataCollectorManager {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = Logger.getLogger(DataCollectorManager.class.getName());
 
     /**
      * Adds a reference counter for each data collector
@@ -98,7 +97,7 @@ public class DataCollectorManager {
 
             // Inspection data
             case DataCollectorDescription.INSPECTION_DATA:
-                if (parameters == null || !(parameters instanceof DataObject_Inspection.Parameters))
+                if (!(parameters instanceof DataObject_Inspection.Parameters))
                     break;
 
                 dc = new DCInspectionData(dcd.getDataName(), (DataObject_Inspection.Parameters) parameters);
@@ -106,7 +105,7 @@ public class DataCollectorManager {
         }
 
         if (dc == null) {
-            logger.error("Unresolved data type: " + dcd);
+            logger.severe("Unresolved data type: " + dcd);
             return;
         }
 

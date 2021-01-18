@@ -1,12 +1,10 @@
 package org.sparkabm.gui.gui.menu;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -19,7 +17,7 @@ import javax.swing.JSeparator;
  * @author Monad
  */
 public class Swing_SparkMenu extends SparkMenu implements SwingMenu {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = Logger.getLogger(Swing_SparkMenu.class.getName());
 
     /* Swing menu itself */
     private final JMenu menu;
@@ -92,7 +90,7 @@ public class Swing_SparkMenu extends SparkMenu implements SwingMenu {
             }
 
         } else {
-            logger.error("An attempt to insert a non-Swing menu item into a Swing menu");
+            logger.severe("An attempt to insert a non-Swing menu item into a Swing menu");
         }
     }
 

@@ -2,11 +2,11 @@ package org.sparkabm.gui.render;
 
 import java.awt.Font;
 import java.io.File;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.media.opengl.GL;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.sparkabm.math.Vector4d;
 import org.sparkabm.gui.render.font.BitmapFont;
 import org.sparkabm.gui.render.images.TileManager;
@@ -19,7 +19,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 public class AgentStyle implements Comparable<AgentStyle> {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = Logger.getLogger(AgentStyle.class.getName());
 
     /* Agent's type name */
     public String typeName;
@@ -643,8 +643,7 @@ public class AgentStyle implements Comparable<AgentStyle> {
                 tileManager = TileManagerInfo.loadFromXml(tileFile);
             } catch (Exception e) {
                 tileFile = null;
-                logger.error("File loading problem: " + tileFile);
-                logger.error(e);
+                logger.log(Level.SEVERE, "File loading problem: " + tileFile, e);
                 return null;
             }
 

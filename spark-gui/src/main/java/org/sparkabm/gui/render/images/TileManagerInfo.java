@@ -7,9 +7,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.sparkabm.math.Vector;
 import org.w3c.dom.Node;
 
@@ -17,7 +17,7 @@ import org.w3c.dom.Node;
  * Describes sources of all images
  */
 public class TileManagerInfo {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = Logger.getLogger(TileManagerInfo.class.getName());
 
     // Collection of all tile manager descriptions
     private static final HashMap<File, TileManagerInfo> tileManagers = new HashMap<File, TileManagerInfo>();
@@ -113,7 +113,7 @@ public class TileManagerInfo {
             // Data source
             String dataSrc = getValue(node, "data", null);
             if (dataSrc == null) {
-                logger.error("No data source: " + tileSet + "$" + name);
+                logger.severe("No data source: " + tileSet + "$" + name);
                 continue;
             }
 
@@ -126,7 +126,7 @@ public class TileManagerInfo {
 
             ImageSrc src = dataSrcMap.get(dataSrc);
             if (src == null) {
-                logger.error("Data source " + dataSrc + " is not defined for " + tileSet + "$" + name);
+                logger.severe("Data source " + dataSrc + " is not defined for " + tileSet + "$" + name);
                 continue;
             }
 
@@ -134,14 +134,14 @@ public class TileManagerInfo {
             try {
                 BufferedImage img = src.getImage(ref);
                 if (img == null) {
-                    logger.error("Image haven't been loaded: " + tileSet + "$" + name);
+                    logger.severe("Image haven't been loaded: " + tileSet + "$" + name);
                     continue;
                 }
 
                 // Add the loaded image
                 manager.addImage(tileSet, name, img, xReflect, yReflect);
             } catch (Exception e) {
-                logger.error(e);
+                logger.log(Level.SEVERE, "exception", e);
             }
         }
     }
@@ -176,7 +176,7 @@ public class TileManagerInfo {
         // File name
         String fname = getValue(fileNode, "name", null);
         if (fname == null) {
-            logger.error("Name attribute is not defined in a file source description");
+            logger.severe("Name attribute is not defined in a file source description");
             return result;
         }
 
@@ -184,7 +184,7 @@ public class TileManagerInfo {
         if (!file.exists()) {
             file = new File(fname);
             if (!file.exists()) {
-                logger.error("File " + fname + " does not exists");
+                logger.severe("File " + fname + " does not exists");
                 return result;
             }
         }
@@ -203,7 +203,7 @@ public class TileManagerInfo {
             else
                 top = new FileSrc(id, file, keyColor.toAWTColorInt());
         } catch (IOException e) {
-            logger.error(e);
+            logger.log(Level.SEVERE, "exception", e);
             return result;
         }
 

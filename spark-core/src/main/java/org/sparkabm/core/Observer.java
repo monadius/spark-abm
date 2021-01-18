@@ -20,9 +20,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.logging.Logger;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.sparkabm.data.DataLayer;
 import org.sparkabm.space.Space;
 
@@ -40,7 +39,7 @@ import org.sparkabm.math.RandomHelper;
  */
 public final class Observer {
     // Log
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = Logger.getLogger(Observer.class.getName());
 
     /**
      * Priority constants
@@ -309,7 +308,7 @@ public final class Observer {
 
         RandomHelper.reset(executionMode == ExecutionMode.PARALLEL_MODE);
 
-        logger.debug("Observer is created. Execution mode: " + ExecutionMode.toString(executionMode));
+        logger.finest("Observer is created. Execution mode: " + ExecutionMode.toString(executionMode));
     }
 
     /**
@@ -1062,7 +1061,7 @@ public final class Observer {
      * Prints performance statistics
      */
     public void printStatistics() {
-        logger.debug("Additional time: %d", statTime);
+        logger.finest("Additional time: " + statTime);
         System.err.println("Additional time: " + statTime);
         impl.printStatistics();
     }

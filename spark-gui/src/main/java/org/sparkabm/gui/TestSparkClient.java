@@ -4,13 +4,12 @@ import java.io.File;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
 
 //import org.apache.log4j.BasicConfigurator;
 //import org.apache.log4j.PropertyConfigurator;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.sparkabm.gui.data.DataReceiver;
 import org.sparkabm.runtime.commands.FileTransfer;
 import org.sparkabm.runtime.commands.ModelManagerCommand;
@@ -24,7 +23,7 @@ import org.w3c.dom.Node;
  * @author Monad
  */
 public class TestSparkClient {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = Logger.getLogger(TestSparkClient.class.getName());
 
 
     /**
@@ -123,7 +122,7 @@ public class TestSparkClient {
                     if (data instanceof DataRow) {
                         receive((DataRow) data);
                     } else {
-                        logger.error("Bad data received: " + data);
+                        logger.severe("Bad data received: " + data);
                     }
                 }
             } catch (Exception e) {

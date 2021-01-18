@@ -3,9 +3,9 @@ package org.sparkabm.runtime.internal.data;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.sparkabm.core.Observer;
 import org.sparkabm.core.SparkModel;
 import org.sparkabm.runtime.data.DataCollectorDescription;
@@ -20,7 +20,7 @@ import org.sparkabm.space.SpaceAgent;
  * @author Monad
  */
 public class DCInspectionData extends DataCollector {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = Logger.getLogger(DCInspectionData.class.getName());
 
     // The name of this inspector
     protected String name;
@@ -118,8 +118,7 @@ public class DCInspectionData extends DataCollector {
                 }
             }
         } catch (Exception e) {
-            logger.error(e);
-            return;
+            logger.log(Level.SEVERE, "exception", e);
         }
 
         inspect(obj, cls.getSuperclass(), info);

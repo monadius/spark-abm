@@ -1,9 +1,9 @@
 package org.sparkabm.gui.data;
 
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.sparkabm.runtime.data.AbstractDataReceiver;
 import org.sparkabm.runtime.data.DataObject;
 import org.sparkabm.runtime.data.DataObject_State;
@@ -15,7 +15,7 @@ import org.sparkabm.runtime.data.DataRow;
  * @author Monad
  */
 public class DataReceiver extends AbstractDataReceiver {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = Logger.getLogger(DataReceiver.class.getName());
 
     /* List of all data consumers */
     protected final ArrayList<DataFilter> consumers;
@@ -60,8 +60,7 @@ public class DataReceiver extends AbstractDataReceiver {
             try {
                 filters[i].consume(row);
             } catch (Exception e) {
-                logger.error(e);
-                e.printStackTrace();
+                logger.log(Level.SEVERE, "exception", e);
             }
         }
     }

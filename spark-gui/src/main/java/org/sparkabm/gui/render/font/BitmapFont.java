@@ -15,11 +15,11 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.media.opengl.GL;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.sparkabm.math.Vector4d;
 import org.sparkabm.gui.render.font.BitmapCharacter.Kerning;
 
@@ -31,7 +31,7 @@ import com.sun.opengl.util.texture.TextureIO;
  */
 public class BitmapFont {
     // Log
-    private static final Logger log = LogManager.getLogger();
+    private static final Logger logger = Logger.getLogger(BitmapFont.class.getName());
 
     // Font alignments
     public enum Align {
@@ -305,7 +305,7 @@ public class BitmapFont {
             try {
                 init();
             } catch (Exception e) {
-                log.error(e);
+                logger.log(Level.SEVERE, "exception", e);
                 return;
             }
         }

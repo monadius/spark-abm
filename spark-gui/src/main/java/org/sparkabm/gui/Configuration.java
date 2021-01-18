@@ -3,9 +3,9 @@ package org.sparkabm.gui;
 import java.io.File;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.sparkabm.gui.gui.menu.ISparkMenuListener;
 import org.sparkabm.gui.gui.menu.SparkMenu;
 import org.sparkabm.gui.gui.menu.SparkMenuFactory;
@@ -22,7 +22,7 @@ import org.w3c.dom.Node;
  * @author Monad
  */
 public class Configuration {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = Logger.getLogger(Configuration.class.getName());
 
 
     /******* Recent projects *******/
@@ -317,8 +317,7 @@ public class Configuration {
                         c.loadModel(project);
                         c.startLoadedModel(Long.MAX_VALUE, true);
                     } catch (Exception e) {
-                        logger.error(e);
-                        e.printStackTrace();
+                        logger.log(Level.SEVERE, "exception", e);
                     }
                 }
             });

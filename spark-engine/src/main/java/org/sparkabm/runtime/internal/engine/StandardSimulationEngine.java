@@ -1,9 +1,9 @@
 package org.sparkabm.runtime.internal.engine;
 
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.sparkabm.core.ExecutionMode;
 import org.sparkabm.core.Observer;
 import org.sparkabm.core.ObserverFactory;
@@ -26,7 +26,7 @@ import org.sparkabm.utils.FileUtils;
  * @author Monad
  */
 public class StandardSimulationEngine extends AbstractSimulationEngine {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = Logger.getLogger(StandardSimulationEngine.class.getName());
 
     /* Simulation flags */
     private boolean pausedFlag = false;
@@ -144,7 +144,7 @@ public class StandardSimulationEngine extends AbstractSimulationEngine {
             try {
                 collector.collect(model, row, time, specialFlag);
             } catch (BadDataSourceException e) {
-                logger.error(e);
+                logger.log(Level.SEVERE, "exception", e);
                 collector.deactivate();
             }
         }
@@ -218,7 +218,7 @@ public class StandardSimulationEngine extends AbstractSimulationEngine {
             try {
                 cmd.execute(model, this);
             } catch (Exception e) {
-                logger.error(e);
+                logger.log(Level.SEVERE, "exception", e);
                 e.printStackTrace();
             }
         }
@@ -309,7 +309,7 @@ public class StandardSimulationEngine extends AbstractSimulationEngine {
                         try {
                             Thread.sleep(delay - tickTotalTime);
                         } catch (InterruptedException e) {
-                            logger.error(e);
+                            logger.log(Level.SEVERE, "exception", e);
                             stopFlag = true;
                         }
                     }

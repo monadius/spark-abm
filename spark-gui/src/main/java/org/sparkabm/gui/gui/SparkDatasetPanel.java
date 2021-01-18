@@ -5,14 +5,14 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.sparkabm.gui.Coordinator;
 import org.sparkabm.gui.data.DataSetTmp;
 import org.sparkabm.utils.FileUtils;
@@ -27,7 +27,7 @@ import org.w3c.dom.Node;
  */
 @SuppressWarnings("serial")
 public class SparkDatasetPanel extends JPanel implements ISparkPanel, ActionListener {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = Logger.getLogger(SparkDatasetPanel.class.getName());
 
     /* Dataset name */
 //	private String name;
@@ -109,8 +109,7 @@ public class SparkDatasetPanel extends JPanel implements ISparkPanel, ActionList
                 out = new PrintStream(file);
                 data.saveData(out, 1);
             } catch (Exception e) {
-                logger.error(e);
-                e.printStackTrace();
+                logger.log(Level.SEVERE, "exception", e);
             } finally {
                 if (out != null)
                     out.close();

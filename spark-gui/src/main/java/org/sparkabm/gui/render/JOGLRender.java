@@ -5,6 +5,8 @@ import java.awt.event.KeyEvent;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 import javax.media.opengl.GL;
@@ -19,8 +21,6 @@ import javax.media.opengl.GLPbuffer;
 import javax.media.opengl.glu.GLU;
 import javax.media.opengl.glu.GLUquadric;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.sparkabm.runtime.data.DataObject_AgentData;
 import org.sparkabm.runtime.data.DataObject_SpaceAgents;
 import org.sparkabm.runtime.data.DataObject_SpaceLinks;
@@ -43,7 +43,7 @@ import com.sun.opengl.util.texture.Texture;
  */
 public class JOGLRender extends Render implements GLEventListener {
     /* Logger */
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = Logger.getLogger(JOGLRender.class.getName());
 
     // private float mouse_x = 0.0f, mouse_y = 0.0f;
 //	private boolean rightButtonPressed = false;
@@ -121,7 +121,7 @@ public class JOGLRender extends Render implements GLEventListener {
         GLDrawableFactory factory = GLDrawableFactory.getFactory();
 
         if (factory == null || !factory.canCreateGLPbuffer()) {
-            logger.error("Cannot create a pbuffer for taking a screenshot");
+            logger.severe("Cannot create a pbuffer for taking a screenshot");
             return;
         }
 
@@ -134,7 +134,7 @@ public class JOGLRender extends Render implements GLEventListener {
         }
 
         if (w <= 0 || h <= 0) {
-            logger.error("Canvas width or height is invalid");
+            logger.severe("Canvas width or height is invalid");
             return;
         }
 
@@ -148,7 +148,7 @@ public class JOGLRender extends Render implements GLEventListener {
             GLCapabilities glCap = new GLCapabilities();
             pbuffer = factory.createGLPbuffer(glCap, null, w, h, null);
             if (pbuffer == null) {
-                logger.error("Cannot create a pbuffer");
+                logger.severe("Cannot create a pbuffer");
                 return;
             }
 
@@ -176,7 +176,7 @@ public class JOGLRender extends Render implements GLEventListener {
             File out = new File(dir, fname + ".png");
             ImageIO.write(img, "png", out);
         } catch (Exception e) {
-            logger.error(e);
+            logger.log(Level.SEVERE, "exception", e);
         }
     }
 

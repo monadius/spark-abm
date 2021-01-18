@@ -8,9 +8,8 @@ package org.sparkabm.core;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.logging.Logger;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.sparkabm.math.SimulationTime;
 //import jsr166y.forkjoin.*;
 
@@ -23,7 +22,7 @@ import extra166y.Ops.Procedure;
  * are stored in the array list
  */
 class ObserverParallel extends ObserverImpl {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = Logger.getLogger(ObserverParallel.class.getName());
 
     // All agents
     private final HashMap<Class<? extends Agent>, ParallelArray<Agent>> agents;

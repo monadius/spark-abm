@@ -13,9 +13,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.logging.Logger;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.sparkabm.gui.data.DataFilter;
 import org.sparkabm.gui.data.DataReceiver;
 import org.sparkabm.gui.data.IDataConsumer;
@@ -36,7 +35,7 @@ import org.w3c.dom.NodeList;
 
 public abstract class Render implements KeyListener, IDataConsumer, MouseWheelListener, MouseListener, MouseMotionListener {
     // Logger
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = Logger.getLogger(Render.class.getName());
 
     /* Types of renderers */
     public static final int JOGL_RENDER = 0;
@@ -200,7 +199,7 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
      * Sets the control state
      */
     public void setControlState(int state) {
-        logger.debug("Set control state: " + state);
+        logger.finest("Set control state: " + state);
         this.controlState = state;
     }
 
@@ -311,8 +310,6 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
 
     /**
      * Enables automatic snapshots at the given time intervals
-     *
-     * @param flag
      */
     public void enableAutomaticSnapshots(int interval) {
         saveSnapshotsFlag = true;
@@ -421,8 +418,6 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
 
     /**
      * Sets the active space
-     *
-     * @param name
      */
     public void setSpace(SpaceStyle style) {
         if (style == null) {
@@ -475,8 +470,6 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
 
     /**
      * Sets an active data layer
-     *
-     * @param name
      */
     public void setDataLayer(DataLayerGraphics dataLayerGraphics) {
         this.selectedDataLayer = dataLayerGraphics;

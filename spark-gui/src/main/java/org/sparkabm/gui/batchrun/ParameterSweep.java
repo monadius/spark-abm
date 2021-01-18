@@ -1,9 +1,8 @@
 package org.sparkabm.gui.batchrun;
 
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.sparkabm.gui.Parameter;
 
 /**
@@ -12,7 +11,7 @@ import org.sparkabm.gui.Parameter;
  * @author Monad
  */
 public class ParameterSweep {
-    private final static Logger logger = LogManager.getLogger();
+    private final static Logger logger = Logger.getLogger(ParameterSweep.class.getName());
 
     /**
      * Auxiliary class with options for a parameter
@@ -69,7 +68,7 @@ public class ParameterSweep {
         p.iteration = 0;
         p.stepsNumber = (int) ((end - start) / step) + 1;
         if (p.stepsNumber < 1) {
-            logger.warn("Bad number of steps for " + par.getName() + ": " + p.stepsNumber);
+            logger.warning("Bad number of steps for " + par.getName() + ": " + p.stepsNumber);
             p.stepsNumber = 1;
         }
 

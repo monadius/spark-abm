@@ -5,9 +5,9 @@ import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.sparkabm.core.Agent;
 import org.sparkabm.core.ExecutionMode;
 import org.sparkabm.core.ModelMethod;
@@ -27,7 +27,7 @@ import org.w3c.dom.Node;
  * @author Monad
  */
 public class SparkModelXMLFactory extends SparkModel.SparkModelFactory {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = Logger.getLogger(SparkModelXMLFactory.class.getName());
 
     /* A single instance of the factory */
     private static SparkModelXMLFactory instance;
@@ -111,9 +111,6 @@ public class SparkModelXMLFactory extends SparkModel.SparkModelFactory {
 
     /**
      * Loads basic model parameters
-     *
-     * @param model
-     * @param root
      */
     private void loadBasicModelParameters(Node root) {
         /* Load tick size */
@@ -133,7 +130,7 @@ public class SparkModelXMLFactory extends SparkModel.SparkModelFactory {
             defaultExecutionMode = ExecutionMode.parse(XmlDocUtils.getValue(
                     nodes.get(0), "mode", "serial"));
         } catch (Exception e) {
-            logger.error(e);
+            logger.log(Level.SEVERE, "exception", e);
         }
 
         setDefaultObserver(defaultObserver, defaultExecutionMode);
@@ -158,13 +155,12 @@ public class SparkModelXMLFactory extends SparkModel.SparkModelFactory {
             try {
                 var = ModelVariable.loadVariable(model, nodes.get(i));
             } catch (Exception e) {
-                logger.error("Cannot create a variable");
+                logger.log(Level.SEVERE, "Cannot create a variable", e);
                 continue;
             }
 
             if (!addModelVariable(var)) {
-                logger.error("A variable " + var.getName()
-                        + " is already declared");
+                logger.severe("A variable " + var.getName() + " is already declared");
             }
         }
     }
@@ -185,8 +181,7 @@ public class SparkModelXMLFactory extends SparkModel.SparkModelFactory {
         for (int i = 0; i < nodes.size(); i++) {
             ModelMethod method = ModelMethod.loadMethod(model, nodes.get(i));
             if (!addMethod(method)) {
-                logger.error("Method " + method.getName()
-                        + " is already defined");
+                logger.severe("Method " + method.getName() + " is already defined");
             }
         }
     }
@@ -194,8 +189,6 @@ public class SparkModelXMLFactory extends SparkModel.SparkModelFactory {
 
     /**
      * Loads definitions of all agents
-     *
-     * @param node
      */
     @SuppressWarnings("unchecked")
     private void loadAgents(Node root, ClassLoader classLoader) throws Exception {
@@ -254,8 +247,6 @@ public class SparkModelXMLFactory extends SparkModel.SparkModelFactory {
 
     /**
      * Returns a class loader for the model
-     *
-     * @param node
      */
     private ClassLoader setupClassPath(File rootPath) {
         ClassLoader classLoader = null;

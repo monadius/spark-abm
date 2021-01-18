@@ -1,9 +1,9 @@
 package org.sparkabm.runtime.internal.manager;
 
 import java.io.File;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.sparkabm.core.SparkModel;
 import org.sparkabm.runtime.commands.*;
 import org.sparkabm.runtime.internal.SparkModelXMLFactory;
@@ -19,7 +19,7 @@ import org.w3c.dom.Node;
  */
 public class ModelManager_Basic implements IModelManager {
     /* Logger */
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = Logger.getLogger(ModelManager_Basic.class.getName());
 
     /* Command queue */
     protected final CommandQueue commandQueue;
@@ -161,8 +161,7 @@ public class ModelManager_Basic implements IModelManager {
             logger.info("Interrupted");
             exitFlag = true;
         } catch (Exception e) {
-            logger.error(e);
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "exception", e);
         }
 
     }

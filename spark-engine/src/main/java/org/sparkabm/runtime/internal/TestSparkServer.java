@@ -4,10 +4,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.logging.Logger;
 
 //import org.apache.log4j.BasicConfigurator;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.sparkabm.runtime.commands.Command_AddDataProcessor;
 import org.sparkabm.runtime.commands.Command_AddDataReceiver;
 import org.sparkabm.runtime.commands.Command_Exit;
@@ -23,7 +22,7 @@ import org.sparkabm.runtime.internal.manager.ModelManager_Basic;
  * @author Monad
  */
 public class TestSparkServer implements Runnable {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = Logger.getLogger(TestSparkServer.class.getName());
 
     /* Socket for communications with a client */
     private final Socket clientSocket;

@@ -2,9 +2,9 @@ package org.sparkabm.gui;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.sparkabm.utils.XmlDocUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -15,7 +15,7 @@ import org.w3c.dom.Node;
  * @author Monad
  */
 public class VariableSetFactory {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = Logger.getLogger(VariableSetFactory.class.getName());
 
     /* Table containing all variable sets */
     private static HashMap<String, VariableSet> variableSets =
@@ -105,8 +105,7 @@ public class VariableSetFactory {
             try {
                 createVariableSet(node);
             } catch (Exception e) {
-                e.printStackTrace();
-                logger.error(e.getMessage());
+                logger.log(Level.SEVERE, "exception", e);
             }
         }
     }
@@ -166,7 +165,7 @@ public class VariableSetFactory {
             ProxyVariable var = Coordinator.getInstance().getVariable(varName);
 
             if (var == null) {
-                logger.error("Variable " + varName + " is not found");
+                logger.severe("Variable " + varName + " is not found");
                 continue;
             }
 

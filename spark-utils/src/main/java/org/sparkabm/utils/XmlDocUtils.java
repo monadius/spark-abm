@@ -2,6 +2,8 @@ package org.sparkabm.utils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -13,8 +15,6 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.sparkabm.math.Vector;
 import org.sparkabm.math.Vector4d;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -26,7 +26,7 @@ import org.w3c.dom.Node;
  */
 public class XmlDocUtils {
     // Log
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = Logger.getLogger(XmlDocUtils.class.getName());
 
     /**
      * Loads an xml file
@@ -40,7 +40,7 @@ public class XmlDocUtils {
                     .newDocumentBuilder().parse(fname);
             return doc;
         } catch (Exception e) {
-            logger.error(e);
+            logger.log(Level.SEVERE, "exception", e);
         }
 
         return null;
@@ -48,9 +48,6 @@ public class XmlDocUtils {
 
     /**
      * Loads an xml file
-     *
-     * @param fname
-     * @return
      */
     public static Document loadXmlFile(File file) {
         try {
@@ -59,7 +56,7 @@ public class XmlDocUtils {
 
             return doc;
         } catch (Exception e) {
-            logger.error(e);
+            logger.log(Level.SEVERE, "exception", e);
         }
 
         return null;
@@ -82,7 +79,7 @@ public class XmlDocUtils {
             doc.appendChild(root);
             return doc;
         } catch (Exception e) {
-            logger.error(e);
+            logger.log(Level.SEVERE, "exception", e);
         }
 
         return null;
@@ -106,7 +103,7 @@ public class XmlDocUtils {
                 if (els.length >= 2)
                     minor = Integer.valueOf(els[1]);
             } catch (Exception e) {
-                logger.error(e);
+                logger.log(Level.SEVERE, "exception", e);
             }
         }
 
@@ -116,10 +113,6 @@ public class XmlDocUtils {
 
     /**
      * Saves the document in the given file
-     *
-     * @param modelDoc
-     * @param fileName
-     * @throws Exception
      */
     public static void saveDocument(Document doc, File file) throws Exception {
         if (doc == null || file == null)
@@ -214,10 +207,6 @@ public class XmlDocUtils {
 
     /**
      * Removes the given attribute from the node
-     *
-     * @param doc
-     * @param node
-     * @param attrName
      */
     public static void removeAttr(Node node, String attrName) {
         if (node.getAttributes().getNamedItem(attrName) != null)

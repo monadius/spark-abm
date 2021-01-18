@@ -8,9 +8,8 @@ package org.sparkabm.core;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.logging.Logger;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.sparkabm.math.SimulationTime;
 
 /**
@@ -19,7 +18,7 @@ import org.sparkabm.math.SimulationTime;
  * are stored in the array list
  */
 class Observer1 extends ObserverImpl {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = Logger.getLogger(Observer1.class.getName());
     // All agents and their types
     private final HashMap<Class<? extends Agent>, ArrayList<Agent>> agents;
     // List of all types of agents
@@ -290,7 +289,7 @@ class Observer1 extends ObserverImpl {
             String name = types[j].getSimpleName();
             long time = statistics.get(types[j]);
 
-            logger.debug(name + ": " + time);
+            logger.finest(name + ": " + time);
             System.err.println(name + ": " + time);
         }
 

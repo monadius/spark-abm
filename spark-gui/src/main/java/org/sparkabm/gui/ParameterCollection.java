@@ -3,9 +3,9 @@ package org.sparkabm.gui;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.sparkabm.utils.XmlDocUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -18,7 +18,7 @@ import org.w3c.dom.NodeList;
  */
 // TODO: make all functionality non-static
 public class ParameterCollection {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = Logger.getLogger(ParameterCollection.class.getName());
 
     /* All model parameters */
     protected final HashMap<String, Parameter> parameters =
@@ -79,8 +79,7 @@ public class ParameterCollection {
                 if (node.getNodeName().equals("parameter"))
                     createParameter(node);
             } catch (Exception e) {
-                e.printStackTrace();
-                logger.error(e.getMessage());
+                logger.log(Level.SEVERE, "exception", e);
             }
         }
     }

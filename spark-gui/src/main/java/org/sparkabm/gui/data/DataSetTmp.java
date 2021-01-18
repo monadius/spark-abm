@@ -3,9 +3,9 @@ package org.sparkabm.gui.data;
 import java.io.File;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.sparkabm.runtime.data.DataCollectorDescription;
 import org.sparkabm.runtime.data.DataRow;
 import org.sparkabm.gui.Coordinator;
@@ -20,7 +20,7 @@ import org.w3c.dom.Node;
  */
 // TODO: implement real data sets
 public class DataSetTmp implements IDataConsumer {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = Logger.getLogger(DataSetTmp.class.getName());
 
     /* Data filter */
     private final DataFilter dataFilter;
@@ -110,7 +110,7 @@ public class DataSetTmp implements IDataConsumer {
         String varName = XmlDocUtils.getValue(item, "variable", null);
 
         if (varName == null) {
-            logger.error("Undefined variable name for the item: " + name);
+            logger.severe("Undefined variable name for the item: " + name);
             return;
         }
 
@@ -217,8 +217,7 @@ public class DataSetTmp implements IDataConsumer {
             out = new PrintStream(file);
             saveData(out, interval);
         } catch (Exception e) {
-            logger.error(e);
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "exception", e);
         } finally {
             if (out != null)
                 out.close();

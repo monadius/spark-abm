@@ -9,14 +9,13 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.logging.Logger;
 
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.sparkabm.gui.Coordinator;
 import org.sparkabm.gui.gui.menu.SparkMenu;
 import org.sparkabm.gui.gui.menu.Swing_SparkMenu;
@@ -27,7 +26,7 @@ import org.sparkabm.gui.gui.menu.Swing_SparkMenu;
  * @author Monad
  */
 public class Swing_SparkWindow extends SparkWindow {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = Logger.getLogger(Swing_SparkMenu.class.getName());
 
     /* References to Swing objects */
     private JFrame frame;
@@ -61,7 +60,7 @@ public class Swing_SparkWindow extends SparkWindow {
             frame.pack();
         } else {
             if (!(owner instanceof Swing_SparkWindow)) {
-                logger.error("An attempt to create a Swing window owned by a non-Swing window");
+                logger.severe("An attempt to create a Swing window owned by a non-Swing window");
                 frame = new JFrame();
                 window = frame;
                 frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
@@ -178,7 +177,7 @@ public class Swing_SparkWindow extends SparkWindow {
 
             return true;
         } else {
-            logger.error("Cannot add the panel: " + panel);
+            logger.severe("Cannot add the panel: " + panel);
         }
 
         return false;
@@ -200,7 +199,7 @@ public class Swing_SparkWindow extends SparkWindow {
 
             return true;
         } else {
-            logger.error("Cannot add the panel: " + panel);
+            logger.severe("Cannot add the panel: " + panel);
         }
 
         return false;

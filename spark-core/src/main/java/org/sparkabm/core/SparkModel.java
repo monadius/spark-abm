@@ -2,9 +2,9 @@ package org.sparkabm.core;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.sparkabm.math.RationalNumber;
 
 /**
@@ -14,7 +14,7 @@ import org.sparkabm.math.RationalNumber;
  */
 public abstract class SparkModel {
     /* Logger */
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = Logger.getLogger(SparkModel.class.getName());
 
     /* Observer for this model */
     private Observer modelObserver;
@@ -140,8 +140,7 @@ public abstract class SparkModel {
             try {
                 flag |= method.synchronize(this);
             } catch (Exception e) {
-                logger.error("Error during external method invokation: " + method.getName());
-                logger.error(e.getMessage());
+                logger.log(Level.SEVERE, "Error during external method invokation: " + method.getName(), e);
             }
         }
 
@@ -207,8 +206,7 @@ public abstract class SparkModel {
             try {
                 var.synchronizeValue();
             } catch (Exception e) {
-                logger.error("Error during variable synchronization: " + var.getName());
-                logger.error(e.getMessage());
+                logger.log(Level.SEVERE, "Error during variable synchronization: " + var.getName(), e);
             }
         }
     }
@@ -308,9 +306,6 @@ public abstract class SparkModel {
 
         /**
          * Sets model's tick time
-         *
-         * @param model
-         * @param tickTime
          */
         protected void setTickTime(RationalNumber tickTime) {
             model.setTickTime(tickTime);

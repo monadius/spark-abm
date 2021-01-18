@@ -3,9 +3,9 @@ package org.sparkabm.gui.batchrun;
 import java.io.File;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.sparkabm.gui.data.DataFilter;
 import org.sparkabm.gui.data.IDataConsumer;
 import org.sparkabm.runtime.data.DataCollectorDescription;
@@ -19,7 +19,7 @@ import org.sparkabm.gui.Coordinator;
  * @author Monad
  */
 class DataLayerSaver implements IDataConsumer {
-    private final static Logger log = LogManager.getLogger();
+    private final static Logger logger = Logger.getLogger(DataLayerSaver.class.getName());
 
     // Names of data layers
     private final ArrayList<String> dataLayers;
@@ -156,7 +156,7 @@ class DataLayerSaver implements IDataConsumer {
                 }
             }
         } catch (Exception e) {
-            log.error(e.getMessage());
+            logger.log(Level.SEVERE, "exception", e);
         }
 
         // Save the data

@@ -9,9 +9,8 @@ package org.sparkabm.core;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.logging.Logger;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.sparkabm.math.SimulationTime;
 
 
@@ -26,7 +25,7 @@ import org.sparkabm.math.SimulationTime;
 // The reason: Observer2 adds new agents at the beginning of the list,
 // meanwhile Observer1 adds new agents at the end
 class Observer2 extends ObserverImpl {
-    private final static Logger logger = LogManager.getLogger();
+    private final static Logger logger = Logger.getLogger(Observer2.class.getName());
     // All agents and their types
     private final HashMap<Class<? extends Agent>, DummyAgent> agentsMap;
     private final ArrayList<DummyAgent> agentsList;

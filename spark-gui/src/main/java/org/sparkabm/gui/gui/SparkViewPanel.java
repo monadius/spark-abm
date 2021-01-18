@@ -9,9 +9,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
+import java.util.logging.Logger;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.sparkabm.gui.Coordinator;
 import org.sparkabm.gui.gui.dialogs.RenderProperties;
 import org.sparkabm.gui.render.Render;
@@ -29,7 +28,7 @@ import javax.swing.*;
 @SuppressWarnings("serial")
 public class SparkViewPanel extends JPanel implements ISparkPanel,
         ActionListener {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = Logger.getLogger(SparkViewPanel.class.getName());
 
     /* Render for this view */
     private Render render;
@@ -88,8 +87,6 @@ public class SparkViewPanel extends JPanel implements ISparkPanel,
 
     /**
      * Creates a tool bar
-     *
-     * @param node
      */
     private void createToolBar(Render render) {
         // Create a tool bar
@@ -191,7 +188,7 @@ public class SparkViewPanel extends JPanel implements ISparkPanel,
         // Create render
         render = Coordinator.getInstance().createRender(node, renderType);
         if (render == null) {
-            logger.error("Cannot create a renderer");
+            logger.severe("Cannot create a renderer");
             return;
         }
 

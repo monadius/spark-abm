@@ -2,11 +2,11 @@ package org.sparkabm.gui.tools;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 //import org.apache.log4j.BasicConfigurator;
 //import org.apache.log4j.PropertyConfigurator;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jfree.util.Log;
 
 import org.sparkabm.gui.Coordinator;
@@ -28,7 +28,7 @@ import org.w3c.dom.Node;
  * @author Alexey
  */
 class Model {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = Logger.getLogger(Model.class.getName());
 
     private final File modelFile;
     private final ArrayList<Batch> batches;
@@ -74,7 +74,7 @@ class Model {
             Coordinator.getInstance().loadModel(modelFile);
 
             if (!Coordinator.getInstance().isModelLoaded()) {
-                logger.error("Model cannot be loaded");
+                logger.severe("Model cannot be loaded");
                 break;
             }
 
@@ -94,7 +94,7 @@ class Model {
  * @author Alexey
  */
 class Batch {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = Logger.getLogger(Batch.class.getName());
 
     private final long ticks;
     private final int repetitions;
@@ -149,7 +149,7 @@ class Batch {
             Parameter p = pc.getParameter(name);
 
             if (p == null) {
-                logger.error("Undefined parameter " + name);
+                logger.severe("Undefined parameter " + name);
                 return;
             }
 
@@ -182,7 +182,7 @@ class Batch {
                 ParameterInfo pInfo = new ParameterInfo(p);
                 parameters.add(pInfo);
             } catch (Exception e) {
-                logger.error(e);
+                logger.log(Level.SEVERE, "exception", e);
             }
         }
 
@@ -261,7 +261,7 @@ class Batch {
             try {
                 lock.wait();
             } catch (InterruptedException e) {
-                logger.error("Interrupted");
+                logger.log(Level.SEVERE, "Interrupted", e);
             }
         }
 
@@ -277,7 +277,7 @@ class Batch {
  */
 public class BatchRunner {
     /* Logger */
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = Logger.getLogger(BatchRunner.class.getName());
 
     /**
      * Test main method
@@ -335,7 +335,7 @@ public class BatchRunner {
                     Model model = new Model(node, basePath);
                     models.add(model);
                 } catch (Exception e) {
-                    logger.error(e);
+                    logger.log(Level.SEVERE, "exception", e);
                 }
             }
 
