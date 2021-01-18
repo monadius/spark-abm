@@ -39,8 +39,8 @@ public class BlockNode extends TreeNode {
     public void debugPrint(java.io.PrintStream out) throws Exception {
         out.println("<block>");
         ArrayList<CommandNode> code = this.code.getCommands();
-        for (int i = 0; i < code.size(); i++) {
-            code.get(i).debugPrint(out);
+        for (CommandNode commandNode : code) {
+            commandNode.debugPrint(out);
         }
         out.println("</block>");
     }

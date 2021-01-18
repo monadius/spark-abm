@@ -23,9 +23,6 @@ public class ConstantNode extends TreeNode {
 
     /**
      * Creates a constant from a description symbol
-     *
-     * @param s
-     * @throws Exception
      */
     public ConstantNode(Symbol s) throws Exception {
         super(s);
@@ -51,22 +48,20 @@ public class ConstantNode extends TreeNode {
 
     /**
      * Creates a vector constant
-     *
-     * @param xyz
      */
     public ConstantNode(double[] xyz) {
         super(null);
         // TODO: improve
-        String str = "new Vector(";
+        StringBuilder str = new StringBuilder("new Vector(");
         for (int i = 0; i < xyz.length; i++) {
-            str += Double.toString(xyz[i]);
+            str.append(xyz[i]);
             if (i != xyz.length - 1)
-                str += ", ";
+                str.append(", ");
         }
 
-        str += ")";
+        str.append(")");
 
-        constant = new Constant(SparkModel.getInstance().getType(new Id("vector")), str);
+        constant = new Constant(SparkModel.getInstance().getType(new Id("vector")), str.toString());
     }
 
 

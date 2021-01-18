@@ -16,8 +16,6 @@ public class ForNode extends CommandNode {
 
     /**
      * Creates a new for node with the given counter variable
-     *
-     * @param counter
      */
     public ForNode(Variable counter) {
         super(null, SparkModel.getInstance().getCommand("for"));

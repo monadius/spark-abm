@@ -13,8 +13,6 @@ public abstract class AgentAnnotation extends InterfaceAnnotation {
 
     /**
      * Constructor
-     *
-     * @param id
      */
     protected AgentAnnotation(int id) {
         super(id);
@@ -22,8 +20,6 @@ public abstract class AgentAnnotation extends InterfaceAnnotation {
 
     /**
      * Associates an agent type with the annotation
-     *
-     * @param agent
      */
     public void associateAgentType(AgentType agent) {
         this.agent = agent;

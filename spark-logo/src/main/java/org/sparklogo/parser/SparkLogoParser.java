@@ -25,13 +25,10 @@ import org.sparklogo.main.type.UnresolvedType;
  */
 public class SparkLogoParser {
     private Scanner scanner;
-    private File[] files;
-    private SparkModel sparkModel;
+    private final File[] files;
 
     /**
      * Creates a parser with the given input files and model's name
-     *
-     * @param files
      */
     public SparkLogoParser(File[] files) {
         this.files = files;
@@ -39,10 +36,6 @@ public class SparkLogoParser {
 
     /**
      * Reads out all symbols from the given string
-     *
-     * @param str
-     * @return
-     * @throws Exception
      */
     public static SymbolList stringToSymbols(String str) throws Exception {
         SymbolFactory sf = new SymbolFactory();
@@ -64,18 +57,15 @@ public class SparkLogoParser {
 
     /**
      * Creates an internal representation of source code
-     *
-     * @return
-     * @throws Exception
      */
     public SparkModel read() throws Exception {
         SymbolFactory sf = new SymbolFactory();
-        sparkModel = SparkModel.getInstance();
+        SparkModel sparkModel = SparkModel.getInstance();
 
         // Load all files
-        for (int i = 0; i < files.length; i++) {
-            FileInputStream in = new FileInputStream(files[i]);
-            sf.setCurrentFileName(files[i].getName());
+        for (File file : files) {
+            FileInputStream in = new FileInputStream(file);
+            sf.setCurrentFileName(file.getName());
             scanner = new Scanner(in, sf);
 
             // Empty file
@@ -96,8 +86,6 @@ public class SparkLogoParser {
     /**
      * Reads declarations without method parsing and type checking. Only source
      * symbols for method are retrieved and new user types are created.
-     *
-     * @throws Exception
      */
     private void parseDeclarations() throws Exception {
         ArrayList<InterfaceAnnotation> annotations = new ArrayList<InterfaceAnnotation>();
@@ -239,8 +227,6 @@ public class SparkLogoParser {
 
     /**
      * Parses an annotation
-     *
-     * @return
      */
     private InterfaceAnnotation parseAnnotation() throws Exception {
         Symbol symbol = scanner.nextToken();
@@ -282,8 +268,6 @@ public class SparkLogoParser {
 
     /**
      * Parses a space declaration
-     *
-     * @param model
      */
     private void parseSpaceDeclaration(ModelType model) throws Exception {
         Symbol symbol = scanner.nextToken();
@@ -325,8 +309,6 @@ public class SparkLogoParser {
     /**
      * Auxiliary procedure for filling up a symbol list with all symbols until
      * new declaration
-     *
-     * @param list
      */
     private void fillSymbolList(SymbolList list) throws Exception {
         int flag = 0;
@@ -377,7 +359,6 @@ public class SparkLogoParser {
      * Parses a string of the type: id [= constant][: type-id]
      *
      * @param fieldFlag indicates whether the parsed variable is a field
-     * @return
      */
     private Variable parseVariableDeclaration(boolean fieldFlag)
             throws Exception {
@@ -415,8 +396,6 @@ public class SparkLogoParser {
 
     /**
      * Parses a type declaration
-     *
-     * @return
      */
     private Type parseTypeDeclaration() throws Exception {
         Symbol s = scanner.nextToken();
@@ -443,19 +422,13 @@ public class SparkLogoParser {
                 throw new Exception("> is expected: " + s);
         }
 
-        Type type = new UnresolvedType(typeId, subtypeId);
-
-        return type;
+        return new UnresolvedType(typeId, subtypeId);
     }
 
     /**
      * Parses a new type declaration. Each source file declares one type.
-     *
-     * @return
-     * @throws IOException
-     * @throws Exception
      */
-    private Type parseNewTypeDeclaration() throws IOException, Exception {
+    private Type parseNewTypeDeclaration() throws Exception {
         Type parentType = null;
         boolean partialFlag = false;
         Id typeId;
@@ -504,16 +477,13 @@ public class SparkLogoParser {
 
     /**
      * Reads a field declaration
-     *
-     * @param type
-     * @throws Exception
      */
     private ArrayList<Variable> parseField() throws Exception {
         Symbol symbol = scanner.nextToken();
         if (symbol.id != sym.VAR)
             throw new Exception("parseField(): expected 'var': " + symbol);
 
-        ArrayList<Variable> fields = new ArrayList<Variable>();
+        ArrayList<Variable> fields = new ArrayList<>();
 
         while (true) {
             Variable var = parseVariableDeclaration(true);
@@ -522,8 +492,7 @@ public class SparkLogoParser {
             // If the type is explicitly declared, then assign the same
             // type to all variable in the group
             if (!(var.type instanceof UnknownType)) {
-                for (int i = 0; i < fields.size(); i++) {
-                    Variable v = fields.get(i);
+                for (Variable v : fields) {
                     if (v.type instanceof UnknownType)
                         v.type = var.type;
                 }
@@ -544,16 +513,13 @@ public class SparkLogoParser {
 
     /**
      * Reads a global variable declaration
-     *
-     * @param type
-     * @throws Exception
      */
     private ArrayList<Variable> parseGlobal(Type type) throws Exception {
         Symbol symbol = scanner.nextToken();
         if (symbol.id != sym.GLOBAL)
             throw new Exception("parseGlobal(): expected 'global': " + symbol);
 
-        ArrayList<Variable> fields = new ArrayList<Variable>();
+        ArrayList<Variable> fields = new ArrayList<>();
 
         while (true) {
             Variable var = parseVariableDeclaration(false);
@@ -562,8 +528,7 @@ public class SparkLogoParser {
             // If the type is explicitly declared, then assign the same
             // type to all variable in the group
             if (!(var.type instanceof UnknownType)) {
-                for (int i = 0; i < fields.size(); i++) {
-                    Variable v = fields.get(i);
+                for (Variable v : fields) {
                     if (v.type instanceof UnknownType)
                         v.type = var.type;
                 }
@@ -591,9 +556,6 @@ public class SparkLogoParser {
 
     /**
      * Reads method's arguments
-     *
-     * @param method
-     * @throws Exception
      */
     private void readArgs(Method method) throws Exception {
         Symbol symbol = scanner.peekToken();
@@ -621,9 +583,6 @@ public class SparkLogoParser {
 
     /**
      * Reads method's body
-     *
-     * @param method
-     * @throws Exception
      */
     private void readBody(Method method) throws Exception {
         while (true) {
@@ -640,9 +599,6 @@ public class SparkLogoParser {
 
     /**
      * Reads a method
-     *
-     * @return
-     * @throws Exception
      */
     private Method parseMethod() throws Exception {
         Id methodId;

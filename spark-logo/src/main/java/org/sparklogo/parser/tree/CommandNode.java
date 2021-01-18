@@ -40,10 +40,10 @@ public class CommandNode extends MultiNode {
 
         out.print("<command name = \"" + name + "\">\n");
 
-        for (int i = 0; i < this.children.size(); i++) {
-            if (children.get(i) == null) continue;
+        for (TreeNode child : this.children) {
+            if (child == null) continue;
             out.print("<argument>\n");
-            children.get(i).debugPrint(out);
+            child.debugPrint(out);
             out.print("</argument>\n");
         }
 
@@ -196,7 +196,7 @@ public class CommandNode extends MultiNode {
 
     // toString()
     public String toString() {
-        StringBuffer str = new StringBuffer();
+        StringBuilder str = new StringBuilder();
 
         str.append(cmd);
         str.append('(');

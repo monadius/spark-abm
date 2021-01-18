@@ -23,16 +23,11 @@ abstract class AnnotationElement {
 
     /**
      * Parses an annotation element value
-     *
-     * @param s
-     * @throws Exception
      */
     public abstract void parseValue(Symbol s) throws Exception;
 
     /**
      * Returns a default value of the element
-     *
-     * @return
      */
 //	public abstract Object getDefaultValue();
     @Override
@@ -58,7 +53,6 @@ abstract class AnnotationElement {
     /**
      * Creates an xml attribute
      *
-     * @param doc
      * @return null if optional without value
      */
     public final Node toAttribute(Document doc) {
@@ -87,7 +81,7 @@ abstract class AnnotationElement {
 class IntegerElement extends AnnotationElement {
     public IntegerElement(String name) {
         this.name = name;
-        this.defaultValue = Integer.valueOf(0);
+        this.defaultValue = 0;
         this.value = null;
     }
 
@@ -106,19 +100,19 @@ class IntegerElement extends AnnotationElement {
 class DoubleElement extends AnnotationElement {
     public DoubleElement(String name, double defaultValue) {
         this.name = name;
-        this.defaultValue = Double.valueOf(defaultValue);
+        this.defaultValue = defaultValue;
         this.value = null;
     }
 
     public DoubleElement(String name) {
-        this(name, Double.valueOf(0));
+        this(name, 0.0);
     }
 
     public void parseValue(Symbol s) throws Exception {
         if (s.id != sym.DOUBLE)
             throw new Exception("A number is expected: " + s);
 
-        this.value = (Double) s.value;
+        this.value = s.value;
     }
 }
 
@@ -136,7 +130,7 @@ class StringElement extends AnnotationElement {
         if (s.id != sym.STRING)
             throw new Exception("A string is expected: " + s);
 
-        this.value = (String) s.value;
+        this.value = s.value;
     }
 }
 
@@ -165,7 +159,7 @@ class ValueElement extends AnnotationElement {
 
             // true, false, or something else
             case sym.IDENTIFIER:
-                this.value = (String) s.value;
+                this.value = s.value;
                 break;
 
             default:
@@ -182,7 +176,7 @@ class ColorElement extends StringElement {
     static HashMap<String, String> colors;
 
     static {
-        colors = new HashMap<String, String>();
+        colors = new HashMap<>();
         colors.put("red", "1;0;0");
         colors.put("green", "0;1;0");
         colors.put("blue", "0;0;1");

@@ -45,9 +45,6 @@ public class SyntaxTreeBuilder {
     /**
      * Returns a command with the given name from the global namespace or from
      * the current class Also returns the reference to the calling object (self)
-     *
-     * @param name
-     * @return
      */
     public static Pair<Command, Variable> getCommand(String name) {
         Command command;
@@ -59,22 +56,19 @@ public class SyntaxTreeBuilder {
         if (currentType != null) {
             command = currentType.getCommand(name);
             if (command != null)
-                return new Pair<Command, Variable>(command, currentBlock
+                return new Pair<>(command, currentBlock
                         .getSelfVariable());
         }
 
         command = SparkModel.getInstance().getCommand(name);
 
-        return new Pair<Command, Variable>(command, null);
+        return new Pair<>(command, null);
     }
 
     /**
      * Returns a variable with the given name from the global namespace, or from
      * the current class, or from the local variable list Also returns the
      * reference to the calling object (self)
-     *
-     * @param name
-     * @return
      */
     public static Pair<Variable, Variable> getVariable(String name) {
         Variable var;
@@ -87,14 +81,14 @@ public class SyntaxTreeBuilder {
         if (currentBlock != null) {
             var = currentBlock.getLocalVariable(name);
             if (var != null)
-                return new Pair<Variable, Variable>(var, null);
+                return new Pair<>(var, null);
         }
 
         // Look at the local fields
         if (currentType != null) {
             var = currentType.getField(new Id(name));
             if (var != null)
-                return new Pair<Variable, Variable>(var, currentBlock
+                return new Pair<>(var, currentBlock
                         .getSelfVariable());
         }
 
@@ -103,14 +97,11 @@ public class SyntaxTreeBuilder {
 
         // Global variables are treated as local ones:
         // they have no reference to the objects which contain them
-        return new Pair<Variable, Variable>(var, null);
+        return new Pair<>(var, null);
     }
 
     /**
      * Parses a local variable declaration
-     *
-     * @param codeBlock
-     * @throws Exception
      */
     public static ArrayList<Variable> parseLocalVariableDeclaration(
             SymbolList source) throws Exception {
@@ -118,7 +109,7 @@ public class SyntaxTreeBuilder {
         if (s.id != sym.VAR)
             throw new Exception("var keyword is expected: got " + s);
 
-        ArrayList<Variable> vars = new ArrayList<Variable>();
+        ArrayList<Variable> vars = new ArrayList<>();
 
         while (true) {
             s = source.next();
@@ -203,10 +194,6 @@ public class SyntaxTreeBuilder {
 
     /**
      * Parses a command or declaration
-     *
-     * @param list
-     * @return
-     * @throws Exception
      */
     public static void parse(SymbolList list, BlockNode code) throws Exception {
         Symbol s = list.peek();
@@ -228,7 +215,7 @@ public class SyntaxTreeBuilder {
             return;
         }
 
-        TreeNode node = null;
+        final TreeNode node;
 
         if (s.id == sym.FOR)
             node = forNode(list);
@@ -247,10 +234,6 @@ public class SyntaxTreeBuilder {
 
     /**
      * Parses an assignment (if any)
-     *
-     * @param list
-     * @return
-     * @throws Exception
      */
     public static TreeNode assignmentNode(SymbolList list) throws Exception {
         TreeNode left = expressionNode(list);
@@ -316,10 +299,6 @@ public class SyntaxTreeBuilder {
 
     /**
      * Parses an expression
-     *
-     * @param list
-     * @return
-     * @throws Exception
      */
     public static TreeNode expressionNode(SymbolList list) throws Exception {
         return operationNode(list, 1);
@@ -327,11 +306,6 @@ public class SyntaxTreeBuilder {
 
     /**
      * Parses an operation with the given precedence level
-     *
-     * @param list
-     * @param level
-     * @return
-     * @throws Exception
      */
     public static TreeNode operationNode(SymbolList list, int level)
             throws Exception {
@@ -365,10 +339,6 @@ public class SyntaxTreeBuilder {
 
     /**
      * Unary operations node (of the highest priority)
-     *
-     * @param list
-     * @return
-     * @throws Exception
      */
     public static TreeNode unaryOperationNode(SymbolList list) throws Exception {
         // TODO: check this code
@@ -393,10 +363,6 @@ public class SyntaxTreeBuilder {
 
     /**
      * Parses a dot operator
-     *
-     * @param list
-     * @return
-     * @throws Exception
      */
     public static TreeNode dotNode(SymbolList list) throws Exception {
         TreeNode left = atomNode(list);
@@ -424,10 +390,6 @@ public class SyntaxTreeBuilder {
 
     /**
      * Parses an atom expression on the right hand side of a dot
-     *
-     * @param list
-     * @return
-     * @throws Exception
      */
     public static TreeNode dotAtomNode(SymbolList list, Type dottedType)
             throws Exception {
@@ -466,10 +428,6 @@ public class SyntaxTreeBuilder {
 
     /**
      * Parses an atom expression
-     *
-     * @param list
-     * @return
-     * @throws Exception
      */
     public static TreeNode atomNode(SymbolList list) throws Exception {
         Symbol s = list.peek();
@@ -555,10 +513,6 @@ public class SyntaxTreeBuilder {
 
     /**
      * Parses an optional code block
-     *
-     * @param list
-     * @return
-     * @throws Exception
      */
     // FIXME: remove the third argument
     public static TreeNode optionalBlockNode(SymbolList list,
@@ -573,11 +527,7 @@ public class SyntaxTreeBuilder {
 
     /**
      * Parses a code block
-     *
-     * @param list
      * @param predefinedBlock is used for predefined block with given local variables
-     * @return
-     * @throws Exception
      */
     // FIXME: remove the fourth argument
     public static BlockNode blockNode(SymbolList list, BlockType blockType,
@@ -709,12 +659,9 @@ public class SyntaxTreeBuilder {
             TreeNode right = expressionNode(list);
             // Modify the right hand side if gridFlag is on
             if (gridFlag) {
-                right.visitAll(new TreeNode.Visitor() {
-                    @Override
-                    public boolean visit(TreeNode node) {
-                        node.nodeFlags |= 0x100;
-                        return true;
-                    }
+                right.visitAll(node -> {
+                    node.nodeFlags |= 0x100;
+                    return true;
                 });
             }
 
@@ -753,10 +700,6 @@ public class SyntaxTreeBuilder {
 
     /**
      * Parses a name (identifier)
-     *
-     * @param list
-     * @return
-     * @throws Exception
      */
     public static VariableNode nameNode(SymbolList list) throws Exception {
         Symbol s = list.next();
@@ -775,10 +718,6 @@ public class SyntaxTreeBuilder {
 
     /**
      * Parses a 'for' control structure
-     *
-     * @param list
-     * @return
-     * @throws Exception
      */
     public static ForNode forNode(SymbolList list) throws Exception {
         Symbol s = list.next();
@@ -797,9 +736,9 @@ public class SyntaxTreeBuilder {
         if (s.id != sym.EQ)
             throw new Exception("'=' is expected: " + s);
 
-        TreeNode from = null;
-        TreeNode to = null;
-        TreeNode step = null;
+        final TreeNode from;
+        final TreeNode to;
+        final TreeNode step;
 
         // From expression
         from = expressionNode(list);
@@ -821,7 +760,7 @@ public class SyntaxTreeBuilder {
             // No step : default step = 1
             to = toOrStep;
             step = new ConstantNode(new Symbol("DOUBLE", sym.DOUBLE,
-                    new Double(1), -1, -1));
+                    1.0, -1, -1));
         }
 
         // Block
@@ -841,10 +780,6 @@ public class SyntaxTreeBuilder {
 
     /**
      * Parses a pure (void return type) command
-     *
-     * @param list
-     * @return
-     * @throws Exception
      */
     public static CommandNode commandNode(SymbolList list) throws Exception {
         Symbol s = list.next();
@@ -872,10 +807,6 @@ public class SyntaxTreeBuilder {
 
     /**
      * Parses a vector constant
-     *
-     * @param list
-     * @return
-     * @throws Exception
      */
     public static ConstantNode parseVectorConstant(SymbolList list)
             throws Exception {

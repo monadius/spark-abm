@@ -6,7 +6,7 @@ import org.sparklogo.parser.Symbol;
 
 
 public abstract class MultiNode extends TreeNode {
-    protected ArrayList<TreeNode> children = new ArrayList<TreeNode>(10);
+    protected ArrayList<TreeNode> children = new ArrayList<>(10);
 
     public MultiNode(Symbol symbol) {
         super(symbol);

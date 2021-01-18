@@ -18,11 +18,11 @@ public abstract class TreeNode {
     public final static int GET_VALUE = 0x4;
 
     /* Code block stack (used in translation) */
-    private static Stack<CodeBlock> currentBlocks = new Stack<CodeBlock>();
+    private final static Stack<CodeBlock> currentBlocks = new Stack<>();
 
 
-    public static interface Visitor {
-        public abstract boolean visit(TreeNode node);
+    public interface Visitor {
+        boolean visit(TreeNode node);
     }
 
 
@@ -35,8 +35,6 @@ public abstract class TreeNode {
 
     /**
      * Creates a new node associated with the given symbol
-     *
-     * @param symbol
      */
     public TreeNode(Symbol symbol) {
         this.symbol = symbol;
@@ -44,8 +42,6 @@ public abstract class TreeNode {
 
     /**
      * Sets the active code block
-     *
-     * @param block
      */
     public void pushCodeBlock(CodeBlock block) {
         currentBlocks.push(block);
@@ -54,8 +50,6 @@ public abstract class TreeNode {
 
     /**
      * Returns to the previous code block
-     *
-     * @return
      */
     public CodeBlock popCodeBlock() {
         return currentBlocks.pop();
@@ -64,8 +58,6 @@ public abstract class TreeNode {
 
     /**
      * Returns the active code block
-     *
-     * @return
      */
     protected CodeBlock currentBlock() {
         return currentBlocks.peek();
@@ -79,25 +71,17 @@ public abstract class TreeNode {
 
     /**
      * Returns a type associated with a tree node.
-     *
-     * @return
      */
     public abstract Type getType() throws Exception;
 
     /**
      * Resolves types of a node and its children
-     *
-     * @return
-     * @throws Exception
      */
     public abstract Type resolveType(Type expectedType, int flag) throws Exception;
 
 
     /**
      * Visits all nodes and calls the visitor's function for each node
-     *
-     * @param visitor
-     * @return
      */
     public boolean visitAll(Visitor visitor) {
         return visitor.visit(this);

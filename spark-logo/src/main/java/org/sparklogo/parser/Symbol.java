@@ -43,8 +43,6 @@ public class Symbol {
 
     /**
      * Returns a string value (if any) of the symbol
-     *
-     * @return
      */
     public String stringValue() {
         if (value instanceof String)
@@ -85,13 +83,13 @@ public class Symbol {
     }
 
     /**
-     * Returns a long value of the symbol or 0l if the symbol is not a number
+     * Returns a long value of the symbol or 0L if the symbol is not a number
      */
     public long longValue() {
         if (value instanceof Number)
             return ((Number) value).longValue();
 
-        return 0l;
+        return 0L;
     }
 
 

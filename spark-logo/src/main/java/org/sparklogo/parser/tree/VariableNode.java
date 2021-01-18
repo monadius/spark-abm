@@ -23,7 +23,7 @@ public class VariableNode extends TreeNode {
 
 
     @Override
-    public void debugPrint(java.io.PrintStream out) throws Exception {
+    public void debugPrint(java.io.PrintStream out) {
         out.println("<variable name = \"" + var.id.name + "\" type = \"" + var.type.getId().name + "\" />");
     }
 

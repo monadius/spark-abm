@@ -3,9 +3,9 @@ package org.sparklogo.parser;
 import java.util.*;
 
 public class SymbolList {
-    ArrayList<Symbol> list = new ArrayList<Symbol>(100);
+    ArrayList<Symbol> list = new ArrayList<>(100);
     int position;
-    Stack<Integer> marks = new Stack<Integer>();
+    Stack<Integer> marks = new Stack<>();
 
     public SymbolList() {
         position = 0;
