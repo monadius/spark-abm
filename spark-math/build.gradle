@@ -11,9 +11,7 @@ repositories {
 
 dependencies {
 //    implementation 'colt:colt:1.2.0'
-    implementation files('../Spark/lib/colt.jar')
-    implementation 'org.apache.logging.log4j:log4j-api:2.14.0'
-    implementation 'org.apache.logging.log4j:log4j-core:2.14.0'
+    implementation files('../spark/lib/colt.jar')
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 }

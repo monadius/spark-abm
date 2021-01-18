@@ -6,19 +6,18 @@
 
 package org.sparkabm.math;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import cern.jet.random.Normal;
 import cern.jet.random.engine.MersenneTwister;
 import cern.jet.random.engine.RandomEngine;
+
+import java.util.logging.Logger;
 
 /**
  * Auxiliary class for working with random numbers
  */
 public class RandomHelper {
     // Logger
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = Logger.getLogger(RandomHelper.class.getName());
 
     // Random seed
     private static long rngSeed;
@@ -43,7 +42,7 @@ public class RandomHelper {
 
 
     static {
-        logger.debug("Initializing RandomHelper class");
+        logger.finest("Initializing RandomHelper class");
         rngSeed = System.currentTimeMillis();
         generator1 = new MersenneTwister((int) rngSeed);
         generator2 = new MersenneTwister((int) rngSeed);
@@ -92,7 +91,7 @@ public class RandomHelper {
             rngSeed = System.currentTimeMillis();
         }
 
-        logger.debug("Generators are resetted: " + (int) rngSeed);
+        logger.finest("Generators are resetted: " + (int) rngSeed);
 
         RandomHelper.synchronizedFlag = synchronizedFlag;
         generator1 = new MersenneTwister((int) rngSeed);
