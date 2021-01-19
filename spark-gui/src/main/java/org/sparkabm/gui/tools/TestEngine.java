@@ -367,7 +367,7 @@ class ModelTest implements IDataConsumer {
  */
 public class TestEngine {
     // Logger
-    private static Logger logger = Logger.getLogger(TestEngine.class.getName());
+    private static final Logger logger = Logger.getLogger(TestEngine.class.getName());
 
     // The stream for logging results
     private static PrintStream out = null;

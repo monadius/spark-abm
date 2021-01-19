@@ -21,22 +21,18 @@ import org.sparkabm.gui.render.DataLayerStyle;
 import org.sparkabm.utils.SpringUtilities;
 import org.sparkabm.math.Vector;
 
-
 /**
  * Dialog for additional data layer colors
  *
  * @author Monad
  */
 public class DataLayerColors extends JDialog implements ActionListener, ChangeListener {
-    private static final long serialVersionUID = -215958960640303857L;
     private JPanel colorPanel;
     private DataLayerStyle currentStyle;
 
 
     /**
      * Default constructor
-     *
-     * @param owner
      */
     public DataLayerColors(JDialog owner) {
         super(owner, "", false);
@@ -75,8 +71,6 @@ public class DataLayerColors extends JDialog implements ActionListener, ChangeLi
 
     /**
      * Initializer for the given data layer style
-     *
-     * @param dataLayers
      */
     public void init(DataLayerStyle style) {
         this.currentStyle = style;
@@ -96,6 +90,7 @@ public class DataLayerColors extends JDialog implements ActionListener, ChangeLi
             spinnerValue.addChangeListener(this);
 
             JButton colorButton = new JButton();
+            colorButton.setOpaque(true);
             colorButton.setBackground(color.toAWTColor());
             colorButton.setActionCommand("color" + key);
             colorButton.addActionListener(this);

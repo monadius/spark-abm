@@ -29,18 +29,14 @@ import org.sparkabm.math.Vector;
  * @author Monad
  */
 public class DataLayersDialog extends JDialog implements ActionListener {
-    private static final long serialVersionUID = -4770465039114801520L;
-
     private JPanel panel;
     private HashMap<String, DataLayerStyle> dataLayers;
 
-    private DataLayerColors colorsDialog;
+    private final DataLayerColors colorsDialog;
 
 
     /**
      * Default constructor
-     *
-     * @param owner
      */
     public DataLayersDialog(JFrame owner) {
         super(owner, "", false);
@@ -66,8 +62,6 @@ public class DataLayersDialog extends JDialog implements ActionListener {
 
     /**
      * Inits the dialog for the given data layers
-     *
-     * @param dataLayers
      */
     public void init(HashMap<String, DataLayerStyle> dataLayers) {
         this.dataLayers = dataLayers;
@@ -78,10 +72,12 @@ public class DataLayersDialog extends JDialog implements ActionListener {
 
             JTextField val1 = new JTextField(String.valueOf(dataLayer.getVal1()));
             JButton color1 = new JButton();
+            color1.setOpaque(true);
             color1.setBackground(dataLayer.getColor1().toAWTColor());
 
             JTextField val2 = new JTextField(String.valueOf(dataLayer.getVal2()));
             JButton color2 = new JButton();
+            color2.setOpaque(true);
             color2.setBackground(dataLayer.getColor2().toAWTColor());
 
             JButton normalize = new JButton("Normalize");
@@ -143,7 +139,7 @@ public class DataLayersDialog extends JDialog implements ActionListener {
 
         // Color1 or Color2 commands
         if (cmd.startsWith("color1") || cmd.startsWith("color2")) {
-            boolean first = cmd.startsWith("color1") ? true : false;
+            boolean first = cmd.startsWith("color1");
 
             String name = cmd.substring("colorx".length());
             DataLayerStyle style = dataLayers.get(name);
@@ -220,19 +216,17 @@ public class DataLayersDialog extends JDialog implements ActionListener {
         }
 
         if (cmd.startsWith("val1") || cmd.startsWith("val2")) {
-            boolean first = cmd.startsWith("val1") ? true : false;
+            boolean first = cmd.startsWith("val1");
 
             String name = cmd.substring("valx".length());
             DataLayerStyle style = dataLayers.get(name);
 
             if (style == null) return;
 
-            double v = first ? style.getVal1() : style.getVal2();
-
             String snewVal = ((JTextField) e.getSource()).getText();
 
             try {
-                v = Double.parseDouble(snewVal);
+                double v = Double.parseDouble(snewVal);
 
                 if (first)
                     style.setVal1(v);
@@ -243,8 +237,6 @@ public class DataLayersDialog extends JDialog implements ActionListener {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-
-            return;
         }
 
     }

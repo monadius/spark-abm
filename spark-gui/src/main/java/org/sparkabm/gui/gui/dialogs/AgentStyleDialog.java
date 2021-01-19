@@ -38,16 +38,10 @@ import org.sparkabm.utils.FileUtils;
  *
  * @author Monad
  */
-@SuppressWarnings("serial")
 public class AgentStyleDialog extends JDialog {
-    // Main pane
-    private JTabbedPane tabs;
 
     /**
      * Default constructor
-     *
-     * @param owner
-     * @param style
      */
     public AgentStyleDialog(Window owner, Render render, AgentStyle style) {
         super(owner, "Advanced properties");
@@ -61,7 +55,8 @@ public class AgentStyleDialog extends JDialog {
      * Initializes the dialog elements
      */
     private void init(Render render, AgentStyle style) {
-        tabs = new JTabbedPane();
+        // Main pane
+        JTabbedPane tabs = new JTabbedPane();
 
         tabs.addTab("Label", new LabelOptions(render, style));
         tabs.addTab("Image", new ImageOptions(render, style));
@@ -78,7 +73,6 @@ public class AgentStyleDialog extends JDialog {
  *
  * @author Alexey
  */
-@SuppressWarnings("serial")
 abstract class OptionPanel extends JPanel implements ActionListener {
     protected AgentStyle style;
     protected Render render;
@@ -86,9 +80,6 @@ abstract class OptionPanel extends JPanel implements ActionListener {
 
     /**
      * Default constructor
-     *
-     * @param render
-     * @param style
      */
     public OptionPanel(Render render, AgentStyle style) {
         this.render = render;
@@ -103,7 +94,6 @@ abstract class OptionPanel extends JPanel implements ActionListener {
 /**
  * Image options
  */
-@SuppressWarnings("serial")
 class ImageOptions extends OptionPanel implements ChangeListener {
     private JCheckBox drawShape;
     private JCheckBox colorBlending;
@@ -185,44 +175,44 @@ class ImageOptions extends OptionPanel implements ChangeListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        String cmd = e.getActionCommand().intern();
+        switch (e.getActionCommand()) {
+            case CMD_DRAW_SHAPE: {
+                boolean flag = drawShape.isSelected();
+                style.setDrawShapeWithImageFlag(flag);
+                render.update();
+                break;
+            }
 
-        // Draw shape
-        if (cmd == CMD_DRAW_SHAPE) {
-            boolean flag = drawShape.isSelected();
-            style.setDrawShapeWithImageFlag(flag);
-            render.update();
-        }
+            case CMD_COLOR_BLENDING: {
+                boolean flag = colorBlending.isSelected();
+                style.setColorBlending(flag);
+                render.update();
+                break;
+            }
 
-        // Color blending
-        if (cmd == CMD_COLOR_BLENDING) {
-            boolean flag = colorBlending.isSelected();
-            style.setColorBlending(flag);
-            render.update();
-        }
+            case CMD_MODULATE_SIZE: {
+                boolean flag = modulateSize.isSelected();
+                style.setModulateSize(flag);
+                render.update();
+                break;
+            }
 
-        // Modulate size
-        if (cmd == CMD_MODULATE_SIZE) {
-            boolean flag = modulateSize.isSelected();
-            style.setModulateSize(flag);
-            render.update();
-        }
+            case CMD_MANAGER: {
+                File file = FileUtils.openFileDialog(Coordinator.getInstance().getCurrentDir(), "xml", null);
+                if (file != null) {
+                    style.setTileManager(file);
+                    if (style.getTileManager() == null)
+                        managerButton.setText("null");
+                    else
+                        managerButton.setText(style.getTileManager().getName());
 
-        // Select manager
-        if (cmd == CMD_MANAGER) {
-            File file = FileUtils.openFileDialog(Coordinator.getInstance().getCurrentDir(), "xml", null);
-            if (file != null) {
-                style.setTileManager(file);
-                if (style.getTileManager() == null)
+                    render.update();
+                } else {
+                    style.setTileManager(null);
                     managerButton.setText("null");
-                else
-                    managerButton.setText(style.getTileManager().getName());
-
-                render.update();
-            } else {
-                style.setTileManager(null);
-                managerButton.setText("null");
-                render.update();
+                    render.update();
+                }
+                break;
             }
         }
     }
@@ -239,7 +229,6 @@ class ImageOptions extends OptionPanel implements ChangeListener {
 /**
  * Label (font and position) options
  */
-@SuppressWarnings("serial")
 class LabelOptions extends OptionPanel implements ChangeListener {
     // Label dx, dy
     private JSpinner spinnerDx;
@@ -257,9 +246,9 @@ class LabelOptions extends OptionPanel implements ChangeListener {
     // Color
     private JButton colorButton;
     // All available bitmap fonts
-    private JComboBox bitmapFonts;
+    private JComboBox<String> bitmapFonts;
     // Text alignment options
-    private JComboBox textAlignments;
+    private JComboBox<BitmapFont.Align> textAlignments;
 
     // Modulate label color check box
     private JCheckBox modulateLabelColor;
@@ -304,7 +293,7 @@ class LabelOptions extends OptionPanel implements ChangeListener {
 
         // Bitmap font
         FontManager fontManager = Coordinator.getInstance().getFontManager();
-        bitmapFonts = new JComboBox(fontManager.getFontNames());
+        bitmapFonts = new JComboBox<>(fontManager.getFontNames());
         String bitmapFontName = style.getBitmapFontName();
         if (style == null)
             bitmapFontName = fontManager.getDefaultFontName();
@@ -315,7 +304,7 @@ class LabelOptions extends OptionPanel implements ChangeListener {
 
         // Alignment
         BitmapFont.Align[] alignments = BitmapFont.Align.values();
-        textAlignments = new JComboBox(alignments);
+        textAlignments = new JComboBox<>(alignments);
         textAlignments.setSelectedItem(style.getTextAlignment());
         textAlignments.setActionCommand(CMD_TEXT_ALIGNMENT);
         textAlignments.addActionListener(this);
@@ -352,6 +341,7 @@ class LabelOptions extends OptionPanel implements ChangeListener {
 
         // Color
         colorButton = new JButton();
+        colorButton.setOpaque(true);
         colorButton.setBackground(style.getLabelColor().toAWTColor());
         colorButton.setActionCommand(CMD_COLOR);
         colorButton.addActionListener(this);
@@ -420,74 +410,71 @@ class LabelOptions extends OptionPanel implements ChangeListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        String cmd = e.getActionCommand().intern();
+        switch (e.getActionCommand()) {
+            // Color
+            case CMD_COLOR: {
+                Color c = JColorChooser.showDialog(this, "Choose Color", style.getLabelColor().toAWTColor());
+                if (c != null) {
+                    style.setLabelColor(Vector4d.fromAWTColor(c));
+                    colorButton.setBackground(c);
+                    render.update();
+                }
+                break;
+            }
 
-        // Color
-        if (cmd == CMD_COLOR) {
-            Color c = JColorChooser.showDialog(this, "Choose Color", style.getLabelColor().toAWTColor());
-            if (c != null) {
-                style.setLabelColor(Vector4d.fromAWTColor(c));
-                colorButton.setBackground(c);
+            // Alignment
+            case CMD_TEXT_ALIGNMENT: {
+                if (textAlignments.getSelectedIndex() >= 0) {
+                    BitmapFont.Align align = (BitmapFont.Align) textAlignments.getSelectedItem();
+                    style.setTextAlignment(align);
+                    render.update();
+                }
+                break;
+            }
+
+            // Bitmap font
+            case CMD_BITMAP_FONT: {
+                if (bitmapFonts.getSelectedIndex() >= 0) {
+                    String name = (String) bitmapFonts.getSelectedItem();
+                    style.setBitmapFontName(name);
+                    render.update();
+                }
+                break;
+            }
+
+            // Modulate label color
+            case CMD_MODULATE_LABEL_COLOR: {
+                style.setModulateLabelColor(modulateLabelColor.isSelected());
                 render.update();
+                break;
             }
 
-            return;
-        }
-
-        // Alignment
-        if (cmd == CMD_TEXT_ALIGNMENT) {
-            if (textAlignments.getSelectedIndex() >= 0) {
-                BitmapFont.Align align = (BitmapFont.Align) textAlignments.getSelectedItem();
-                style.setTextAlignment(align);
+            // Modulate label size
+            case CMD_MODULATE_LABEL_SIZE: {
+                style.setModulateLabelSize(modulateLabelSize.isSelected());
                 render.update();
+                break;
             }
 
-            return;
-        }
+            // Font
+            case CMD_FONT: {
+                FontSelectionDialog dialog = new FontSelectionDialog(null);
+                dialog.setVisible(true);
 
-        // Bitmap font
-        if (cmd == CMD_BITMAP_FONT) {
-            if (bitmapFonts.getSelectedIndex() >= 0) {
-                String name = (String) bitmapFonts.getSelectedItem();
-                style.setBitmapFontName(name);
+                Font font = dialog.getSelectedFont();
+                if (font != null) {
+                    style.setFont(font.getFamily(), font.getStyle(), font.getSize());
+                } else {
+                    style.setFont(null, 0, 10);
+                }
+
+                font = style.getFont();
+                fontButton.setFont(font);
+                fontButton.setText(font.getFamily() + ": " + font.getSize());
+
                 render.update();
+                break;
             }
-
-            return;
-        }
-
-        // Modulate label color
-        if (cmd == CMD_MODULATE_LABEL_COLOR) {
-            style.setModulateLabelColor(modulateLabelColor.isSelected());
-            render.update();
-            return;
-        }
-
-        // Modulate label size
-        if (cmd == CMD_MODULATE_LABEL_SIZE) {
-            style.setModulateLabelSize(modulateLabelSize.isSelected());
-            render.update();
-            return;
-        }
-
-        // Font
-        if (cmd == CMD_FONT) {
-            FontSelectionDialog dialog = new FontSelectionDialog(null);
-            dialog.setVisible(true);
-
-            Font font = dialog.getSelectedFont();
-            if (font != null) {
-                style.setFont(font.getFamily(), font.getStyle(), font.getSize());
-            } else {
-                style.setFont(null, 0, 10);
-            }
-
-            font = style.getFont();
-            fontButton.setFont(font);
-            fontButton.setText(font.getFamily() + ": " + font.getSize());
-
-            render.update();
-            return;
         }
     }
 }
@@ -554,8 +541,6 @@ class AlphaBlendingOptions extends OptionPanel implements ChangeListener {
 
     /**
      * Creates the components of transparencyPanel
-     *
-     * @param panel
      */
     private void initTransparencyPanel(JPanel panel) {
         JSpinner value = new JSpinner(new SpinnerNumberModel(style.getTransparencyCoefficient(), 0, 1, 0.1));
@@ -567,12 +552,10 @@ class AlphaBlendingOptions extends OptionPanel implements ChangeListener {
 
     /**
      * Creates the components of blendPanel
-     *
-     * @param panel
      */
     private void initBlendPanel(JPanel panel) {
-        JComboBox src = new JComboBox(AgentStyle.srcBlends);
-        JComboBox dst = new JComboBox(AgentStyle.dstBlends);
+        JComboBox<AgentStyle.RenderProperty> src = new JComboBox<>(AgentStyle.srcBlends);
+        JComboBox<AgentStyle.RenderProperty> dst = new JComboBox<>(AgentStyle.dstBlends);
 
         src.setSelectedIndex(style.getSrcBlendIndex());
         dst.setSelectedIndex(style.getDstBlendIndex());
@@ -590,11 +573,9 @@ class AlphaBlendingOptions extends OptionPanel implements ChangeListener {
 
     /**
      * Creates components of the alphaPanel
-     *
-     * @param panel
      */
     private void initAlphaPanel(JPanel panel) {
-        JComboBox alpha = new JComboBox(AgentStyle.alphaFuncs);
+        JComboBox<AgentStyle.RenderProperty> alpha = new JComboBox<>(AgentStyle.alphaFuncs);
         alpha.setSelectedIndex(style.getAlphaFuncIndex());
         alpha.addActionListener(this);
         alpha.setActionCommand("alpha-function");
@@ -610,12 +591,10 @@ class AlphaBlendingOptions extends OptionPanel implements ChangeListener {
 
     /**
      * Creates components of the stencilPanel
-     *
-     * @param panel
      */
     private void initStencilPanel(JPanel panel) {
         // func
-        JComboBox func = new JComboBox(AgentStyle.stencilFuncs);
+        JComboBox<AgentStyle.RenderProperty> func = new JComboBox<>(AgentStyle.stencilFuncs);
         func.setSelectedIndex(style.getStencilFuncIndex());
         func.addActionListener(this);
         func.setActionCommand("stencil-function");
@@ -631,19 +610,19 @@ class AlphaBlendingOptions extends OptionPanel implements ChangeListener {
         mask.addChangeListener(this);
 
         // fail
-        JComboBox fail = new JComboBox(AgentStyle.stencilOps);
+        JComboBox<AgentStyle.RenderProperty> fail = new JComboBox<>(AgentStyle.stencilOps);
         fail.setSelectedIndex(style.getStencilFailIndex());
         fail.addActionListener(this);
         fail.setActionCommand("stencil-fail");
 
         // zfail
-        JComboBox zfail = new JComboBox(AgentStyle.stencilOps);
+        JComboBox<AgentStyle.RenderProperty> zfail = new JComboBox<>(AgentStyle.stencilOps);
         zfail.setSelectedIndex(style.getStencilZFailIndex());
         zfail.addActionListener(this);
         zfail.setActionCommand("stencil-zfail");
 
         // zpass
-        JComboBox zpass = new JComboBox(AgentStyle.stencilOps);
+        JComboBox<AgentStyle.RenderProperty> zpass = new JComboBox<>(AgentStyle.stencilOps);
         zpass.setSelectedIndex(style.getStencilZPassIndex());
         zpass.addActionListener(this);
         zpass.setActionCommand("stencil-zpass");
@@ -662,7 +641,6 @@ class AlphaBlendingOptions extends OptionPanel implements ChangeListener {
      * Action listener
      */
     public void actionPerformed(ActionEvent e) {
-        String cmd = e.getActionCommand().intern();
         int index = 0;
 
         // Get selected index
@@ -670,61 +648,55 @@ class AlphaBlendingOptions extends OptionPanel implements ChangeListener {
             index = ((JComboBox) e.getSource()).getSelectedIndex();
         }
 
-        // src-blend command
-        if (cmd == "src-blend") {
-            style.setSrcBlend(index);
-            render.update();
-            return;
-        }
+        switch (e.getActionCommand()) {
+            case "src-blend": {
+                style.setSrcBlend(index);
+                render.update();
+                break;
+            }
 
-        // dst-blend command
-        if (cmd == "dst-blend") {
-            style.setDstBlend(index);
-            render.update();
-            return;
-        }
+            case "dst-blend": {
+                style.setDstBlend(index);
+                render.update();
+                break;
+            }
 
-        // alpha-function command
-        if (cmd == "alpha-function") {
-            style.setAlphaFunc(index);
-            render.update();
-            return;
-        }
+            case "alpha-function": {
+                style.setAlphaFunc(index);
+                render.update();
+                break;
+            }
 
-        // texture-env command
-        if (cmd == "texture-env") {
-            style.setTextureEnv(index);
-            render.update();
-            return;
-        }
+            case "texture-env": {
+                style.setTextureEnv(index);
+                render.update();
+                break;
+            }
 
-        // stencil-function command
-        if (cmd == "stencil-function") {
-            style.setStencilFunc(index);
-            render.update();
-            return;
-        }
+            case "stencil-function": {
+                style.setStencilFunc(index);
+                render.update();
+                break;
+            }
 
-        // stencil-fail
-        if (cmd == "stencil-fail") {
-            style.setStencilFail(index);
-            render.update();
-            return;
-        }
+            case "stencil-fail": {
+                style.setStencilFail(index);
+                render.update();
+                break;
+            }
 
-        // stencil-zfail
-        if (cmd == "stencil-zfail") {
-            style.setStencilZFail(index);
-            render.update();
-            return;
-        }
-        // stencil-zpass
-        if (cmd == "stencil-zpass") {
-            style.setStencilZPass(index);
-            render.update();
-            return;
-        }
+            case "stencil-zfail": {
+                style.setStencilZFail(index);
+                render.update();
+                break;
+            }
 
+            case "stencil-zpass": {
+                style.setStencilZPass(index);
+                render.update();
+                break;
+            }
+        }
     }
 
 
@@ -734,34 +706,37 @@ class AlphaBlendingOptions extends OptionPanel implements ChangeListener {
     public void stateChanged(ChangeEvent e) {
         if (e.getSource() instanceof JSpinner) {
             JSpinner spinner = (JSpinner) e.getSource();
-            String name = spinner.getName().intern();
 
-            // Transparency
-            if (name == "transparency") {
-                float val = ((Number) spinner.getValue()).floatValue();
-                style.setTransparencyCoefficient(val);
-                render.update();
-            }
+            switch (spinner.getName()) {
+                case "transparency": {
+                    float val = ((Number) spinner.getValue()).floatValue();
+                    style.setTransparencyCoefficient(val);
+                    render.update();
+                    break;
+                }
 
-            // Alpha
-            if (name == "alpha") {
-                float val = ((Number) spinner.getValue()).floatValue();
-                style.setAlphaFuncValue(val);
-                render.update();
-            }
+                case "alpha": {
+                    float val = ((Number) spinner.getValue()).floatValue();
+                    style.setAlphaFuncValue(val);
+                    render.update();
+                    break;
+                }
 
-            // Stencil ref
-            if (name == "ref") {
-                int val = ((Number) spinner.getValue()).intValue();
-                style.setStencilRef(val);
-                render.update();
-            }
+                // Stencil ref
+                case "ref": {
+                    int val = ((Number) spinner.getValue()).intValue();
+                    style.setStencilRef(val);
+                    render.update();
+                    break;
+                }
 
-            // Stencil mask
-            if (name == "mask") {
-                int val = ((Number) spinner.getValue()).intValue();
-                style.setStencilMask(val);
-                render.update();
+                // Stencil mask
+                case "mask": {
+                    int val = ((Number) spinner.getValue()).intValue();
+                    style.setStencilMask(val);
+                    render.update();
+                    break;
+                }
             }
         }
     }
