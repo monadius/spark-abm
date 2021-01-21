@@ -2,11 +2,11 @@ package org.sparkabm.gui.tools;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -34,7 +34,7 @@ import org.w3c.dom.Node;
  * @author Monad
  */
 class MyStream extends OutputStream {
-    private FileOutputStream fos;
+    private final FileOutputStream fos;
 
     public MyStream(File logFile) throws IOException {
         fos = new FileOutputStream(logFile, true);
@@ -63,7 +63,7 @@ class ModelTest implements IDataConsumer {
     private final File modelFile;
 
     // List of all tests for this model
-    private final ArrayList<TestCase> testCases;
+    private final List<TestCase> testCases;
 
     // Data filter for controlling the simulation process
     private final DataFilter dataFilter;
@@ -77,22 +77,21 @@ class ModelTest implements IDataConsumer {
 
     /**
      * Constructs a model test from the given xml node
-     *
-     * @param node
      */
     public ModelTest(Node node, File basePath) throws Exception {
         // Load attributes with default values
         String model = XmlDocUtils.getValue(node, "model", null);
-        if (model == null)
-            throw new Exception(
-                    "'model' attribute should be specified for all tests");
+        if (model == null) {
+            throw new Exception("'model' attribute should be specified for all tests");
+        }
 
         this.modelFile = new File(basePath, model);
-        if (!modelFile.exists())
+        if (!modelFile.exists()) {
             throw new Exception("Model file '" + modelFile.getAbsolutePath() + "' does not exist");
+        }
 
         // Load test cases (runs)
-        this.testCases = new ArrayList<TestCase>();
+        this.testCases = new ArrayList<>();
         ArrayList<Node> list = XmlDocUtils.getChildrenByTagName(node, "run");
 
         for (Node n : list) {
@@ -132,8 +131,9 @@ class ModelTest implements IDataConsumer {
                     lock.wait();
                 }
 
-                if (finalRow == null)
+                if (finalRow == null) {
                     throw new Exception("finalRow == null");
+                }
 
                 test.analyzeResults(finalRow);
             }
@@ -145,10 +145,10 @@ class ModelTest implements IDataConsumer {
     }
 
 
-    @Override
     /**
      * Method for controlling the simulation process
      */
+    @Override
     public void consume(DataRow row) {
         // We are interested in final states only
         if (row.getState().isFinalState()) {
@@ -179,12 +179,10 @@ class ModelTest implements IDataConsumer {
         private TestEngineData data;
 
         // Base path to the directory with tests
-        private File basePath;
+        private final File basePath;
 
         /**
          * Constructs a test case from the given xml node
-         *
-         * @param node
          */
         public TestCase(Node node, File basePath) {
             this.basePath = basePath;
@@ -196,15 +194,8 @@ class ModelTest implements IDataConsumer {
             this.observerName = XmlDocUtils.getValue(node, "observer", "Observer1");
             String saveData = XmlDocUtils.getValue(node, "save-all", "true");
 
-            if (saveData.equals("time"))
-                timeTestOnly = true;
-            else
-                timeTestOnly = false;
-
-            if (saveData.equals("true"))
-                saveAllData = true;
-            else
-                saveAllData = false;
+            timeTestOnly = saveData.equals("time");
+            saveAllData = saveData.equals("true");
         }
 
 
@@ -247,8 +238,6 @@ class ModelTest implements IDataConsumer {
 
         /**
          * Saves the collected data in text and binary files
-         *
-         * @param fname
          */
         void saveData(String fname) {
             if (data == null)
@@ -273,8 +262,7 @@ class ModelTest implements IDataConsumer {
             long elapsedTime = finalRow.getState().getElapsedTime();
             TestEngine.getLog().println("END: time = " + elapsedTime);
 
-            if (timeTestOnly)
-                return;
+            if (timeTestOnly) return;
 
             // Remove data consumer
             Coordinator c = Coordinator.getInstance();
@@ -318,42 +306,42 @@ class ModelTest implements IDataConsumer {
             }
         }
 
-        /**
-         * Runs the test case
-         *
-         * @param engine
-         */
-/*		public void run(RunEngine engine) throws Exception {
-			engine.run(length, seed, observerName, mode, saveAllData);
-
-			if (timeTestOnly)
-				return;
-			
-			String fname = modelFile.getName();
-			fname += "_" + length;
-			fname += "_" + seed;
-			fname += "_" + observerName;
-			fname += "_" + mode;
-			fname += saveAllData ? "_all" : "";
-
-			fname = "data/" + fname;
-
-			File file = new File(fname + ".dat");
-			if (file.exists()) {
-				// Compare new data with the previous one
-				Dataset data = Dataset.readData(file);
-
-				if (engine.compareData(data)) {
-					TestEngine.getLog().println("DATA: OK");
-				} else {
-					System.err.println("DATA: FAIL");
-					TestEngine.getLog().println("DATA: FAIL");
-					engine.saveData(fname + "_failure");
-				}
-			} else {
-				engine.saveData(fname);
-			}
-		}*/
+//        /**
+//         * Runs the test case
+//         *
+//         * @param engine
+//         */
+//		public void run(RunEngine engine) throws Exception {
+//			engine.run(length, seed, observerName, mode, saveAllData);
+//
+//			if (timeTestOnly)
+//				return;
+//
+//			String fname = modelFile.getName();
+//			fname += "_" + length;
+//			fname += "_" + seed;
+//			fname += "_" + observerName;
+//			fname += "_" + mode;
+//			fname += saveAllData ? "_all" : "";
+//
+//			fname = "data/" + fname;
+//
+//			File file = new File(fname + ".dat");
+//			if (file.exists()) {
+//				// Compare new data with the previous one
+//				Dataset data = Dataset.readData(file);
+//
+//				if (engine.compareData(data)) {
+//					TestEngine.getLog().println("DATA: OK");
+//				} else {
+//					System.err.println("DATA: FAIL");
+//					TestEngine.getLog().println("DATA: FAIL");
+//					engine.saveData(fname + "_failure");
+//				}
+//			} else {
+//				engine.saveData(fname);
+//			}
+//		}
 
 
     }
@@ -377,8 +365,6 @@ public class TestEngine {
 
     /**
      * Returns the log output stream
-     *
-     * @return
      */
     public static PrintStream getLog() {
         return out;
@@ -386,17 +372,16 @@ public class TestEngine {
 
     /**
      * Loads all tests from the given xml file
-     *
-     * @param file
      */
     public static void loadTestFile(File file) throws Exception {
         // The path to the directory with tests (everything is relative to the test description file)
         File basePath = file.getParentFile();
 
-        tests = new ArrayList<ModelTest>();
+        tests = new ArrayList<>();
 
         // Load xml document
         Document xmlDoc = XmlDocUtils.loadXmlFile(file);
+        assert xmlDoc != null;
         Node root = xmlDoc.getFirstChild();
 
         // Get all test nodes
@@ -427,20 +412,10 @@ public class TestEngine {
     /**
      * Displays all xml files in the current directory and asks a user to choose
      * one of them
-     *
-     * @return
      */
     public static File selectXmlFile() throws Exception {
         ArrayList<File> files = FileUtils.findAllFiles(new File("."),
-                new FilenameFilter() {
-                    public boolean accept(File dir, String fname) {
-                        if (fname.endsWith(".xml"))
-                            return true;
-                        else
-                            return false;
-                    }
-
-                }, false);
+                (dir, fname) -> fname.endsWith(".xml"), false);
 
         System.out.println("0: Exit");
         for (int i = 0; i < files.size() && i < 9; i++) {
@@ -454,12 +429,8 @@ public class TestEngine {
             if (Character.isDigit(answer)) {
                 char ch = (char) answer;
                 int n = Integer.parseInt(Character.toString(ch));
-
-                if (n == 0)
-                    return null;
-
-                if (n <= files.size())
-                    return files.get(n - 1);
+                if (n == 0) return null;
+                if (n <= files.size()) return files.get(n - 1);
             }
         }
     }
@@ -467,9 +438,6 @@ public class TestEngine {
 
     /**
      * Main method
-     *
-     * @param args
-     * @throws Exception
      */
     public static void main(String[] args) throws Exception {
         // The first thing to do is to set up the logger
@@ -488,8 +456,7 @@ public class TestEngine {
 
         // Select an xml file with tests
         File file = selectXmlFile();
-        if (file == null)
-            return;
+        if (file == null) return;
 
         // Create the logging stream
         File logFile = new File("tests.log");
@@ -497,7 +464,6 @@ public class TestEngine {
 
         // Load tests
         loadTestFile(file);
-
 
         // Initialize main objects
         ModelManager_Basic manager = new ModelManager_Basic();
