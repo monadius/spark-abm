@@ -52,8 +52,8 @@ task sparkInstall(type: Sync) {
     into "$buildDir/spark"
     into('') {
         from '../LICENSE'
-        from 'README'
-        from 'logo.jpg'
+        from '../README.md'
+        from '../logo.jpg'
     }
     // The script should be copied to bin (or another subfolder)
     into('bin') {
