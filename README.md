@@ -29,9 +29,16 @@ any folder on your computer. (Note for macOS users: do not unzip the SPARK distr
 folder such as Documents, Downloads, or Desktop.) Double click `SPARK_Manager.jar` in a file manager to run
 SPARK. If it does not work then run SPARK from the command line:
 
+macOS/Linux:
 ```bash
 cd 'name of SPARK directory'
 bin/spark-manager
+```
+
+Windows:
+```bash
+cd 'name of SPARK directory'
+bin\spark-manager
 ```
 
 ## Documentation

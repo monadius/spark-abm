@@ -357,15 +357,7 @@ public class Project {
 
         // Get all java files in the output folder and its sub-folders
         ArrayList<File> javaFiles = ProjectFile.findAllFiles(output,
-                new FilenameFilter() {
-                    public boolean accept(File dir, String fname) {
-                        if (fname.endsWith(".java"))
-                            return true;
-                        else
-                            return false;
-                    }
-
-                }, true);
+                (dir, fname) -> fname.endsWith(".java"), true);
 
         // Create a compiler parameters string
         // compilerArgs.add("-verbose");
@@ -382,14 +374,14 @@ public class Project {
         final String path = sparkLibPath.getPath();
         String jars = Arrays.stream(LIBS)
                 .map(lib -> Paths.get(path, lib).toAbsolutePath().toString())
-                .collect(Collectors.joining(":"));
+                .collect(Collectors.joining(File.pathSeparator));
 //        System.out.println("jars = " + jars);
 
         //compilerArgs.add(sparkCorePath.getParent());
         compilerArgs.add(jars);
 
-        for (int i = 0; i < javaFiles.size(); i++) {
-            compilerArgs.add(javaFiles.get(i).getPath());
+        for (File javaFile : javaFiles) {
+            compilerArgs.add(javaFile.getPath());
         }
 
         // Get the javac compiler
@@ -397,6 +389,8 @@ public class Project {
         if (compiler == null) {
             // Try to use the compiler as an external process
             compilerArgs.add(0, "javac");
+            System.out.println("Compiling java files...");
+            System.out.println(String.join(" ", compilerArgs));
 
             try {
                 Process proc = Runtime.getRuntime().exec(
@@ -430,6 +424,7 @@ public class Project {
             args = compilerArgs.toArray(args);
 
             System.out.println("Compiling java files...");
+            System.out.println(String.join(" ", args));
             int result = compiler.run(null, null, null, args);
 
 
