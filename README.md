@@ -26,7 +26,7 @@ This command should print the version of the installed JDK.
 
 Download the latest SPARK [release](https://github.com/monadius/spark-abm/releases). Unzip the archive into
 any folder on your computer. (Note for macOS users: do not unzip the SPARK distribution into a restricted
-folder such as Documents, Downloads, or Desktop.) Double click `SPARK Manager.jar` in a file manager to run
+folder such as Documents, Downloads, or Desktop.) Double click `SPARK_Manager.jar` in a file manager to run
 SPARK. If it does not work then run SPARK from the command line:
 
 ```bash
@@ -39,6 +39,20 @@ bin/spark-manager
 Documentation can be found at 
 [http://www.mirmresearch.net/spark/documentation/documentation.asp](http://www.mirmresearch.net/spark/documentation/documentation.asp)
 
+Note: the documentation is not updated yet and it may contain outdated information.
+
+## Building from Source Code
+
+Clone the repository and run
+
+```bash
+./gradlew sparkInstall
+```
+
+A compiled version of SPARK with all dependencies will be created in `spark/build/spark`.
+
+Alternatively, the command `./gradlew sparkDist` will create a zip archive in `spark/build/sparkDist`.
+
 ## Publications
 
 1. Solovyev, A., Mikheev, M., Zhou, L., Dutta-Moscato, J., Ziraldo, C., An, G., Vodovotz, Y., & Mi, Q. (2010). 
@@ -46,17 +60,17 @@ Documentation can be found at
    International journal of agent technologies and systems, 2(3), 18–30.
    https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3806198/
    
-1. Dutta-Moscato, J., Solovyev, A., Mi, Q., Nishikawa, T., Soto-Gutierrez, A., Fox, I. J., & Vodovotz, Y. (2014). 
-   **A Multiscale Agent-Based in silico Model of Liver Fibrosis Progression.** 
-   Frontiers in bioengineering and biotechnology, 2, 18.
-   https://www.frontiersin.org/articles/10.3389/fbioe.2014.00018/full
-   
 1. Solovyev, A., Mi, Q., Tzen, Y. T., Brienza, D., & Vodovotz, Y. (2013). 
    **Hybrid equation/agent-based model of ischemia-induced hyperemia and pressure ulcer 
    formation predicts greater propensity to ulcerate in subjects with spinal cord injury.** 
    PLoS computational biology, 9(5), e1003070.
    https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1003070
-   
+
+1. Dutta-Moscato, J., Solovyev, A., Mi, Q., Nishikawa, T., Soto-Gutierrez, A., Fox, I. J., & Vodovotz, Y. (2014).
+   **A Multiscale Agent-Based in silico Model of Liver Fibrosis Progression.**
+   Frontiers in bioengineering and biotechnology, 2, 18.
+   https://www.frontiersin.org/articles/10.3389/fbioe.2014.00018/full
+
 1. Ziraldo, C., Solovyev, A., Allegretti, A., Krishnan, S., Henzel, M. K., Sowa, G. A., 
    Brienza, D., An, G., Mi, Q., & Vodovotz, Y. (2015). 
    **A Computational, Tissue-Realistic Model of Pressure Ulcer Formation in Individuals with Spinal Cord Injury.** 
