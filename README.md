@@ -11,12 +11,12 @@ The official SPARK website: [http://www.mirmresearch.net/spark/default.asp](http
 
 ## License
 
-SPARK largely uses the MIT License. For details see [LICENSE](LICENSE) file.
+SPARK largely uses the MIT License. For details see the [LICENSE](LICENSE) file.
 
 SPARK contains several third-party libraries. Information about
 these libraries and about their licenses can be found in the [spark/Licenses](spark/Licenses) folder.
 
-## How to run
+## How to Run
 
 JDK (Java Development Kit) 1.8 or higher is required to run SPARK. A free and open source
 version of JDK can be downloaded at [https://adoptopenjdk.net/releases.html](https://adoptopenjdk.net/releases.html).
@@ -62,3 +62,7 @@ Documentation can be found at
    **A Computational, Tissue-Realistic Model of Pressure Ulcer Formation in Individuals with Spinal Cord Injury.** 
    PLoS computational biology, 11(6), e1004309.
    https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1004309
+
+## Feedback and Troubleshooting
+
+Please open issues at [https://github.com/monadius/spark-abm/issues](https://github.com/monadius/spark-abm/issues)
