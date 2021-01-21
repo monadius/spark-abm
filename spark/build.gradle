@@ -35,7 +35,7 @@ jar {
     }
 }
 
-task createStartScripts(type: CreateStartScripts) {
+task createSparkManagerScript(type: CreateStartScripts) {
     outputDir = file("$buildDir/scripts")
     applicationName = "spark-manager"
     mainClass.set(application.mainClassName)
@@ -48,6 +48,20 @@ task createStartScripts(type: CreateStartScripts) {
     }
 }
 
+task createSparkGuiScript(type: CreateStartScripts) {
+    outputDir = file("$buildDir/scripts")
+    applicationName = "spark-gui"
+    mainClass.set('org.sparkabm.gui.Coordinator')
+    classpath = files(configurations.runtimeClasspath.findAll { it.name.startsWith('spark-gui') })
+}
+
+task createSparkTestsScript(type: CreateStartScripts) {
+    outputDir = file("$buildDir/scripts")
+    applicationName = "spark-tests"
+    mainClass.set('org.sparkabm.gui.tools.TestEngine')
+    classpath = files(configurations.runtimeClasspath.findAll { it.name.startsWith('spark-gui') })
+}
+
 task sparkInstall(type: Sync) {
     into "$buildDir/spark"
     into('') {
@@ -57,7 +71,9 @@ task sparkInstall(type: Sync) {
     }
     // The script should be copied to bin (or another subfolder)
     into('bin') {
-        from createStartScripts
+        from createSparkManagerScript
+        from createSparkGuiScript
+        from createSparkTestsScript
     }
     into('') {
         from jar
