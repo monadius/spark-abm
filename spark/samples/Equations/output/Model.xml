@@ -1,67 +1,58 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <spark version="1.1">
-    
   <files all="true" path="."/>
-    
   <model tick="1">
-        
     <setup>Equations.Model</setup>
-        
     <variables>
-            
       <variable get="get_dt" name="dt" set="set_dt" type="Double"/>
-            
       <variable get="get_k" name="k" set="set_k" type="Double"/>
-            
       <variable get="get_n" name="n" set="set_n" type="Double"/>
-            
       <variable get="count$SimpleAgent" name="count$SimpleAgent" set="" type="Double"/>
-          
     </variables>
-        
     <parameters>
-            
       <parameter default="0.1" max="1.0" min="0.01" name="dt" step="0.01" type="Double" variable="dt"/>
-            
       <parameter default="2.0" max="100.0" min="0.0" name="k" step="0.1" type="Double" variable="k"/>
-            
       <parameter default="10.0" max="100.0" min="0.0" name="Initial number of agents" step="1.0" type="Double" variable="n"/>
-          
     </parameters>
-        
     <agents>
-            
       <agent name="SimpleAgent">Equations.SimpleAgent</agent>
-          
     </agents>
-      
   </model>
-    
   <interface>
     <about path="readme.txt"/>
     <windows>
+            
       <window height="249" name="Parameters" visible="true" width="632" x="720" y="25"/>
+            
       <window height="850" main="true" name="Main Window" visible="true" width="697" x="136" y="54"/>
+          
     </windows>
     <mainframe control-state="0" dx="0.0" dy="0.0" location="Main Window" rot-x="20.0" rot-y="30.0" zoom="1.0">
+            
       <spacestyle auto-size="true" cell-xsize="10" cell-ysize="10" name="space" selected="true" swapXY="false"/>
+            
       <datalayerstyle>
+                
         <info color-weight="1.0" height-weight="0.0" style-name="data"/>
+              
       </datalayerstyle>
+            
       <agentstyle alpha-function="4" alpha-function-value="0.0" bitmap-font-size="1.0" border="true" color-blending="false" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0;1.0" label-height="100.0" label-width="100.0" modulate-label-color="false" modulate-label-size="false" modulate-size="true" name="SimpleAgent" position="0" scale="1.0" stencil-function="0" stencil-mask="65535" stencil-ref="0" text-alignment="Left" texture-env="0" transparency-coefficient="0.5" transparent="false" visible="true"/>
+          
     </mainframe>
     <parameterframe location="Parameters">
+            
       <user-parameter max="1.0" min="0.01" name="dt" step="0.01" use="false"/>
+            
       <user-parameter max="100.0" min="0.0" name="Initial number of agents" step="1.0" use="false"/>
+            
       <user-parameter max="100.0" min="0.0" name="k" step="0.1" use="false"/>
+          
     </parameterframe>
     <variable-sets/>
-    <data-layers>
-            
-      <datalayer color1="0.0;0.0;0.0" color2="0.0;1.0;0.0" name="data" val1="0.0" val2="1.0"/>
-          
-    </data-layers>
     <control-panel delay="8" freq="3"/>
+    <data-layers>
+      <datalayer color1="0.0;0.0;0.0" color2="0.0;1.0;0.0" name="data" val1="0.0" val2="1.0"/>
+    </data-layers>
   </interface>
-  
 </spark>

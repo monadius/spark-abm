@@ -32,10 +32,6 @@ import org.w3c.dom.NodeList;
 public class ProjectFile {
     /**
      * Converts the file path relatively to the parent
-     *
-     * @param parent
-     * @param file
-     * @return
      */
     public static File getRelativePath(File parent, File file) {
         if (parent == null || file == null)
@@ -63,9 +59,6 @@ public class ProjectFile {
 
     /**
      * Reads the project file
-     *
-     * @return
-     * @throws Exception
      */
     public static void readProjectFile(File projectFile, Project project) throws Exception {
         File defaultPath = projectFile.getAbsoluteFile().getParentFile();
@@ -74,8 +67,9 @@ public class ProjectFile {
         Document doc = db.parse(projectFile);
 
         NodeList elements = doc.getChildNodes();
-        if (elements.getLength() < 1 || !elements.item(0).getNodeName().equals("spark-project"))
+        if (elements.getLength() < 1 || !elements.item(0).getNodeName().equals("spark-project")) {
             throw new Exception("The file " + projectFile.getName() + " is not a valid SPARK project file");
+        }
 
         elements = elements.item(0).getChildNodes();
 
@@ -103,8 +97,9 @@ public class ProjectFile {
         }
 
         // Set name
-        if (name == null || name.equals(""))
+        if (name == null || name.equals("")) {
             name = "SPARK Model";
+        }
 
         project.setName(name);
 
@@ -118,8 +113,9 @@ public class ProjectFile {
 //			projectDirectory = new File(projectDir);
 
 
-        if (projectDirectory.exists())
+        if (projectDirectory.exists()) {
             defaultPath = projectDirectory;
+        }
 
         project.setProjectDirectory(defaultPath);
 
@@ -143,11 +139,6 @@ public class ProjectFile {
 
     /**
      * Prints out a tag with the given inner text
-     *
-     * @param out
-     * @param tag
-     * @param text
-     * @param indent
      */
     private static void printTag(PrintStream out, String tag, String text, int indent) {
         for (int i = 0; i < indent; i++)
@@ -161,10 +152,6 @@ public class ProjectFile {
 
     /**
      * Saves files into a project file
-     *
-     * @param projectFile
-     * @param files
-     * @throws FileNotFoundException
      */
     public static void saveProjectFile(File projectFile,
                                        String projectName,
@@ -194,26 +181,20 @@ public class ProjectFile {
         out.println();
         out.println("\t<files>");
 
-        for (int i = 0; i < files.size(); i++) {
-            String path = files.get(i).getPath();
-            if (path != null) {
-                // Use '/' as the separator even on windows machines
-                path = path.replace('\\', '/');
-                printTag(out, "file", path, 2);
-            }
+        for (File file : files) {
+            String path = file.getPath();
+            // Use '/' as the separator even on windows machines
+            path = path.replace('\\', '/');
+            printTag(out, "file", path, 2);
         }
 
         out.println("\t</files>");
         out.println("</spark-project>");
-
     }
 
 
     /**
      * Auxiliary function
-     *
-     * @param f
-     * @return
      */
     public static String getExtension(File f) {
         return getExtension(f.getName());
@@ -222,9 +203,6 @@ public class ProjectFile {
 
     /**
      * Returns the extension of the given name
-     *
-     * @param name
-     * @return
      */
     public static String getExtension(String name) {
         String ext = "";
@@ -241,19 +219,13 @@ public class ProjectFile {
     /**
      * Returns all files satisfying the given filter in the given directory
      * and its sub-directories
-     *
-     * @param directory
-     * @param filter
-     * @param recurse
-     * @return
      */
     public static ArrayList<File> findAllFiles(File directory, FilenameFilter filter, boolean recurse) {
-        ArrayList<File> files = new ArrayList<File>();
+        ArrayList<File> files = new ArrayList<>();
 
         // Get files / directories in the directory
         File[] entries = directory.listFiles();
-        if (entries == null)
-            return files;
+        if (entries == null) return files;
 
         // Go over entries
         for (File entry : entries) {
@@ -276,18 +248,10 @@ public class ProjectFile {
 
     /**
      * Deletes all files in the given directory with the given extension
-     *
-     * @param directory
-     * @param extension
      */
     public static void deleteAll(File directory, final String extension, boolean recursive) {
-        ArrayList<File> files = findAllFiles(directory, new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                String ext = getExtension(name);
-                return ext.equals(extension);
-            }
-        }, recursive);
+        ArrayList<File> files = findAllFiles(directory,
+                (dir, name) -> getExtension(name).equals(extension), recursive);
 
         for (File file : files) {
             file.delete();
@@ -297,10 +261,6 @@ public class ProjectFile {
 
     /**
      * Copies src file to dst file.
-     *
-     * @param src
-     * @param dst
-     * @throws IOException
      */
     public static void copy(File src, File dst) throws IOException {
         InputStream in = new FileInputStream(src);
