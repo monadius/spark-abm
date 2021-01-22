@@ -2,6 +2,7 @@ package org.sparkabm.gui;
 
 import java.io.File;
 import java.io.PrintStream;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -24,6 +25,8 @@ import org.w3c.dom.Node;
 public class Configuration {
     private static final Logger logger = Logger.getLogger(Configuration.class.getName());
 
+    /* Program directory */
+    private final File programDirectory;
 
     /******* Recent projects *******/
 
@@ -33,16 +36,17 @@ public class Configuration {
     /* List of all recent projects */
     private final ArrayList<File> recentProjects;
 
+    /* The number of recent projects */
+    private int maxRecentProjects;
+    private static final int DEFAULT_MAX_RECENT_PROJECTS = 10;
+
+    /******* Font options *******/
+
     /* Font directory */
     private File fontDirectory;
 
     /* Default font name */
     private String defaultFontName;
-
-    /* The number of recent projects */
-    private int maxRecentProjects;
-    private static final int DEFAULT_MAX_RECENT_PROJECTS = 10;
-
 
     /******* Graphics options ******/
 
@@ -52,12 +56,23 @@ public class Configuration {
 
     /**
      * Creates a config file reader
-     *
-     * @param fileMenu
      */
     public Configuration(SparkMenu fileMenu) {
         this.fileMenu = fileMenu;
-        this.recentProjects = new ArrayList<File>();
+        this.recentProjects = new ArrayList<>();
+        File path;
+        try {
+            path = new File(Configuration.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParentFile();
+        }
+        catch (URISyntaxException ex) {
+            path = new File(".");
+        }
+
+        if ("lib".equals(path.getName())) {
+            programDirectory = path.getParentFile();
+        } else {
+            programDirectory = path;
+        }
     }
 
 
@@ -70,14 +85,13 @@ public class Configuration {
         maxRecentProjects = DEFAULT_MAX_RECENT_PROJECTS;
         renderType = Render.JAVA_2D_RENDER;
 
-        doc = XmlDocUtils.loadXmlFile("spark-config.xml");
-        if (doc == null) {
-            return;
-        }
+        File path = new File(programDirectory, "spark-config.xml");
+        if (!path.isFile()) return;
+        doc = XmlDocUtils.loadXmlFile(path);
+        if (doc == null) return;
 
         Node root = doc.getFirstChild();
-        if (root == null)
-            return;
+        if (root == null) return;
 
         Node graphics = XmlDocUtils.getChildByTagName(root, "graphics");
         readGraphicsOptions(graphics);
@@ -95,17 +109,13 @@ public class Configuration {
      */
     private void readFontParameters(Node fontNode) {
         String dirName = XmlDocUtils.getValue(fontNode, "directory", null);
-        if (dirName != null)
-            fontDirectory = new File(dirName);
-
+        if (dirName != null) fontDirectory = new File(dirName);
         defaultFontName = XmlDocUtils.getValue(fontNode, "default-name", null);
     }
 
 
     /**
      * Loads graphics options
-     *
-     * @param graphics
      */
     private void readGraphicsOptions(Node graphics) {
         int type = XmlDocUtils.getIntegerValue(graphics, "render", Render.JAVA_2D_RENDER);
@@ -115,8 +125,6 @@ public class Configuration {
 
     /**
      * Loads recent projects
-     *
-     * @param recentProjects
      */
     private void readRecentProjects(Node recentProjects) {
         maxRecentProjects = XmlDocUtils.getIntegerValue(recentProjects, "max", DEFAULT_MAX_RECENT_PROJECTS);
@@ -124,9 +132,7 @@ public class Configuration {
         ArrayList<Node> models = XmlDocUtils.getChildrenByTagName(recentProjects, "file");
         for (Node model : models) {
             String path = model.getTextContent();
-            if (path == null || path.equals(""))
-                continue;
-
+            if (path == null || path.isEmpty()) continue;
             addRecentProject(new File(path));
         }
     }
@@ -136,7 +142,7 @@ public class Configuration {
      * Saves a configuration file
      */
     public void saveConfigFile() throws Exception {
-        PrintStream out = new PrintStream(new File("spark-config.xml"));
+        PrintStream out = new PrintStream(new File(programDirectory, "spark-config.xml"));
 
         out.println("<config>");
 
@@ -174,8 +180,6 @@ public class Configuration {
 
     /**
      * Returns default render type
-     *
-     * @return
      */
     public int getRenderType() {
         return renderType;
@@ -184,12 +188,11 @@ public class Configuration {
 
     /**
      * Sets default render type
-     *
-     * @param type
      */
     public void setRenderType(int type) {
-        if (type != Render.JAVA_2D_RENDER && type != Render.JOGL_RENDER)
+        if (type != Render.JAVA_2D_RENDER && type != Render.JOGL_RENDER) {
             type = Render.JAVA_2D_RENDER;
+        }
 
         renderType = type;
     }
@@ -201,8 +204,9 @@ public class Configuration {
     public void loadFontManager(FontManager fontManager) {
         fontManager.clear();
         fontManager.setDefaultFontName(defaultFontName);
-        if (fontDirectory != null)
+        if (fontDirectory != null) {
             fontManager.load(fontDirectory);
+        }
     }
 
 
@@ -213,15 +217,14 @@ public class Configuration {
         defaultFontName = fontManager.getDefaultFontName();
         // TODO: save all directories
         File[] dirs = fontManager.getFontDirectories();
-        if (dirs.length > 0)
+        if (dirs.length > 0) {
             fontDirectory = dirs[0];
+        }
     }
 
 
     /**
      * Returns the max number of recent projects
-     *
-     * @return
      */
     public int getMaxRecentProjects() {
         return maxRecentProjects;
@@ -230,20 +233,18 @@ public class Configuration {
 
     /**
      * Sets the max number of recent projects
-     *
-     * @param max
      */
     public void setMaxRecentProjects(int max) {
-        if (max < 1)
+        if (max < 1) {
             max = 1;
-        else if (max > 100)
+        }
+        else if (max > 100) {
             max = 100;
+        }
 
         maxRecentProjects = max;
         if (maxRecentProjects < recentProjects.size()) {
-            for (int i = recentProjects.size() - 1; i >= maxRecentProjects; i--)
-                recentProjects.remove(i);
-
+            recentProjects.subList(maxRecentProjects, recentProjects.size()).clear();
             updateRecentMenu();
         }
     }
@@ -251,8 +252,6 @@ public class Configuration {
 
     /**
      * Adds a project to the recent projects list
-     *
-     * @param file
      */
     public void addRecentProject(File file) {
         if (!file.exists())
@@ -262,8 +261,7 @@ public class Configuration {
         for (int i = 0; i < recentProjects.size(); i++) {
             File f = recentProjects.get(i);
             if (f.equals(file)) {
-                if (i == 0)
-                    return;
+                if (i == 0) return;
 
                 // Move this project to the top
                 recentProjects.remove(i);
@@ -291,34 +289,28 @@ public class Configuration {
 
 
     /**
-     * Updates menu of recent projects
+     * Updates the menu of recent projects
      */
     private void updateRecentMenu() {
-        if (fileMenu == null)
-            return;
+        if (fileMenu == null) return;
 
         // Remove all recent projects from the menu
         fileMenu.removeGroup(100);
 
         // Insert all current components
-        for (int i = 0; i < recentProjects.size(); i++) {
-            final File project = recentProjects.get(i);
+        for (final File project : recentProjects) {
             String name = project.getName();
 
             SparkMenuItem item = SparkMenuFactory.getFactory().createItem(name, 100);
-            item.setActionListener(new ISparkMenuListener() {
+            item.setActionListener(item1 -> {
+                Coordinator c = Coordinator.getInstance();
+                if (c == null) return;
 
-                public void onClick(SparkMenuItem item) {
-                    Coordinator c = Coordinator.getInstance();
-                    if (c == null)
-                        return;
-
-                    try {
-                        c.loadModel(project);
-                        c.startLoadedModel(Long.MAX_VALUE, true);
-                    } catch (Exception e) {
-                        logger.log(Level.SEVERE, "exception", e);
-                    }
+                try {
+                    c.loadModel(project);
+                    c.startLoadedModel(Long.MAX_VALUE, true);
+                } catch (Exception e) {
+                    logger.log(Level.SEVERE, "exception", e);
                 }
             });
 

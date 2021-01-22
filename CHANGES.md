@@ -3,6 +3,9 @@
 ### SPARK Manager
 *[feature]* Save configuration files in the SPARK home directory (not in the current working directory).
 
+### GUI
+*[feature]* Save configuration files in the SPARK home directory (not in the current working directory).
+
 -------------------------
 
 # SPARK 1.3.0

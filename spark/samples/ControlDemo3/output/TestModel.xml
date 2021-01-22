@@ -1,25 +1,178 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <spark version="1.1">
+                    
+  
+  
+  
+  
+  
+  
+  
+  
   <files all="true" path="."/>
+                    
+  
+  
+  
+  
+  
+  
+  
+  
   <model tick="1">
+                                        
+    
+    
+    
+    
+    
+    
+    
+    
     <setup>ControlDemo3.TestModel</setup>
-    <agents>
-      <agent name="SimpleAgent">ControlDemo3.SimpleAgent</agent>
-      <agent name="Agent1">ControlDemo3.Agent1</agent>
-      <agent name="TestAgent">ControlDemo3.TestAgent</agent>
-      <agent name="MyLink">ControlDemo3.MyLink</agent>
-    </agents>
+                                        
+    
+    
+    
+    
+    
+    
+    
+    
     <variables>
-      <variable get="count$SimpleAgent" name="count$SimpleAgent" set="" type="Double"/>
-      <variable get="count$Agent1" name="count$Agent1" set="" type="Double"/>
-      <variable get="count$TestAgent" name="count$TestAgent" set="" type="Double"/>
+                                                            
+      
+      
+      
+      
+      
+      
+      
+      
       <variable get="count$MyLink" name="count$MyLink" set="" type="Double"/>
+                                                            
+      
+      
+      
+      
+      
+      
+      
+      
+      <variable get="count$SimpleAgent" name="count$SimpleAgent" set="" type="Double"/>
+                                                            
+      
+      
+      
+      
+      
+      
+      
+      
+      <variable get="count$Agent1" name="count$Agent1" set="" type="Double"/>
+                                                            
+      
+      
+      
+      
+      
+      
+      
+      
+      <variable get="count$TestAgent" name="count$TestAgent" set="" type="Double"/>
+                                                          
+    
+    
+    
+    
+    
+    
+    
+    
     </variables>
+                                        
+    
+    
+    
+    
+    
+    
+    
+    
+    <agents>
+                                                            
+      
+      
+      
+      
+      
+      
+      
+      
+      <agent name="MyLink">ControlDemo3.MyLink</agent>
+                                                            
+      
+      
+      
+      
+      
+      
+      
+      
+      <agent name="SimpleAgent">ControlDemo3.SimpleAgent</agent>
+                                                            
+      
+      
+      
+      
+      
+      
+      
+      
+      <agent name="Agent1">ControlDemo3.Agent1</agent>
+                                                            
+      
+      
+      
+      
+      
+      
+      
+      
+      <agent name="TestAgent">ControlDemo3.TestAgent</agent>
+                                                          
+    
+    
+    
+    
+    
+    
+    
+    
+    </agents>
+                                      
+  
+  
+  
+  
+  
+  
+  
+  
   </model>
+                    
+  
+  
+  
+  
+  
+  
+  
+  
   <interface>
     <about path="readme.txt"/>
     <windows>
-      <window height="766" main="true" name="Main Window" visible="true" width="694" x="0" y="0"/>
+      <window height="766" main="true" name="Main Window" visible="true" width="694" x="630" y="142"/>
     </windows>
     <mainframe control-state="2" dx="0.0" dy="0.0" location="Main Window" rot-x="20.0" rot-y="30.0" zoom="1.0">
       <spacestyle auto-size="true" cell-xsize="10" cell-ysize="10" name="space" selected="true" swapXY="false"/>
@@ -31,4 +184,13 @@
     <data-layers/>
     <control-panel delay="8" freq="4"/>
   </interface>
+                  
+
+
+
+
+
+
+
+
 </spark>
