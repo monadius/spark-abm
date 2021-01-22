@@ -826,6 +826,7 @@ public class Coordinator {
             return;
 
         try {
+            XmlDocUtils.removeTextNodes(modelXmlDoc);
             // Save data layers
             saveDataLayerStyles(modelXmlDoc);
 

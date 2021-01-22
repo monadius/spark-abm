@@ -74,9 +74,10 @@ public class ModelFileWriter {
         if (tickTime == null)
             tickTime = "1";
 
-        removeChildren(modelNode, "#text");
-        removeChildren(interfaceNode, "#text");
-        removeChildren(filesNode, "#text");
+//        removeChildren(modelNode, "#text");
+//        removeChildren(interfaceNode, "#text");
+//        removeChildren(filesNode, "#text");
+        removeTextNodes(doc.getFirstChild());
 
         addAttr(doc, modelNode, "tick", tickTime);
     }
@@ -236,6 +237,7 @@ public class ModelFileWriter {
     public void addMainFrame() {
         // Manage windows first
         Node windowsNode = getChildByTagName(interfaceNode, "windows");
+        removeChildren(windowsNode, "#text");
         ArrayList<Node> windows = getChildrenByTagName(windowsNode, "window");
         String location = null;
 

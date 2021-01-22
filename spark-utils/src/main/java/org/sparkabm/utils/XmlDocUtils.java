@@ -2,6 +2,7 @@ package org.sparkabm.utils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -201,6 +202,25 @@ public class XmlDocUtils {
 
         for (Node item : getChildrenByTagName(node, name)) {
             node.removeChild(item);
+        }
+    }
+
+    public static void removeTextNodes(Node node) {
+        if (node == null) return;
+        List<Node> remove = new ArrayList<>();
+        for (Node child = node.getFirstChild(); child != null; child = child.getNextSibling()) {
+            if (child.hasChildNodes()) {
+                removeTextNodes(child);
+            }
+            if (child.getNodeType() == Node.TEXT_NODE) {
+                String value = child.getNodeValue();
+                if (value == null || value.trim().isEmpty()) {
+                    remove.add(child);
+                }
+            }
+        }
+        for (Node child : remove) {
+            node.removeChild(child);
         }
     }
 
