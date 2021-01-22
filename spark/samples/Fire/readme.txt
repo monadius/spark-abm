@@ -1,4 +1,4 @@
-<b>A simple particle effect.</b>
+<b>A simple particle effect</b>
 
 You can change the default texture by right clicking
 the main window, selecting 'Properties' and clicking

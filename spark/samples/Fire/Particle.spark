@@ -9,7 +9,7 @@ var size
 
 var energy
 var time-of-birth
-var life-time
+var life-time : number
 var last-update-time
 
 var start-color : vector
