@@ -1,15 +1,9 @@
 package org.sparklogo.gui;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.PrintStream;
-import java.nio.file.CopyOption;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
@@ -37,26 +31,21 @@ public class ProjectFile {
      * Converts the file path relatively to the parent
      */
     public static File getRelativePath(File parent, File file) {
-        if (parent == null || file == null)
-            return file;
+        if (parent == null || file == null) return file;
 
         parent = parent.getAbsoluteFile();
-        if (!file.isAbsolute())
+        if (!file.isAbsolute()) {
             file = new File(parent, file.getPath());
+        }
 
-        return new File(FileUtils.getRelativePath(parent, file));
-		
-/*		String path = file.getName();
-		
-		for (File f = file.getParentFile(); f != null; f = f.getParentFile()) {
-			if (f.equals(parent))
-				return new File(path);
-			
-			path = f.getName() + File.separator + path;
-				
-		}
-		
-		return file;*/
+        try {
+            return parent.toPath().relativize(file.toPath()).toFile();
+        }
+        catch (IllegalArgumentException e) {
+            // Return the file path if it cannot be relativized
+            return file;
+        }
+//        return new File(FileUtils.getRelativePath(parent, file));
     }
 
 
@@ -197,65 +186,10 @@ public class ProjectFile {
 
 
     /**
-     * Auxiliary function
-     */
-    public static String getExtension(File f) {
-        return getExtension(f.getName());
-    }
-
-
-    /**
-     * Returns the extension of the given name
-     */
-    public static String getExtension(String name) {
-        String ext = "";
-        int i = name.lastIndexOf('.');
-
-        if (i > 0 && i < name.length() - 1) {
-            ext = name.substring(i + 1).toLowerCase();
-        }
-
-        return ext;
-    }
-
-
-    /**
-     * Returns all files satisfying the given filter in the given directory
-     * and its sub-directories
-     */
-    public static ArrayList<File> findAllFiles(File directory, FilenameFilter filter, boolean recurse) {
-        ArrayList<File> files = new ArrayList<>();
-
-        // Get files / directories in the directory
-        File[] entries = directory.listFiles();
-        if (entries == null) return files;
-
-        // Go over entries
-        for (File entry : entries) {
-            // If there is no filter or the filter accepts the
-            // file / directory, add it to the list
-            if (filter == null || filter.accept(directory, entry.getName())) {
-                files.add(entry);
-            }
-
-            // If the file is a directory and the recurse flag
-            // is set, recurse into the directory
-            if (recurse && entry.isDirectory()) {
-                files.addAll(findAllFiles(entry, filter, recurse));
-            }
-        }
-
-        return files;
-    }
-
-
-    /**
      * Deletes all files in the given directory with the given extension
      */
     public static void deleteAll(File directory, final String extension, boolean recursive) {
-        ArrayList<File> files = findAllFiles(directory,
-                (dir, name) -> getExtension(name).equals(extension), recursive);
-
+        ArrayList<File> files = FileUtils.findAllFiles(directory, extension, recursive);
         for (File file : files) {
             file.delete();
         }

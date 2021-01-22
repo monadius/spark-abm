@@ -11,6 +11,7 @@ import javax.swing.ListModel;
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
 
+import org.sparkabm.utils.FileUtils;
 import org.sparklogo.main.SparkModel;
 import org.sparklogo.parser.SparkLogoParser;
 
@@ -356,8 +357,7 @@ public class Project {
         ProjectFile.deleteAll(output, "class", true);
 
         // Get all java files in the output folder and its sub-folders
-        ArrayList<File> javaFiles = ProjectFile.findAllFiles(output,
-                (dir, fname) -> fname.endsWith(".java"), true);
+        ArrayList<File> javaFiles = FileUtils.findAllFiles(output, "java", true);
 
         // Create a compiler parameters string
         // compilerArgs.add("-verbose");
@@ -465,20 +465,11 @@ public class Project {
         }
 
         // Get all xml files in the output folder (possible model files)
-        ArrayList<File> xmlFiles = ProjectFile.findAllFiles(output,
-                new FilenameFilter() {
-                    public boolean accept(File dir, String fname) {
-                        if (fname.endsWith(".xml"))
-                            return true;
-                        else
-                            return false;
-                    }
-
-                }, false);
-
-        if (xmlFiles.size() == 0)
+        ArrayList<File> xmlFiles = FileUtils.findAllFiles(output, "xml", false);
+        if (xmlFiles.size() == 0) {
             throw new Exception("No model files in the output directory: "
                     + output.getPath());
+        }
 
 //		StringBuilder cmd = new StringBuilder(
 //				"java -Xmx512m -Xms128m -jar ");

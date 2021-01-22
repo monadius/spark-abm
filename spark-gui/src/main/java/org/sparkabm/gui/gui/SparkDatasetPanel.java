@@ -97,7 +97,7 @@ public class SparkDatasetPanel extends JPanel implements ISparkPanel, ActionList
         if (data == null)
             return;
 
-        File file = FileUtils.saveFileDialog(Coordinator.getInstance().getCurrentDir(), "csv", null);
+        File file = FileUtils.saveFileDialog(null, Coordinator.getInstance().getCurrentDir(), "csv");
         PrintStream out = null;
 
         if (file != null) {

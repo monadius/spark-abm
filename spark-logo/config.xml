@@ -1,7 +1,6 @@
 <config>
 	<spark-lib-path>/Users/monad/Work/git/spark-abm/spark/build/spark/lib</spark-lib-path>
 	<recent-projects>
-		<file>/Users/monad/Work/tools/SPARK_1.2.004_universal/models/Games/Tanks/Tanks_1/Tanks.xml</file>
 		<file>/Users/monad/Work/tools/SPARK_1.2.004_universal/models/Games/War2/War2Model.xml</file>
 		<file>/Users/monad/Work/tools/SPARK_1.2.004_universal/models/PUABM/SCIRIS2 Project.xml</file>
 		<file>/Users/monad/Work/tools/SPARK_1.2.004_universal/samples/Worms/Worms project.xml</file>
@@ -9,7 +8,8 @@
 		<file>/Users/monad/Work/git/spark-abm/Spark/samples/ControlDemo3/ControlDemo3.xml</file>
 		<file>/Users/monad/Work/git/spark-abm/spark/samples/ControlDemo/ControlDemo.xml</file>
 		<file>/Users/monad/Work/tools/SPARK_1.2.004_universal/models/Cirrhosis/Cirrhosis20130301/CirrhosisModel.xml</file>
-		<file>/Users/monad/Work/git/spark-abm/spark/samples/Equations/EquationsModel.xml</file>
 		<file>/Users/monad/Work/git/spark-abm/spark/samples/Fire/FireModel.xml</file>
+		<file>/Users/monad/Work/git/spark-abm/spark/samples/Physical 3d Model/Physical 3d Model.xml</file>
+		<file>/Users/monad/Work/git/spark-abm/spark/samples/Equations/EquationsModel.xml</file>
 	</recent-projects>
 </config>

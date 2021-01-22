@@ -269,7 +269,7 @@ public class SparkPreferencesDialog extends JDialog implements ActionListener {
 
         // Font directory
         if (cmd == CMD_FONT_DIR) {
-            File dir = FileUtils.selectDirDialog(new File("."), null);
+            File dir = FileUtils.selectDirDialog(null, new File("."));
             if (dir == null || !dir.exists() || !dir.isDirectory())
                 return;
 

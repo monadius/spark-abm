@@ -198,7 +198,7 @@ class ImageOptions extends OptionPanel implements ChangeListener {
             }
 
             case CMD_MANAGER: {
-                File file = FileUtils.openFileDialog(Coordinator.getInstance().getCurrentDir(), "xml", null);
+                File file = FileUtils.openFileDialog(null, Coordinator.getInstance().getCurrentDir(), "xml");
                 if (file != null) {
                     style.setTileManager(file);
                     if (style.getTileManager() == null)

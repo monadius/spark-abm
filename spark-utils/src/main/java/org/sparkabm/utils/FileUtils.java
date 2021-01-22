@@ -10,8 +10,8 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -25,7 +25,7 @@ public class FileUtils {
     private static final Logger logger = Logger.getLogger(FileUtils.class.getName());
 
     /* Collection of all file writers */
-    private static final HashMap<String, PrintStream> writers = new HashMap<>();
+    private static final Map<String, PrintStream> writers = new HashMap<>();
 
     /* Base directory for file operations */
     private static File baseDir = null;
@@ -49,10 +49,10 @@ public class FileUtils {
      * Appends the base directory to the given file name
      */
     public static File getFile(String fname) {
-        File file = new File(fname);
+        final File file = new File(fname);
         if (baseDir != null) {
             if (!file.isAbsolute()) {
-                file = new File(baseDir, fname);
+                return new File(baseDir, fname);
             }
         }
 
@@ -68,7 +68,7 @@ public class FileUtils {
             FileReader fr = new FileReader(getFile(fname));
             return new BufferedReader(fr);
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "getFileReader", e);
+            logger.log(Level.SEVERE, "exception", e);
             return null;
         }
     }
@@ -81,7 +81,7 @@ public class FileUtils {
         try {
             return new PrintWriter(getFile(fname));
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "getFileReader", e);
+            logger.log(Level.SEVERE, "exception", e);
 
             return null;
         }
@@ -92,14 +92,12 @@ public class FileUtils {
      * Closes the file reader
      */
     public static void close(BufferedReader r) {
-        if (r == null)
-            return;
+        if (r == null) return;
 
         try {
             r.close();
         } catch (IOException e) {
-            logger.log(Level.SEVERE, "getFileReader", e);
-
+            logger.log(Level.SEVERE, "exception", e);
         }
     }
 
@@ -108,13 +106,12 @@ public class FileUtils {
      * Closes the file writer
      */
     public static void close(PrintWriter w) {
-        if (w == null)
-            return;
+        if (w == null) return;
 
         try {
             w.close();
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "getFileReader", e);
+            logger.log(Level.SEVERE, "exception", e);
         }
     }
 
@@ -123,13 +120,12 @@ public class FileUtils {
      * Reads a line from the given reader
      */
     public static String readLine(BufferedReader r) {
-        if (r == null)
-            return null;
+        if (r == null) return null;
 
         try {
             return r.readLine();
         } catch (IOException e) {
-            logger.log(Level.SEVERE, "getFileReader", e);
+            logger.log(Level.SEVERE, "exception", e);
             return null;
         }
     }
@@ -138,13 +134,12 @@ public class FileUtils {
      * Writes a line to the given writer
      */
     public static void writeLine(PrintWriter w, String line) {
-        if (w == null)
-            return;
+        if (w == null) return;
 
         try {
             w.println(line);
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "getFileReader", e);
+            logger.log(Level.SEVERE, "exception", e);
         }
     }
 
@@ -153,14 +148,13 @@ public class FileUtils {
      * Reads a double number
      */
     public static double readDouble(BufferedReader r) {
-        if (r == null)
-            return 0.0;
+        if (r == null) return 0.0;
 
         try {
             String line = r.readLine();
             return StringUtils.StringToDouble(line);
         } catch (IOException e) {
-            logger.log(Level.SEVERE, "getFileReader", e);
+            logger.log(Level.SEVERE, "exception", e);
             return 0.0;
         }
     }
@@ -169,13 +163,12 @@ public class FileUtils {
      * Writes a double number to the given writer
      */
     public static void writeDouble(PrintWriter w, double n) {
-        if (w == null)
-            return;
+        if (w == null) return;
 
         try {
             w.println(n);
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "getFileReader", e);
+            logger.log(Level.SEVERE, "exception", e);
         }
     }
 
@@ -183,14 +176,13 @@ public class FileUtils {
      * Reads a boolean value
      */
     public static boolean readBool(BufferedReader r) {
-        if (r == null)
-            return false;
+        if (r == null) return false;
 
         try {
             String line = r.readLine();
             return StringUtils.stringToBoolean(line);
         } catch (IOException e) {
-            logger.log(Level.SEVERE, "getFileReader", e);
+            logger.log(Level.SEVERE, "exception", e);
             return false;
         }
     }
@@ -199,13 +191,12 @@ public class FileUtils {
      * Writes a boolean value to the given writer
      */
     public static void writeBool(PrintWriter w, boolean b) {
-        if (w == null)
-            return;
+        if (w == null) return;
 
         try {
             w.println(b);
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "getFileReader", e);
+            logger.log(Level.SEVERE, "exception", e);
         }
     }
 
@@ -214,14 +205,13 @@ public class FileUtils {
      * Reads an integer
      */
     public static int readInteger(BufferedReader r) {
-        if (r == null)
-            return 0;
+        if (r == null) return 0;
 
         try {
             String line = r.readLine();
             return StringUtils.StringToInteger(line);
         } catch (IOException e) {
-            logger.log(Level.SEVERE, "getFileReader", e);
+            logger.log(Level.SEVERE, "exception", e);
             return 0;
         }
     }
@@ -231,14 +221,13 @@ public class FileUtils {
      * Reads a vector
      */
     public static Vector readVector(BufferedReader r, String separator) {
-        if (r == null)
-            return null;
+        if (r == null) return null;
 
         try {
             String line = r.readLine();
             return StringUtils.StringToVector(line, separator);
         } catch (IOException e) {
-            logger.log(Level.SEVERE, "getFileReader", e);
+            logger.log(Level.SEVERE, "exception", e);
             return null;
         }
     }
@@ -247,13 +236,12 @@ public class FileUtils {
      * Writes a vector to the given writer
      */
     public static void writeVector(PrintWriter w, Vector v) {
-        if (w == null)
-            return;
+        if (w == null) return;
 
         try {
             w.println(v);
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "getFileReader", e);
+            logger.log(Level.SEVERE, "exception", e);
         }
     }
 
@@ -265,21 +253,13 @@ public class FileUtils {
      */
     public static PrintStream getFileWriter(String name) {
         PrintStream writer = writers.get(name);
-
-        if (writer != null) {
-            return writer;
-        }
+        if (writer != null) return writer;
 
         try {
-            File file = new File(name);
-            if (baseDir != null) {
-                if (!file.isAbsolute()) {
-                    file = new File(baseDir, name);
-                }
-            }
+            File file = getFile(name);
             writer = new PrintStream(new FileOutputStream(file, true));
         } catch (IOException e) {
-            logger.log(Level.SEVERE, "getFileReader", e);
+            logger.log(Level.SEVERE, "exception", e);
             return null;
         }
 
@@ -291,29 +271,21 @@ public class FileUtils {
     /**
      * Creates a new file with the given name or erases an existing file
      */
-    public static void createNew(String name) {
+    public static boolean createNew(String name) {
         closeFile(name);
-
-        File file = new File(name);
-        if (baseDir != null) {
-            if (!file.isAbsolute()) {
-                file = new File(baseDir, name);
-            }
-        }
+        File file = getFile(name);
 
         try {
-            if (!file.exists()) {
-                file.createNewFile();
-            } else {
-                if (file.isFile()) {
-                    if (file.delete())
-                        file.createNewFile();
-                }
+            if (file.createNewFile()) {
+                return true;
             }
-
+            else if (file.isFile() && file.delete()) {
+                return file.createNewFile();
+            }
         } catch (IOException e) {
-            logger.log(Level.SEVERE, "getFileReader", e);
+            logger.log(Level.SEVERE, "exception", e);
         }
+        return false;
     }
 
 
@@ -344,7 +316,7 @@ public class FileUtils {
                 }
             }
         } catch (IOException e) {
-            logger.log(Level.SEVERE, "getFileReader", e);
+            logger.log(Level.SEVERE, "exception", e);
             return null;
         }
 
@@ -382,12 +354,11 @@ public class FileUtils {
      * and its sub-directories
      */
     public static ArrayList<File> findAllFiles(File directory, FilenameFilter filter, boolean recurse) {
-        ArrayList<File> files = new ArrayList<File>();
+        ArrayList<File> files = new ArrayList<>();
 
         // Get files / directories in the directory
         File[] entries = directory.listFiles();
-        if (entries == null)
-            return files;
+        if (entries == null) return files;
 
         // Go over entries
         for (File entry : entries) {
@@ -413,103 +384,38 @@ public class FileUtils {
      * and its sub-directories
      */
     public static ArrayList<File> findAllFiles(File directory, final String extension, boolean recurse) {
-        FilenameFilter filter = new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                if (name == null)
-                    return false;
-
-                return extension.equals(getExtension(name));
-            }
-        };
-
+        FilenameFilter filter = (dir, name) -> getExtension(name).equals(extension);
         return findAllFiles(directory, filter, recurse);
     }
 
-
     /**
-     * Splits the given file path into a list of all parent directories
-     * starting from the root
-     */
-    public static ArrayList<String> splitFilePath(File file) {
-        ArrayList<String> result = new ArrayList<String>();
-
-        while (file != null) {
-            result.add(file.getName());
-            file = file.getParentFile();
-        }
-
-        // Reverse the resulting list
-        int n = result.size();
-        for (int i = 0; i < n / 2; i++) {
-            String tmp = result.get(i);
-            result.set(i, result.get(n - i - 1));
-            result.set(n - i - 1, tmp);
-        }
-
-        return result;
-    }
-
-
-    /**
-     * Returns a relative path to the given file
+     * Returns a relative path to the given file.
+     * Both path are canonicalized before relativization.
      */
     public static String getRelativePath(File base, File file) {
-        if (file == null)
-            return null;
-
-        if (base == null)
-            return file.getAbsolutePath();
-
-        if (base.isFile())
-            base = base.getParentFile();
+        if (file == null) return null;
+        if (base == null) return file.getAbsolutePath();
+        if (base.isFile()) base = base.getParentFile();
 
         // Get canonical paths
         File canonicalBase;
         File canonicalFile;
 
         try {
-            canonicalBase = new File(base.getCanonicalPath());
-            canonicalFile = new File(file.getCanonicalPath());
+            canonicalBase = base.getCanonicalFile();
+            canonicalFile = file.getCanonicalFile();
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "getFileReader", e);
+            logger.log(Level.SEVERE, "exception", e);
             return file.getAbsolutePath();
         }
 
-        ArrayList<String> baseList = splitFilePath(canonicalBase);
-        ArrayList<String> fileList = splitFilePath(canonicalFile);
-
-        int bn = baseList.size();
-        int fn = fileList.size();
-        int counter = 0;
-
-        // Skip all common base directories
-        while (true) {
-            if (counter >= bn || counter >= fn)
-                break;
-
-            String name1 = baseList.get(counter);
-            String name2 = fileList.get(counter);
-
-            if (!name1.equals(name2))
-                break;
-
-            counter++;
+        try {
+            return canonicalBase.toPath().relativize(canonicalFile.toPath()).toString();
         }
-
-        StringBuilder str = new StringBuilder();
-        for (int i = counter; i < bn; i++) {
-            str.append("..");
-            str.append("/");
+        catch (IllegalArgumentException e) {
+            // Return the file path if it cannot be relativized
+            return file.getAbsolutePath();
         }
-
-        for (int i = counter; i < fn; i++) {
-            str.append(fileList.get(i));
-            if (i < fn - 1)
-                str.append("/");
-        }
-
-        return str.toString();
     }
 
 
@@ -535,7 +441,6 @@ public class FileUtils {
         return ext;
     }
 
-
     /**
      * Creates a file chooser for the given file extension
      */
@@ -548,24 +453,12 @@ public class FileUtils {
                 if (f.isDirectory()) {
                     return true;
                 }
-
-                if (extension == null)
-                    return true;
-
-                String ext = getExtension(f);
-                if (ext != null) {
-                    return ext.equals(extension);
-                }
-
-                return false;
+                return extension == null || extension.equals(getExtension(f));
             }
 
             // The description of this filter
             public String getDescription() {
-                if (extension == null)
-                    return "*.*";
-
-                return "*." + extension;
+                return extension == null ? "*.*" : "*." + extension;
             }
         });
 
@@ -576,7 +469,7 @@ public class FileUtils {
     /**
      * Shows an open file dialog and returns a selected file
      */
-    public static File openFileDialog(File dir, String extension, Window parent) {
+    public static File openFileDialog(Window parent, File dir, String extension) {
         JFileChooser fc = createFileChooser(dir, extension);
         int returnVal = fc.showOpenDialog(parent);
 
@@ -591,7 +484,7 @@ public class FileUtils {
     /**
      * Shows an open file dialog and returns a selected file
      */
-    public static File saveFileDialog(File dir, final String extension, Window parent) {
+    public static File saveFileDialog(Window parent, File dir, String extension) {
         JFileChooser fc = createFileChooser(dir, extension);
         int returnVal = fc.showSaveDialog(parent);
 
@@ -606,7 +499,7 @@ public class FileUtils {
     /**
      * Shows a dialog for selecting directories
      */
-    public static File selectDirDialog(File baseDir, Window parent) {
+    public static File selectDirDialog(Window parent, File baseDir) {
         final JFileChooser fc = new JFileChooser(baseDir);
         FileFilter filter = new FileFilter() {
             // Accept all directories
@@ -623,7 +516,7 @@ public class FileUtils {
         fc.setFileFilter(filter);
         fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
-        int returnVal = fc.showDialog(parent, "Select");
+        int returnVal = fc.showOpenDialog(parent);
 
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             return fc.getSelectedFile();

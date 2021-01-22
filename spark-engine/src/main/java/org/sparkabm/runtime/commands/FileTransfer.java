@@ -46,7 +46,7 @@ public class FileTransfer implements Serializable {
             if (file == null || !file.isFile() || !file.exists())
                 return;
 
-            this.name = FileUtils.getRelativePath(rootPath, file).toString();
+            this.name = FileUtils.getRelativePath(rootPath, file);
 
             FileInputStream fis = null;
             try {

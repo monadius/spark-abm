@@ -3,29 +3,24 @@ package org.sparklogo.gui;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.io.File;
 import java.io.PrintStream;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 import javax.swing.*;
-import javax.swing.filechooser.FileFilter;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.sparkabm.utils.FileUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
-@SuppressWarnings("serial")
 public class MainFrame extends JFrame implements ActionListener {
     private static final int MAX_RECENT_PROJECTS = 10;
 
-    private final JList fileList;
+    private final JList<File> fileList;
     private final Console console;
     private final JButton addButton;
     private final JButton removeButton;
@@ -55,7 +50,7 @@ public class MainFrame extends JFrame implements ActionListener {
     private int recentProjectsStart;
 
     /* Project instance */
-    private Project project;
+    private final Project project;
 
     public MainFrame() throws Exception {
         super("SPARK-PL");
@@ -66,13 +61,14 @@ public class MainFrame extends JFrame implements ActionListener {
                 try {
                     saveConfigFile();
                 } catch (Exception ex) {
+                    ex.printStackTrace();
                 }
                 System.exit(0);
             }
         });
 
         // Create file list
-        fileList = new JList(project.getListModel());
+        fileList = new JList<>(project.getListModel());
 //		listPanel.add(fileList);
 
         // Create three panels and console
@@ -192,26 +188,21 @@ public class MainFrame extends JFrame implements ActionListener {
 
         // Open
         menuItem = new JMenuItem("Open project...", KeyEvent.VK_O);
-        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O,
-                ActionEvent.CTRL_MASK));
-        menuItem.getAccessibleContext().setAccessibleDescription(
-                "Opens a project file");
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK));
+        menuItem.getAccessibleContext().setAccessibleDescription("Opens a project file");
         menuItem.addActionListener(this);
         menu.add(menuItem);
 
         // Save
         menuItem = new JMenuItem("Save project...", KeyEvent.VK_S);
-        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
-                ActionEvent.CTRL_MASK));
-        menuItem.getAccessibleContext().setAccessibleDescription(
-                "Saves the project");
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK));
+        menuItem.getAccessibleContext().setAccessibleDescription("Saves the project");
         menuItem.addActionListener(this);
         menu.add(menuItem);
 
         // Exit
         menuItem = new JMenuItem("Exit", KeyEvent.VK_X);
-        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X,
-                ActionEvent.CTRL_MASK));
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_DOWN_MASK));
         menuItem.getAccessibleContext().setAccessibleDescription("Exit");
         menuItem.addActionListener(this);
         menu.add(menuItem);
@@ -225,8 +216,7 @@ public class MainFrame extends JFrame implements ActionListener {
 
         // Options dialog
         menuItem = new JMenuItem("Options", KeyEvent.VK_P);
-        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P,
-                ActionEvent.CTRL_MASK));
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_DOWN_MASK));
         menuItem.getAccessibleContext().setAccessibleDescription("Options");
         menuItem.setActionCommand("options");
         menuItem.addActionListener(this);
@@ -357,8 +347,6 @@ public class MainFrame extends JFrame implements ActionListener {
 
     /**
      * Adds a project to the recent projects list
-     *
-     * @param file
      */
     private void addRecentProject(File file) {
         if (!file.exists())
@@ -422,12 +410,10 @@ public class MainFrame extends JFrame implements ActionListener {
     }
 
     /**
-     * Opens a project file
-     *
-     * @throws Exception
+     * Opens a project file with an open file dialog
      */
     private void openProjectFile() throws Exception {
-        File file = openFileDialog("xml");
+        File file = FileUtils.openFileDialog(this, currentDirectory, "xml");
 
         if (file != null) {
             openProjectFile(file);
@@ -436,62 +422,8 @@ public class MainFrame extends JFrame implements ActionListener {
 
     }
 
-
     /**
-     * Shows open file dialog and returns a selected file
-     *
-     * @param ext
-     * @return
-     * @throws Exception
-     */
-    public File openFileDialog(final String ext) throws Exception {
-        final JFileChooser fc = new JFileChooser(currentDirectory);
-
-        if (ext != null) {
-            // Create a filter
-            fc.setFileFilter(new FileFilter() {
-                // Accept all directories and all xml files
-                public boolean accept(File f) {
-                    if (f.isDirectory()) {
-                        return true;
-                    }
-
-                    String extension = ProjectFile.getExtension(f);
-                    if (extension != null && ext != null) {
-                        if (extension.equals(ext))
-                            return true;
-                        else
-                            return false;
-                    }
-
-                    return false;
-                }
-
-                // The description of this filter
-                public String getDescription() {
-                    return "*." + ext;
-                }
-            });
-        }
-        else {
-            fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        }
-
-        int returnVal = fc.showOpenDialog(this);
-
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            File file = fc.getSelectedFile();
-            return file;
-        }
-
-        return null;
-    }
-
-
-    /**
-     * Opens a given project file
-     *
-     * @param file
+     * Opens the given project file
      */
     public void openProjectFile(File file) throws Exception {
         ProjectFile.readProjectFile(file, project);
@@ -501,95 +433,42 @@ public class MainFrame extends JFrame implements ActionListener {
 
     /**
      * Saves a project file
-     *
-     * @throws Exception
      */
     private void saveProjectFile() throws Exception {
-        final JFileChooser fc = new JFileChooser(currentDirectory);
-
-        // Create a filter
-        fc.setFileFilter(new FileFilter() {
-
-            // Accept all directories and all xml files
-            public boolean accept(File f) {
-                if (f.isDirectory()) {
-                    return true;
-                }
-
-                String extension = ProjectFile.getExtension(f);
-                if (extension != null) {
-                    if (extension.equals("xml"))
-                        return true;
-                    else
-                        return false;
-                }
-
-                return false;
-            }
-
-            // The description of this filter
-            public String getDescription() {
-                return "*.xml";
-            }
-        });
-
-        int returnVal = fc.showSaveDialog(this);
-
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            File file = fc.getSelectedFile();
-            // TODO: think about better solution: maybe it is intended
-            // to save file with different extension
-            if (!ProjectFile.getExtension(file).equals("xml"))
+        File file = FileUtils.saveFileDialog(this, currentDirectory, "xml");
+        if (file != null) {
+            // TODO: think about a better solution: maybe it is intended
+            //       to save file with a different extension
+            if (!FileUtils.getExtension(file).equals("xml")) {
                 file = new File(file.getPath() + ".xml");
+            }
 
             project.saveProject(file);
-
             addRecentProject(file);
-            currentDirectory = fc.getCurrentDirectory();
+            currentDirectory = file.getParentFile();
         }
-
     }
 
     /**
-     * Add a file into a project file
-     *
-     * @throws Exception
+     * Adds a file into a project file with a file open dialog
      */
     private void addFileDialog() throws Exception {
-        final JFileChooser fc = new JFileChooser(currentDirectory);
-
-        int returnVal = fc.showOpenDialog(this);
-
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            File file = fc.getSelectedFile();
+        File file = FileUtils.openFileDialog(this, currentDirectory, null);
+        if (file != null) {
             project.addFile(file);
-            currentDirectory = fc.getCurrentDirectory();
+            currentDirectory = file.getParentFile();
         }
-
     }
 
     /**
-     * Add a file into a project file
-     *
-     * @throws Exception
+     * Shows a directory selection dialog and sets the current directory
      */
-    private File getDirectoryDialog() throws Exception {
-        final JFileChooser fc = new JFileChooser(currentDirectory);
-
-        fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        int returnVal = fc.showOpenDialog(this);
-
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            File file = fc.getSelectedFile();
-            currentDirectory = fc.getCurrentDirectory();
-
-            if (file.isDirectory()) {
-                currentDirectory = file;
-                return file;
-            }
+    private File getDirectoryDialog()  {
+        File file = FileUtils.selectDirDialog(this, currentDirectory);
+        if (file != null) {
+            currentDirectory = file;
         }
-
-        return null;
+        return file;
     }
 
 
@@ -600,8 +479,7 @@ public class MainFrame extends JFrame implements ActionListener {
             /* Project directory change */
             if (src == changeProjectDirectoryButton) {
                 File dir = getDirectoryDialog();
-                if (dir == null)
-                    dir = currentDirectory;
+                if (dir == null) dir = currentDirectory;
 
                 // TODO: remove this
                 projectNameField.setText("");
@@ -621,8 +499,9 @@ public class MainFrame extends JFrame implements ActionListener {
             /* Remove button */
             if (src == removeButton) {
                 int[] indices = fileList.getSelectedIndices();
-                for (int i = indices.length - 1; i >= 0; i--)
+                for (int i = indices.length - 1; i >= 0; i--) {
                     project.removeFile(indices[i]);
+                }
 
                 return;
             }
@@ -676,10 +555,12 @@ public class MainFrame extends JFrame implements ActionListener {
                 // TODO: add action commands to all menu items
                 String cmd = ((JMenuItem) src).getText();
 
-                if (cmd.startsWith("Open"))
+                if (cmd.startsWith("Open")) {
                     openProjectFile();
-                else if (cmd.startsWith("Save"))
+                }
+                else if (cmd.startsWith("Save")) {
                     saveProjectFile();
+                }
                 else if (cmd.startsWith("Exit")) {
                     saveConfigFile();
                     System.exit(0);

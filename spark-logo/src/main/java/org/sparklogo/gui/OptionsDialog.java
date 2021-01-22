@@ -1,5 +1,7 @@
 package org.sparklogo.gui;
 
+import org.sparkabm.utils.FileUtils;
+
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -160,7 +162,7 @@ public class OptionsDialog extends JDialog implements ActionListener {
         try {
             /* Change spark-core path command */
             if (cmd.equals("spark-lib")) {
-                File file = parent.openFileDialog(null);
+                File file = FileUtils.selectDirDialog(parent, sparkLib);
                 setSparkLibPath(file);
 //                return;
             }

@@ -72,7 +72,7 @@ public class StandardMenu {
                     return;
 
                 try {
-                    File file = FileUtils.openFileDialog(c.getCurrentDir(), "xml", null);
+                    File file = FileUtils.openFileDialog(null, c.getCurrentDir(), "xml");
                     if (file != null) {
                         c.loadModel(file);
                         c.startLoadedModel(Long.MAX_VALUE, true);

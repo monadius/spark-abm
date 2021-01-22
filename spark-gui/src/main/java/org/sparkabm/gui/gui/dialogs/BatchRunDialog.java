@@ -562,7 +562,7 @@ public class BatchRunDialog extends JDialog implements ActionListener {
         // Select experimental data file
         if (cmd == "select-file") {
             try {
-                File file = FileUtils.openFileDialog(Coordinator.getInstance().getCurrentDir(), null, null);
+                File file = FileUtils.openFileDialog(null, Coordinator.getInstance().getCurrentDir(), null);
                 if (file != null) {
                     textExperimentalData.setText(file.getAbsolutePath());
                 }
