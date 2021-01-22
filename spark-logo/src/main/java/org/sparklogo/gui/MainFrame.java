@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.PrintStream;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.*;
 import javax.xml.parsers.DocumentBuilder;
@@ -247,19 +248,6 @@ public class MainFrame extends JFrame implements ActionListener {
     }
 
     /**
-     * Sets the default path to SPARK/lib
-     */
-    private void setDefaultLibPath() {
-        try {
-            File path = new File(MainFrame.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParentFile();
-            options.setSparkLibPath(path);
-        }
-        catch (URISyntaxException ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    /**
      * Reads a configuration file
      */
     private void readConfigFile() {
@@ -270,8 +258,7 @@ public class MainFrame extends JFrame implements ActionListener {
                     .newDocumentBuilder();
             doc = db.parse(new File(programDirectory, "config.xml"));
         } catch (Exception e) {
-            // No configure file or other problems
-            setDefaultLibPath();
+            options.setSparkLibPath(new File(programDirectory, "lib"));
             return;
         }
 
@@ -281,8 +268,7 @@ public class MainFrame extends JFrame implements ActionListener {
             options.setSparkLibPath(new File(sparkPath));
         }
         else {
-            // Default path
-            setDefaultLibPath();
+            options.setSparkLibPath(new File(programDirectory, "lib"));
         }
 
 //        NodeList list = doc.getElementsByTagName("spark-core-path");
@@ -478,6 +464,13 @@ public class MainFrame extends JFrame implements ActionListener {
     }
 
     /**
+     * Returns the current project directory
+     */
+    public File getCurrentDirectory() {
+        return currentDirectory;
+    }
+
+    /**
      * Shows a directory selection dialog and sets the current directory
      */
     private File getDirectoryDialog()  {
@@ -486,6 +479,17 @@ public class MainFrame extends JFrame implements ActionListener {
             currentDirectory = file;
         }
         return file;
+    }
+
+    /**
+     * Returns the SPARK/lib path or the program path if SPARK/lib is invalid
+     */
+    public File getLibPath() {
+        File path = options.getSparkLibPath();
+        if (path == null || !path.isDirectory()) {
+            return new File(programDirectory, "lib");
+        }
+        return path;
     }
 
 
@@ -526,30 +530,31 @@ public class MainFrame extends JFrame implements ActionListener {
             /* Translate button */
             if (src == translateButton) {
                 console.clearText();
-                project.translate(options.getSparkLibPath());
+                project.translate(getLibPath());
                 return;
             }
 
             /* Compile button */
             if (src == compileButton) {
                 console.clearText();
-                project.compile(options.getSparkLibPath());
+                project.compile(getLibPath());
                 return;
             }
 
             /* Run in SPARK button */
             if (src == runInSparkButton) {
                 console.clearText();
-                project.runInSpark(options.getSparkLibPath());
+                project.runInSpark(getLibPath());
                 return;
             }
 
             /* Start button */
             if (src == startButton) {
                 console.clearText();
-                project.translate(options.getSparkLibPath());
-                project.compile(options.getSparkLibPath());
-                project.runInSpark(options.getSparkLibPath());
+                File libPath = getLibPath();
+                project.translate(libPath);
+                project.compile(libPath);
+                project.runInSpark(libPath);
                 return;
             }
 

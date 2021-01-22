@@ -1,7 +1,6 @@
 package org.sparklogo.gui;
 
 import java.io.*;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -21,11 +20,10 @@ import org.sparklogo.parser.SparkLogoParser;
  * @author Monad
  */
 public class Project {
-    // TODO: search libraries with patterns
     private final static String[] LIBS = {
-            "spark-core-1.0.jar", "spark-math-1.0.jar", "spark-utils-1.0.jar"
+            "spark-core", "spark-math", "spark-utils"
     };
-    private final static String SPARK_LIB = "spark-gui-1.0.jar";
+    private final static String SPARK_LIB = "spark-gui";
 
     /* Project name */
     private String name;
@@ -68,7 +66,7 @@ public class Project {
      * Default constructor
      */
     public Project() {
-        projectFiles = new ArrayList<File>();
+        projectFiles = new ArrayList<>();
         listModel = new ProjectListModel();
         name = "SPARK Model";
     }
@@ -83,24 +81,20 @@ public class Project {
 
     /**
      * Sets project's name
-     *
-     * @param name
      */
     public void setName(String name) {
-        if (name == null || name.equals(""))
+        if (name == null || name.equals("")) {
             name = "SPARK Model";
+        }
         this.name = name;
     }
 
     /**
      * Sets the project directory
-     *
-     * @param dir
      */
     public void setProjectDirectory(File dir) {
         // If it is not a directory then do nothing
-        if (dir != null && !dir.isDirectory())
-            return;
+        if (dir != null && !dir.isDirectory()) return;
 
         if (projectDirectory != null) {
             // Make all paths absolute
@@ -132,8 +126,6 @@ public class Project {
 
     /**
      * Sets the output directory
-     *
-     * @param dir
      */
     public void setOutputDirectory(File dir) {
         outputDirectory = dir;
@@ -141,8 +133,6 @@ public class Project {
 
     /**
      * Synchronizes the data with the main frame
-     *
-     * @param frame
      */
     public void synchronizeWithMainFrame(MainFrame frame) {
         String name = frame.projectNameField.getText();
@@ -150,10 +140,12 @@ public class Project {
         String outputDir = frame.outputDirectoryField.getText();
 
         // Set project directory
-        if (projectDir != null && !projectDir.equals(""))
+        if (projectDir != null && !projectDir.equals("")) {
             setProjectDirectory(new File(projectDir));
-        else
+        }
+        else {
             setProjectDirectory(null);
+        }
 
         if (name == null || name.equals("")) {
             setName(projectDirectory.getAbsoluteFile().getName());
@@ -174,24 +166,28 @@ public class Project {
 
     /**
      * Synchronizes text fields with the project data
-     *
-     * @param frame
      */
     public void synchronizeMainFrame(MainFrame frame) {
-        if (name != null)
+        if (name != null) {
             frame.projectNameField.setText(this.name);
-        else
+        }
+        else {
             frame.projectNameField.setText("");
+        }
 
-        if (projectDirectory != null)
+        if (projectDirectory != null) {
             frame.projectDirectoryField.setText(projectDirectory.getPath());
-        else
+        }
+        else {
             frame.projectDirectoryField.setText("");
+        }
 
-        if (outputDirectory != null)
+        if (outputDirectory != null) {
             frame.outputDirectoryField.setText(outputDirectory.getPath());
-        else
+        }
+        else {
             frame.outputDirectoryField.setText("");
+        }
     }
 
     /**
@@ -204,19 +200,17 @@ public class Project {
 
     /**
      * Adds a file to the project
-     *
-     * @param file
-     * @return modified file (with relative/full path)
      */
     public void addFile(File file) throws Exception {
         // Verify that there are no duplicates
         for (File f : projectFiles) {
-            if (!f.isAbsolute() && projectDirectory != null)
+            if (!f.isAbsolute() && projectDirectory != null) {
                 f = new File(projectDirectory, f.getPath());
+            }
 
-            if (file.equals(f))
-                throw new Exception("File " + file
-                        + " is already in the project");
+            if (file.equals(f)) {
+                throw new Exception("File " + file + " is already in the project");
+            }
         }
 
         file = ProjectFile.getRelativePath(projectDirectory, file);
@@ -226,12 +220,9 @@ public class Project {
 
     /**
      * Removes a file at the given position
-     *
-     * @param index
      */
     public void removeFile(int index) {
-        if (index < 0 || index >= projectFiles.size())
-            return;
+        if (index < 0 || index >= projectFiles.size()) return;
 
         projectFiles.remove(index);
         listModel.fireChangeEvent();
@@ -239,39 +230,57 @@ public class Project {
 
     /**
      * Saves the project file
-     *
-     * @param projectFile
      */
     public void saveProject(File projectFile) throws Exception {
         ProjectFile.saveProjectFile(projectFile, name, projectDirectory,
                 outputDirectory, projectFiles);
     }
 
+    private void checkPath(File path, FilenameFilter filter) throws Exception {
+        if (path != null && path.isDirectory()) {
+            File[] files = path.listFiles(filter);
+            if (files != null && files.length > 0) {
+                return;
+            }
+        }
+        throw new Exception("Path to SPARK/lib is invalid: use options menu to set up this path");
+    }
+
+    private String getJars(File libPath, String[] names) {
+        FilenameFilter filter = (dir, name) ->
+                name.endsWith(".jar") && Arrays.stream(names).anyMatch(name::startsWith);
+
+        return FileUtils.findAllFiles(libPath.getAbsoluteFile(), filter, false)
+                        .stream()
+                        .map(File::getPath)
+                        .collect(Collectors.joining(File.pathSeparator));
+    }
+
     /**
      * Translates the spark code into java code
-     *
-     * @throws Exception
      */
     public void translate(File sparkLibPath) throws Exception {
         if (projectFiles.size() == 0) {
             System.out.println("No files to translate");
             return;
         }
+        File logoPath = new File(sparkLibPath != null ? sparkLibPath.getParentFile() : new File(""), "logo");
+        checkPath(logoPath, (dir, name) -> "commands.xml".equals(name));
 
         File[] files = new File[projectFiles.size()];
         // Make all paths absolute
         for (int i = 0; i < files.length; i++) {
             files[i] = projectFiles.get(i);
 
-            if (!files[i].isAbsolute() && projectDirectory != null)
+            if (!files[i].isAbsolute() && projectDirectory != null) {
                 files[i] = new File(projectDirectory, files[i].getPath());
+            }
         }
 
-        if (name == null)
-            name = "SPARK Model";
+        if (name == null) name = "SPARK Model";
 
         // Init spark model
-        SparkModel.init(sparkLibPath == null ? new File("") : sparkLibPath.getParentFile(), name);
+        SparkModel.init(logoPath, name);
 
         // Read project files
 
@@ -289,10 +298,12 @@ public class Project {
         File output;
 
         if (outputDirectory != null) {
-            if (outputDirectory.isAbsolute())
+            if (outputDirectory.isAbsolute()) {
                 output = outputDirectory;
-            else
+            }
+            else {
                 output = new File(projectDirectory, outputDirectory.getPath());
+            }
         } else {
             output = new File(projectDirectory, "output");
         }
@@ -314,8 +325,9 @@ public class Project {
         File readme = new File(projectDirectory, "readme.txt");
         if (readme.exists()) {
             File dst = new File(output, "readme.txt");
-            if (!readme.equals(dst))
+            if (!readme.equals(dst)) {
                 ProjectFile.copy(readme, dst);
+            }
         }
     }
 
@@ -327,10 +339,7 @@ public class Project {
          * if (rtPath == null || !rtPath.exists()) { throw new Exception(
          * "Path to rt.jar is invalid: use options menu to set up this path"); }
          */
-        if (sparkLibPath == null || !sparkLibPath.exists()) {
-            throw new Exception(
-                    "Path to SPARK/lib is invalid: use options menu to set up this path");
-        }
+        checkPath(sparkLibPath, (dir, name) -> name.startsWith(LIBS[0]) && name.endsWith(".jar"));
 
         // Arguments of the compiler
         ArrayList<String> compilerArgs = new ArrayList<>();
@@ -339,17 +348,18 @@ public class Project {
         File output;
 
         if (outputDirectory != null) {
-            if (outputDirectory.isAbsolute())
+            if (outputDirectory.isAbsolute()) {
                 output = outputDirectory;
-            else
+            }
+            else {
                 output = new File(projectDirectory, outputDirectory.getPath());
+            }
         } else {
             output = new File(projectDirectory, "output");
         }
 
         if (!output.exists()) {
-            System.out.println("Output directory " + output.getPath()
-                    + " does not exist");
+            System.out.println("Output directory " + output.getPath() + " does not exist");
             return;
         }
 
@@ -371,14 +381,7 @@ public class Project {
         compilerArgs.add("8");
 
         compilerArgs.add("-classpath");
-        final String path = sparkLibPath.getPath();
-        String jars = Arrays.stream(LIBS)
-                .map(lib -> Paths.get(path, lib).toAbsolutePath().toString())
-                .collect(Collectors.joining(File.pathSeparator));
-//        System.out.println("jars = " + jars);
-
-        //compilerArgs.add(sparkCorePath.getParent());
-        compilerArgs.add(jars);
+        compilerArgs.add(getJars(sparkLibPath, LIBS));
 
         for (File javaFile : javaFiles) {
             compilerArgs.add(javaFile.getPath());
@@ -413,10 +416,9 @@ public class Project {
                 while ((line = bufferedReader.readLine()) != null) {
                     System.out.println(line);
                 }
-            } catch (Exception e) {
-                throw e;
-                // TODO: a meaningful error message (link to adoptopenjdk)
-//				throw new Exception("Java compiler is not found");
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                throw new Exception("A Java compiler is not found. Please install JDK 8 or newer: https://adoptopenjdk.net/releases.html");
             }
         } else {
             // Run the compiler with standard input/output streams
@@ -441,19 +443,18 @@ public class Project {
      * Runs the project in SPARK
      */
     public void runInSpark(File sparkLibPath) throws Exception {
-        if (sparkLibPath == null || !sparkLibPath.exists()) {
-            throw new Exception(
-                    "Path to SPARK/lib is invalid: use options menu to set up this path");
-        }
+        checkPath(sparkLibPath, (dir, name) -> name.startsWith(SPARK_LIB) && name.endsWith(".jar"));
 
         // Set up output directory
         File output;
 
         if (outputDirectory != null) {
-            if (outputDirectory.isAbsolute())
+            if (outputDirectory.isAbsolute()) {
                 output = outputDirectory;
-            else
+            }
+            else {
                 output = new File(projectDirectory, outputDirectory.getPath());
+            }
         } else {
             output = new File(projectDirectory, "output");
         }
@@ -467,8 +468,7 @@ public class Project {
         // Get all xml files in the output folder (possible model files)
         ArrayList<File> xmlFiles = FileUtils.findAllFiles(output, "xml", false);
         if (xmlFiles.size() == 0) {
-            throw new Exception("No model files in the output directory: "
-                    + output.getPath());
+            throw new Exception("No model files in the output directory: " + output.getPath());
         }
 
 //		StringBuilder cmd = new StringBuilder(
@@ -488,7 +488,7 @@ public class Project {
 //        };
         String[] cmd = {
                 "java", "-jar",
-                Paths.get(sparkLibPath.getPath(), SPARK_LIB).toAbsolutePath().toString(),
+                getJars(sparkLibPath, new String[] { SPARK_LIB }),
                 xmlFiles.get(0).getPath()
         };
 
@@ -501,8 +501,7 @@ public class Project {
 
         InputStream inputStream = proc.getInputStream();
         InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-        final BufferedReader bufferedReader = new BufferedReader(
-                inputStreamReader);
+        final BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 
         inputStream = proc.getErrorStream();
         final BufferedReader errReader = new BufferedReader(

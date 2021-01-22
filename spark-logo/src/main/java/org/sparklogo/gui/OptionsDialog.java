@@ -98,7 +98,7 @@ public class OptionsDialog extends JDialog implements ActionListener {
      * Sets the path to SPARK/lib
      */
     public void setSparkLibPath(File path) {
-        if (path != null && path.exists()) {
+        if (path != null && path.exists() && path.isDirectory()) {
             sparkLib = path;
             sparkLibTextField.setText(sparkLib.getPath());
         }
@@ -162,7 +162,8 @@ public class OptionsDialog extends JDialog implements ActionListener {
         try {
             /* Change spark-core path command */
             if (cmd.equals("spark-lib")) {
-                File file = FileUtils.selectDirDialog(parent, sparkLib);
+                File base = sparkLib != null ? sparkLib : parent.getCurrentDirectory();
+                File file = FileUtils.selectDirDialog(parent, base);
                 setSparkLibPath(file);
 //                return;
             }

@@ -56,7 +56,7 @@ public class SparkModel {
      *
      * @param name
      */
-    public static void init(File basePath, String name) throws Exception {
+    public static void init(File logoPath, String name) throws Exception {
 //		if (theModel != null) {
 //			throw new Error("Model is already created");
 
@@ -64,10 +64,10 @@ public class SparkModel {
         theModel = new SparkModel(name);
 
         // Load all predefined types
-        final String path = basePath.getPath();
-        TypeLoader.load(Paths.get(path, "logo", "SparkTypes.xml").toAbsolutePath().toString(), theModel.sparkTypes);
+        final String path = logoPath.getPath();
+        TypeLoader.load(Paths.get(path, "SparkTypes.xml").toAbsolutePath().toString(), theModel.sparkTypes);
         // Load all predefined commands
-        Loader.load(Paths.get(path, "logo", "commands.xml").toAbsolutePath().toString());
+        Loader.load(Paths.get(path, "commands.xml").toAbsolutePath().toString());
     }
 
 

@@ -1,3 +1,10 @@
+# SPARK 1.4.0
+
+### SPARK Manager
+*[feature]* Save configuration files in the SPARK home directory (not in the current working directory).
+
+-------------------------
+
 # SPARK 1.3.0
 
 ### General
@@ -16,7 +23,6 @@ can be changed in options.
 ### GUI
 *[bug fix]* Fixed a missing background color of color selection buttons in
 the data layers dialog and in the agent style dialog. 
-
 
 -------------------------
 
