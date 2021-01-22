@@ -12,6 +12,8 @@
 !gradle-wrapper.jar
 
 # Spark
+config.xml
+spark-config.xml
 **/output/
 !src/**/output
 

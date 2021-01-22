@@ -38,12 +38,14 @@ public class MainFrame extends JFrame implements ActionListener {
 
     private final OptionsDialog options;
 
+    /* Program directory (the parent directory of the running jar file) */
+    private final File programDirectory;
+
     /* Current directory */
-    private File currentDirectory = new File(".");
+    private File currentDirectory;
 
     /* Recent project files */
-    private final ArrayList<File> recentProjects = new ArrayList<File>(
-            MAX_RECENT_PROJECTS);
+    private final ArrayList<File> recentProjects = new ArrayList<>(MAX_RECENT_PROJECTS);
 
     private JMenu fileMenu;
     /* Indicates where recent projects appear in the file menu */
@@ -52,9 +54,24 @@ public class MainFrame extends JFrame implements ActionListener {
     /* Project instance */
     private final Project project;
 
-    public MainFrame() throws Exception {
+    public MainFrame() {
         super("SPARK-PL");
         project = new Project();
+
+        File path;
+        try {
+            path = new File(MainFrame.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParentFile();
+        }
+        catch (URISyntaxException ex) {
+            path = new File(".");
+        }
+
+        if ("lib".equals(path.getName())) {
+            programDirectory = path.getParentFile();
+        } else {
+            programDirectory = path;
+        }
+        currentDirectory = programDirectory;
 
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
@@ -251,7 +268,7 @@ public class MainFrame extends JFrame implements ActionListener {
         try {
             DocumentBuilder db = DocumentBuilderFactory.newInstance()
                     .newDocumentBuilder();
-            doc = db.parse("config.xml");
+            doc = db.parse(new File(programDirectory, "config.xml"));
         } catch (Exception e) {
             // No configure file or other problems
             setDefaultLibPath();
@@ -295,7 +312,7 @@ public class MainFrame extends JFrame implements ActionListener {
      * Saves a configuration file
      */
     private void saveConfigFile() throws Exception {
-        PrintStream out = new PrintStream(new File("config.xml"));
+        PrintStream out = new PrintStream(new File(programDirectory, "config.xml"));
 
         out.println("<config>");
 
