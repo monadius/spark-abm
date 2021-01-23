@@ -237,7 +237,6 @@ public class ModelFileWriter {
     public void addMainFrame() {
         // Manage windows first
         Node windowsNode = getChildByTagName(interfaceNode, "windows");
-        removeChildren(windowsNode, "#text");
         ArrayList<Node> windows = getChildrenByTagName(windowsNode, "window");
         String location = null;
 
