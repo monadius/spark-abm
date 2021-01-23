@@ -45,7 +45,7 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
     /* Data to be rendered */
     private DataRow data;
 
-    private Object dataLock = new Object();
+    private final Object dataLock = new Object();
 
     /* Data filter */
     private final DataFilter dataFilter;
@@ -126,8 +126,8 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
      * Default protected constructor
      */
     protected Render(int interval) {
-        dataLayerStyles = new HashMap<String, DataLayerStyle>();
-        agentStyles = new ArrayList<AgentStyle>();
+        dataLayerStyles = new HashMap<>();
+        agentStyles = new ArrayList<>();
         dataFilter = new DataFilter(this, "render");
         dataFilter.setInterval(interval);
 
@@ -151,8 +151,6 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
 
     /**
      * Method should be implemented by any specific render
-     *
-     * @return
      */
     public abstract Canvas getCanvas();
 
@@ -229,8 +227,6 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
 
     /**
      * Saves a snapshot of the current data to an automatically generated file
-     *
-     * @param prefix
      */
     public synchronized final void takeSnapshot(final String prefix) {
         takeSnapshot(data, prefix);
@@ -248,17 +244,17 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
                 if (row == null)
                     return;
 
-                String name = (prefix != null ? prefix : "");
-                name += (renderName != null && renderName != "") ? renderName : "pic";
-                name += "-";
+                StringBuilder name = new StringBuilder((prefix != null ? prefix : ""));
+                name.append(renderName != null && !renderName.isEmpty() ? renderName : "pic");
+                name.append("-");
 
                 String time = String.valueOf(row.getTime().getTick());
                 for (int i = time.length(); i < 4; i++)
-                    name += "0";
+                    name.append("0");
 
-                name += time;
+                name.append(time);
 
-                saveSnapshot(dir, name, row);
+                saveSnapshot(dir, name.toString(), row);
             }
         });
     }
@@ -299,8 +295,6 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
 
     /**
      * Returns the data filter associated with the renderer
-     *
-     * @return
      */
     public void register(DataReceiver receiver) {
         receiver.addDataConsumer(dataFilter);
@@ -328,8 +322,6 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
 
     /**
      * Returns saveSnapshotFlag
-     *
-     * @return
      */
     public boolean getSaveSnapshotsFlag() {
         return saveSnapshotsFlag;
@@ -338,8 +330,6 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
 
     /**
      * Sets the prefix for snapshot file names
-     *
-     * @param name
      */
     public void setSnapshotNamePrefix(String name) {
         snapshotNamePrefix = name;
@@ -348,8 +338,6 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
 
     /**
      * Returns the prefix for snapshot file names
-     *
-     * @return
      */
     public String getSnapshotNamePrefix() {
         return snapshotNamePrefix;
@@ -358,8 +346,6 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
 
     /**
      * Sets render's name
-     *
-     * @param name
      */
     public void setName(String name) {
         renderName = name;
@@ -368,8 +354,6 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
 
     /**
      * Returns render's name
-     *
-     * @return
      */
     public String getName() {
         return renderName;
@@ -378,8 +362,6 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
 
     /**
      * Returns all agent styles in this renderer
-     *
-     * @return
      */
     public ArrayList<AgentStyle> getAgentStyles() {
         return agentStyles;
@@ -388,8 +370,6 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
 
     /**
      * Returns the active space style
-     *
-     * @return
      */
     public SpaceStyle getSelectedSpaceStyle() {
         return selectedSpace;
@@ -398,8 +378,6 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
 
     /**
      * Returns all data layer styles in this renderer
-     *
-     * @return
      */
     public HashMap<String, DataLayerStyle> getDataLayerStyles() {
         return dataLayerStyles;
@@ -408,8 +386,6 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
 
     /**
      * Returns selected data layer
-     *
-     * @return
      */
     public DataLayerGraphics getCurrentDataLayerGraphics() {
         return selectedDataLayer;
@@ -422,34 +398,34 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
     public void setSpace(SpaceStyle style) {
         if (style == null) {
             selectedSpace = null;
-            setDataLayerStyles(globalDataLayerStyles);
         } else {
-            if (selectedSpace != null)
+            if (selectedSpace != null) {
                 reshapeRequested = true;
+            }
             selectedSpace = style;
-            setDataLayerStyles(globalDataLayerStyles);
         }
+        setDataLayerStyles(globalDataLayerStyles);
     }
 
 
     /**
      * Returns names of spaces available for the render
-     *
-     * @return
      */
     public String[] getSpaceNames() {
-        if (data == null)
-            return null;
+        if (data == null) return null;
 
         DataObject_Spaces spaces = data.getSpaces();
+        if (spaces == null) return null;
         String[] names = spaces.getNames();
 
-        if (spaces.getTotalNumber() == names.length)
+        if (spaces.getTotalNumber() == names.length) {
             return names;
+        }
 
         names = new String[spaces.getTotalNumber()];
-        for (int i = 0; i < spaces.getTotalNumber(); i++)
+        for (int i = 0; i < spaces.getTotalNumber(); i++) {
             names[i] = spaces.getNames()[i];
+        }
 
         return names;
     }
@@ -457,8 +433,6 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
 
     /**
      * Sets swapXY flag for the selected space
-     *
-     * @param flag
      */
     public void setSwapXYFlag(boolean flag) {
         if (selectedSpace != null) {
@@ -478,8 +452,6 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
 
     /**
      * Adds a new agent style
-     *
-     * @param style
      */
     public void addAgentStyle(AgentStyle style) {
         agentStyles.add(style);
@@ -488,8 +460,6 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
 
     /**
      * Sets a reference to all data layer styles in a model
-     *
-     * @param globalStyles
      */
     public void setGlobalDataLayerStyles(HashMap<String, DataLayerStyle> globalStyles) {
         globalDataLayerStyles = globalStyles;
@@ -498,8 +468,6 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
 
     /**
      * Sets data layer styles
-     *
-     * @param styles
      */
     private void setDataLayerStyles(HashMap<String, DataLayerStyle> styles) {
         dataLayerStyles.clear();
@@ -507,8 +475,7 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
 
         for (String name : styles.keySet()) {
             DataLayerStyle style = styles.get(name);
-            if (style == null)
-                continue;
+            if (style == null) continue;
 
             dataLayerStyles.put(name, style);
         }
@@ -537,19 +504,14 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
 
     /**
      * Changes the priority of agent styles
-     *
-     * @param style1
-     * @param style2
      */
     public void swapAgentStyles(AgentStyle style1, AgentStyle style2) {
-        if (style1 == style2)
-            return;
+        if (style1 == style2) return;
 
         int i1 = agentStyles.indexOf(style1);
         int i2 = agentStyles.indexOf(style2);
 
-        if (i1 == -1 || i2 == -1)
-            return;
+        if (i1 == -1 || i2 == -1) return;
 
         agentStyles.set(i1, style2);
         agentStyles.set(i2, style1);
@@ -627,12 +589,11 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
             // Iterate over all components
             for (int i = 0; i < nodes.getLength(); i++) {
                 node = nodes.item(i);
-                String nodeName = node.getNodeName().intern();
-
+                String nodeName = node.getNodeName();
                 String name = XmlDocUtils.getValue(node, "name", null);
 
                 // space style
-                if (nodeName == "spacestyle") {
+                if (nodeName.equals("spacestyle")) {
                     SpaceStyle spaceStyle = SpaceStyle.load(node);
 
                     if (spaceStyle.selected)
@@ -640,7 +601,7 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
 
                 }
                 // data layer style
-                else if (nodeName == "datalayerstyle") {
+                else if (nodeName.equals("datalayerstyle")) {
                     selectedDataLayer = DataLayerGraphics.loadXML(node, dataLayerStyles);
                 }
                 // agent style
@@ -658,8 +619,8 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
 
         Collections.sort(agentStyles);
 
-        for (int j = 0; j < agentStyles.size(); j++) {
-            render.addAgentStyle(agentStyles.get(j));
+        for (AgentStyle agentStyle : agentStyles) {
+            render.addAgentStyle(agentStyle);
         }
 
         render.setGlobalDataLayerStyles(dataLayerStyles);
@@ -679,9 +640,6 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
 
     /**
      * Writes out style information into an xml file
-     *
-     * @param doc
-     * @param parent
      */
     public synchronized void writeXML(Document doc, Node parent, File modelPath) {
         if (doc == null || parent == null)
@@ -721,8 +679,7 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
             String name = agentStyle.name;
 
             // Ignore styles without name
-            if (name == null)
-                continue;
+            if (name == null) continue;
 
             Node agentNode = agentStyle.createNode(doc, i, modelPath);
 
@@ -734,9 +691,6 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
 
     /**
      * Controls the camera position using the keyboard events
-     *
-     * @param code
-     * @param symbol
      */
     private void controlCamera(int code, char symbol) {
         boolean flag = false;
@@ -815,9 +769,6 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
 
     /**
      * Creates an inspector for the given coordinates
-     *
-     * @param x
-     * @param y
      */
     private void createInspector(int x, int y) {
         if (inspectionPanel == null) {
@@ -895,8 +846,6 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
 
     /**
      * Mouse listeners
-     *
-     * @param e
      */
     private int prevMouseX, prevMouseY;
     private boolean rightButtonPressed, leftButtonPressed;
@@ -918,7 +867,7 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
             rightButtonPressed = true;
         }
 
-        // Swith the control state
+        // Switch the control state
         switch (controlState) {
             case CONTROL_STATE_SELECT:
                 // TODO: implement
