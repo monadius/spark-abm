@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.sparkabm.gui.gui.menu.ISparkMenuListener;
 import org.sparkabm.gui.gui.menu.SparkMenu;
 import org.sparkabm.gui.gui.menu.SparkMenuFactory;
 import org.sparkabm.gui.gui.menu.SparkMenuItem;

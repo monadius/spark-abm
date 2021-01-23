@@ -18,13 +18,11 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.media.opengl.GL;
-
+import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.util.texture.Texture;
+import com.jogamp.opengl.util.texture.TextureIO;
 import org.sparkabm.math.Vector4d;
 import org.sparkabm.gui.render.font.BitmapCharacter.Kerning;
-
-import com.sun.opengl.util.texture.Texture;
-import com.sun.opengl.util.texture.TextureIO;
 
 /**
  * Describes a bitmap font
@@ -38,25 +36,20 @@ public class BitmapFont {
         Left, Center, Right
     }
 
-    ;
-
-    private BitmapCharacterSet m_charSet;
-    private ArrayList<FontQuad> m_quads;
-    private ArrayList<StringBlock> m_strings;
-    private File m_fntFile;
+    private final BitmapCharacterSet m_charSet;
+    private final ArrayList<FontQuad> m_quads;
+    private final ArrayList<StringBlock> m_strings;
+    private final File m_fntFile;
     private File m_textureFile;
     private Texture m_texture = null;
-    // private VertexBuffer m_vb = null;
-//	private final static int MaxVertices = 4096;
-    private int m_nextChar;
 
 
     /**
      * Constructor
      */
     public BitmapFont(File fntFile) throws Exception {
-        m_quads = new ArrayList<FontQuad>();
-        m_strings = new ArrayList<StringBlock>();
+        m_quads = new ArrayList<>();
+        m_strings = new ArrayList<>();
         m_fntFile = fntFile;
         m_charSet = new BitmapCharacterSet();
         ParseFNTFile();
@@ -86,7 +79,7 @@ public class BitmapFont {
 
             // Split the line into tokens
             String[] tokens = line.split("[ =]");
-            if (tokens == null || tokens.length == 0)
+            if (tokens.length == 0)
                 continue;
 
             for (int i = 0; i < tokens.length; i++) {
@@ -97,11 +90,11 @@ public class BitmapFont {
             String head = tokens[0];
 
             // Info
-            if (head == "info") {
+            if (head.equals("info")) {
                 for (int i = 1; i < tokens.length; i++) {
                     String t = tokens[i];
 
-                    if (t == "size") {
+                    if (t.equals("size")) {
                         m_charSet.RenderedSize = Integer.parseInt(tokens[i + 1]);
                     }
                 }
@@ -110,18 +103,23 @@ public class BitmapFont {
             }
 
             // Common
-            if (head == "common") {
+            if (head.equals("common")) {
                 for (int i = 1; i < tokens.length; i++) {
                     String t = tokens[i];
 
-                    if (t == "lineHeight") {
-                        m_charSet.LineHeight = Integer.parseInt(tokens[i + 1]);
-                    } else if (t == "base") {
-                        m_charSet.Base = Integer.parseInt(tokens[i + 1]);
-                    } else if (t == "scaleW") {
-                        m_charSet.Width = Integer.parseInt(tokens[i + 1]);
-                    } else if (t == "scaleH") {
-                        m_charSet.Height = Integer.parseInt(tokens[i + 1]);
+                    switch (t) {
+                        case "lineHeight":
+                            m_charSet.LineHeight = Integer.parseInt(tokens[i + 1]);
+                            break;
+                        case "base":
+                            m_charSet.Base = Integer.parseInt(tokens[i + 1]);
+                            break;
+                        case "scaleW":
+                            m_charSet.Width = Integer.parseInt(tokens[i + 1]);
+                            break;
+                        case "scaleH":
+                            m_charSet.Height = Integer.parseInt(tokens[i + 1]);
+                            break;
                     }
                 }
 
@@ -129,15 +127,15 @@ public class BitmapFont {
             }
 
             // Page
-            if (head == "page") {
+            if (head.equals("page")) {
                 for (int i = 1; i < tokens.length; i++) {
                     String t = tokens[i];
 
-                    if (t == "id") {
+                    if (t.equals("id")) {
                         int index = Integer.parseInt(tokens[i + 1]);
                         if (index != 0)
                             throw new Exception("Page 0 is supported only");
-                    } else if (t == "file") {
+                    } else if (t.equals("file")) {
                         String fname = tokens[i + 1];
                         int len = fname.length();
                         // Remove quotes
@@ -152,54 +150,67 @@ public class BitmapFont {
             }
 
             // Char
-            if (head == "char") {
+            if (head.equals("char")) {
                 // New BitmapCharacter
                 int index = 0;
                 for (int i = 1; i < tokens.length; i++) {
                     String t = tokens[i];
 
-                    if (t == "id") {
-                        index = Integer.parseInt(tokens[i + 1]);
-                    } else if (t == "x") {
-                        m_charSet.Characters[index].X = Integer
-                                .parseInt(tokens[i + 1]);
-                    } else if (t == "y") {
-                        m_charSet.Characters[index].Y = Integer
-                                .parseInt(tokens[i + 1]);
-                    } else if (t == "width") {
-                        m_charSet.Characters[index].Width = Integer
-                                .parseInt(tokens[i + 1]);
-                    } else if (t == "height") {
-                        m_charSet.Characters[index].Height = Integer
-                                .parseInt(tokens[i + 1]);
-                    } else if (t == "xoffset") {
-                        m_charSet.Characters[index].XOffset = Integer
-                                .parseInt(tokens[i + 1]);
-                    } else if (t == "yoffset") {
-                        m_charSet.Characters[index].YOffset = Integer
-                                .parseInt(tokens[i + 1]);
-                    } else if (t == "xadvance") {
-                        m_charSet.Characters[index].XAdvance = Integer
-                                .parseInt(tokens[i + 1]);
+                    switch (t) {
+                        case "id":
+                            index = Integer.parseInt(tokens[i + 1]);
+                            break;
+                        case "x":
+                            m_charSet.Characters[index].X = Integer
+                                    .parseInt(tokens[i + 1]);
+                            break;
+                        case "y":
+                            m_charSet.Characters[index].Y = Integer
+                                    .parseInt(tokens[i + 1]);
+                            break;
+                        case "width":
+                            m_charSet.Characters[index].Width = Integer
+                                    .parseInt(tokens[i + 1]);
+                            break;
+                        case "height":
+                            m_charSet.Characters[index].Height = Integer
+                                    .parseInt(tokens[i + 1]);
+                            break;
+                        case "xoffset":
+                            m_charSet.Characters[index].XOffset = Integer
+                                    .parseInt(tokens[i + 1]);
+                            break;
+                        case "yoffset":
+                            m_charSet.Characters[index].YOffset = Integer
+                                    .parseInt(tokens[i + 1]);
+                            break;
+                        case "xadvance":
+                            m_charSet.Characters[index].XAdvance = Integer
+                                    .parseInt(tokens[i + 1]);
+                            break;
                     }
                 }
 
                 continue;
             }
 
-            if (head == "kerning") {
+            if (head.equals("kerning")) {
                 // Build the kerning list
                 int index = 0;
                 BitmapCharacter.Kerning k = new BitmapCharacter.Kerning();
                 for (int i = 1; i < tokens.length; i++) {
                     String t = tokens[i];
 
-                    if (t == "first") {
-                        index = Integer.parseInt(tokens[i + 1]);
-                    } else if (t == "second") {
-                        k.Second = Integer.parseInt(tokens[i + 1]);
-                    } else if (t == "amount") {
-                        k.Amount = Integer.parseInt(tokens[i + 1]);
+                    switch (t) {
+                        case "first":
+                            index = Integer.parseInt(tokens[i + 1]);
+                            break;
+                        case "second":
+                            k.Second = Integer.parseInt(tokens[i + 1]);
+                            break;
+                        case "amount":
+                            k.Amount = Integer.parseInt(tokens[i + 1]);
+                            break;
                     }
                 }
 
@@ -213,16 +224,16 @@ public class BitmapFont {
 
     // / <summary>Call when the device is created.</summary>
     // / <param name="device">D3D device.</param>
-    public void init() throws Exception {
+    public void init(GL2 gl) throws Exception {
         m_texture = TextureIO.newTexture(m_textureFile, false);
-        m_texture.setTexParameteri(GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
-        m_texture.setTexParameteri(GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR);
+        m_texture.setTexParameteri(gl, GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_LINEAR);
+        m_texture.setTexParameteri(gl, GL2.GL_TEXTURE_MIN_FILTER, GL2.GL_LINEAR);
     }
 
     // / <summary>Call when the device is destroyed.</summary>
-    public void dispose() {
+    public void dispose(GL2 gl) {
         if (m_texture != null) {
-            m_texture.dispose();
+            m_texture.destroy(gl);
         }
     }
 
@@ -257,18 +268,18 @@ public class BitmapFont {
     }
 
 
-    public void testRender(char ch, GL gl) {
+    public void testRender(char ch, GL2 gl) {
         BitmapCharacter c = m_charSet.Characters[ch];
-        gl.glTexEnvi(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, GL.GL_MODULATE);
-        gl.glEnable(GL.GL_TEXTURE_2D);
-        m_texture.bind();
+        gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_MODULATE);
+        gl.glEnable(GL2.GL_TEXTURE_2D);
+        m_texture.bind(gl);
 
         float u0 = c.X / (float) m_charSet.Width;
         float v0 = c.Y / (float) m_charSet.Height;
         float u1 = (c.X + c.Width) / (float) m_charSet.Width;
         float v1 = (c.Y + c.Height) / (float) m_charSet.Height;
 
-        gl.glBegin(GL.GL_TRIANGLES);
+        gl.glBegin(GL2.GL_TRIANGLES);
         // 0
         gl.glTexCoord2f(u0, v0);
         gl.glVertex2f(-1, 1);
@@ -294,30 +305,30 @@ public class BitmapFont {
         gl.glVertex2f(1, -1);
         gl.glEnd();
 
-        gl.glDisable(GL.GL_TEXTURE_2D);
+        gl.glDisable(GL2.GL_TEXTURE_2D);
     }
 
 
     // / <summary>Renders the strings.</summary>
     // / <param name="device">D3D Device</param>
-    public void Render(GL gl) {
+    public void Render(GL2 gl) {
         if (m_texture == null) {
             try {
-                init();
+                init(gl);
             } catch (Exception e) {
                 logger.log(Level.SEVERE, "exception", e);
                 return;
             }
         }
 
-        gl.glTexEnvi(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, GL.GL_MODULATE);
-        gl.glEnable(GL.GL_TEXTURE_2D);
-        m_texture.bind();
+        gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_MODULATE);
+        gl.glEnable(GL2.GL_TEXTURE_2D);
+        m_texture.bind(gl);
 
-        gl.glEnable(GL.GL_BLEND);
-        gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
+        gl.glEnable(GL2.GL_BLEND);
+        gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
 
-        gl.glBegin(GL.GL_TRIANGLES);
+        gl.glBegin(GL2.GL_TRIANGLES);
         for (FontQuad quad : m_quads) {
             Vector4d color = quad.m_vertices[0].ColorValue;
             gl.glColor4d(color.x, color.y, color.z, color.a);
@@ -330,8 +341,8 @@ public class BitmapFont {
         }
         gl.glEnd();
 
-        gl.glDisable(GL.GL_BLEND);
-        gl.glDisable(GL.GL_TEXTURE_2D);
+        gl.glDisable(GL2.GL_BLEND);
+        gl.glDisable(GL2.GL_TEXTURE_2D);
 
 
         /*
@@ -387,7 +398,7 @@ public class BitmapFont {
             throw new RuntimeException("String block index out of range.");
         }
 
-        ArrayList<FontQuad> quads = new ArrayList<FontQuad>();
+        ArrayList<FontQuad> quads = new ArrayList<>();
         StringBlock b = m_strings.get(index);
         String text = b.Text;
         float x = b.TextBox.x;
@@ -419,6 +430,9 @@ public class BitmapFont {
             }
 
             // Newline
+            // private VertexBuffer m_vb = null;
+            //	private final static int MaxVertices = 4096;
+            int m_nextChar;
             if (text.charAt(i) == '\n' || text.charAt(i) == '\r'
                     || (lineWidth + xAdvance >= maxWidth)) {
                 if (alignment == Align.Left) {
@@ -441,9 +455,7 @@ public class BitmapFont {
                     // We have to move the last word down one line
                     char newLineLastChar = 0;
                     lineWidth = 0f;
-                    for (int j = 0; j < quads.size(); j++) {
-                        FontQuad quad = quads.get(j);
-
+                    for (FontQuad quad : quads) {
                         if (alignment == Align.Left) {
                             // Move current word to the left side of the text
                             // box
@@ -537,17 +549,17 @@ public class BitmapFont {
                     // Make post-newline justifications
                     if (alignment == Align.Center || alignment == Align.Right) {
                         // Justify the new line
-                        for (int k = 0; k < quads.size(); k++) {
-                            if (quads.get(k).getLineNumber() == lineNumber + 1) {
-                                quads.get(k).setX(quads.get(k).getX() - offset);
+                        for (FontQuad quad : quads) {
+                            if (quad.getLineNumber() == lineNumber + 1) {
+                                quad.setX(quad.getX() - offset);
                             }
                         }
                         x -= offset;
 
                         // Rejustify the line it was moved from
-                        for (int k = 0; k < quads.size(); k++) {
-                            if (quads.get(k).getLineNumber() == lineNumber) {
-                                quads.get(k).setX(quads.get(k).getX() + offset);
+                        for (FontQuad quad : quads) {
+                            if (quad.getLineNumber() == lineNumber) {
+                                quad.setX(quad.getX() + offset);
                             }
                         }
                     }
@@ -649,9 +661,9 @@ public class BitmapFont {
                 if (b.Kerning) {
                     offset += kernAmount / 2f;
                 }
-                for (int j = 0; j < quads.size(); j++) {
-                    if (quads.get(j).getLineNumber() == lineNumber) {
-                        quads.get(j).setX(quads.get(j).getX() - offset);
+                for (FontQuad quad : quads) {
+                    if (quad.getLineNumber() == lineNumber) {
+                        quad.setX(quad.getX() - offset);
                     }
                 }
                 x -= offset;
@@ -662,10 +674,10 @@ public class BitmapFont {
                 if (b.Kerning) {
                     offset += kernAmount;
                 }
-                for (int j = 0; j < quads.size(); j++) {
-                    if (quads.get(j).getLineNumber() == lineNumber) {
+                for (FontQuad quad : quads) {
+                    if (quad.getLineNumber() == lineNumber) {
                         offset = xAdvance;
-                        quads.get(j).setX(quads.get(j).getX() - xAdvance);
+                        quad.setX(quad.getX() - xAdvance);
                     }
                 }
                 x -= offset;

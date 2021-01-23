@@ -5,8 +5,7 @@ import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.media.opengl.GL;
-
+import com.jogamp.opengl.GL2;
 import org.sparkabm.math.Vector4d;
 import org.sparkabm.gui.render.font.BitmapFont;
 import org.sparkabm.gui.render.images.TileManager;
@@ -29,9 +28,9 @@ public class AgentStyle implements Comparable<AgentStyle> {
 
     /* Basic options */
 
-    public boolean transparent = false;
-    public boolean visible = true;
-    public boolean border = true;
+    public boolean transparent;
+    public boolean visible;
+    public boolean border;
     public boolean label = false;
 
     /* Advanced options */
@@ -137,7 +136,6 @@ public class AgentStyle implements Comparable<AgentStyle> {
     private static final String ATTR_TILE_MANAGER = "tile-manager";
 
 
-    /***************************************/
     /**
      * Constructor
      */
@@ -194,10 +192,10 @@ public class AgentStyle implements Comparable<AgentStyle> {
     }
 
     public static final RenderProperty[] textureEnvs = new RenderProperty[]{
-            new RenderProperty("GL_MODULATE", GL.GL_MODULATE),
-            new RenderProperty("GL_REPLACE", GL.GL_REPLACE),
-            new RenderProperty("GL_BLEND", GL.GL_BLEND),
-            new RenderProperty("GL_DECAL", GL.GL_DECAL)
+            new RenderProperty("GL_MODULATE", GL2.GL_MODULATE),
+            new RenderProperty("GL_REPLACE", GL2.GL_REPLACE),
+            new RenderProperty("GL_BLEND", GL2.GL_BLEND),
+            new RenderProperty("GL_DECAL", GL2.GL_DECAL)
     };
 
     public int getTextureEnv() {
@@ -221,37 +219,37 @@ public class AgentStyle implements Comparable<AgentStyle> {
             // For the first value (index = 0) the alpha test is turned off
             new RenderProperty("NONE", -1),
             // GL_ALWAYS equivalent to turned off alpha function
-            new RenderProperty("GL_ALWAYS", GL.GL_ALWAYS),
-            new RenderProperty("GL_NEVER", GL.GL_NEVER),
-            new RenderProperty("GL_LESS", GL.GL_LESS),
-            new RenderProperty("GL_GREATER", GL.GL_GREATER),
-            new RenderProperty("GL_EQUAL", GL.GL_EQUAL),
-            new RenderProperty("GL_LEQUAL", GL.GL_LEQUAL),
-            new RenderProperty("GL_GEQUAL", GL.GL_GEQUAL),
-            new RenderProperty("GL_NOTEQUAL", GL.GL_NOTEQUAL)
+            new RenderProperty("GL_ALWAYS", GL2.GL_ALWAYS),
+            new RenderProperty("GL_NEVER", GL2.GL_NEVER),
+            new RenderProperty("GL_LESS", GL2.GL_LESS),
+            new RenderProperty("GL_GREATER", GL2.GL_GREATER),
+            new RenderProperty("GL_EQUAL", GL2.GL_EQUAL),
+            new RenderProperty("GL_LEQUAL", GL2.GL_LEQUAL),
+            new RenderProperty("GL_GEQUAL", GL2.GL_GEQUAL),
+            new RenderProperty("GL_NOTEQUAL", GL2.GL_NOTEQUAL)
     };
 
     public static final RenderProperty[] stencilFuncs = new RenderProperty[]{
             // For the first value (index = 0) the stencil test is turned off
             new RenderProperty("NONE", -1),
             // GL_ALWAYS equivalent to turned off alpha function
-            new RenderProperty("GL_ALWAYS", GL.GL_ALWAYS),
-            new RenderProperty("GL_NEVER", GL.GL_NEVER),
-            new RenderProperty("GL_LESS", GL.GL_LESS),
-            new RenderProperty("GL_GREATER", GL.GL_GREATER),
-            new RenderProperty("GL_EQUAL", GL.GL_EQUAL),
-            new RenderProperty("GL_LEQUAL", GL.GL_LEQUAL),
-            new RenderProperty("GL_GEQUAL", GL.GL_GEQUAL),
-            new RenderProperty("GL_NOTEQUAL", GL.GL_NOTEQUAL)
+            new RenderProperty("GL_ALWAYS", GL2.GL_ALWAYS),
+            new RenderProperty("GL_NEVER", GL2.GL_NEVER),
+            new RenderProperty("GL_LESS", GL2.GL_LESS),
+            new RenderProperty("GL_GREATER", GL2.GL_GREATER),
+            new RenderProperty("GL_EQUAL", GL2.GL_EQUAL),
+            new RenderProperty("GL_LEQUAL", GL2.GL_LEQUAL),
+            new RenderProperty("GL_GEQUAL", GL2.GL_GEQUAL),
+            new RenderProperty("GL_NOTEQUAL", GL2.GL_NOTEQUAL)
     };
 
     public static final RenderProperty[] stencilOps = new RenderProperty[]{
-            new RenderProperty("GL_KEEP", GL.GL_KEEP),
-            new RenderProperty("GL_ZERO", GL.GL_ZERO),
-            new RenderProperty("GL_REPLACE", GL.GL_REPLACE),
-            new RenderProperty("GL_INCR", GL.GL_INCR),
-            new RenderProperty("GL_DECR", GL.GL_DECR),
-            new RenderProperty("GL_INVERT", GL.GL_INVERT),
+            new RenderProperty("GL_KEEP", GL2.GL_KEEP),
+            new RenderProperty("GL_ZERO", GL2.GL_ZERO),
+            new RenderProperty("GL_REPLACE", GL2.GL_REPLACE),
+            new RenderProperty("GL_INCR", GL2.GL_INCR),
+            new RenderProperty("GL_DECR", GL2.GL_DECR),
+            new RenderProperty("GL_INVERT", GL2.GL_INVERT),
     };
 
     // Transparency
@@ -457,13 +455,11 @@ public class AgentStyle implements Comparable<AgentStyle> {
 
     /**
      * Returns a font for printing labels
-     *
-     * @return
      */
     public Font getFont() {
         if (font == null) {
             if (fontFamily == null)
-                font = new Font("Arial", 0, 10);
+                font = new Font("Arial", Font.PLAIN, 10);
             else
                 font = new Font(fontFamily, fontStyle, fontSize);
         }
@@ -502,9 +498,6 @@ public class AgentStyle implements Comparable<AgentStyle> {
 
     /**
      * Sets the x and y offsets of a label
-     *
-     * @param dx
-     * @param dy
      */
     public void setLabelOffset(float dx, float dy) {
         this.dxLabel = dx;
@@ -575,15 +568,15 @@ public class AgentStyle implements Comparable<AgentStyle> {
 
     public static final RenderProperty[] srcBlends = new RenderProperty[]{
             new RenderProperty("NONE", -1),
-            new RenderProperty("GL_ZERO", GL.GL_ZERO),
-            new RenderProperty("GL_ONE", GL.GL_ONE),
-            new RenderProperty("GL_DST_COLOR", GL.GL_DST_COLOR),
-            new RenderProperty("GL_ONE_MINUS_DST_COLOR", GL.GL_ONE_MINUS_DST_COLOR),
-            new RenderProperty("GL_SRC_ALPHA", GL.GL_SRC_ALPHA),
-            new RenderProperty("GL_ONE_MINUS_SRC_ALPHA", GL.GL_ONE_MINUS_SRC_ALPHA),
-            new RenderProperty("GL_DST_ALPHA", GL.GL_DST_ALPHA),
-            new RenderProperty("GL_ONE_MINUS_DST_ALPHA", GL.GL_ONE_MINUS_DST_ALPHA),
-            new RenderProperty("GL_SRC_ALPHA_SATURATE", GL.GL_SRC_ALPHA_SATURATE)
+            new RenderProperty("GL_ZERO", GL2.GL_ZERO),
+            new RenderProperty("GL_ONE", GL2.GL_ONE),
+            new RenderProperty("GL_DST_COLOR", GL2.GL_DST_COLOR),
+            new RenderProperty("GL_ONE_MINUS_DST_COLOR", GL2.GL_ONE_MINUS_DST_COLOR),
+            new RenderProperty("GL_SRC_ALPHA", GL2.GL_SRC_ALPHA),
+            new RenderProperty("GL_ONE_MINUS_SRC_ALPHA", GL2.GL_ONE_MINUS_SRC_ALPHA),
+            new RenderProperty("GL_DST_ALPHA", GL2.GL_DST_ALPHA),
+            new RenderProperty("GL_ONE_MINUS_DST_ALPHA", GL2.GL_ONE_MINUS_DST_ALPHA),
+            new RenderProperty("GL_SRC_ALPHA_SATURATE", GL2.GL_SRC_ALPHA_SATURATE)
     };
 
     public int getSrcBlend() {
@@ -601,14 +594,14 @@ public class AgentStyle implements Comparable<AgentStyle> {
 
     public static final RenderProperty[] dstBlends = new RenderProperty[]{
             new RenderProperty("NONE", -1),
-            new RenderProperty("GL_ZERO", GL.GL_ZERO),
-            new RenderProperty("GL_ONE", GL.GL_ONE),
-            new RenderProperty("GL_SRC_COLOR", GL.GL_SRC_COLOR),
-            new RenderProperty("GL_ONE_MINUS_SRC_COLOR", GL.GL_ONE_MINUS_SRC_COLOR),
-            new RenderProperty("GL_SRC_ALPHA", GL.GL_SRC_ALPHA),
-            new RenderProperty("GL_ONE_MINUS_SRC_ALPHA", GL.GL_ONE_MINUS_SRC_ALPHA),
-            new RenderProperty("GL_DST_ALPHA", GL.GL_DST_ALPHA),
-            new RenderProperty("GL_ONE_MINUS_DST_ALPHA", GL.GL_ONE_MINUS_DST_ALPHA),
+            new RenderProperty("GL_ZERO", GL2.GL_ZERO),
+            new RenderProperty("GL_ONE", GL2.GL_ONE),
+            new RenderProperty("GL_SRC_COLOR", GL2.GL_SRC_COLOR),
+            new RenderProperty("GL_ONE_MINUS_SRC_COLOR", GL2.GL_ONE_MINUS_SRC_COLOR),
+            new RenderProperty("GL_SRC_ALPHA", GL2.GL_SRC_ALPHA),
+            new RenderProperty("GL_ONE_MINUS_SRC_ALPHA", GL2.GL_ONE_MINUS_SRC_ALPHA),
+            new RenderProperty("GL_DST_ALPHA", GL2.GL_DST_ALPHA),
+            new RenderProperty("GL_ONE_MINUS_DST_ALPHA", GL2.GL_ONE_MINUS_DST_ALPHA),
     };
 
     public int getDstBlend() {
@@ -642,8 +635,8 @@ public class AgentStyle implements Comparable<AgentStyle> {
             try {
                 tileManager = TileManagerInfo.loadFromXml(tileFile);
             } catch (Exception e) {
-                tileFile = null;
                 logger.log(Level.SEVERE, "File loading problem: " + tileFile, e);
+                tileFile = null;
                 return null;
             }
 
@@ -671,10 +664,6 @@ public class AgentStyle implements Comparable<AgentStyle> {
 
     /**
      * Creates an xml node for this agent style
-     *
-     * @param doc
-     * @param position
-     * @return
      */
     public Node createNode(Document doc, int position, File modelPath) {
         Node agentNode = doc.createElement("agentstyle");
@@ -760,7 +749,6 @@ public class AgentStyle implements Comparable<AgentStyle> {
     /**
      * Loads the agent style configuration from an xml file
      *
-     * @param node
      * @param modelPath path to the model xml file
      */
     public void load(Node node, File modelPath) {

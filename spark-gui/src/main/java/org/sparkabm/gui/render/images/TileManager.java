@@ -1,14 +1,12 @@
 package org.sparkabm.gui.render.images;
 
+import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.util.texture.Texture;
+import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
+
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.logging.Logger;
-
-import javax.media.opengl.GL;
-
-import com.sun.opengl.util.texture.Texture;
-import com.sun.opengl.util.texture.TextureIO;
-
 
 /**
  * Manages images and tiles
@@ -40,27 +38,20 @@ public class TileManager {
 
         /**
          * Returns the corresponding OpenGL texture
-         *
-         * @return
          */
-        public Texture getTexture() {
+        public Texture getTexture(GL2 gl) {
             if (texture != null)
                 return texture;
 
             if (image == null)
                 return null;
 
-            texture = TextureIO.newTexture(image, false);
-/*			texture.setTexParameteri(GL.GL_TEXTURE_MAG_FILTER,
-					GL.GL_NEAREST);
-			texture.setTexParameteri(GL.GL_TEXTURE_MIN_FILTER,
-					GL.GL_NEAREST);
-*/
-            texture.setTexParameteri(GL.GL_TEXTURE_MAG_FILTER,
-                    GL.GL_LINEAR);
-            texture.setTexParameteri(GL.GL_TEXTURE_MIN_FILTER,
-                    GL.GL_LINEAR);
+            texture = AWTTextureIO.newTexture(gl.getGLProfile(), image, false);
+//			texture.setTexParameteri(GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
+//			texture.setTexParameteri(GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
 
+            texture.setTexParameteri(gl, GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_LINEAR);
+            texture.setTexParameteri(gl, GL2.GL_TEXTURE_MIN_FILTER, GL2.GL_LINEAR);
 
             return texture;
         }
@@ -68,15 +59,13 @@ public class TileManager {
 
 
     // Name
-    private String name;
+    private final String name;
 
     // All images
     private final HashMap<String, TileImage> images;
 
     /**
      * Default constructor
-     *
-     * @param name
      */
     public TileManager(String name) {
         this.name = name;
@@ -86,8 +75,6 @@ public class TileManager {
 
     /**
      * Name property
-     *
-     * @return
      */
     public String getName() {
         return name;

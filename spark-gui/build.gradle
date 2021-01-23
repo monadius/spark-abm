@@ -16,7 +16,9 @@ dependencies {
     implementation project(':spark-core')
     implementation project(':spark-engine')
 
-    implementation files('../spark/lib/jogl.jar')
+//    implementation files('../spark/lib/jogl.jar')
+    implementation 'com.metsci.ext.org.jogamp.jogl:jogl-all-main:2.4.0-rc-20200202'
+    implementation 'com.metsci.ext.org.jogamp.gluegen:gluegen-rt-main:2.4.0-rc-20200202'
     implementation files('../spark/lib/jcommon.jar')
     implementation files('../spark/lib/jfreechart.jar')
 

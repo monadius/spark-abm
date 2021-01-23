@@ -3,24 +3,15 @@ package org.sparkabm.gui.render;
 import java.awt.Canvas;
 import java.awt.event.KeyEvent;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.imageio.ImageIO;
-import javax.media.opengl.GL;
-import javax.media.opengl.GLAutoDrawable;
-import javax.media.opengl.GLCanvas;
-import javax.media.opengl.GLCapabilities;
-import javax.media.opengl.GLContext;
-import javax.media.opengl.GLDrawableFactory;
-import javax.media.opengl.GLEventListener;
-import javax.media.opengl.GLJPanel;
-import javax.media.opengl.GLPbuffer;
-import javax.media.opengl.glu.GLU;
-import javax.media.opengl.glu.GLUquadric;
-
+import com.jogamp.opengl.*;
+import com.jogamp.opengl.awt.GLCanvas;
+import com.jogamp.opengl.awt.GLJPanel;
+import com.jogamp.opengl.glu.GLU;
+import com.jogamp.opengl.glu.GLUquadric;
+import com.jogamp.opengl.util.texture.Texture;
 import org.sparkabm.runtime.data.DataObject_AgentData;
 import org.sparkabm.runtime.data.DataObject_SpaceAgents;
 import org.sparkabm.runtime.data.DataObject_SpaceLinks;
@@ -32,9 +23,6 @@ import org.sparkabm.gui.render.font.FontManager;
 import org.sparkabm.gui.render.images.TileManager;
 import org.sparkabm.math.Vector;
 import org.sparkabm.math.Vector4d;
-
-import com.sun.opengl.util.Screenshot;
-import com.sun.opengl.util.texture.Texture;
 
 /**
  * JOGL renderer
@@ -51,14 +39,14 @@ public class JOGLRender extends Render implements GLEventListener {
 //	private int prevMouseX, prevMouseY;
 
     // used for refreshing the frame
-    private GLCanvas canvas;
+    private final GLCanvas canvas;
 
     // shapes
     private int circle, circle2;
     private int square, square2;
     private int torus, torus2;
 
-    private GLU glu = new GLU();
+    private final GLU glu = new GLU();
     private GLUquadric ball, cube;
 
     /* Current data */
@@ -72,24 +60,18 @@ public class JOGLRender extends Render implements GLEventListener {
     private float xMin, yMin, xMax, yMax, zMin, zMax;
 
     /* Pbuffer for taking screenshots */
-    private GLPbuffer pbuffer;
-    private int pbufferWidth, pbufferHeight;
+    //private GLPbuffer pbuffer;
+    //private int pbufferWidth, pbufferHeight;
 
     /**
      * Default constructor
-     *
-     * @param interval
-     * @throws Exception
      */
     public JOGLRender(int interval) throws Exception {
         super(interval);
-        GLCapabilities cap = new GLCapabilities();
+        GLProfile glProfile = GLProfile.getDefault();
+        GLCapabilities cap = new GLCapabilities(glProfile);
         cap.setStencilBits(8);
         GLCanvas glcanvas = new GLCanvas(cap);
-        if (glcanvas == null) {
-            throw new Exception("Problems during OpenGL initialization");
-        }
-
         glcanvas.addGLEventListener(this);
         this.canvas = glcanvas;
     }
@@ -118,119 +100,120 @@ public class JOGLRender extends Render implements GLEventListener {
      */
     @Override
     protected void saveSnapshot(File dir, String fname, DataRow data) {
-        GLDrawableFactory factory = GLDrawableFactory.getFactory();
-
-        if (factory == null || !factory.canCreateGLPbuffer()) {
-            logger.severe("Cannot create a pbuffer for taking a screenshot");
-            return;
-        }
-
-        int w = 500;
-        int h = 500;
-
-        if (canvas != null) {
-            w = canvas.getWidth();
-            h = canvas.getHeight();
-        }
-
-        if (w <= 0 || h <= 0) {
-            logger.severe("Canvas width or height is invalid");
-            return;
-        }
-
-        // Create a new pbuffer if something has been changed
-        if (pbuffer == null || w != pbufferWidth || h != pbufferHeight) {
-            if (pbuffer != null) {
-                pbuffer.destroy();
-            }
-
-            // Create a pbuffer
-            GLCapabilities glCap = new GLCapabilities();
-            pbuffer = factory.createGLPbuffer(glCap, null, w, h, null);
-            if (pbuffer == null) {
-                logger.severe("Cannot create a pbuffer");
-                return;
-            }
-
-            pbuffer.addGLEventListener(this);
-            pbufferWidth = w;
-            pbufferHeight = h;
-        }
-
-        try {
-            // Render the data
-            DataRow currentData = this.data;
-            this.data = data;
-            pbuffer.display();
-            this.data = currentData;
-
-            // Save the buffer content into a file
-            GLContext context = pbuffer.createContext(null);
-
-            context.makeCurrent();
-            BufferedImage img = Screenshot.readToBufferedImage(w, h);
-            context.release();
-
-            context.destroy();
-
-            File out = new File(dir, fname + ".png");
-            ImageIO.write(img, "png", out);
-        } catch (Exception e) {
-            logger.log(Level.SEVERE, "exception", e);
-        }
+        // TODO: implement
+//        GLDrawableFactory factory = GLDrawableFactory.getFactory();
+//
+//        if (factory == null || !factory.canCreateGLPbuffer()) {
+//            logger.severe("Cannot create a pbuffer for taking a screenshot");
+//            return;
+//        }
+//
+//        int w = 500;
+//        int h = 500;
+//
+//        if (canvas != null) {
+//            w = canvas.getWidth();
+//            h = canvas.getHeight();
+//        }
+//
+//        if (w <= 0 || h <= 0) {
+//            logger.severe("Canvas width or height is invalid");
+//            return;
+//        }
+//
+//        // Create a new pbuffer if something has been changed
+//        if (pbuffer == null || w != pbufferWidth || h != pbufferHeight) {
+//            if (pbuffer != null) {
+//                pbuffer.destroy();
+//            }
+//
+//            // Create a pbuffer
+//            GLCapabilities glCap = new GLCapabilities();
+//            pbuffer = factory.createGLPbuffer(glCap, null, w, h, null);
+//            if (pbuffer == null) {
+//                logger.severe("Cannot create a pbuffer");
+//                return;
+//            }
+//
+//            pbuffer.addGLEventListener(this);
+//            pbufferWidth = w;
+//            pbufferHeight = h;
+//        }
+//
+//        try {
+//            // Render the data
+//            DataRow currentData = this.data;
+//            this.data = data;
+//            pbuffer.display();
+//            this.data = currentData;
+//
+//            // Save the buffer content into a file
+//            GLContext context = pbuffer.createContext(null);
+//
+//            context.makeCurrent();
+//            BufferedImage img = Screenshot.readToBufferedImage(w, h);
+//            context.release();
+//
+//            context.destroy();
+//
+//            File out = new File(dir, fname + ".png");
+//            ImageIO.write(img, "png", out);
+//        } catch (Exception e) {
+//            logger.log(Level.SEVERE, "exception", e);
+//        }
     }
 
     /*
      * public void resize() { if (canvas == null) return;
      * canvas.setSize(canvas.getSize()); canvas.display(); }
      */
-
+    @Override
     public void init(GLAutoDrawable drawable) {
         logger.info("Initializing JOGLRender");
 
         // Use debug pipeline
         // drawable.setGL(new DebugGL(drawable.getGL()));
 
-        GL gl = drawable.getGL();
+        GL2 gl = drawable.getGL().getGL2();
 
         gl.setSwapInterval(1);
         // gl.glEnable(GL.GL_POINT_SMOOTH);
         gl.glClearColor(1, 1, 1, 1);
         gl.glClearStencil(0);
-        gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
-        gl.glTexEnvi(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, GL.GL_MODULATE);
+        gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
+        gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_MODULATE);
 //		gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_LINE);
 //		gl.glPolygonMode(GL.GL_BACK, GL.GL_LINE);
 
         /* Set up light */
 
-        float lightAmbient[] = {0.2f, 0.2f, 0.2f}; // Ambient Light is 20%
+        float[] lightAmbient = {0.2f, 0.2f, 0.2f}; // Ambient Light is 20%
         // white
-        float lightDiffuse[] = {0.8f, 0.8f, 0.8f}; // Diffuse Light is white
+        float[] lightDiffuse = {0.8f, 0.8f, 0.8f}; // Diffuse Light is white
 
         // Position is somewhat in front of screen
-        float lightPosition[] = {10.0f, 0.0f, 20.0f};
+        float[] lightPosition = {10.0f, 0.0f, 20.0f};
 
         // Set The Ambient Lighting For Light0
-        gl.glLightfv(GL.GL_LIGHT0, GL.GL_AMBIENT, lightAmbient, 0);
+        gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_AMBIENT, lightAmbient, 0);
 
         // Set The Diffuse Lighting For Light0
-        gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, lightDiffuse, 0);
+        gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_DIFFUSE, lightDiffuse, 0);
 
         // Set The Position For Light0
-        gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, lightPosition, 0);
+        gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_POSITION, lightPosition, 0);
 
 //		drawable.addMouseListener(this);
 //		drawable.addMouseMotionListener(this);
 //		drawable.addMouseWheelListener(this);
 
         // Disable the depth test by default (for 2d-case mostly)
-        gl.glDisable(GL.GL_DEPTH_TEST);
+        gl.glDisable(GL2.GL_DEPTH_TEST);
 
         int n = 16;
         circle = gl.glGenLists(1);
-        gl.glNewList(circle, GL.GL_COMPILE);
-        gl.glBegin(GL.GL_TRIANGLE_FAN);
+        gl.glNewList(circle, GL2.GL_COMPILE);
+        gl.glBegin(GL2.GL_TRIANGLE_FAN);
         gl.glVertex2d(0, 0);
         for (int i = 0; i <= n; i++) {
             double angle = 2 * Math.PI / n * i;
@@ -238,7 +221,7 @@ public class JOGLRender extends Render implements GLEventListener {
         }
         gl.glEnd();
         gl.glColor3f(0, 0, 0);
-        gl.glBegin(GL.GL_LINE_LOOP);
+        gl.glBegin(GL2.GL_LINE_LOOP);
         for (int i = 0; i <= n; i++) {
             double angle = 2 * Math.PI / n * i;
             gl.glVertex2d(Math.cos(angle), Math.sin(angle));
@@ -247,8 +230,8 @@ public class JOGLRender extends Render implements GLEventListener {
         gl.glEndList();
 
         torus = gl.glGenLists(1);
-        gl.glNewList(torus, GL.GL_COMPILE);
-        gl.glBegin(GL.GL_QUADS);
+        gl.glNewList(torus, GL2.GL_COMPILE);
+        gl.glBegin(GL2.GL_QUADS);
         for (int i = 0; i < n; i++) {
             double r1 = 0.5, r2 = 1.0;
             double angle1 = 2 * Math.PI / n * i;
@@ -264,13 +247,13 @@ public class JOGLRender extends Render implements GLEventListener {
         gl.glEnd();
 
         gl.glColor3f(0, 0, 0);
-        gl.glBegin(GL.GL_LINE_LOOP);
+        gl.glBegin(GL2.GL_LINE_LOOP);
         for (int i = 0; i <= n; i++) {
             double angle = 2 * Math.PI / n * i;
             gl.glVertex2d(Math.cos(angle), Math.sin(angle));
         }
         gl.glEnd();
-        gl.glBegin(GL.GL_LINE_LOOP);
+        gl.glBegin(GL2.GL_LINE_LOOP);
         for (int i = 0; i <= n; i++) {
             double angle = 2 * Math.PI / n * i;
             gl.glVertex2d(0.5 * Math.cos(angle), 0.5 * Math.sin(angle));
@@ -279,15 +262,15 @@ public class JOGLRender extends Render implements GLEventListener {
         gl.glEndList();
 
         square = gl.glGenLists(1);
-        gl.glNewList(square, GL.GL_COMPILE);
-        gl.glBegin(GL.GL_QUADS);
+        gl.glNewList(square, GL2.GL_COMPILE);
+        gl.glBegin(GL2.GL_QUADS);
         gl.glVertex2f(-1f, -1f);
         gl.glVertex2f(-1f, 1f);
         gl.glVertex2f(1f, 1f);
         gl.glVertex2f(1f, -1f);
         gl.glEnd();
         gl.glColor3f(0, 0, 0);
-        gl.glBegin(GL.GL_LINE_LOOP);
+        gl.glBegin(GL2.GL_LINE_LOOP);
         gl.glVertex2f(-1f, -1f);
         gl.glVertex2f(-1f, 1f);
         gl.glVertex2f(1f, 1f);
@@ -297,8 +280,8 @@ public class JOGLRender extends Render implements GLEventListener {
         gl.glEndList();
 
         torus2 = gl.glGenLists(1);
-        gl.glNewList(torus2, GL.GL_COMPILE);
-        gl.glBegin(GL.GL_QUADS);
+        gl.glNewList(torus2, GL2.GL_COMPILE);
+        gl.glBegin(GL2.GL_QUADS);
         for (int i = 0; i < n; i++) {
             double r1 = 0.5, r2 = 1.0;
             double angle1 = 2 * Math.PI / n * i;
@@ -315,8 +298,8 @@ public class JOGLRender extends Render implements GLEventListener {
         gl.glEndList();
 
         circle2 = gl.glGenLists(1);
-        gl.glNewList(circle2, GL.GL_COMPILE);
-        gl.glBegin(GL.GL_TRIANGLE_FAN);
+        gl.glNewList(circle2, GL2.GL_COMPILE);
+        gl.glBegin(GL2.GL_TRIANGLE_FAN);
         gl.glVertex2d(0, 0);
         for (int i = 0; i <= n; i++) {
             double angle = 2 * Math.PI / n * i;
@@ -326,8 +309,8 @@ public class JOGLRender extends Render implements GLEventListener {
         gl.glEndList();
 
         square2 = gl.glGenLists(1);
-        gl.glNewList(square2, GL.GL_COMPILE);
-        gl.glBegin(GL.GL_QUADS);
+        gl.glNewList(square2, GL2.GL_COMPILE);
+        gl.glBegin(GL2.GL_QUADS);
         gl.glVertex2f(-1f, -1f);
         gl.glVertex2f(-1f, 1f);
         gl.glVertex2f(1f, 1f);
@@ -337,12 +320,16 @@ public class JOGLRender extends Render implements GLEventListener {
 
         /* Create quadratics */
         ball = glu.gluNewQuadric(); // Create A New Quadratic
-        glu.gluQuadricNormals(ball, GL.GL_SMOOTH); // Generate Smooth Normals
+        glu.gluQuadricNormals(ball, GL2.GL_SMOOTH); // Generate Smooth Normals
         // For The Quad
 
         cube = glu.gluNewQuadric();
-        glu.gluQuadricNormals(cube, GL.GL_SMOOTH);
+        glu.gluQuadricNormals(cube, GL2.GL_SMOOTH);
 
+    }
+
+    @Override
+    public void dispose(GLAutoDrawable drawable) {
     }
 
 
@@ -376,24 +363,23 @@ public class JOGLRender extends Render implements GLEventListener {
     /**
      * Reshape event
      */
+    @Override
     public void reshape(GLAutoDrawable drawable, int x, int y, int width,
                         int height) {
-        GL gl = drawable.getGL();
+        GL2 gl = drawable.getGL().getGL2();
         reshape(gl);
     }
 
     /**
      * Reshape method
-     *
-     * @param gl
      */
-    public void reshape(GL gl) {
+    public void reshape(GL2 gl) {
         reshapeRequested = false;
 
-        gl.glMatrixMode(GL.GL_PROJECTION);
+        gl.glMatrixMode(GL2.GL_PROJECTION);
         gl.glLoadIdentity();
 
-        boolean swapXY = (selectedSpace != null) ? selectedSpace.swapXY : false;
+        boolean swapXY = selectedSpace != null && selectedSpace.swapXY;
 
         if (data != null && selectedSpace != null) {
             DataObject_Spaces spaces = data.getSpaces();
@@ -437,11 +423,11 @@ public class JOGLRender extends Render implements GLEventListener {
         }
 
         gl.glOrtho(x0, x1, y0, y1, zMin - 10, zMax + 10);
-        gl.glMatrixMode(GL.GL_MODELVIEW);
+        gl.glMatrixMode(GL2.GL_MODELVIEW);
         gl.glLoadIdentity();
     }
 
-    private void glNormal(GL gl, Vector v0, double z0, Vector v1, double z1, Vector v2, double z2) {
+    private void glNormal(GL2 gl, Vector v0, double z0, Vector v1, double z1, Vector v2, double z2) {
         double x0 = v1.x - v0.x;
         double y0 = v1.y - v0.y;
         double x1 = v2.x - v0.x;
@@ -459,13 +445,8 @@ public class JOGLRender extends Render implements GLEventListener {
 
     /**
      * Renders the given data layer
-     *
-     * @param gl
-     * @param info
-     * @param data
-     * @param spaceIndex
      */
-    protected void renderDataLayer(GL gl, DataLayerGraphics info, DataRow data,
+    protected void renderDataLayer(GL2 gl, DataLayerGraphics info, DataRow data,
                                    int spaceIndex) {
         if (info == null)
             return;
@@ -507,7 +488,7 @@ public class JOGLRender extends Render implements GLEventListener {
         if (heightMap != null) {
             // Render the height map (the central part only)
             for (int i = 0; i < n; i++) {
-                gl.glBegin(GL.GL_TRIANGLE_STRIP);
+                gl.glBegin(GL2.GL_TRIANGLE_STRIP);
                 Vector v0 = gridGeometry[i][0];
                 Vector v1 = gridGeometry[i + 1][0];
                 Vector c0 = colors[i][0];
@@ -551,7 +532,7 @@ public class JOGLRender extends Render implements GLEventListener {
         } else {
             // Render the center part
             for (int i = 0; i < n; i++) {
-                gl.glBegin(GL.GL_QUAD_STRIP);
+                gl.glBegin(GL2.GL_QUAD_STRIP);
                 Vector v0 = gridGeometry[i][0];
                 Vector v1 = gridGeometry[i + 1][0];
                 Vector c0 = colors[i][0];
@@ -584,7 +565,7 @@ public class JOGLRender extends Render implements GLEventListener {
             double x, y;
 
             // Render the bottom border
-            gl.glBegin(GL.GL_TRIANGLE_STRIP);
+            gl.glBegin(GL2.GL_TRIANGLE_STRIP);
 
             x = xMin;
             y = yMin;
@@ -609,7 +590,7 @@ public class JOGLRender extends Render implements GLEventListener {
             gl.glEnd();
 
             // Render the top border
-            gl.glBegin(GL.GL_TRIANGLE_STRIP);
+            gl.glBegin(GL2.GL_TRIANGLE_STRIP);
 
             x = xMin;
             y = yMax;
@@ -633,7 +614,7 @@ public class JOGLRender extends Render implements GLEventListener {
             gl.glEnd();
 
             // Render the left border
-            gl.glBegin(GL.GL_TRIANGLE_STRIP);
+            gl.glBegin(GL2.GL_TRIANGLE_STRIP);
 
             x = xMin;
             y = yMin;
@@ -657,7 +638,7 @@ public class JOGLRender extends Render implements GLEventListener {
             gl.glEnd();
 
             // Render the right border
-            gl.glBegin(GL.GL_TRIANGLE_STRIP);
+            gl.glBegin(GL2.GL_TRIANGLE_STRIP);
 
             x = xMax;
             y = yMin;
@@ -688,11 +669,8 @@ public class JOGLRender extends Render implements GLEventListener {
 
     /**
      * Renders all visible space links of the given type (style)
-     *
-     * @param gl
-     * @param linkStyle
      */
-    protected void renderLinks(GL gl, DataObject_SpaceLinks links,
+    protected void renderLinks(GL2 gl, DataObject_SpaceLinks links,
                                int spaceIndex, AgentStyle linkStyle) {
         if (!linkStyle.visible)
             return;
@@ -707,7 +685,7 @@ public class JOGLRender extends Render implements GLEventListener {
         int[] spaceIndices = links.getSpaceIndices();
         double[] width = links.getWidth();
 
-        gl.glBegin(GL.GL_LINES);
+        gl.glBegin(GL2.GL_LINES);
         for (int i = 0; i < n; i++) {
             Vector end1 = ends1[i];
             Vector end2 = ends2[i];
@@ -739,7 +717,7 @@ public class JOGLRender extends Render implements GLEventListener {
      *
      * @return true if successful
      */
-    protected boolean drawTile(GL gl, float scale, TileManager tiles, DataObject_AgentData agentData,
+    protected boolean drawTile(GL2 gl, float scale, TileManager tiles, DataObject_AgentData agentData,
                                AgentStyle style, Vector4d color, int index) {
         if (agentData == null)
             return false;
@@ -757,7 +735,7 @@ public class JOGLRender extends Render implements GLEventListener {
         if (tile == null)
             return false;
 
-        Texture tex = tile.getTexture();
+        Texture tex = tile.getTexture(gl);
         if (tex == null)
             return false;
 
@@ -774,15 +752,15 @@ public class JOGLRender extends Render implements GLEventListener {
         int alphaFunc = style.getAlphaFunc();
 
         if (alphaFunc >= 0) {
-            gl.glEnable(GL.GL_ALPHA_TEST);
+            gl.glEnable(GL2.GL_ALPHA_TEST);
             gl.glAlphaFunc(alphaFunc, style.getAlphaFuncValue());
         }
 
-        gl.glTexEnvi(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, style.getTextureEnv());
+        gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, style.getTextureEnv());
 
         // enable texturing
         gl.glEnable(GL.GL_TEXTURE_2D);
-        tex.bind();
+        tex.bind(gl);
 
         float xt0 = 0, xt1 = 1;
         float yt0 = 1, yt1 = 0;
@@ -833,7 +811,7 @@ public class JOGLRender extends Render implements GLEventListener {
         gl.glScalef(scale, scale, scale);
 
         // Render a rectangle
-        gl.glBegin(GL.GL_QUADS);
+        gl.glBegin(GL2.GL_QUADS);
         gl.glTexCoord2f(xt0, yt0);
         gl.glVertex2f(x0, y0);
         gl.glTexCoord2f(xt1, yt0);
@@ -850,14 +828,14 @@ public class JOGLRender extends Render implements GLEventListener {
 
         // Disable special rendering features
         if (alphaFunc >= 0) {
-            gl.glDisable(GL.GL_ALPHA_TEST);
+            gl.glDisable(GL2.GL_ALPHA_TEST);
         }
 
         if (blendSrc >= 0 && blendDst >= 0 && !style.transparent) {
-            gl.glDisable(GL.GL_BLEND);
+            gl.glDisable(GL2.GL_BLEND);
         }
 
-        gl.glDisable(GL.GL_TEXTURE_2D);
+        gl.glDisable(GL2.GL_TEXTURE_2D);
         return true;
     }
 
@@ -865,7 +843,7 @@ public class JOGLRender extends Render implements GLEventListener {
     /**
      * Renders a specific shape
      */
-    private void drawShape(GL gl, float scale, DataObject_SpaceAgents.ShapeInfo shape, boolean border) {
+    private void drawShape(GL2 gl, float scale, DataObject_SpaceAgents.ShapeInfo shape, boolean border) {
         switch (shape.type) {
             case 0:
                 gl.glScalef(scale, scale, scale);
@@ -875,7 +853,7 @@ public class JOGLRender extends Render implements GLEventListener {
             case 1:
                 float hx = shape.hx;
                 float hy = shape.hy;
-                gl.glBegin(GL.GL_QUADS);
+                gl.glBegin(GL2.GL_QUADS);
                 gl.glVertex2f(-hx, -hy);
                 gl.glVertex2f(-hx, hy);
                 gl.glVertex2f(hx, hy);
@@ -888,13 +866,8 @@ public class JOGLRender extends Render implements GLEventListener {
 
     /**
      * Renders agents
-     *
-     * @param gl
-     * @param agents
-     * @param spaceIndex
-     * @param agentStyle
      */
-    protected void renderAgents(GL gl, DataObject_SpaceAgents agents,
+    protected void renderAgents(GL2 gl, DataObject_SpaceAgents agents,
                                 DataObject_AgentData agentData,
                                 int spaceIndex, AgentStyle agentStyle, BitmapFont bitmapFont) {
         if (!agentStyle.visible)
@@ -932,13 +905,13 @@ public class JOGLRender extends Render implements GLEventListener {
 
         /* Transparent agents */
         if (agentStyle.transparent) {
-            gl.glEnable(GL.GL_BLEND);
-            gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
+            gl.glEnable(GL2.GL_BLEND);
+            gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
         }
 
         // Stencil
         if (agentStyle.getStencilFunc() > 0) {
-            gl.glEnable(GL.GL_STENCIL_TEST);
+            gl.glEnable(GL2.GL_STENCIL_TEST);
             gl.glStencilFunc(agentStyle.getStencilFunc(),
                     agentStyle.getStencilRef(), agentStyle.getStencilMask());
             gl.glStencilOp(agentStyle.getStencilFail(),
@@ -954,7 +927,7 @@ public class JOGLRender extends Render implements GLEventListener {
         // Render lists
         int circle = agentStyle.border ? this.circle : this.circle2;
         int square = agentStyle.border ? this.square : this.square2;
-        int donnut = agentStyle.border ? this.torus : this.torus2;
+        int donut = agentStyle.border ? this.torus : this.torus2;
 
         double rad2angles = 180.0 / Math.PI;
 
@@ -1015,7 +988,7 @@ public class JOGLRender extends Render implements GLEventListener {
                             break;
                         // case SpaceAgent.TORUS:
                         case 3:
-                            gl.glCallList(donnut);
+                            gl.glCallList(donut);
                             break;
                     }
                 }
@@ -1053,24 +1026,19 @@ public class JOGLRender extends Render implements GLEventListener {
 
         // Disable the stencil test
         if (agentStyle.getStencilFunc() > 0) {
-            gl.glDisable(GL.GL_STENCIL_TEST);
+            gl.glDisable(GL2.GL_STENCIL_TEST);
         }
 
         /* Disable transparency */
         if (agentStyle.transparent) {
-            gl.glDisable(GL.GL_BLEND);
+            gl.glDisable(GL2.GL_BLEND);
         }
     }
 
     /**
      * Displays agents in 3d
-     *
-     * @param gl
-     * @param agents
-     * @param agentStyle
-     * @param spaceIndex
      */
-    protected void renderAgents3d(GL gl, DataObject_SpaceAgents agents,
+    protected void renderAgents3d(GL2 gl, DataObject_SpaceAgents agents,
                                   AgentStyle agentStyle, int spaceIndex) {
         if (!agentStyle.visible)
             return;
@@ -1132,13 +1100,8 @@ public class JOGLRender extends Render implements GLEventListener {
 
     /**
      * Displays 3d agents on a 2d slice
-     *
-     * @param gl
-     * @param agents
-     * @param agentStyle
-     * @param spaceIndex
      */
-    protected void renderAgents3dSliced(GL gl, DataObject_SpaceAgents agents,
+    protected void renderAgents3dSliced(GL2 gl, DataObject_SpaceAgents agents,
                                         AgentStyle agentStyle, int spaceIndex) {
         if (!agentStyle.visible)
             return;
@@ -1155,8 +1118,8 @@ public class JOGLRender extends Render implements GLEventListener {
 
         /* Transparent agents */
         if (agentStyle.transparent) {
-            gl.glEnable(GL.GL_BLEND);
-            gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
+            gl.glEnable(GL2.GL_BLEND);
+            gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
         }
 
         /* Textured agents */
@@ -1188,7 +1151,7 @@ public class JOGLRender extends Render implements GLEventListener {
         // Render lists
         int circle = agentStyle.border ? this.circle : this.circle2;
         int square = agentStyle.border ? this.square : this.square2;
-        int donnut = agentStyle.border ? this.torus : this.torus2;
+        int donut = agentStyle.border ? this.torus : this.torus2;
 
         /* Iterate through all agents */
         for (int i = 0; i < n; i++) {
@@ -1242,7 +1205,7 @@ public class JOGLRender extends Render implements GLEventListener {
                     break;
                 // case SpaceAgent.TORUS:
                 case 3:
-                    gl.glCallList(donnut);
+                    gl.glCallList(donut);
                     break;
             }
 //			}
@@ -1251,7 +1214,7 @@ public class JOGLRender extends Render implements GLEventListener {
 
         /* Disable transparency */
         if (agentStyle.transparent) {
-            gl.glDisable(GL.GL_BLEND);
+            gl.glDisable(GL2.GL_BLEND);
         }
 
         /* Disable texture */
@@ -1268,6 +1231,7 @@ public class JOGLRender extends Render implements GLEventListener {
     /**
      * Main display method
      */
+    @Override
     public void display(GLAutoDrawable drawable) {
         if (data == null)
             return;
@@ -1286,7 +1250,7 @@ public class JOGLRender extends Render implements GLEventListener {
 
         int spaceIndex = spaces.getIndices()[index];
 
-        GL gl = drawable.getGL();
+        GL2 gl = drawable.getGL().getGL2();
 
         // if (reshapeRequested) {
         // reshape(gl);
@@ -1315,11 +1279,11 @@ public class JOGLRender extends Render implements GLEventListener {
                 && !((GLJPanel) drawable).isOpaque()
                 && ((GLJPanel) drawable)
                 .shouldPreserveColorBufferIfTranslucent()) {
-            gl.glClear(GL.GL_DEPTH_BUFFER_BIT);
+            gl.glClear(GL2.GL_DEPTH_BUFFER_BIT);
         } else {
-            gl.glClear(GL.GL_COLOR_BUFFER_BIT |
-                    GL.GL_DEPTH_BUFFER_BIT |
-                    GL.GL_STENCIL_BUFFER_BIT);
+            gl.glClear(GL2.GL_COLOR_BUFFER_BIT |
+                    GL2.GL_DEPTH_BUFFER_BIT |
+                    GL2.GL_STENCIL_BUFFER_BIT);
         }
 
         // Save world matrix
@@ -1340,7 +1304,7 @@ public class JOGLRender extends Render implements GLEventListener {
             gl.glRotatef(view_rotx, 1.0f, 0.0f, 0.0f);
             gl.glRotatef(view_roty, 0.0f, 1.0f, 0.0f);
 //			gl.glScalef(wheel_scale, wheel_scale, wheel_scale);
-            gl.glEnable(GL.GL_DEPTH_TEST);
+            gl.glEnable(GL2.GL_DEPTH_TEST);
         }
 
 
@@ -1352,10 +1316,10 @@ public class JOGLRender extends Render implements GLEventListener {
         }
 
         if (mode3d) {
-            gl.glEnable(GL.GL_COLOR_MATERIAL);
-            gl.glEnable(GL.GL_LIGHT0); // Enable Light 0
-            gl.glEnable(GL.GL_LIGHTING); // Enable Lighting
-            gl.glEnable(GL.GL_AUTO_NORMAL);
+            gl.glEnable(GL2.GL_COLOR_MATERIAL);
+            gl.glEnable(GL2.GL_LIGHT0); // Enable Light 0
+            gl.glEnable(GL2.GL_LIGHTING); // Enable Lighting
+            gl.glEnable(GL2.GL_AUTO_NORMAL);
         }
 
         // Get the bitmap font manager
@@ -1421,13 +1385,13 @@ public class JOGLRender extends Render implements GLEventListener {
             }
         }
 
-        if (mode3d) {
+//        if (mode3d) {
 //			gl.glDisable(GL.GL_DEPTH_TEST);
 //			gl.glDisable(GL.GL_COLOR_MATERIAL);
 //			gl.glDisable(GL.GL_LIGHT0); // Disable Light 0
 //			gl.glDisable(GL.GL_LIGHTING); // Disable Lighting
 //			gl.glDisable(GL.GL_AUTO_NORMAL);
-        }
+//        }
 
         // Restore world matrix
         gl.glPopMatrix();
@@ -1458,7 +1422,8 @@ public class JOGLRender extends Render implements GLEventListener {
                 return;
         }
 
-        if (flag)
+        if (flag) {
             canvas.display();
+        }
     }
 }
