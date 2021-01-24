@@ -4,7 +4,7 @@ plugins {
     id 'application'
 }
 
-version = '1.3.0'
+version = '1.4.0'
 
 repositories {
     mavenCentral()
@@ -71,7 +71,7 @@ task sparkInstall(type: Sync) {
         from '../README.md'
         from '../logo.jpg'
     }
-    // The script should be copied to bin (or another subfolder)
+    // The script must be copied to bin (or another subfolder)
     into('bin') {
         from createSparkManagerScript
         from createSparkGuiScript
@@ -101,7 +101,16 @@ task sparkInstall(type: Sync) {
 
 task sparkDist(type: Zip) {
     dependsOn tasks.sparkInstall
-    archiveFileName = "SPARK_${project.version}_universal.zip"
+    archiveFileName = "SPARK_${project.version}.zip"
     destinationDirectory = file("$buildDir/sparkDist")
     from "$buildDir/spark"
 }
+
+//task sparkDist(type: Zip) {
+//    dependsOn tasks.sparkInstall
+//    archiveFileName = "SPARK_${project.version}.zip"
+//    destinationDirectory = file("$buildDir/sparkDist")
+//    from "$buildDir/spark"
+//    exclude "**/jogl*.jar"
+//    exclude "**/gluegen-rt*.jar"
+//}

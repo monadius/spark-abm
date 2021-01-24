@@ -6,6 +6,8 @@
 ### GUI
 *[feature]* Save configuration files in the SPARK home directory (not in the current working directory).
 
+*[feature]* OpenGL rendering is supported.
+
 -------------------------
 
 # SPARK 1.3.0
