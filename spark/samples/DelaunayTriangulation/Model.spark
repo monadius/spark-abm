@@ -1,0 +1,58 @@
+; Agent
+agent TestAgent : SpaceAgent
+
+to create
+	color = red
+	radius = 0.2
+	heading = random 360
+end
+
+
+var heading : number
+
+to step
+	heading += random-in-interval -30 30
+	var dp = vector-in-direction 0.1 heading
+	move dp
+end
+
+
+
+; MyLink
+agent MyLink : Link
+
+to create
+	color = green
+end
+
+
+
+
+; Model
+model DelaunayModel
+
+
+@parameter(min = 0, max = 100, default = 10)
+global n : number
+
+
+space StandardSpace -10 10 -10 10 true true
+
+
+to end-step
+	ask agents MyLink [ die ]
+	delaunay-triangulation (agents TestAgent) MyLink
+end
+
+
+to setup
+	ask create TestAgent n
+	[
+;		set-random-position
+	]
+	
+	delaunay-triangulation (agents TestAgent) MyLink
+end
+
+
+

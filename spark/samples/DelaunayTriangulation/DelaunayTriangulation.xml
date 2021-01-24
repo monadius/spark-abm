@@ -1,0 +1,8 @@
+<spark-project>
+	<name>DelaunayTriangulation</name>
+	<output-directory>output</output-directory>
+
+	<files>
+		<file>Model.spark</file>
+	</files>
+</spark-project>

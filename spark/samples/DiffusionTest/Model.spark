@@ -1,0 +1,65 @@
+@step(priority = 1)
+agent TestAgent : SpaceAgent
+
+
+to step
+        data.value += 1
+end
+
+
+; Obstacle
+@step(priority = 2)
+agent Obstacle : SpaceAgent
+
+to create
+  super 0.5 square
+end
+
+
+
+
+; Model
+model DiffusionModel
+
+space StandardSpace -20 30 -10 40 false false
+;space StandardSpace -10 30 -10 40 false true
+;space StandardSpace -1 1 -1 1 false true
+
+global data : grid
+
+global mask : grid
+
+@parameter(min = 0, max = 1000, default = 4)
+global n : number
+
+@chart
+global total : number
+
+
+to end-step
+;        data.diffuse 0.1
+	data.diffuse-with-mask 0.1 mask
+
+        total = sum data
+end
+
+
+to setup
+;        data.set-value 1
+        create-one TestAgent
+
+        ask create Obstacle n
+        [
+			set-random-position
+			mask.value = 1
+        ]
+		
+		for x = space-xmin + 0.5 : 20
+		[
+			ask create-one Obstacle
+			[
+				move-to (create-vector x 10.5 0)
+				mask.value = 1
+			]
+		]
+end

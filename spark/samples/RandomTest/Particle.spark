@@ -1,0 +1,32 @@
+agent Particle : SpaceAgent
+
+
+var color1, color2 : vector
+var dv : vector
+var life : number
+var t : number
+
+
+to create
+  super 0.2 circle
+  color1 = red
+  color2 = white
+  life = random 10 + 5
+  t = 0
+end
+
+
+
+to step
+	move dv
+	var dr = t / life
+	radius = 0.2 - dr * 0.15
+	
+	color = color1 + (color2 - color1) * dr
+	t += 1
+	
+	if t > life
+		[ die ]
+end
+
+

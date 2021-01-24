@@ -1,0 +1,80 @@
+agent TestAgent : SpaceAgent
+
+
+var flag : boolean
+
+
+to create
+	super 0.5 square
+	color = green
+	flag = false
+end
+
+
+to step
+	if position.y <= space-ymin + 2
+		[ exit ]
+	
+	if count agents-at TestAgent (position + [0,-1,0]) 0.1 > 0
+	[ 
+		if flag [ exit ]
+		
+		ask create Particle 20
+		[
+			var dp = create-vector (random 1 - 0.5) 0.5 0
+			move-to myself.position - dp
+			dv = random-vector-of-length 0.1
+		]
+		
+		flag = true
+		
+		exit 
+	]
+		
+	move [0,-1,0]
+end
+
+
+; Model
+model RandomTest
+
+space StandardSpace -50 50 0 50 false false
+
+
+@parameter
+global normal-dist : boolean
+
+@parameter(default = 0, min = -20, max = 20)
+global mean : number
+
+@parameter(default = 20, min = 1, max = 30)
+global std : number
+
+
+to end-step
+	var x
+	
+	ifelse normal-dist
+		[ x = normal-random mean std ]
+		[ x = random-in-interval (space-xmin + 1) (space-xmax - 1)]
+		
+	x = round x
+	
+	if x < space-xmin or x > space-xmax [ return false ]
+		
+	var p = create-vector x (space-ymax - 1) 0
+		
+	ask create-one TestAgent
+	[
+		move-to p
+		
+		if count (agents-here TestAgent) > 1
+		[
+			return true
+		]
+	]
+end
+
+
+to setup
+end

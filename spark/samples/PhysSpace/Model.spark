@@ -1,0 +1,47 @@
+model PhysSpaceTest
+
+space PhysicalSpace2d -10 10 -10 10 false false
+
+@parameter(min = 1, max = 120, default = 20)
+global init-number-static : number
+
+@parameter(min = 1, max = 120, default = 20)
+global init-number-dynamic : number
+
+
+
+to setup
+        ask create StaticAgent init-number-static
+        [
+                var p = random-vector-of-length 5
+                move-to p
+        ]
+
+        ask create DynamicAgent init-number-dynamic
+        [
+                var p = random-vector-of-length 5
+                move-to p
+        ]
+
+end
+
+
+agent StaticAgent : SpaceAgent
+
+to create
+        super 0.4 static-circle
+        color = red
+end
+
+
+agent DynamicAgent : SpaceAgent
+
+to create
+        super 0.4 dynamic-circle
+        color = green
+end
+
+
+to step
+        apply-force [0,-1,0]
+end

@@ -1458,7 +1458,7 @@
         <!-- D -->
         <command name = "delaunay-triangulation">
         	<argument name = "list" type = "ArrayList" subtype = "SpaceAgent"/>
-        	<argument name = "linktype" type = "NameType"/>
+        	<argument name = "lnktype" type = "NameType"/>
         	
         	<translation>
         		<temp name = "i"/>
@@ -1488,7 +1488,7 @@
         		@n = @tri.edge.length;
         		for (int @i = 0; @i &lt; @n; @i++)
         		{
-        			SpaceLink @link = new @linktype();
+        			SpaceLink @link = new @lnktype();
         			SpaceAgent @a1 = @list.get(@tri.edge[@i].s);
         			SpaceAgent @a2 = @list.get(@tri.edge[@i].t);
         			@link.connect(@a1, @a2); 

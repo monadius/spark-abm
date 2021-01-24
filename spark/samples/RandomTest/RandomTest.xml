@@ -1,0 +1,9 @@
+<spark-project>
+	<name>RandomTest</name>
+	<output-directory>output</output-directory>
+
+	<files>
+		<file>Model.spark</file>
+		<file>Particle.spark</file>
+	</files>
+</spark-project>

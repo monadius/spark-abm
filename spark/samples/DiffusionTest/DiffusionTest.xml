@@ -1,0 +1,8 @@
+<spark-project>
+	<name>DiffusionTest</name>
+	<output-directory>output</output-directory>
+
+	<files>
+		<file>Model.spark</file>
+	</files>
+</spark-project>
