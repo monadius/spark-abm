@@ -1,6 +1,5 @@
 <spark-project>
 	<name>Minesweeper</name>
-	<project-directory>C:\Work\My Projects\SPARK\SparkLogo\Models\Games\Minesweeper</project-directory>
 	<output-directory>output</output-directory>
 
 	<files>

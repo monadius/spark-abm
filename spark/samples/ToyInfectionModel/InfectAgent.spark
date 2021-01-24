@@ -44,7 +44,7 @@ to step [tick]
 end
 
 
-@#$#@#$#@
+***end***
 package ToyInfectionModel;
 
 import static org.spark.core.Observer.getSpace;

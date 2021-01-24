@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<spark version="1.1">
+  <files all="true" path="."/>
+  <model tick="1">
+    <setup>LinksDemo.LinksDemoModel</setup>
+    <agents>
+      <agent name="SimpleLink">LinksDemo.SimpleLink</agent>
+      <agent name="SimpleAgent">LinksDemo.SimpleAgent</agent>
+    </agents>
+    <variables>
+      <variable get="get_initNumber" name="init-number" set="set_initNumber" type="Double"/>
+      <variable get="count$SimpleLink" name="count$SimpleLink" set="" type="Double"/>
+      <variable get="count$SimpleAgent" name="count$SimpleAgent" set="" type="Double"/>
+    </variables>
+    <parameters>
+      <parameter default="2.0" max="10.0" min="0.0" name="init-number" step="0.1" type="Double" values="1,2,3,4,10,20" variable="init-number"/>
+    </parameters>
+  </model>
+  <interface>
+    <about path="readme.txt"/>
+    <windows>
+      <window height="183" name="Parameters" visible="true" width="426" x="618" y="41"/>
+      <window height="600" main="true" name="Main Window" visible="true" width="500" x="90" y="25"/>
+    </windows>
+    <mainframe control-state="0" dx="0.0" dy="0.0" location="Main Window" rot-x="20.0" rot-y="30.0" zoom="1.0">
+      <spacestyle auto-size="true" cell-xsize="10" cell-ysize="10" name="space" selected="true" swapXY="false"/>
+      <agentstyle alpha-function="4" alpha-function-value="0.0" bitmap-font-size="1.0" border="true" color-blending="false" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0;1.0" label-height="100.0" label-width="100.0" modulate-label-color="false" modulate-label-size="false" modulate-size="true" name="SimpleLink" position="0" scale="1.0" stencil-function="0" stencil-mask="0" stencil-ref="0" text-alignment="Left" texture-env="0" transparency-coefficient="0.5" transparent="false" visible="true"/>
+      <agentstyle alpha-function="4" alpha-function-value="0.0" bitmap-font-size="1.0" border="true" color-blending="false" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0;1.0" label-height="100.0" label-width="100.0" modulate-label-color="false" modulate-label-size="false" modulate-size="true" name="SimpleAgent" position="1" scale="1.0" stencil-function="0" stencil-mask="0" stencil-ref="0" text-alignment="Left" texture-env="0" transparency-coefficient="0.5" transparent="false" visible="true"/>
+    </mainframe>
+    <data-layers/>
+    <parameterframe location="Parameters">
+      <user-parameter max="10.0" min="0.0" name="init-number" step="0.1" use="false"/>
+    </parameterframe>
+    <control-panel delay="8" freq="4"/>
+    <variable-sets/>
+  </interface>
+</spark>

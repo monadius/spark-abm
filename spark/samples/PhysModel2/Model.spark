@@ -1,4 +1,4 @@
-model TestModel
+model PhysModel2
 
 
 space StandardSpace -10 10 -10 10 false false

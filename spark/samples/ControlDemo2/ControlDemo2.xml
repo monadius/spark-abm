@@ -1,6 +1,5 @@
 <spark-project>
 	<name>ControlDemo2</name>
-	<project-directory>C:\Work\My Projects\SPARK\SparkLogo\samples\ControlDemo2</project-directory>
 	<output-directory>output</output-directory>
 
 	<files>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<spark version="1.1">
+  <files all="true" path="."/>
+  <model tick="1">
+    <setup>Physical_3d_Model.PhysicalModel3d</setup>
+    <variables>
+      <variable get="get_velocityCoefficient" name="velocity-coefficient" set="set_velocityCoefficient" type="Double"/>
+      <variable get="get_separationCoefficient" name="separation-coefficient" set="set_separationCoefficient" type="Double"/>
+      <variable get="get_centralForceCoefficient" name="central-force-coefficient" set="set_centralForceCoefficient" type="Double"/>
+      <variable get="get_collisionCoefficient" name="collision-coefficient" set="set_collisionCoefficient" type="Double"/>
+      <variable get="get_dt" name="dt" set="set_dt" type="Double"/>
+      <variable get="get_initialAgentNumber" name="initial-agent-number" set="set_initialAgentNumber" type="Double"/>
+      <variable get="get_obstaclesNumber" name="obstacles-number" set="set_obstaclesNumber" type="Double"/>
+      <variable get="count$Obstacle" name="count$Obstacle" set="" type="Double"/>
+      <variable get="count$PhysAgent" name="count$PhysAgent" set="" type="Double"/>
+      <variable get="count$Spring" name="count$Spring" set="" type="Double"/>
+    </variables>
+    <parameters>
+      <parameter default="0.6" max="1.0" min="0.1" name="Velocity Decay" step="0.1" type="Double" variable="velocity-coefficient"/>
+      <parameter default="0.1" max="10.0" min="0.0" name="Separation Coefficient" step="0.1" type="Double" variable="separation-coefficient"/>
+      <parameter default="2.5" max="10.0" min="0.0" name="Central Force" step="0.1" type="Double" variable="central-force-coefficient"/>
+      <parameter default="50.0" max="100.0" min="0.0" name="Collision Coefficient" step="1.0" type="Double" variable="collision-coefficient"/>
+      <parameter default="0.05" max="0.2" min="0.01" name="dt" step="0.01" type="Double" variable="dt"/>
+      <parameter default="100.0" max="1000.0" min="0.0" name="initial-agent-number" step="0.1" type="Double" variable="initial-agent-number"/>
+      <parameter default="10.0" max="100.0" min="0.0" name="obstacles-number" step="0.1" type="Double" variable="obstacles-number"/>
+    </parameters>
+    <agents>
+      <agent name="Obstacle">Physical_3d_Model.Obstacle</agent>
+      <agent name="PhysAgent">Physical_3d_Model.PhysAgent</agent>
+      <agent name="Spring">Physical_3d_Model.Spring</agent>
+    </agents>
+  </model>
+  <interface>
+    <about path="readme.txt"/>
+    <windows>
+      <window height="431" name="Parameters" visible="true" width="486" x="622" y="25"/>
+      <window height="600" main="true" name="Main Window" visible="true" width="500" x="104" y="25"/>
+    </windows>
+    <mainframe control-state="1" dx="0.0" dy="0.0" location="Main Window" rot-x="20.0" rot-y="30.0" zoom="0.6999999">
+      <spacestyle auto-size="true" cell-xsize="10" cell-ysize="10" name="space" selected="true" swapXY="false"/>
+      <agentstyle alpha-function="4" alpha-function-value="0.0" bitmap-font-size="1.0" border="true" color-blending="false" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0;1.0" label-height="100.0" label-width="100.0" modulate-label-color="false" modulate-label-size="false" modulate-size="true" name="Obstacle" position="0" scale="1.0" stencil-function="0" stencil-mask="0" stencil-ref="0" text-alignment="Left" texture-env="0" transparency-coefficient="0.5" transparent="false" visible="true"/>
+      <agentstyle alpha-function="4" alpha-function-value="0.0" bitmap-font-size="1.0" border="true" color-blending="false" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0;1.0" label-height="100.0" label-width="100.0" modulate-label-color="false" modulate-label-size="false" modulate-size="true" name="PhysAgent" position="1" scale="1.0" stencil-function="0" stencil-mask="0" stencil-ref="0" text-alignment="Left" texture-env="0" transparency-coefficient="0.5" transparent="false" visible="true"/>
+      <agentstyle alpha-function="4" alpha-function-value="0.0" bitmap-font-size="1.0" border="true" color-blending="false" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0;1.0" label-height="100.0" label-width="100.0" modulate-label-color="false" modulate-label-size="false" modulate-size="true" name="Spring" position="2" scale="1.0" stencil-function="0" stencil-mask="0" stencil-ref="0" text-alignment="Left" texture-env="0" transparency-coefficient="0.5" transparent="false" visible="true"/>
+    </mainframe>
+    <parameterframe location="Parameters">
+      <user-parameter max="0.2" min="0.01" name="dt" step="0.01" use="false"/>
+      <user-parameter max="100.0" min="0.0" name="obstacles-number" step="0.1" use="false"/>
+      <user-parameter max="100.0" min="0.0" name="Collision Coefficient" step="1.0" use="false"/>
+      <user-parameter max="10.0" min="0.0" name="Central Force" step="0.1" use="false"/>
+      <user-parameter max="10.0" min="0.0" name="Separation Coefficient" step="0.1" use="false"/>
+      <user-parameter max="1.0" min="0.1" name="Velocity Decay" step="0.1" use="false"/>
+      <user-parameter max="1000.0" min="0.0" name="initial-agent-number" step="0.1" use="false"/>
+    </parameterframe>
+    <variable-sets/>
+    <data-layers/>
+    <control-panel delay="8" freq="0"/>
+  </interface>
+</spark>

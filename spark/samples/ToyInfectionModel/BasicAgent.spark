@@ -20,7 +20,7 @@ to wiggle
 end
 
 
-@#$#@#$#@
+***end***
 package ToyInfectionModel;
 
 import static org.spark.utils.RandomHelper.nextDoubleFromTo;

@@ -1,4 +1,4 @@
-model TestModel
+model LinksDemo2
 
 
 space StandardSpace -15 15 -15 15 false false

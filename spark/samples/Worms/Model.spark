@@ -1,4 +1,4 @@
-model Model
+model WormsModel
 
 
 space StandardSpace -10 10 -10 10 true true

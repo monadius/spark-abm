@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<spark version="1.1">
+  <files all="true" path="."/>
+  <model tick="1">
+    <setup>Terrain.TerrainModel</setup>
+    <methods>
+      <method method="mounts" name="mounts"/>
+      <method method="river" name="river"/>
+      <method method="rain" name="rain"/>
+      <method method="waterSource" name="water-source"/>
+    </methods>
+    <variables>
+      <variable get="get_dt" name="dt" set="set_dt" type="Double"/>
+      <variable get="count$WaterSource" name="count$WaterSource" set="" type="Double"/>
+      <variable get="count$RainAgent" name="count$RainAgent" set="" type="Double"/>
+      <variable get="count$RainDrop" name="count$RainDrop" set="" type="Double"/>
+      <variable get="count$MountAgent" name="count$MountAgent" set="" type="Double"/>
+      <variable get="count$RiverAgent" name="count$RiverAgent" set="" type="Double"/>
+    </variables>
+    <parameters>
+      <parameter default="0.1" max="1.0" min="0.01" name="dt" step="0.01" type="Double" variable="dt"/>
+    </parameters>
+    <agents>
+      <agent name="WaterSource">Terrain.WaterSource</agent>
+      <agent name="RainAgent">Terrain.RainAgent</agent>
+      <agent name="RainDrop">Terrain.RainDrop</agent>
+      <agent name="MountAgent">Terrain.MountAgent</agent>
+      <agent name="RiverAgent">Terrain.RiverAgent</agent>
+    </agents>
+  </model>
+  <interface>
+    <about path="readme.txt"/>
+    <windows>
+      <window height="200" name="Methods" visible="true" width="200" x="670" y="194"/>
+      <window height="558" name="Water" visible="true" width="540" x="663" y="400"/>
+      <window height="168" name="Parameters" visible="true" width="659" x="670" y="25"/>
+      <window height="462" name="flux-l" visible="true" width="420" x="1206" y="394"/>
+      <window height="300" name="Sediment" visible="false" width="300" x="1487" y="682"/>
+      <window height="692" main="true" name="Main Window" visible="true" width="586" x="68" y="25"/>
+    </windows>
+    <mainframe control-state="1" dx="0.0" dy="0.0" location="Main Window" rot-x="113.59996" rot-y="-182.40001" zoom="1.0">
+      <spacestyle auto-size="true" cell-xsize="10" cell-ysize="10" name="space" selected="true" swapXY="false"/>
+      <datalayerstyle>
+        <info color-weight="1.0" height-weight="1.0" style-name="water-map"/>
+        <info color-weight="0.1" height-weight="1.0" style-name="height-map"/>
+      </datalayerstyle>
+      <agentstyle alpha-function="4" alpha-function-value="0.0" bitmap-font-size="1.0" border="true" color-blending="false" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0;0.0" label-height="100.0" label-width="100.0" modulate-label-color="false" modulate-label-size="false" modulate-size="true" name="MountAgent" position="0" scale="1.0" stencil-function="0" stencil-mask="65535" stencil-ref="0" text-alignment="Left" texture-env="0" transparency-coefficient="0.5" transparent="false" visible="true"/>
+      <agentstyle alpha-function="4" alpha-function-value="0.0" bitmap-font-size="1.0" border="true" color-blending="false" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0;0.0" label-height="100.0" label-width="100.0" modulate-label-color="false" modulate-label-size="false" modulate-size="true" name="RainDrop" position="1" scale="1.0" stencil-function="0" stencil-mask="65535" stencil-ref="0" text-alignment="Left" texture-env="0" transparency-coefficient="0.5" transparent="false" visible="true"/>
+      <agentstyle alpha-function="4" alpha-function-value="0.0" bitmap-font-size="1.0" border="true" color-blending="false" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0;0.0" label-height="100.0" label-width="100.0" modulate-label-color="false" modulate-label-size="false" modulate-size="true" name="RainAgent" position="2" scale="1.0" stencil-function="0" stencil-mask="65535" stencil-ref="0" text-alignment="Left" texture-env="0" transparency-coefficient="0.5" transparent="false" visible="true"/>
+      <agentstyle alpha-function="4" alpha-function-value="0.0" bitmap-font-size="1.0" border="true" color-blending="false" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0;0.0" label-height="100.0" label-width="100.0" modulate-label-color="false" modulate-label-size="false" modulate-size="true" name="WaterSource" position="3" scale="1.0" stencil-function="0" stencil-mask="65535" stencil-ref="0" text-alignment="Left" texture-env="0" transparency-coefficient="0.5" transparent="false" visible="true"/>
+      <agentstyle alpha-function="4" alpha-function-value="0.0" bitmap-font-size="1.0" border="true" color-blending="false" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0;0.0" label-height="100.0" label-width="100.0" modulate-label-color="false" modulate-label-size="false" modulate-size="true" name="RiverAgent" position="4" scale="1.0" stencil-function="0" stencil-mask="65535" stencil-ref="0" text-alignment="Left" texture-env="0" transparency-coefficient="0.5" transparent="false" visible="true"/>
+    </mainframe>
+    <renderframe control-state="0" dx="0.0" dy="0.0" location="Water" rot-x="20.0" rot-y="30.0" zoom="1.0">
+      <spacestyle auto-size="true" cell-xsize="10" cell-ysize="10" name="space" selected="true" swapXY="false"/>
+      <datalayerstyle>
+        <info color-weight="1.0" height-weight="0.0" style-name="water-map"/>
+      </datalayerstyle>
+      <agentstyle alpha-function="4" alpha-function-value="0.0" bitmap-font-size="1.0" border="true" color-blending="false" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0;0.0" label-height="100.0" label-width="100.0" modulate-label-color="false" modulate-label-size="false" modulate-size="true" name="MountAgent" position="0" scale="1.0" stencil-function="0" stencil-mask="65535" stencil-ref="0" text-alignment="Left" texture-env="0" transparency-coefficient="0.5" transparent="false" visible="true"/>
+      <agentstyle alpha-function="4" alpha-function-value="0.0" bitmap-font-size="1.0" border="true" color-blending="false" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0;0.0" label-height="100.0" label-width="100.0" modulate-label-color="false" modulate-label-size="false" modulate-size="true" name="RainDrop" position="1" scale="1.0" stencil-function="0" stencil-mask="65535" stencil-ref="0" text-alignment="Left" texture-env="0" transparency-coefficient="0.5" transparent="false" visible="true"/>
+      <agentstyle alpha-function="4" alpha-function-value="0.0" bitmap-font-size="1.0" border="true" color-blending="false" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0;0.0" label-height="100.0" label-width="100.0" modulate-label-color="false" modulate-label-size="false" modulate-size="true" name="RainAgent" position="2" scale="1.0" stencil-function="0" stencil-mask="65535" stencil-ref="0" text-alignment="Left" texture-env="0" transparency-coefficient="0.5" transparent="false" visible="true"/>
+      <agentstyle alpha-function="4" alpha-function-value="0.0" bitmap-font-size="1.0" border="true" color-blending="false" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0;0.0" label-height="100.0" label-width="100.0" modulate-label-color="false" modulate-label-size="false" modulate-size="true" name="WaterSource" position="3" scale="1.0" stencil-function="0" stencil-mask="65535" stencil-ref="0" text-alignment="Left" texture-env="0" transparency-coefficient="0.5" transparent="false" visible="true"/>
+      <agentstyle alpha-function="4" alpha-function-value="0.0" bitmap-font-size="1.0" border="true" color-blending="false" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0;0.0" label-height="100.0" label-width="100.0" modulate-label-color="false" modulate-label-size="false" modulate-size="true" name="RiverAgent" position="4" scale="1.0" stencil-function="0" stencil-mask="65535" stencil-ref="0" text-alignment="Left" texture-env="0" transparency-coefficient="0.5" transparent="false" visible="true"/>
+    </renderframe>
+    <parameterframe location="Parameters">
+      <user-parameter max="1.0" min="0.01" name="dt" step="0.01" use="false"/>
+    </parameterframe>
+    <variable-sets/>
+    <renderframe control-state="0" dx="0.0" dy="0.0" location="flux-l" rot-x="20.0" rot-y="30.0" zoom="1.0">
+      <spacestyle auto-size="true" cell-xsize="10" cell-ysize="10" name="space" selected="true" swapXY="false"/>
+      <datalayerstyle>
+        <info color-weight="1.0" height-weight="0.0" style-name="flux-l"/>
+      </datalayerstyle>
+      <agentstyle alpha-function="4" alpha-function-value="0.0" bitmap-font-size="1.0" border="true" color-blending="false" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0;0.0" label-height="100.0" label-width="100.0" modulate-label-color="false" modulate-label-size="false" modulate-size="true" name="MountAgent" position="0" scale="1.0" stencil-function="0" stencil-mask="65535" stencil-ref="0" text-alignment="Left" texture-env="0" transparency-coefficient="0.5" transparent="false" visible="false"/>
+      <agentstyle alpha-function="4" alpha-function-value="0.0" bitmap-font-size="1.0" border="true" color-blending="false" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0;0.0" label-height="100.0" label-width="100.0" modulate-label-color="false" modulate-label-size="false" modulate-size="true" name="RainDrop" position="1" scale="1.0" stencil-function="0" stencil-mask="65535" stencil-ref="0" text-alignment="Left" texture-env="0" transparency-coefficient="0.5" transparent="false" visible="false"/>
+      <agentstyle alpha-function="4" alpha-function-value="0.0" bitmap-font-size="1.0" border="true" color-blending="false" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0;0.0" label-height="100.0" label-width="100.0" modulate-label-color="false" modulate-label-size="false" modulate-size="true" name="RainAgent" position="2" scale="1.0" stencil-function="0" stencil-mask="65535" stencil-ref="0" text-alignment="Left" texture-env="0" transparency-coefficient="0.5" transparent="false" visible="false"/>
+      <agentstyle alpha-function="4" alpha-function-value="0.0" bitmap-font-size="1.0" border="true" color-blending="false" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0;0.0" label-height="100.0" label-width="100.0" modulate-label-color="false" modulate-label-size="false" modulate-size="true" name="WaterSource" position="3" scale="1.0" stencil-function="0" stencil-mask="65535" stencil-ref="0" text-alignment="Left" texture-env="0" transparency-coefficient="0.5" transparent="false" visible="true"/>
+      <agentstyle alpha-function="4" alpha-function-value="0.0" bitmap-font-size="1.0" border="true" color-blending="false" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0;0.0" label-height="100.0" label-width="100.0" modulate-label-color="false" modulate-label-size="false" modulate-size="true" name="RiverAgent" position="4" scale="1.0" stencil-function="0" stencil-mask="65535" stencil-ref="0" text-alignment="Left" texture-env="0" transparency-coefficient="0.5" transparent="false" visible="true"/>
+    </renderframe>
+    <renderframe control-state="0" dx="0.0" dy="0.0" location="Sediment" rot-x="20.0" rot-y="30.0" zoom="1.0">
+      <spacestyle auto-size="true" cell-xsize="10" cell-ysize="10" name="space" selected="true" swapXY="false"/>
+      <datalayerstyle>
+        <info color-weight="1.0" height-weight="0.0" style-name="sediment"/>
+      </datalayerstyle>
+      <agentstyle alpha-function="4" alpha-function-value="0.0" bitmap-font-size="1.0" border="true" color-blending="false" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0;0.0" label-height="100.0" label-width="100.0" modulate-label-color="false" modulate-label-size="false" modulate-size="true" name="MountAgent" position="0" scale="1.0" stencil-function="0" stencil-mask="65535" stencil-ref="0" text-alignment="Left" texture-env="0" transparency-coefficient="0.5" transparent="false" visible="false"/>
+      <agentstyle alpha-function="4" alpha-function-value="0.0" bitmap-font-size="1.0" border="true" color-blending="false" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0;0.0" label-height="100.0" label-width="100.0" modulate-label-color="false" modulate-label-size="false" modulate-size="true" name="RainDrop" position="1" scale="1.0" stencil-function="0" stencil-mask="65535" stencil-ref="0" text-alignment="Left" texture-env="0" transparency-coefficient="0.5" transparent="false" visible="false"/>
+      <agentstyle alpha-function="4" alpha-function-value="0.0" bitmap-font-size="1.0" border="true" color-blending="false" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0;0.0" label-height="100.0" label-width="100.0" modulate-label-color="false" modulate-label-size="false" modulate-size="true" name="RainAgent" position="2" scale="1.0" stencil-function="0" stencil-mask="65535" stencil-ref="0" text-alignment="Left" texture-env="0" transparency-coefficient="0.5" transparent="false" visible="false"/>
+      <agentstyle alpha-function="4" alpha-function-value="0.0" bitmap-font-size="1.0" border="true" color-blending="false" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0;0.0" label-height="100.0" label-width="100.0" modulate-label-color="false" modulate-label-size="false" modulate-size="true" name="WaterSource" position="3" scale="1.0" stencil-function="0" stencil-mask="65535" stencil-ref="0" text-alignment="Left" texture-env="0" transparency-coefficient="0.5" transparent="false" visible="true"/>
+      <agentstyle alpha-function="4" alpha-function-value="0.0" bitmap-font-size="1.0" border="true" color-blending="false" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0;0.0" label-height="100.0" label-width="100.0" modulate-label-color="false" modulate-label-size="false" modulate-size="true" name="RiverAgent" position="4" scale="1.0" stencil-function="0" stencil-mask="65535" stencil-ref="0" text-alignment="Left" texture-env="0" transparency-coefficient="0.5" transparent="false" visible="true"/>
+    </renderframe>
+    <data-layers>
+      <datalayer color1="0.4;0.4;0.0" color2="0.8;0.8;0.0" name="height-map" val1="-15.0" val2="15.0" values-colors="0.23/0.4;0.4;0.0/0.73/0.8;0.8;0.0/"/>
+      <datalayer color1="0.6;0.6;0.0" color2="0.0;0.6;1.0" name="water-map" val1="0.0" val2="0.2" values-colors="0.88/0.0;0.6;0.6/0.2/0.6;0.6;0.6941176470588235/0.59/0.0;1.0;1.0/"/>
+      <datalayer color1="0.4;0.4;0.4" color2="1.0;0.0;0.0" name="sediment" val1="0.0" val2="1.0"/>
+      <datalayer color1="0.0;0.0;0.0" color2="0.0;0.0;1.0" name="s1" val1="0.0" val2="1.0"/>
+      <datalayer color1="0.0;0.0;0.0" color2="0.0;0.0;1.0" name="vel-u" val1="0.0" val2="1.0"/>
+      <datalayer color1="0.0;0.0;0.0" color2="0.0;0.0;1.0" name="vel-v" val1="0.0" val2="1.0"/>
+      <datalayer color1="1.0;1.0;1.0" color2="0.0;0.0;1.0" name="flux-l" val1="0.0" val2="0.30473856352087075"/>
+      <datalayer color1="1.0;1.0;1.0" color2="0.0;0.0;1.0" name="flux-r" val1="0.0" val2="1.0"/>
+      <datalayer color1="0.0;0.0;0.0" color2="0.0;0.0;1.0" name="flux-t" val1="0.0" val2="1.0"/>
+      <datalayer color1="0.0;0.0;0.0" color2="0.0;0.0;1.0" name="flux-b" val1="0.0" val2="1.0"/>
+      <datalayer color1="0.0;0.0;0.0" color2="0.0;0.0;1.0" name="d1" val1="0.0" val2="1.0"/>
+      <datalayer color1="0.0;0.0;0.0" color2="0.0;0.0;1.0" name="K-grid" val1="0.0" val2="1.0"/>
+    </data-layers>
+    <methods-panel location="Methods"/>
+    <control-panel delay="8" freq="4"/>
+  </interface>
+</spark>

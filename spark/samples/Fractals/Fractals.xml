@@ -1,6 +1,5 @@
 <spark-project>
 	<name>Fractals</name>
-	<project-directory>C:\Work\My Projects\Eclipse\SparkLogo\samples\Fractals</project-directory>
 	<output-directory>output</output-directory>
 
 	<files>

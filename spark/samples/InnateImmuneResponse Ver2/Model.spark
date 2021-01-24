@@ -1,4 +1,4 @@
-model InnateImmuneResponseModel
+model InnateImmuneResponseModelV2
 
 global system-oxy = 0
 

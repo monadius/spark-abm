@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<spark version="1.1">
+  <files all="true" path="."/>
+  <model tick="1">
+    <setup>ToyInfectionModel.ToyInfectionModel</setup>
+    <variables>
+      <variable get="get_totalTissueDamage" name="total-tissue-damage" set="set_totalTissueDamage" type="Double"/>
+      <variable get="get_initialInfectionNumber" name="initial-infection-number" set="set_initialInfectionNumber" type="Double"/>
+      <variable get="get_cidalCompoundProduction" name="cidal-compound-production" set="set_cidalCompoundProduction" type="Double"/>
+      <variable get="get_chemotaxisThreshold" name="chemotaxis-threshold" set="set_chemotaxisThreshold" type="Double"/>
+      <variable get="get_yesToxin" name="yes-toxin" set="set_yesToxin" type="Boolean"/>
+      <variable get="get_CONST" name="CONST" set="set_CONST" type="Double"/>
+      <variable get="count$BasicAgent" name="count$BasicAgent" set="" type="Double"/>
+      <variable get="count$InflamCell" name="count$InflamCell" set="" type="Double"/>
+      <variable get="count$InfectAgent" name="count$InfectAgent" set="" type="Double"/>
+    </variables>
+    <parameters>
+      <parameter max="1000.0" min="0.0" name="Initial infection" step="1.0" type="Double" variable="initial-infection-number"/>
+      <parameter max="30.0" min="0.0" name="Cidal compound production" step="0.1" type="Double" variable="cidal-compound-production"/>
+      <parameter max="1.0" min="0.0" name="Chemotaxis threshold" step="0.1" type="Double" variable="chemotaxis-threshold"/>
+      <parameter max="10.0" min="0.0" name="yes-toxin" step="0.1" type="Boolean" variable="yes-toxin"/>
+    </parameters>
+    <agents>
+      <agent name="BasicAgent">ToyInfectionModel.BasicAgent</agent>
+      <agent name="InflamCell" priority="1">ToyInfectionModel.InflamCell</agent>
+      <agent name="InfectAgent" priority="2">ToyInfectionModel.InfectAgent</agent>
+    </agents>
+  </model>
+  <interface>
+    <about path="readme.txt"/>
+    <windows>
+      <window height="234" name="Parameters" visible="true" width="532" x="720" y="29"/>
+      <window height="672" name="Toxin" visible="false" width="693" x="763" y="319"/>
+      <window height="222" name="Total Tissue Damage" visible="false" width="480" x="591" y="458"/>
+      <window height="574" name="View" visible="true" width="503" x="720" y="272"/>
+      <window height="736" main="true" name="Main Window" visible="true" width="631" x="73" y="25"/>
+    </windows>
+    <mainframe control-state="1" dx="0.0" dy="0.0" location="Main Window" rot-x="-959.20215" rot-y="-164.39989" zoom="1.0">
+      <spacestyle auto-size="true" cell-xsize="10" cell-ysize="10" name="space" selected="true" swapXY="false"/>
+      <datalayerstyle>
+        <info color-weight="0.0" height-weight="3.0" style-name="toxin"/>
+        <info color-weight="1.0" height-weight="0.0" style-name="tissue-life"/>
+      </datalayerstyle>
+      <agentstyle alpha-function="4" alpha-function-value="0.0" bitmap-font-size="1.0" border="true" color-blending="false" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0;0.0" label-height="100.0" label-width="100.0" modulate-label-color="false" modulate-label-size="false" modulate-size="true" name="InfectAgent" position="0" scale="1.0" stencil-function="0" stencil-mask="65535" stencil-ref="0" text-alignment="Left" texture-env="0" transparency-coefficient="0.5" transparent="false" visible="true"/>
+      <agentstyle alpha-function="4" alpha-function-value="0.0" bitmap-font-size="1.0" border="true" color-blending="false" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0;0.0" label-height="100.0" label-width="100.0" modulate-label-color="false" modulate-label-size="false" modulate-size="true" name="InflamCell" position="1" scale="1.0" stencil-function="0" stencil-mask="65535" stencil-ref="0" text-alignment="Left" texture-env="0" transparency-coefficient="0.5" transparent="false" visible="true"/>
+      <agentstyle alpha-function="4" alpha-function-value="0.0" bitmap-font-size="1.0" border="true" color-blending="false" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0;0.0" label-height="100.0" label-width="100.0" modulate-label-color="false" modulate-label-size="false" modulate-size="true" name="BasicAgent" position="2" scale="1.0" stencil-function="0" stencil-mask="65535" stencil-ref="0" text-alignment="Left" texture-env="0" transparency-coefficient="0.5" transparent="false" visible="true"/>
+    </mainframe>
+    <parameterframe location="Parameters">
+      <user-parameter max="10.0" min="0.0" name="yes-toxin" step="0.1" use="false"/>
+      <user-parameter max="30.0" min="0.0" name="Cidal compound production" step="0.1" use="false"/>
+      <user-parameter max="1.0" min="0.0" name="Chemotaxis threshold" step="0.1" use="false"/>
+      <user-parameter max="1000.0" min="0.0" name="Initial infection" step="1.0" use="false"/>
+    </parameterframe>
+    <variable-sets/>
+    <renderframe control-state="1" dx="2.0" dy="-14.0" location="Toxin" rot-x="-408.4" rot-y="-9.5999775" zoom="1.0">
+      <spacestyle auto-size="true" cell-xsize="10" cell-ysize="10" name="space" selected="true" swapXY="false"/>
+      <datalayerstyle>
+        <info color-weight="1.0" height-weight="3.0" style-name="toxin"/>
+        <info color-weight="0.5" height-weight="0.2" style-name="tissue-life"/>
+      </datalayerstyle>
+      <agentstyle alpha-function="4" alpha-function-value="0.0" bitmap-font-size="1.0" border="true" color-blending="false" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0;0.0" label-height="100.0" label-width="100.0" modulate-label-color="false" modulate-label-size="false" modulate-size="true" name="InfectAgent" position="0" scale="1.0" stencil-function="0" stencil-mask="65535" stencil-ref="0" text-alignment="Left" texture-env="0" transparency-coefficient="0.5" transparent="false" visible="false"/>
+      <agentstyle alpha-function="4" alpha-function-value="0.0" bitmap-font-size="1.0" border="true" color-blending="false" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0;0.0" label-height="100.0" label-width="100.0" modulate-label-color="false" modulate-label-size="false" modulate-size="true" name="InflamCell" position="1" scale="1.0" stencil-function="0" stencil-mask="65535" stencil-ref="0" text-alignment="Left" texture-env="0" transparency-coefficient="0.5" transparent="false" visible="false"/>
+      <agentstyle alpha-function="4" alpha-function-value="0.0" bitmap-font-size="1.0" border="true" color-blending="false" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0;0.0" label-height="100.0" label-width="100.0" modulate-label-color="false" modulate-label-size="false" modulate-size="true" name="BasicAgent" position="2" scale="1.0" stencil-function="0" stencil-mask="65535" stencil-ref="0" text-alignment="Left" texture-env="0" transparency-coefficient="0.5" transparent="false" visible="false"/>
+    </renderframe>
+    <renderframe control-state="0" dx="0.0" dy="0.0" location="View" rot-x="-44.800014" rot-y="354.00003" zoom="1.0">
+      <spacestyle auto-size="true" cell-xsize="10" cell-ysize="10" name="space" selected="true" swapXY="false"/>
+      <datalayerstyle>
+        <info color-weight="1.0" height-weight="0.0" style-name="cidal-compound"/>
+      </datalayerstyle>
+      <agentstyle alpha-function="4" alpha-function-value="0.0" bitmap-font-size="1.0" border="true" color-blending="false" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0;0.0" label-height="100.0" label-width="100.0" modulate-label-color="false" modulate-label-size="false" modulate-size="true" name="InfectAgent" position="0" scale="1.0" stencil-function="0" stencil-mask="65535" stencil-ref="0" text-alignment="Left" texture-env="0" transparency-coefficient="0.5" transparent="false" visible="false"/>
+      <agentstyle alpha-function="4" alpha-function-value="0.0" bitmap-font-size="1.0" border="true" color-blending="false" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0;0.0" label-height="100.0" label-width="100.0" modulate-label-color="false" modulate-label-size="false" modulate-size="true" name="InflamCell" position="1" scale="1.0" stencil-function="0" stencil-mask="65535" stencil-ref="0" text-alignment="Left" texture-env="0" transparency-coefficient="0.5" transparent="false" visible="false"/>
+      <agentstyle alpha-function="4" alpha-function-value="0.0" bitmap-font-size="1.0" border="true" color-blending="false" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0;0.0" label-height="100.0" label-width="100.0" modulate-label-color="false" modulate-label-size="false" modulate-size="true" name="BasicAgent" position="2" scale="1.0" stencil-function="0" stencil-mask="65535" stencil-ref="0" text-alignment="Left" texture-env="0" transparency-coefficient="0.5" transparent="false" visible="false"/>
+    </renderframe>
+    <data-layers>
+      <datalayer color1="0.0;0.0;0.2" color2="0.4;0.4;0.4" name="cidal-compound" val1="5.388529728155038E-26" val2="1.3500815590252057E-24"/>
+      <datalayer color1="1.0;0.2;0.0" color2="0.2;0.8;0.0" name="tissue-life" val1="0.0" val2="100.0"/>
+      <datalayer color1="0.2;1.0;1.0" color2="1.0;0.0;0.0" name="toxin" val1="0.0" val2="0.0"/>
+    </data-layers>
+    <chart interval="1" label="total-tissue-damage" location="Total Tissue Damage" name="Total Tissue Damage" variable="total-tissue-damage"/>
+    <control-panel delay="9" freq="3"/>
+  </interface>
+</spark>

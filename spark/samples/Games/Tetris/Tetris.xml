@@ -1,6 +1,5 @@
 <spark-project>
 	<name>Tetris</name>
-	<project-directory>C:\Work\My Projects\SPARK\SparkLogo\Models\Games\Tetris</project-directory>
 	<output-directory>output</output-directory>
 
 	<files>

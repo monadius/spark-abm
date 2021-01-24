@@ -1,12 +1,11 @@
 <spark-project>
 	<name>ToyInfectionModel</name>
-	<project-directory>C:\Help\Alexey\My New Projects\Eclipse Projects\Spark Language\SparkLOGO\ToyInfectionModel</project-directory>
 	<output-directory>output</output-directory>
 
 	<files>
-		<file>BasicAgent.java</file>
-		<file>InfectAgent.java</file>
-		<file>InflamCell.java</file>
-		<file>Model.java</file>
+		<file>BasicAgent.spark</file>
+		<file>InfectAgent.spark</file>
+		<file>InflamCell.spark</file>
+		<file>Model.spark</file>
 	</files>
 </spark-project>

@@ -29,7 +29,7 @@ end
 
 
 ; Model
-model TestModel
+model ControlDemo3
 
 space PhysicalSpace2d -10 10 -10 10 false false
 

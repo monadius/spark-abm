@@ -36,7 +36,7 @@ end
 ;;;;;;;;;;;;;
 ; The model
 ;;;;;;;;;;;;;
-model Model
+model EquationsModel
 
 ; Declare the main model space
 space StandardSpace -10 10 -10 10 true true
