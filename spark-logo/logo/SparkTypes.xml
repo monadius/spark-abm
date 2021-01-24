@@ -1400,7 +1400,7 @@
                 		<temp name = "v" type = "vector"/>
                 		<prelude>
                 			@v = @data.getUphillDirection(@@object.getPosition());
-                			@@object.move(@v)
+                			@@object.move(@v);
                 		</prelude>
                 	</translation2>
                 </method>
