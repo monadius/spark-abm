@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<spark version="1.1">
+    
+  <files all="true" path="."/>
+    
+  <model tick="1">
+        
+    <setup>CreateDieB.CreateDieB</setup>
+        
+    <agents>
+            
+      <agent name="TestAgent">CreateDieB.TestAgent</agent>
+          
+    </agents>
+        
+    <variables>
+            
+      <variable get="count$TestAgent" name="count$TestAgent" set="" type="Double"/>
+          
+    </variables>
+      
+  </model>
+    
+  <interface>
+    <about path="readme.txt"/>
+    <windows>
+      <window height="600" main="true" name="Main Window" visible="true" width="500" x="244" y="108"/>
+    </windows>
+    <mainframe control-state="0" dx="0.0" dy="0.0" location="Main Window" rot-x="20.0" rot-y="30.0" zoom="1.0">
+      <spacestyle auto-size="true" cell-xsize="10" cell-ysize="10" name="space" selected="true" swapXY="false"/>
+      <agentstyle alpha-function="4" alpha-function-value="0.0" bitmap-font-size="1.0" border="true" color-blending="false" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0;1.0" label-height="100.0" label-width="100.0" modulate-label-color="false" modulate-label-size="false" modulate-size="true" name="TestAgent" position="0" scale="1.0" stencil-function="0" stencil-mask="0" stencil-ref="0" text-alignment="Left" texture-env="0" transparency-coefficient="0.5" transparent="false" visible="true"/>
+    </mainframe>
+    <data-layers/>
+    <control-panel delay="8" freq="0"/>
+  </interface>
+  
+</spark>

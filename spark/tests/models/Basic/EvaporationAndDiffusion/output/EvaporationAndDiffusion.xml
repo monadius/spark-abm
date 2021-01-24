@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<spark version="1.1">
+    
+  <files all="true" path="."/>
+    
+  <model tick="1">
+        
+    <setup>EvaporationAndDiffusion.EvaporationAndDiffusion</setup>
+        
+    <agents>
+            
+      <agent name="TestAgent">EvaporationAndDiffusion.TestAgent</agent>
+          
+    </agents>
+        
+    <variables>
+            
+      <variable get="get_totalData" name="total-data" set="set_totalData" type="Double"/>
+            
+      <variable get="count$TestAgent" name="count$TestAgent" set="" type="Double"/>
+          
+    </variables>
+      
+  </model>
+    
+  <interface>
+    <about path="readme.txt"/>
+    <windows>
+      <window height="600" main="true" name="Main Window" visible="true" width="500" x="216" y="124"/>
+    </windows>
+    <mainframe control-state="0" dx="0.0" dy="0.0" location="Main Window" rot-x="20.0" rot-y="30.0" zoom="1.0">
+      <spacestyle auto-size="true" cell-xsize="10" cell-ysize="10" name="space" selected="true" swapXY="false"/>
+      <agentstyle alpha-function="4" alpha-function-value="0.0" bitmap-font-size="1.0" border="true" color-blending="false" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0;1.0" label-height="100.0" label-width="100.0" modulate-label-color="false" modulate-label-size="false" modulate-size="true" name="TestAgent" position="0" scale="1.0" stencil-function="0" stencil-mask="0" stencil-ref="0" text-alignment="Left" texture-env="0" transparency-coefficient="0.5" transparent="false" visible="true"/>
+    </mainframe>
+    <data-layers>
+            
+      <datalayer color1="0.0;0.0;0.0" color2="0.0;0.0;1.0" name="data" val1="0.0" val2="1.0"/>
+          
+    </data-layers>
+    <control-panel delay="8" freq="0"/>
+  </interface>
+  
+</spark>
