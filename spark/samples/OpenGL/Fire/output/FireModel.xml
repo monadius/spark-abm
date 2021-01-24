@@ -1,50 +1,36 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <spark version="1.1">
-    
   <files all="true" path="."/>
-    
   <model tick="1">
-        
     <setup>Fire.FireModel</setup>
-        
     <variables>
-            
       <variable get="get_numberOfParticles" name="number-of-particles" set="set_numberOfParticles" type="Double"/>
-            
       <variable get="count$Particle" name="count$Particle" set="" type="Double"/>
-            
       <variable get="count$ParticleEmitter" name="count$ParticleEmitter" set="" type="Double"/>
-          
     </variables>
-        
     <agents>
-            
       <agent name="Particle">Fire.Particle</agent>
-            
       <agent name="ParticleEmitter">Fire.ParticleEmitter</agent>
-          
     </agents>
-      
   </model>
-    
   <interface>
     <about path="readme.txt"/>
     <windows>
-      <window height="200" name="number-of-particles" visible="true" width="200" x="782" y="114"/>
-      <window height="600" main="true" name="Main Window" visible="true" width="500" x="207" y="77"/>
+      <window height="200" name="number-of-particles" visible="true" width="300" x="753" y="25"/>
+      <window height="683" main="true" name="Main Window" visible="true" width="583" x="169" y="25"/>
     </windows>
     <mainframe control-state="0" dx="0.0" dy="0.0" location="Main Window" rot-x="20.0" rot-y="30.0" zoom="1.0">
       <spacestyle auto-size="true" cell-xsize="10" cell-ysize="10" name="space" selected="true" swapXY="false"/>
-      <agentstyle alpha-function="4" alpha-function-value="0.0" bitmap-font-size="1.0" border="true" color-blending="false" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0;1.0" label-height="100.0" label-width="100.0" modulate-label-color="false" modulate-label-size="false" modulate-size="true" name="Particle" position="0" scale="1.0" stencil-function="0" stencil-mask="0" stencil-ref="0" text-alignment="Left" texture-env="0" transparency-coefficient="0.5" transparent="false" visible="true"/>
-      <agentstyle alpha-function="4" alpha-function-value="0.0" bitmap-font-size="1.0" border="true" color-blending="false" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0;1.0" label-height="100.0" label-width="100.0" modulate-label-color="false" modulate-label-size="false" modulate-size="true" name="ParticleEmitter" position="1" scale="1.0" stencil-function="0" stencil-mask="0" stencil-ref="0" text-alignment="Left" texture-env="0" transparency-coefficient="0.5" transparent="false" visible="true"/>
+      <datalayerstyle>
+        <info color-weight="1.0" height-weight="0.0" style-name="black-background"/>
+      </datalayerstyle>
+      <agentstyle alpha-function="4" alpha-function-value="0.0" bitmap-font-size="1.0" blend-dst="4" blend-src="2" border="true" color-blending="true" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0;1.0" label-height="100.0" label-width="100.0" modulate-label-color="false" modulate-label-size="false" modulate-size="false" name="Particle" position="0" scale="1.0" stencil-function="0" stencil-mask="65535" stencil-ref="0" text-alignment="Left" texture-env="0" tile-manager="../images/tiles.xml" transparency-coefficient="0.5" transparent="false" visible="true"/>
+      <agentstyle alpha-function="4" alpha-function-value="0.0" bitmap-font-size="1.0" border="true" color-blending="false" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0;1.0" label-height="100.0" label-width="100.0" modulate-label-color="false" modulate-label-size="false" modulate-size="true" name="ParticleEmitter" position="1" scale="1.0" stencil-function="0" stencil-mask="65535" stencil-ref="0" text-alignment="Left" texture-env="0" transparency-coefficient="0.5" transparent="false" visible="true"/>
     </mainframe>
     <data-layers>
-            
       <datalayer color1="0.0;0.0;0.0" color2="0.0;0.0;1.0" name="black-background" val1="0.0" val2="1.0"/>
-          
     </data-layers>
     <chart interval="0" label="number-of-particles" location="number-of-particles" name="number-of-particles" variable="number-of-particles"/>
-    <control-panel delay="8" freq="0"/>
+    <control-panel delay="8" freq="4"/>
   </interface>
-  
 </spark>

@@ -1,0 +1,17 @@
+<tiles>
+  <data>
+    <file name="001.png">
+      <subimage id="001"/>
+    </file>
+    <file name="explosion.png">
+      <subimage id="explosion"/>
+    </file>
+  </data>
+
+  <references>
+    <set name="particle">
+      <image name="1" data="001"/>
+      <image name="2" data="explosion"/>
+    </set>
+  </references>
+</tiles>

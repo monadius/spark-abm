@@ -17,6 +17,8 @@ var end-color : vector
 var start-alpha : number
 var end-alpha : number
 
+var tile-set : string
+var tile-name : string
 
 to init [         start-radius
                         min-size
@@ -49,6 +51,22 @@ to init [         start-radius
                 self.last-update-time = cur-time
 
                 self.velocity = prev-position * (dispersion * speed)
+                init-image radius "particle" "2"
+
+end
+
+to get-data : AgentData
+    var data = create-one AgentData
+    data.add "tile-set" tile-set
+    data.add "tile-name" tile-name
+
+    return data
+end
+
+to init-image [r tile-set tile-name]
+        this.radius = r
+        this.tile-set = tile-set
+        this.tile-name = tile-name
 end
 
 
