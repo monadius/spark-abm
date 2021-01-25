@@ -3,7 +3,9 @@ package org.sparkabm.gui.render;
 import java.awt.Canvas;
 import java.awt.event.KeyEvent;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.jogamp.opengl.*;
@@ -11,6 +13,7 @@ import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.awt.GLJPanel;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.glu.GLUquadric;
+import com.jogamp.opengl.util.awt.AWTGLReadBufferUtil;
 import com.jogamp.opengl.util.texture.Texture;
 import org.sparkabm.runtime.data.DataObject_AgentData;
 import org.sparkabm.runtime.data.DataObject_SpaceAgents;
@@ -23,6 +26,8 @@ import org.sparkabm.gui.render.font.FontManager;
 import org.sparkabm.gui.render.images.TileManager;
 import org.sparkabm.math.Vector;
 import org.sparkabm.math.Vector4d;
+
+import javax.imageio.ImageIO;
 
 /**
  * JOGL renderer
@@ -60,8 +65,8 @@ public class JOGLRender extends Render implements GLEventListener {
     private float xMin, yMin, xMax, yMax, zMin, zMax;
 
     /* Pbuffer for taking screenshots */
-    //private GLPbuffer pbuffer;
-    //private int pbufferWidth, pbufferHeight;
+    private GLOffscreenAutoDrawable pbuffer;
+    private int pbufferWidth, pbufferHeight;
 
     /**
      * Default constructor
@@ -100,67 +105,71 @@ public class JOGLRender extends Render implements GLEventListener {
      */
     @Override
     protected void saveSnapshot(File dir, String fname, DataRow data) {
-        // TODO: implement
-//        GLDrawableFactory factory = GLDrawableFactory.getFactory();
-//
-//        if (factory == null || !factory.canCreateGLPbuffer()) {
-//            logger.severe("Cannot create a pbuffer for taking a screenshot");
-//            return;
-//        }
-//
-//        int w = 500;
-//        int h = 500;
-//
-//        if (canvas != null) {
-//            w = canvas.getWidth();
-//            h = canvas.getHeight();
-//        }
-//
-//        if (w <= 0 || h <= 0) {
-//            logger.severe("Canvas width or height is invalid");
-//            return;
-//        }
-//
+        int w = 500;
+        int h = 500;
+
+        if (canvas != null) {
+            w = canvas.getWidth();
+            h = canvas.getHeight();
+        }
+
+        if (w <= 0 || h <= 0) {
+            logger.severe("Canvas width or height is invalid");
+            return;
+        }
+
 //        // Create a new pbuffer if something has been changed
-//        if (pbuffer == null || w != pbufferWidth || h != pbufferHeight) {
-//            if (pbuffer != null) {
-//                pbuffer.destroy();
-//            }
-//
-//            // Create a pbuffer
-//            GLCapabilities glCap = new GLCapabilities();
-//            pbuffer = factory.createGLPbuffer(glCap, null, w, h, null);
-//            if (pbuffer == null) {
-//                logger.severe("Cannot create a pbuffer");
-//                return;
-//            }
-//
-//            pbuffer.addGLEventListener(this);
-//            pbufferWidth = w;
-//            pbufferHeight = h;
-//        }
-//
-//        try {
-//            // Render the data
-//            DataRow currentData = this.data;
-//            this.data = data;
-//            pbuffer.display();
-//            this.data = currentData;
-//
-//            // Save the buffer content into a file
-//            GLContext context = pbuffer.createContext(null);
-//
-//            context.makeCurrent();
-//            BufferedImage img = Screenshot.readToBufferedImage(w, h);
-//            context.release();
-//
-//            context.destroy();
-//
-//            File out = new File(dir, fname + ".png");
-//            ImageIO.write(img, "png", out);
-//        } catch (Exception e) {
-//            logger.log(Level.SEVERE, "exception", e);
-//        }
+        if (pbuffer == null || w != pbufferWidth || h != pbufferHeight) {
+            if (pbuffer != null) {
+                pbuffer.destroy();
+            }
+
+            GLProfile glp = GLProfile.getDefault();
+            GLCapabilities cap = new GLCapabilities(glp);
+            GLDrawableFactory factory = GLDrawableFactory.getDesktopFactory();
+            if (factory == null) {
+                logger.severe("Cannot create a pbuffer factory for taking a screenshot");
+                return;
+            }
+
+            pbuffer = factory.createOffscreenAutoDrawable(factory.getDefaultDevice(),
+                    cap, null, w, h);
+
+            if (pbuffer == null) {
+                logger.severe("Cannot create a pbuffer");
+                return;
+            }
+
+            pbufferWidth = w;
+            pbufferHeight = h;
+
+            // Initialize the context
+            pbuffer.display();
+            pbuffer.addGLEventListener(this);
+        }
+
+        try {
+            // Render the data
+            pbuffer.getContext().makeCurrent();
+            final DataRow currentData = this.data;
+            this.data = data;
+            pbuffer.display();
+            this.data = currentData;
+
+            // Save the buffer content into a file
+            BufferedImage img = new AWTGLReadBufferUtil(pbuffer.getGLProfile(), false)
+                    .readPixelsToBufferedImage(pbuffer.getGL(), true);
+
+            File out = new File(dir, fname + ".png");
+            ImageIO.write(img, "png", out);
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "exception", e);
+        }
+        finally {
+            if (pbuffer.getContext() != null) {
+                pbuffer.getContext().release();
+            }
+        }
     }
 
     /*
