@@ -14,6 +14,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.sparkabm.utils.FileUtils;
+import org.sparklogo.project.Project;
+import org.sparklogo.project.ProjectFile;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
@@ -411,6 +413,26 @@ public class MainFrame extends JFrame implements ActionListener {
         }
     }
 
+    private void synchronizeWithProject() {
+        projectNameField.setText(project.getName());
+        File projectDirectory = project.getProjectDirectory();
+        File outputDirectory = project.getOutputDirectory();
+
+        if (projectDirectory != null) {
+            projectDirectoryField.setText(projectDirectory.getPath());
+        }
+        else {
+            projectDirectoryField.setText("");
+        }
+
+        if (outputDirectory != null) {
+            outputDirectoryField.setText(outputDirectory.getPath());
+        }
+        else {
+            outputDirectoryField.setText("");
+        }
+    }
+
     /**
      * Opens a project file with an open file dialog
      */
@@ -429,7 +451,7 @@ public class MainFrame extends JFrame implements ActionListener {
      */
     public void openProjectFile(File file) throws Exception {
         ProjectFile.readProjectFile(file, project);
-        project.synchronizeMainFrame(this);
+        synchronizeWithProject();
         addRecentProject(file);
     }
 

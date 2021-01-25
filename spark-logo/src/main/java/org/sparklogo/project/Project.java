@@ -1,4 +1,4 @@
-package org.sparklogo.gui;
+package org.sparklogo.project;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -11,8 +11,10 @@ import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
 
 import org.sparkabm.utils.FileUtils;
+import org.sparklogo.gui.MainFrame;
 import org.sparklogo.main.SparkModel;
 import org.sparklogo.parser.SparkLogoParser;
+import org.sparklogo.project.ProjectFile;
 
 /**
  * SPARK Project class
@@ -20,6 +22,8 @@ import org.sparklogo.parser.SparkLogoParser;
  * @author Monad
  */
 public class Project {
+    public final static String DEFAULT_NAME = "SPARK Model";
+
     private final static String[] LIBS = {
             "spark-core", "spark-math", "spark-utils"
     };
@@ -68,7 +72,7 @@ public class Project {
     public Project() {
         projectFiles = new ArrayList<>();
         listModel = new ProjectListModel();
-        name = "SPARK Model";
+        name = DEFAULT_NAME;
     }
 
     /**
@@ -83,10 +87,17 @@ public class Project {
      * Sets project's name
      */
     public void setName(String name) {
-        if (name == null || name.equals("")) {
-            name = "SPARK Model";
+        if (name == null || name.isEmpty()) {
+            name = DEFAULT_NAME;
         }
         this.name = name;
+    }
+
+    /**
+     * Returns project's name. The returned value is nonnull.
+     */
+    public String getName() {
+        return name;
     }
 
     /**
@@ -125,6 +136,13 @@ public class Project {
     }
 
     /**
+     * Returns project's directory (the path to the project file).
+     */
+    public File getProjectDirectory() {
+        return projectDirectory;
+    }
+
+    /**
      * Sets the output directory
      */
     public void setOutputDirectory(File dir) {
@@ -132,62 +150,10 @@ public class Project {
     }
 
     /**
-     * Synchronizes the data with the main frame
+     * Returns project's output directory
      */
-    public void synchronizeWithMainFrame(MainFrame frame) {
-        String name = frame.projectNameField.getText();
-        String projectDir = frame.projectDirectoryField.getText();
-        String outputDir = frame.outputDirectoryField.getText();
-
-        // Set project directory
-        if (projectDir != null && !projectDir.equals("")) {
-            setProjectDirectory(new File(projectDir));
-        }
-        else {
-            setProjectDirectory(null);
-        }
-
-        if (name == null || name.equals("")) {
-            setName(projectDirectory.getAbsoluteFile().getName());
-        } else {
-            setName(name);
-        }
-
-        if (outputDir == null || outputDir.equals("")) {
-            outputDirectory = new File("output");
-        } else {
-            outputDirectory = new File(outputDir);
-            // TODO: test output directory file (is it acceptable or not)
-        }
-
-        // Synchronize MainFrame data
-        synchronizeMainFrame(frame);
-    }
-
-    /**
-     * Synchronizes text fields with the project data
-     */
-    public void synchronizeMainFrame(MainFrame frame) {
-        if (name != null) {
-            frame.projectNameField.setText(this.name);
-        }
-        else {
-            frame.projectNameField.setText("");
-        }
-
-        if (projectDirectory != null) {
-            frame.projectDirectoryField.setText(projectDirectory.getPath());
-        }
-        else {
-            frame.projectDirectoryField.setText("");
-        }
-
-        if (outputDirectory != null) {
-            frame.outputDirectoryField.setText(outputDirectory.getPath());
-        }
-        else {
-            frame.outputDirectoryField.setText("");
-        }
+    public File getOutputDirectory() {
+        return outputDirectory;
     }
 
     /**

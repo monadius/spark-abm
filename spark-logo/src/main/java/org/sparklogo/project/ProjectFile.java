@@ -1,4 +1,4 @@
-package org.sparklogo.gui;
+package org.sparklogo.project;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -84,7 +84,7 @@ public class ProjectFile {
 
         // Set name
         if (name == null || name.isEmpty()) {
-            name = "SPARK Model";
+            name = Project.DEFAULT_NAME;
         }
 
         project.setName(name);

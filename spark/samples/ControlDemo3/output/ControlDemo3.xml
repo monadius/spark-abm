@@ -3,18 +3,18 @@
   <files all="true" path="."/>
   <model tick="1">
     <setup>ControlDemo3.ControlDemo3</setup>
-    <agents>
-      <agent name="MyLink">ControlDemo3.MyLink</agent>
-      <agent name="SimpleAgent">ControlDemo3.SimpleAgent</agent>
-      <agent name="Agent1">ControlDemo3.Agent1</agent>
-      <agent name="TestAgent">ControlDemo3.TestAgent</agent>
-    </agents>
     <variables>
       <variable get="count$MyLink" name="count$MyLink" set="" type="Double"/>
       <variable get="count$SimpleAgent" name="count$SimpleAgent" set="" type="Double"/>
       <variable get="count$Agent1" name="count$Agent1" set="" type="Double"/>
       <variable get="count$TestAgent" name="count$TestAgent" set="" type="Double"/>
     </variables>
+    <agents>
+      <agent name="MyLink">ControlDemo3.MyLink</agent>
+      <agent name="SimpleAgent">ControlDemo3.SimpleAgent</agent>
+      <agent name="Agent1">ControlDemo3.Agent1</agent>
+      <agent name="TestAgent">ControlDemo3.TestAgent</agent>
+    </agents>
   </model>
   <interface>
     <about path="readme.txt"/>
@@ -28,7 +28,7 @@
       <agentstyle alpha-function="4" alpha-function-value="0.0" bitmap-font-size="1.0" border="true" color-blending="false" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0;1.0" label-height="100.0" label-width="100.0" modulate-label-color="false" modulate-label-size="false" modulate-size="true" name="TestAgent" position="2" scale="1.0" stencil-function="0" stencil-mask="0" stencil-ref="0" text-alignment="Left" texture-env="0" transparency-coefficient="0.5" transparent="false" visible="true"/>
       <agentstyle alpha-function="4" alpha-function-value="0.0" bitmap-font-size="1.0" border="true" color-blending="false" draw-shape-with-image="false" dx-label="0.0" dy-label="0.0" label="false" label-color="0.0;0.0;0.0;1.0" label-height="100.0" label-width="100.0" modulate-label-color="false" modulate-label-size="false" modulate-size="true" name="MyLink" position="3" scale="1.0" stencil-function="0" stencil-mask="0" stencil-ref="0" text-alignment="Left" texture-env="0" transparency-coefficient="0.5" transparent="false" visible="true"/>
     </mainframe>
-    <data-layers/>
     <control-panel delay="8" freq="4"/>
+    <data-layers/>
   </interface>
 </spark>
