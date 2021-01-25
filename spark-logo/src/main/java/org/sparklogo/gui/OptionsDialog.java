@@ -14,7 +14,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-public class OptionsDialog extends JDialog implements ActionListener {
+class OptionsDialog extends JDialog implements ActionListener {
     /* A reference to the main frame */
     private final MainFrame parent;
 

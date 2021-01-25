@@ -1,6 +1,5 @@
 package org.sparklogo.gui;
 
-import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
@@ -12,9 +11,8 @@ import javax.swing.JTextArea;
  *
  * @author Monad
  */
-@SuppressWarnings("serial")
-public class Console extends JScrollPane {
-    private JTextArea textArea;
+class Console extends JScrollPane {
+    private final JTextArea textArea;
 
     public Console() {
         textArea = new JTextArea(10, 10);
@@ -40,7 +38,7 @@ public class Console extends JScrollPane {
     }
 
     class MyOutputStream extends OutputStream {
-        public void write(int b) throws IOException {
+        public void write(int b) {
             printChar((char) b);
         }
     }

@@ -19,7 +19,7 @@ import org.sparklogo.project.ProjectFile;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
-public class MainFrame extends JFrame implements ActionListener {
+class MainFrame extends JFrame implements ActionListener {
     private static final int MAX_RECENT_PROJECTS = 10;
 
     private final JList<File> fileList;
