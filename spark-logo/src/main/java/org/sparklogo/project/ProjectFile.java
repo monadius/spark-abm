@@ -134,7 +134,7 @@ public class ProjectFile {
         out.println("<spark-project>");
 
         // Print out name
-        if (projectName != null && !projectName.equals("")) {
+        if (projectName != null && !projectName.isEmpty()) {
             printTag(out, "name", projectName, 1);
         }
 

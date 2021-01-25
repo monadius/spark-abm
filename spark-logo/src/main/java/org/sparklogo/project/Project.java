@@ -196,8 +196,11 @@ public class Project {
      * Saves the project file
      */
     public void saveProject(File projectFile) throws Exception {
-        ProjectFile.saveProjectFile(projectFile, name, projectDirectory,
-                outputDirectory, projectFiles);
+        if (projectFile != null && !projectFile.isDirectory()) {
+            setProjectDirectory(projectFile.getParentFile());
+            ProjectFile.saveProjectFile(projectFile, name, projectDirectory,
+                    outputDirectory, projectFiles);
+        }
     }
 
     private void checkPath(File path, FilenameFilter filter) throws Exception {
@@ -240,8 +243,6 @@ public class Project {
                 files[i] = new File(projectDirectory, files[i].getPath());
             }
         }
-
-        if (name == null) name = "SPARK Model";
 
         // Init spark model
         SparkModel.init(logoPath, name);

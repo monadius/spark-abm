@@ -324,6 +324,7 @@ class MainFrame extends JFrame implements ActionListener {
             project.saveProject(file);
             addRecentProject(file);
             currentDirectory = file.getParentFile();
+            synchronizeWithProject();
         }
     }
 
