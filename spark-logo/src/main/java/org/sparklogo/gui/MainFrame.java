@@ -33,8 +33,8 @@ public class MainFrame extends JFrame implements ActionListener {
     protected final JTextField outputDirectoryField;
     protected final JTextField projectNameField;
 
-    private final JButton changeProjectDirectoryButton;
-    private final JButton changeOutputDirectoryButton;
+//    private final JButton changeProjectDirectoryButton;
+//    private final JButton changeOutputDirectoryButton;
 
     private final OptionsDialog options;
 
@@ -89,7 +89,7 @@ public class MainFrame extends JFrame implements ActionListener {
 //		listPanel.add(fileList);
 
         // Create three panels and console
-        JPanel projectPanel = new JPanel(new GridLayout(3, 2));
+        JPanel projectPanel = new JPanel(new GridLayout(0, 2));
         JPanel buttonPanel = new JPanel(new GridLayout(6, 1));
         console = new Console();
 
@@ -153,24 +153,24 @@ public class MainFrame extends JFrame implements ActionListener {
         projectDirectoryField.setEditable(false);
         outputDirectoryField.setEditable(false);
 
-        changeProjectDirectoryButton = new JButton("...");
-        changeProjectDirectoryButton.addActionListener(this);
-
-        changeOutputDirectoryButton = new JButton("...");
-        changeOutputDirectoryButton.addActionListener(this);
+//        changeProjectDirectoryButton = new JButton("...");
+//        changeProjectDirectoryButton.addActionListener(this);
+//
+//        changeOutputDirectoryButton = new JButton("...");
+//        changeOutputDirectoryButton.addActionListener(this);
 
         projectPanel.add(new JLabel("Project name: "));
         projectPanel.add(projectNameField);
-        projectPanel.add(new JLabel(""));
+//        projectPanel.add(new JLabel(""));
 
         projectPanel.add(new JLabel("Project directory: "));
         projectPanel.add(projectDirectoryField);
-        projectPanel.add(changeProjectDirectoryButton);
+//        projectPanel.add(changeProjectDirectoryButton);
 
         projectPanel.add(new JLabel("Output directory: "));
         projectPanel.add(outputDirectoryField);
         // projectPanel.add(changeOutputDirectoryButton);
-        projectPanel.add(new JLabel(""));
+//        projectPanel.add(new JLabel(""));
 
         // Create options dialog
         options = new OptionsDialog(this);
@@ -497,18 +497,18 @@ public class MainFrame extends JFrame implements ActionListener {
 
         try {
             /* Project directory change */
-            if (src == changeProjectDirectoryButton) {
-                File dir = getDirectoryDialog();
-                if (dir == null) dir = currentDirectory;
-
-                // TODO: remove this
-                projectNameField.setText("");
-                outputDirectoryField.setText("");
-
-                projectDirectoryField.setText(dir.getAbsolutePath());
-                project.synchronizeWithMainFrame(this);
-                return;
-            }
+//            if (src == changeProjectDirectoryButton) {
+//                File dir = getDirectoryDialog();
+//                if (dir == null) dir = currentDirectory;
+//
+//                // TODO: remove this
+//                projectNameField.setText("");
+//                outputDirectoryField.setText("");
+//
+//                projectDirectoryField.setText(dir.getAbsolutePath());
+//                project.synchronizeWithMainFrame(this);
+//                return;
+//            }
 
             /* Add button */
             if (src == addButton) {

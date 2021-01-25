@@ -53,7 +53,8 @@ public class ProjectFile {
      * Reads the project file
      */
     public static void readProjectFile(File projectFile, Project project) throws Exception {
-        File defaultPath = projectFile.getAbsoluteFile().getParentFile();
+        // All paths are relative to the location of projectFile
+        final File projectDirectory = projectFile.getAbsoluteFile().getParentFile();
 
         DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         Document doc = db.parse(projectFile);
@@ -66,56 +67,33 @@ public class ProjectFile {
         elements = elements.item(0).getChildNodes();
 
         String name = null;
-//		String projectDir = null;
         String outputDir = null;
 
         for (int i = 0; i < elements.getLength(); i++) {
             Node node = elements.item(i);
 
-            if (node.getNodeName().equals("name")) {
-                name = node.getTextContent();
-                continue;
-            }
-
-            if (node.getNodeName().equals("project-directory")) {
-//				projectDir = node.getTextContent();
-                continue;
-            }
-
-            if (node.getNodeName().equals("output-directory")) {
-                outputDir = node.getTextContent();
-                continue;
+            switch (node.getNodeName()) {
+                case "name":
+                    name = node.getTextContent();
+                    break;
+                case "output-directory":
+                    outputDir = node.getTextContent();
+                    break;
             }
         }
 
         // Set name
-        if (name == null || name.equals("")) {
+        if (name == null || name.isEmpty()) {
             name = "SPARK Model";
         }
 
         project.setName(name);
-
-        // Set project directory
-        File projectDirectory;
-
-        // TODO: introduce a checkbox for selecting absolute project path
-//		if (projectDir == null || projectDir.equals(""))
-        projectDirectory = defaultPath;
-//		else
-//			projectDirectory = new File(projectDir);
-
-
-        if (projectDirectory.exists()) {
-            defaultPath = projectDirectory;
-        }
-
-        project.setProjectDirectory(defaultPath);
+        project.setProjectDirectory(projectDirectory);
 
         // Set output directory
-        if (outputDir != null && !outputDir.equals("")) {
+        if (outputDir != null && !outputDir.isEmpty()) {
             project.setOutputDirectory(new File(outputDir));
         }
-
 
         // Parse file list
         NodeList fileList = doc.getElementsByTagName("file");
@@ -159,11 +137,6 @@ public class ProjectFile {
         if (projectName != null && !projectName.equals("")) {
             printTag(out, "name", projectName, 1);
         }
-
-        // Print out project directory
-//		if (projectDirectory != null) {
-//			printTag(out, "project-directory", projectDirectory.getAbsolutePath(), 1);
-//		}
 
         // Print out output directory
         if (outputDirectory != null) {

@@ -3,6 +3,9 @@
 ### SPARK Manager
 *[feature]* Save configuration files in the SPARK home directory (not in the current working directory).
 
+*[feature]* The project path is always the path to a project file. The tag `<project-directory>` is removed
+from project files.
+
 ### GUI
 *[feature]* Save configuration files in the SPARK home directory (not in the current working directory).
 
