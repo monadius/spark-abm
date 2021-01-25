@@ -5,23 +5,15 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.*;
 import java.io.File;
-import java.io.PrintStream;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.*;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.sparkabm.utils.FileUtils;
 import org.sparklogo.project.Project;
 import org.sparklogo.project.ProjectFile;
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
 
 class MainFrame extends JFrame implements ActionListener {
-    private static final int MAX_RECENT_PROJECTS = 10;
-
     private final JList<File> fileList;
     private final Console console;
     private final JButton addButton;
@@ -40,14 +32,11 @@ class MainFrame extends JFrame implements ActionListener {
 
     private final OptionsDialog options;
 
-    /* Program directory (the parent directory of the running jar file) */
-    private final File programDirectory;
+    /* Configuration */
+    private final Configuration configuration;
 
     /* Current directory */
     private File currentDirectory;
-
-    /* Recent project files */
-    private final ArrayList<File> recentProjects = new ArrayList<>(MAX_RECENT_PROJECTS);
 
     private JMenu fileMenu;
     /* Indicates where recent projects appear in the file menu */
@@ -59,26 +48,13 @@ class MainFrame extends JFrame implements ActionListener {
     public MainFrame() {
         super("SPARK-PL");
         project = new Project();
-
-        File path;
-        try {
-            path = new File(MainFrame.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParentFile();
-        }
-        catch (URISyntaxException ex) {
-            path = new File(".");
-        }
-
-        if ("lib".equals(path.getName())) {
-            programDirectory = path.getParentFile();
-        } else {
-            programDirectory = path;
-        }
-        currentDirectory = programDirectory;
+        configuration = new Configuration();
+        currentDirectory = configuration.getProgramDirectory();
 
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 try {
-                    saveConfigFile();
+                    configuration.saveConfigFile();
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
@@ -179,7 +155,8 @@ class MainFrame extends JFrame implements ActionListener {
 
         // Set up menu
         setupMenu();
-        readConfigFile();
+        configuration.readConfigFile();
+        updateRecentMenu();
 
         // Finalize setup
         this.add(splitter, BorderLayout.CENTER);
@@ -249,142 +226,18 @@ class MainFrame extends JFrame implements ActionListener {
     }
 
     /**
-     * Reads a configuration file
+     * Returns the configuration object
      */
-    private void readConfigFile() {
-        Document doc;
-
-        try {
-            DocumentBuilder db = DocumentBuilderFactory.newInstance()
-                    .newDocumentBuilder();
-            doc = db.parse(new File(programDirectory, "config.xml"));
-        } catch (Exception e) {
-            options.setSparkLibPath(new File(programDirectory, "lib"));
-            return;
-        }
-
-        NodeList list = doc.getElementsByTagName("spark-lib-path");
-        if (list != null && list.getLength() > 0) {
-            String sparkPath = list.item(0).getTextContent();
-            options.setSparkLibPath(new File(sparkPath));
-        }
-        else {
-            options.setSparkLibPath(new File(programDirectory, "lib"));
-        }
-
-//        NodeList list = doc.getElementsByTagName("spark-core-path");
-//        if (list != null && list.getLength() > 0) {
-//            String sparkPath = list.item(0).getTextContent();
-//            options.setSparkCorePath(new File(sparkPath));
-//        }
-//
-//        list = doc.getElementsByTagName("spark-external-path");
-//        if (list != null && list.getLength() > 0) {
-//            String sparkPath = list.item(0).getTextContent();
-//            options.setSparkExternalPath(new File(sparkPath));
-//        }
-
-
-        list = doc.getElementsByTagName("file");
-        for (int i = 0; i < list.getLength(); i++) {
-            String path = list.item(i).getTextContent();
-            if (path == null || path.equals(""))
-                continue;
-
-            addRecentProject(new File(path));
-        }
-    }
-
-    /**
-     * Saves a configuration file
-     */
-    private void saveConfigFile() throws Exception {
-        PrintStream out = new PrintStream(new File(programDirectory, "config.xml"));
-
-        out.println("<config>");
-
-//		File rtPath = options.getRtPath();
-//		if (rtPath != null) {
-//			out.print("\t<rt-path>");
-//			out.print(rtPath.getPath());
-//			out.print("</rt-path>");
-//			out.println();
-//		}
-
-        File sparkPath = options.getSparkLibPath();
-        if (sparkPath != null) {
-            out.print("\t<spark-lib-path>");
-            out.print(sparkPath.getPath());
-            out.print("</spark-lib-path>");
-            out.println();
-        }
-
-//        File sparkPath = options.getSparkCorePath();
-//        if (sparkPath != null) {
-//            out.print("\t<spark-core-path>");
-//            out.print(sparkPath.getPath());
-//            out.print("</spark-core-path>");
-//            out.println();
-//        }
-//
-//        sparkPath = options.getSparkExternalPath();
-//        if (sparkPath != null) {
-//            out.print("\t<spark-external-path>");
-//            out.print(sparkPath.getPath());
-//            out.print("</spark-external-path>");
-//            out.println();
-//        }
-
-
-        out.println("\t<recent-projects>");
-        for (int i = recentProjects.size() - 1; i >= 0; i--) {
-            out.print("\t\t<file>");
-            out.print(recentProjects.get(i).getPath());
-            out.print("</file>");
-            out.println();
-        }
-        out.println("\t</recent-projects>");
-
-        out.println("</config>");
-        out.close();
+    Configuration getConfiguration() {
+        return configuration;
     }
 
     /**
      * Adds a project to the recent projects list
      */
     private void addRecentProject(File file) {
-        if (!file.exists())
-            return;
-
-        // Check duplicates
-        for (int i = 0; i < recentProjects.size(); i++) {
-            File f = recentProjects.get(i);
-            if (f.equals(file)) {
-                if (i == 0)
-                    return;
-
-                // Move this project to the top
-                recentProjects.remove(i);
-                recentProjects.add(0, f);
-                updateRecentMenu();
-
-                return;
-            }
-        }
-
-        // Add new project to the top
-        recentProjects.add(0, file);
+        configuration.addRecentProject(file);
         updateRecentMenu();
-
-        // Remove old 'recent' projects
-        if (recentProjects.size() > MAX_RECENT_PROJECTS) {
-            int n = recentProjects.size() - MAX_RECENT_PROJECTS;
-            for (int i = 0; i < n; i++) {
-                // Index should be the same because elements are automatically
-                // shifted
-                recentProjects.remove(MAX_RECENT_PROJECTS);
-            }
-        }
     }
 
     /**
@@ -398,8 +251,10 @@ class MainFrame extends JFrame implements ActionListener {
             fileMenu.remove(recentProjectsStart);
         }
 
-        if (recentProjects.size() > 0)
+        List<File> recentProjects = configuration.getRecentProjects();
+        if (recentProjects.size() > 0) {
             fileMenu.addSeparator();
+        }
 
         // Insert all current components
         for (int i = 0; i < recentProjects.size(); i++) {
@@ -443,7 +298,6 @@ class MainFrame extends JFrame implements ActionListener {
             openProjectFile(file);
             currentDirectory = file.getParentFile();
         }
-
     }
 
     /**
@@ -502,18 +356,6 @@ class MainFrame extends JFrame implements ActionListener {
         return file;
     }
 
-    /**
-     * Returns the SPARK/lib path or the program path if SPARK/lib is invalid
-     */
-    public File getLibPath() {
-        File path = options.getSparkLibPath();
-        if (path == null || !path.isDirectory()) {
-            return new File(programDirectory, "lib");
-        }
-        return path;
-    }
-
-
     public void actionPerformed(ActionEvent arg0) {
         Object src = arg0.getSource();
 
@@ -551,28 +393,28 @@ class MainFrame extends JFrame implements ActionListener {
             /* Translate button */
             if (src == translateButton) {
                 console.clearText();
-                project.translate(getLibPath());
+                project.translate(configuration.getLibPath());
                 return;
             }
 
             /* Compile button */
             if (src == compileButton) {
                 console.clearText();
-                project.compile(getLibPath());
+                project.compile(configuration.getLibPath());
                 return;
             }
 
             /* Run in SPARK button */
             if (src == runInSparkButton) {
                 console.clearText();
-                project.runInSpark(getLibPath());
+                project.runInSpark(configuration.getLibPath());
                 return;
             }
 
             /* Start button */
             if (src == startButton) {
                 console.clearText();
-                File libPath = getLibPath();
+                File libPath = configuration.getLibPath();
                 project.translate(libPath);
                 project.compile(libPath);
                 project.runInSpark(libPath);
@@ -585,12 +427,16 @@ class MainFrame extends JFrame implements ActionListener {
                 if (action.startsWith("project")) {
                     int i = Integer.parseInt(action.substring("project"
                             .length()));
-                    currentDirectory = recentProjects.get(i).getParentFile();
-                    openProjectFile(recentProjects.get(i));
+                    File recentProject = configuration.getRecentProject(i);
+                    if (recentProject != null) {
+                        currentDirectory = recentProject.getParentFile();
+                        openProjectFile(recentProject);
+                    }
                     return;
                 }
 
                 if (action.equals("options")) {
+                    options.setSparkLibPath(configuration.getLibPath());
                     options.setVisible(true);
                     return;
                 }
@@ -605,7 +451,7 @@ class MainFrame extends JFrame implements ActionListener {
                     saveProjectFile();
                 }
                 else if (cmd.startsWith("Exit")) {
-                    saveConfigFile();
+                    configuration.saveConfigFile();
                     System.exit(0);
                 }
             }

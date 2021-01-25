@@ -11,10 +11,8 @@ import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
 
 import org.sparkabm.utils.FileUtils;
-import org.sparklogo.gui.MainFrame;
 import org.sparklogo.main.SparkModel;
 import org.sparklogo.parser.SparkLogoParser;
-import org.sparklogo.project.ProjectFile;
 
 /**
  * SPARK Project class
