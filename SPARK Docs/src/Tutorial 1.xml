@@ -181,7 +181,7 @@
 		</para>
 
 		<para>
-			Windows below the charts are displays (or renders). They are
+			Windows below the charts are displays (or renderers). They are
 			used
 			to show different views of the model. 
 		</para>
@@ -221,7 +221,7 @@
 		
 		<para>
 			Data layers can be visualized. Right click on the main window or on
-			any render window and select Properties from the pop-up menu.
+			any renderer window and select Properties from the pop-up menu.
 			<figure>
 				<title>Render Properties</title>
 				<mediaobject>
@@ -318,7 +318,7 @@
 		<para>
 			In order to open a model in the SPARK GUI, you need to open model's
 			xml-file. This file contains the description of main model components
-			and all windows: charts, renders, parameters. When you close the model,
+			and all windows: charts, renderers, parameters. When you close the model,
 			all changes are written in this xml-file. Changes include: resizing or
 			moving model windows, changing the data layer visualization parameters.
 			Even if you are not going to develop your own SPARK models, the basic
@@ -391,7 +391,7 @@
 			binary files of the model and the model main class which is used
 			for model initialization (setup method). Next the parameter frame
 			is described. The specification of the method (invokation) frame and
-			two render frames follow. Agents and datalayers are described next. Last
+			two renderer frames follow. Agents and datalayers are described next. Last
 			four lines are descriptions of the chart frames (windows).
 		</para>
 	</section>

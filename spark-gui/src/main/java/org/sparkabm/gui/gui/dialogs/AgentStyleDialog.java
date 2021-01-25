@@ -24,12 +24,12 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.sparkabm.gui.render.AgentStyle;
-import org.sparkabm.gui.render.Render;
+import org.sparkabm.gui.renderer.AgentStyle;
+import org.sparkabm.gui.renderer.Renderer;
 import org.sparkabm.math.Vector4d;
 import org.sparkabm.gui.Coordinator;
-import org.sparkabm.gui.render.font.BitmapFont;
-import org.sparkabm.gui.render.font.FontManager;
+import org.sparkabm.gui.renderer.font.BitmapFont;
+import org.sparkabm.gui.renderer.font.FontManager;
 import org.sparkabm.utils.FileUtils;
 
 /**
@@ -43,24 +43,24 @@ public class AgentStyleDialog extends JDialog {
     /**
      * Default constructor
      */
-    public AgentStyleDialog(Window owner, Render render, AgentStyle style) {
+    public AgentStyleDialog(Window owner, Renderer renderer, AgentStyle style) {
         super(owner, "Advanced properties");
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
-        init(render, style);
+        init(renderer, style);
     }
 
 
     /**
      * Initializes the dialog elements
      */
-    private void init(Render render, AgentStyle style) {
+    private void init(Renderer renderer, AgentStyle style) {
         // Main pane
         JTabbedPane tabs = new JTabbedPane();
 
-        tabs.addTab("Label", new LabelOptions(render, style));
-        tabs.addTab("Image", new ImageOptions(render, style));
-        tabs.addTab("Blending", new AlphaBlendingOptions(render, style));
+        tabs.addTab("Label", new LabelOptions(renderer, style));
+        tabs.addTab("Image", new ImageOptions(renderer, style));
+        tabs.addTab("Blending", new AlphaBlendingOptions(renderer, style));
 
         this.add(tabs);
         this.pack();
@@ -75,14 +75,14 @@ public class AgentStyleDialog extends JDialog {
  */
 abstract class OptionPanel extends JPanel implements ActionListener {
     protected AgentStyle style;
-    protected Render render;
+    protected Renderer renderer;
 
 
     /**
      * Default constructor
      */
-    public OptionPanel(Render render, AgentStyle style) {
-        this.render = render;
+    public OptionPanel(Renderer renderer, AgentStyle style) {
+        this.renderer = renderer;
         this.style = style;
         init();
     }
@@ -108,8 +108,8 @@ class ImageOptions extends OptionPanel implements ChangeListener {
     private final static String CMD_COLOR_BLENDING = "color-blending";
 
 
-    public ImageOptions(Render render, AgentStyle style) {
-        super(render, style);
+    public ImageOptions(Renderer renderer, AgentStyle style) {
+        super(renderer, style);
     }
 
     @Override
@@ -179,21 +179,21 @@ class ImageOptions extends OptionPanel implements ChangeListener {
             case CMD_DRAW_SHAPE: {
                 boolean flag = drawShape.isSelected();
                 style.setDrawShapeWithImageFlag(flag);
-                render.update();
+                renderer.update();
                 break;
             }
 
             case CMD_COLOR_BLENDING: {
                 boolean flag = colorBlending.isSelected();
                 style.setColorBlending(flag);
-                render.update();
+                renderer.update();
                 break;
             }
 
             case CMD_MODULATE_SIZE: {
                 boolean flag = modulateSize.isSelected();
                 style.setModulateSize(flag);
-                render.update();
+                renderer.update();
                 break;
             }
 
@@ -206,11 +206,11 @@ class ImageOptions extends OptionPanel implements ChangeListener {
                     else
                         managerButton.setText(style.getTileManager().getName());
 
-                    render.update();
+                    renderer.update();
                 } else {
                     style.setTileManager(null);
                     managerButton.setText("null");
-                    render.update();
+                    renderer.update();
                 }
                 break;
             }
@@ -221,7 +221,7 @@ class ImageOptions extends OptionPanel implements ChangeListener {
     public void stateChanged(ChangeEvent e) {
         float scale = ((Number) scaleSpinner.getValue()).floatValue();
         style.setScaleFactor(scale);
-        render.update();
+        renderer.update();
     }
 }
 
@@ -268,8 +268,8 @@ class LabelOptions extends OptionPanel implements ChangeListener {
     /**
      * Default constructor
      */
-    public LabelOptions(Render render, AgentStyle style) {
-        super(render, style);
+    public LabelOptions(Renderer renderer, AgentStyle style) {
+        super(renderer, style);
     }
 
 
@@ -404,7 +404,7 @@ class LabelOptions extends OptionPanel implements ChangeListener {
         style.setBitmapFontSize(size);
         style.setLabelOffset(dx, dy);
         style.setLabelDimension(w, h);
-        render.update();
+        renderer.update();
     }
 
 
@@ -417,7 +417,7 @@ class LabelOptions extends OptionPanel implements ChangeListener {
                 if (c != null) {
                     style.setLabelColor(Vector4d.fromAWTColor(c));
                     colorButton.setBackground(c);
-                    render.update();
+                    renderer.update();
                 }
                 break;
             }
@@ -427,7 +427,7 @@ class LabelOptions extends OptionPanel implements ChangeListener {
                 if (textAlignments.getSelectedIndex() >= 0) {
                     BitmapFont.Align align = (BitmapFont.Align) textAlignments.getSelectedItem();
                     style.setTextAlignment(align);
-                    render.update();
+                    renderer.update();
                 }
                 break;
             }
@@ -437,7 +437,7 @@ class LabelOptions extends OptionPanel implements ChangeListener {
                 if (bitmapFonts.getSelectedIndex() >= 0) {
                     String name = (String) bitmapFonts.getSelectedItem();
                     style.setBitmapFontName(name);
-                    render.update();
+                    renderer.update();
                 }
                 break;
             }
@@ -445,14 +445,14 @@ class LabelOptions extends OptionPanel implements ChangeListener {
             // Modulate label color
             case CMD_MODULATE_LABEL_COLOR: {
                 style.setModulateLabelColor(modulateLabelColor.isSelected());
-                render.update();
+                renderer.update();
                 break;
             }
 
             // Modulate label size
             case CMD_MODULATE_LABEL_SIZE: {
                 style.setModulateLabelSize(modulateLabelSize.isSelected());
-                render.update();
+                renderer.update();
                 break;
             }
 
@@ -472,7 +472,7 @@ class LabelOptions extends OptionPanel implements ChangeListener {
                 fontButton.setFont(font);
                 fontButton.setText(font.getFamily() + ": " + font.getSize());
 
-                render.update();
+                renderer.update();
                 break;
             }
         }
@@ -489,8 +489,8 @@ class AlphaBlendingOptions extends OptionPanel implements ChangeListener {
     /**
      * Default constructor
      */
-    public AlphaBlendingOptions(Render render, AgentStyle style) {
-        super(render, style);
+    public AlphaBlendingOptions(Renderer renderer, AgentStyle style) {
+        super(renderer, style);
     }
 
 
@@ -554,8 +554,8 @@ class AlphaBlendingOptions extends OptionPanel implements ChangeListener {
      * Creates the components of blendPanel
      */
     private void initBlendPanel(JPanel panel) {
-        JComboBox<AgentStyle.RenderProperty> src = new JComboBox<>(AgentStyle.srcBlends);
-        JComboBox<AgentStyle.RenderProperty> dst = new JComboBox<>(AgentStyle.dstBlends);
+        JComboBox<AgentStyle.RendererProperty> src = new JComboBox<>(AgentStyle.srcBlends);
+        JComboBox<AgentStyle.RendererProperty> dst = new JComboBox<>(AgentStyle.dstBlends);
 
         src.setSelectedIndex(style.getSrcBlendIndex());
         dst.setSelectedIndex(style.getDstBlendIndex());
@@ -575,7 +575,7 @@ class AlphaBlendingOptions extends OptionPanel implements ChangeListener {
      * Creates components of the alphaPanel
      */
     private void initAlphaPanel(JPanel panel) {
-        JComboBox<AgentStyle.RenderProperty> alpha = new JComboBox<>(AgentStyle.alphaFuncs);
+        JComboBox<AgentStyle.RendererProperty> alpha = new JComboBox<>(AgentStyle.alphaFuncs);
         alpha.setSelectedIndex(style.getAlphaFuncIndex());
         alpha.addActionListener(this);
         alpha.setActionCommand("alpha-function");
@@ -594,7 +594,7 @@ class AlphaBlendingOptions extends OptionPanel implements ChangeListener {
      */
     private void initStencilPanel(JPanel panel) {
         // func
-        JComboBox<AgentStyle.RenderProperty> func = new JComboBox<>(AgentStyle.stencilFuncs);
+        JComboBox<AgentStyle.RendererProperty> func = new JComboBox<>(AgentStyle.stencilFuncs);
         func.setSelectedIndex(style.getStencilFuncIndex());
         func.addActionListener(this);
         func.setActionCommand("stencil-function");
@@ -610,19 +610,19 @@ class AlphaBlendingOptions extends OptionPanel implements ChangeListener {
         mask.addChangeListener(this);
 
         // fail
-        JComboBox<AgentStyle.RenderProperty> fail = new JComboBox<>(AgentStyle.stencilOps);
+        JComboBox<AgentStyle.RendererProperty> fail = new JComboBox<>(AgentStyle.stencilOps);
         fail.setSelectedIndex(style.getStencilFailIndex());
         fail.addActionListener(this);
         fail.setActionCommand("stencil-fail");
 
         // zfail
-        JComboBox<AgentStyle.RenderProperty> zfail = new JComboBox<>(AgentStyle.stencilOps);
+        JComboBox<AgentStyle.RendererProperty> zfail = new JComboBox<>(AgentStyle.stencilOps);
         zfail.setSelectedIndex(style.getStencilZFailIndex());
         zfail.addActionListener(this);
         zfail.setActionCommand("stencil-zfail");
 
         // zpass
-        JComboBox<AgentStyle.RenderProperty> zpass = new JComboBox<>(AgentStyle.stencilOps);
+        JComboBox<AgentStyle.RendererProperty> zpass = new JComboBox<>(AgentStyle.stencilOps);
         zpass.setSelectedIndex(style.getStencilZPassIndex());
         zpass.addActionListener(this);
         zpass.setActionCommand("stencil-zpass");
@@ -651,49 +651,49 @@ class AlphaBlendingOptions extends OptionPanel implements ChangeListener {
         switch (e.getActionCommand()) {
             case "src-blend": {
                 style.setSrcBlend(index);
-                render.update();
+                renderer.update();
                 break;
             }
 
             case "dst-blend": {
                 style.setDstBlend(index);
-                render.update();
+                renderer.update();
                 break;
             }
 
             case "alpha-function": {
                 style.setAlphaFunc(index);
-                render.update();
+                renderer.update();
                 break;
             }
 
             case "texture-env": {
                 style.setTextureEnv(index);
-                render.update();
+                renderer.update();
                 break;
             }
 
             case "stencil-function": {
                 style.setStencilFunc(index);
-                render.update();
+                renderer.update();
                 break;
             }
 
             case "stencil-fail": {
                 style.setStencilFail(index);
-                render.update();
+                renderer.update();
                 break;
             }
 
             case "stencil-zfail": {
                 style.setStencilZFail(index);
-                render.update();
+                renderer.update();
                 break;
             }
 
             case "stencil-zpass": {
                 style.setStencilZPass(index);
-                render.update();
+                renderer.update();
                 break;
             }
         }
@@ -711,14 +711,14 @@ class AlphaBlendingOptions extends OptionPanel implements ChangeListener {
                 case "transparency": {
                     float val = ((Number) spinner.getValue()).floatValue();
                     style.setTransparencyCoefficient(val);
-                    render.update();
+                    renderer.update();
                     break;
                 }
 
                 case "alpha": {
                     float val = ((Number) spinner.getValue()).floatValue();
                     style.setAlphaFuncValue(val);
-                    render.update();
+                    renderer.update();
                     break;
                 }
 
@@ -726,7 +726,7 @@ class AlphaBlendingOptions extends OptionPanel implements ChangeListener {
                 case "ref": {
                     int val = ((Number) spinner.getValue()).intValue();
                     style.setStencilRef(val);
-                    render.update();
+                    renderer.update();
                     break;
                 }
 
@@ -734,7 +734,7 @@ class AlphaBlendingOptions extends OptionPanel implements ChangeListener {
                 case "mask": {
                     int val = ((Number) spinner.getValue()).intValue();
                     style.setStencilMask(val);
-                    render.update();
+                    renderer.update();
                     break;
                 }
             }

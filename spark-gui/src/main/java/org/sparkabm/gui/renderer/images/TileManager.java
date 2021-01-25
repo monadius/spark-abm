@@ -1,4 +1,4 @@
-package org.sparkabm.gui.render.images;
+package org.sparkabm.gui.renderer.images;
 
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.texture.Texture;

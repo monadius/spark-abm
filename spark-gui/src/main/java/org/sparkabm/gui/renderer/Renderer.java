@@ -1,4 +1,4 @@
-package org.sparkabm.gui.render;
+package org.sparkabm.gui.renderer;
 
 import java.awt.Canvas;
 import java.awt.EventQueue;
@@ -33,13 +33,13 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-public abstract class Render implements KeyListener, IDataConsumer, MouseWheelListener, MouseListener, MouseMotionListener {
+public abstract class Renderer implements KeyListener, IDataConsumer, MouseWheelListener, MouseListener, MouseMotionListener {
     // Logger
-    private static final Logger logger = Logger.getLogger(Render.class.getName());
+    private static final Logger logger = Logger.getLogger(Renderer.class.getName());
 
     /* Types of renderers */
-    public static final int JOGL_RENDER = 0;
-    public static final int JAVA_2D_RENDER = 1;
+    public static final int JOGL_RENDERER = 0;
+    public static final int JAVA_2D_RENDERER = 1;
 
 
     /* Data to be rendered */
@@ -112,7 +112,7 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
     private volatile boolean displayRequested;
 
 
-    protected String renderName;
+    protected String rendererName;
 //	protected long updateTick;
 
     // Some constants
@@ -125,7 +125,7 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
     /**
      * Default protected constructor
      */
-    protected Render(int interval) {
+    protected Renderer(int interval) {
         dataLayerStyles = new HashMap<>();
         agentStyles = new ArrayList<>();
         dataFilter = new DataFilter(this, "render");
@@ -245,7 +245,7 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
                     return;
 
                 StringBuilder name = new StringBuilder((prefix != null ? prefix : ""));
-                name.append(renderName != null && !renderName.isEmpty() ? renderName : "pic");
+                name.append(rendererName != null && !rendererName.isEmpty() ? rendererName : "pic");
                 name.append("-");
 
                 String time = String.valueOf(row.getTime().getTick());
@@ -348,7 +348,7 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
      * Sets render's name
      */
     public void setName(String name) {
-        renderName = name;
+        rendererName = name;
     }
 
 
@@ -356,7 +356,7 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
      * Returns render's name
      */
     public String getName() {
-        return renderName;
+        return rendererName;
     }
 
 
@@ -536,31 +536,31 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
      * Creates a new render from the given xml document and
      * of the specific type
      */
-    public static Render createRender(Node node, int renderType, int interval,
-                                      HashMap<String, DataLayerStyle> dataLayerStyles,
-                                      HashMap<String, String> agentTypesAndNames,
-                                      File modelPath, boolean noGUI) {
-        Render render = null;
-        if (renderType == Render.JOGL_RENDER) {
+    public static Renderer createRenderer(Node node, int renderType, int interval,
+                                          HashMap<String, DataLayerStyle> dataLayerStyles,
+                                          HashMap<String, String> agentTypesAndNames,
+                                          File modelPath, boolean noGUI) {
+        Renderer renderer = null;
+        if (renderType == Renderer.JOGL_RENDERER) {
             try {
-                render = new JOGLRender(interval);
+                renderer = new JOGLRenderer(interval);
             } catch (Exception e) {
                 e.printStackTrace();
-                render = new JavaRender(interval, noGUI);
+                renderer = new JavaRenderer(interval, noGUI);
             }
         } else {
-            render = new JavaRender(interval, noGUI);
+            renderer = new JavaRenderer(interval, noGUI);
         }
 
         // Load general properties
         int controlState = XmlDocUtils.getIntegerValue(node, "control-state", 0);
-        render.setControlState(controlState);
+        renderer.setControlState(controlState);
 
-        render.dx = XmlDocUtils.getFloatValue(node, "dx", 0);
-        render.dy = XmlDocUtils.getFloatValue(node, "dy", 0);
-        render.view_rotx = XmlDocUtils.getFloatValue(node, "rot-x", 20);
-        render.view_roty = XmlDocUtils.getFloatValue(node, "rot-y", 30);
-        render.zoom = XmlDocUtils.getFloatValue(node, "zoom", 1);
+        renderer.dx = XmlDocUtils.getFloatValue(node, "dx", 0);
+        renderer.dy = XmlDocUtils.getFloatValue(node, "dy", 0);
+        renderer.view_rotx = XmlDocUtils.getFloatValue(node, "rot-x", 20);
+        renderer.view_roty = XmlDocUtils.getFloatValue(node, "rot-y", 30);
+        renderer.zoom = XmlDocUtils.getFloatValue(node, "zoom", 1);
 
 
         // Create agent styles for this renderer
@@ -620,22 +620,22 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
         Collections.sort(agentStyles);
 
         for (AgentStyle agentStyle : agentStyles) {
-            render.addAgentStyle(agentStyle);
+            renderer.addAgentStyle(agentStyle);
         }
 
-        render.setGlobalDataLayerStyles(dataLayerStyles);
+        renderer.setGlobalDataLayerStyles(dataLayerStyles);
 
         if (selectedSpace == null) {
             // TODO: it is just a way around: find better solution
             selectedSpace = new SpaceStyle("space");
         }
 
-        render.setSpace(selectedSpace);
+        renderer.setSpace(selectedSpace);
 
         if (selectedDataLayer != null)
-            render.setDataLayer(selectedDataLayer);
+            renderer.setDataLayer(selectedDataLayer);
 
-        return render;
+        return renderer;
     }
 
     /**
@@ -772,7 +772,7 @@ public abstract class Render implements KeyListener, IDataConsumer, MouseWheelLi
      */
     private void createInspector(int x, int y) {
         if (inspectionPanel == null) {
-            inspectionPanel = new SparkInspectionPanel(Coordinator.getInstance().getWindowManager(), renderName);
+            inspectionPanel = new SparkInspectionPanel(Coordinator.getInstance().getWindowManager(), rendererName);
         } else {
             SparkWindow win = Coordinator.getInstance().getWindowManager().findWindow(inspectionPanel);
             if (win != null)

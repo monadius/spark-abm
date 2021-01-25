@@ -16,7 +16,7 @@ import org.sparkabm.gui.batchrun.BatchRunController;
 import org.sparkabm.gui.batchrun.BatchRunManager;
 import org.sparkabm.gui.batchrun.DataAnalyzer;
 import org.sparkabm.gui.batchrun.ParameterSweep;
-import org.sparkabm.gui.render.DataLayerStyle;
+import org.sparkabm.gui.renderer.DataLayerStyle;
 import org.sparkabm.utils.FileUtils;
 import org.sparkabm.utils.SpringUtilities;
 

@@ -18,9 +18,9 @@ import org.sparkabm.gui.data.DataReceiver;
 import org.sparkabm.gui.data.DataSetTmp;
 import org.sparkabm.gui.gui.*;
 import org.sparkabm.gui.gui.menu.StandardMenu;
-import org.sparkabm.gui.render.DataLayerStyle;
-import org.sparkabm.gui.render.Render;
-import org.sparkabm.gui.render.font.FontManager;
+import org.sparkabm.gui.renderer.DataLayerStyle;
+import org.sparkabm.gui.renderer.Renderer;
+import org.sparkabm.gui.renderer.font.FontManager;
 import org.sparkabm.modelfile.ModelFileLoader;
 import org.sparkabm.runtime.commands.*;
 import org.sparkabm.runtime.data.DataCollectorDescription;
@@ -120,7 +120,7 @@ public class Coordinator {
     private SparkControlPanel controlPanel;
 
     /* List of all active renders */
-    private final ArrayList<Render> renders;
+    private final ArrayList<Renderer> renderers;
 
     /**
      * Private constructor
@@ -139,7 +139,7 @@ public class Coordinator {
         this.agentTypesAndNames = new HashMap<String, String>();
 
         this.noGUI = noGUI;
-        this.renders = new ArrayList<Render>();
+        this.renderers = new ArrayList<Renderer>();
         this.fontManager = new FontManager();
 
         if (noGUI) {
@@ -659,7 +659,7 @@ public class Coordinator {
                 renders.add(mainRender);
 
             for (Node render : renders) {
-                createRender(render, configuration.getRenderType());
+                createRenderer(render, configuration.getRendererType());
             }
 
             return;
@@ -670,12 +670,12 @@ public class Coordinator {
         /* Load view panels */
         ArrayList<Node> list = XmlDocUtils.getChildrenByTagName(interfaceNode, "renderframe");
         for (Node render : list) {
-            new SparkViewPanel(windowManager, render, configuration.getRenderType());
+            new SparkViewPanel(windowManager, render, configuration.getRendererType());
         }
 
         Node mainWindowRender = XmlDocUtils.getChildByTagName(interfaceNode, "mainframe");
         if (mainWindowRender != null) {
-            new SparkViewPanel(windowManager, mainWindowRender, configuration.getRenderType());
+            new SparkViewPanel(windowManager, mainWindowRender, configuration.getRendererType());
         }
 
         /* Load the parameter panel */
@@ -782,7 +782,7 @@ public class Coordinator {
             modelXmlDoc = null;
             modelXmlFile = null;
 
-            renders.clear();
+            renderers.clear();
         }
         receiver.removeAllConsumers();
 
@@ -860,36 +860,36 @@ public class Coordinator {
      * parameters
      *
      * @param node
-     * @param renderType
+     * @param rendererType
      * @return
      */
-    public synchronized Render createRender(Node node, int renderType) {
+    public synchronized Renderer createRenderer(Node node, int rendererType) {
 //		if (noGUI)
 //			return null;
 
         int interval = (delayTime < 0) ? -delayTime : 1;
 
-        Render render = Render.createRender(node, renderType, interval, dataLayerStyles,
+        Renderer renderer = Renderer.createRenderer(node, rendererType, interval, dataLayerStyles,
                 agentTypesAndNames, currentDir, noGUI);
 
-        render.updateDataFilter();
-        render.register(receiver);
+        renderer.updateDataFilter();
+        renderer.register(receiver);
 
-        renders.add(render);
+        renderers.add(renderer);
 
-        return render;
+        return renderer;
     }
 
 
     /**
-     * Invokes the update method for all active renders
+     * Invokes the update method for all active renderers
      */
-    public synchronized void updateAllRenders() {
+    public synchronized void updateAllRenderers() {
 //		if (noGUI)
 //			return;
 
-        for (Render render : renders) {
-            render.update();
+        for (Renderer renderer : renderers) {
+            renderer.update();
         }
     }
 
@@ -897,9 +897,9 @@ public class Coordinator {
     /**
      * Returns an array of all renders
      */
-    public synchronized Render[] getRenders() {
-        Render[] result = new Render[renders.size()];
-        return renders.toArray(result);
+    public synchronized Renderer[] getRenderers() {
+        Renderer[] result = new Renderer[renderers.size()];
+        return renderers.toArray(result);
     }
 
 

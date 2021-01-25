@@ -8,7 +8,7 @@ Description : Bitmap font wrapper based on the Angelcode bitmap font generator.
 http://www.angelcode.com/products/bmfont/
 */
 
-package org.sparkabm.gui.render.font;
+package org.sparkabm.gui.renderer.font;
 
 import java.awt.geom.Rectangle2D;
 import java.io.BufferedReader;
@@ -22,7 +22,7 @@ import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.TextureIO;
 import org.sparkabm.math.Vector4d;
-import org.sparkabm.gui.render.font.BitmapCharacter.Kerning;
+import org.sparkabm.gui.renderer.font.BitmapCharacter.Kerning;
 
 /**
  * Describes a bitmap font

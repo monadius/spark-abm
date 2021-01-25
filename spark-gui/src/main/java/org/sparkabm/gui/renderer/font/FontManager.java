@@ -1,4 +1,4 @@
-package org.sparkabm.gui.render.font;
+package org.sparkabm.gui.renderer.font;
 
 import java.io.File;
 import java.util.ArrayList;

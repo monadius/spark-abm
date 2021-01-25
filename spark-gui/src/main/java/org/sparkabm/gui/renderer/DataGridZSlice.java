@@ -1,4 +1,4 @@
-package org.sparkabm.gui.render;
+package org.sparkabm.gui.renderer;
 
 import org.sparkabm.runtime.data.DataObject_Grid;
 

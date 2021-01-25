@@ -20,7 +20,7 @@ import org.sparkabm.runtime.data.DataObject_State;
 import org.sparkabm.runtime.data.DataRow;
 import org.sparkabm.gui.Coordinator;
 import org.sparkabm.gui.data.IDataConsumer;
-import org.sparkabm.gui.render.Render;
+import org.sparkabm.gui.renderer.Renderer;
 import org.sparkabm.utils.XmlDocUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -174,8 +174,8 @@ public class SparkControlPanel extends JPanel implements ISparkPanel, IDataConsu
         } else if (cmd == "start") {
             c.pauseResumeLoadedModel();
             // Move focus to a renderer for which the user control is on
-            for (Render r : c.getRenders()) {
-                if (r.getControlState() == Render.CONTROL_STATE_CONTROL) {
+            for (Renderer r : c.getRenderers()) {
+                if (r.getControlState() == Renderer.CONTROL_STATE_CONTROL) {
                     if (r.getCanvas() != null) {
                         r.getCanvas().requestFocus();
                         break;

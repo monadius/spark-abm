@@ -1,4 +1,4 @@
-package org.sparkabm.gui.render.images;
+package org.sparkabm.gui.renderer.images;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;

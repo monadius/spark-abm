@@ -1,5 +1,5 @@
 <config>
-	<graphics render = "0"/>
+	<graphics renderer = "0"/>
 	<recent-models max = "10">		<file>C:\Work\My Projects\Eclipse\Spark\tests\models\Worms\Model.xml</file>
 		<file>C:\Work\My Projects\Eclipse\Spark\tests\models\GameOfLife\GameOfLifeModel.xml</file>
 		<file>C:\Work\My Projects\Eclipse\SparkLogo\Models\SMC v2\output\TestSMCModel.xml</file>

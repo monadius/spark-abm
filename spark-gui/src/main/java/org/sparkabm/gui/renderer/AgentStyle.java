@@ -1,4 +1,4 @@
-package org.sparkabm.gui.render;
+package org.sparkabm.gui.renderer;
 
 import java.awt.Font;
 import java.io.File;
@@ -7,9 +7,9 @@ import java.util.logging.Logger;
 
 import com.jogamp.opengl.GL2;
 import org.sparkabm.math.Vector4d;
-import org.sparkabm.gui.render.font.BitmapFont;
-import org.sparkabm.gui.render.images.TileManager;
-import org.sparkabm.gui.render.images.TileManagerInfo;
+import org.sparkabm.gui.renderer.font.BitmapFont;
+import org.sparkabm.gui.renderer.images.TileManager;
+import org.sparkabm.gui.renderer.images.TileManagerInfo;
 import org.sparkabm.utils.FileUtils;
 
 import static org.sparkabm.utils.XmlDocUtils.*;
@@ -176,11 +176,11 @@ public class AgentStyle implements Comparable<AgentStyle> {
     /**
      * Describes a rendering property
      */
-    public static class RenderProperty {
+    public static class RendererProperty {
         public final String name;
         public final int value;
 
-        public RenderProperty(String name, int value) {
+        public RendererProperty(String name, int value) {
             this.name = name;
             this.value = value;
         }
@@ -191,11 +191,11 @@ public class AgentStyle implements Comparable<AgentStyle> {
         }
     }
 
-    public static final RenderProperty[] textureEnvs = new RenderProperty[]{
-            new RenderProperty("GL_MODULATE", GL2.GL_MODULATE),
-            new RenderProperty("GL_REPLACE", GL2.GL_REPLACE),
-            new RenderProperty("GL_BLEND", GL2.GL_BLEND),
-            new RenderProperty("GL_DECAL", GL2.GL_DECAL)
+    public static final RendererProperty[] textureEnvs = new RendererProperty[]{
+            new RendererProperty("GL_MODULATE", GL2.GL_MODULATE),
+            new RendererProperty("GL_REPLACE", GL2.GL_REPLACE),
+            new RendererProperty("GL_BLEND", GL2.GL_BLEND),
+            new RendererProperty("GL_DECAL", GL2.GL_DECAL)
     };
 
     public int getTextureEnv() {
@@ -215,41 +215,41 @@ public class AgentStyle implements Comparable<AgentStyle> {
     }
 
 
-    public static final RenderProperty[] alphaFuncs = new RenderProperty[]{
+    public static final RendererProperty[] alphaFuncs = new RendererProperty[]{
             // For the first value (index = 0) the alpha test is turned off
-            new RenderProperty("NONE", -1),
+            new RendererProperty("NONE", -1),
             // GL_ALWAYS equivalent to turned off alpha function
-            new RenderProperty("GL_ALWAYS", GL2.GL_ALWAYS),
-            new RenderProperty("GL_NEVER", GL2.GL_NEVER),
-            new RenderProperty("GL_LESS", GL2.GL_LESS),
-            new RenderProperty("GL_GREATER", GL2.GL_GREATER),
-            new RenderProperty("GL_EQUAL", GL2.GL_EQUAL),
-            new RenderProperty("GL_LEQUAL", GL2.GL_LEQUAL),
-            new RenderProperty("GL_GEQUAL", GL2.GL_GEQUAL),
-            new RenderProperty("GL_NOTEQUAL", GL2.GL_NOTEQUAL)
+            new RendererProperty("GL_ALWAYS", GL2.GL_ALWAYS),
+            new RendererProperty("GL_NEVER", GL2.GL_NEVER),
+            new RendererProperty("GL_LESS", GL2.GL_LESS),
+            new RendererProperty("GL_GREATER", GL2.GL_GREATER),
+            new RendererProperty("GL_EQUAL", GL2.GL_EQUAL),
+            new RendererProperty("GL_LEQUAL", GL2.GL_LEQUAL),
+            new RendererProperty("GL_GEQUAL", GL2.GL_GEQUAL),
+            new RendererProperty("GL_NOTEQUAL", GL2.GL_NOTEQUAL)
     };
 
-    public static final RenderProperty[] stencilFuncs = new RenderProperty[]{
+    public static final RendererProperty[] stencilFuncs = new RendererProperty[]{
             // For the first value (index = 0) the stencil test is turned off
-            new RenderProperty("NONE", -1),
+            new RendererProperty("NONE", -1),
             // GL_ALWAYS equivalent to turned off alpha function
-            new RenderProperty("GL_ALWAYS", GL2.GL_ALWAYS),
-            new RenderProperty("GL_NEVER", GL2.GL_NEVER),
-            new RenderProperty("GL_LESS", GL2.GL_LESS),
-            new RenderProperty("GL_GREATER", GL2.GL_GREATER),
-            new RenderProperty("GL_EQUAL", GL2.GL_EQUAL),
-            new RenderProperty("GL_LEQUAL", GL2.GL_LEQUAL),
-            new RenderProperty("GL_GEQUAL", GL2.GL_GEQUAL),
-            new RenderProperty("GL_NOTEQUAL", GL2.GL_NOTEQUAL)
+            new RendererProperty("GL_ALWAYS", GL2.GL_ALWAYS),
+            new RendererProperty("GL_NEVER", GL2.GL_NEVER),
+            new RendererProperty("GL_LESS", GL2.GL_LESS),
+            new RendererProperty("GL_GREATER", GL2.GL_GREATER),
+            new RendererProperty("GL_EQUAL", GL2.GL_EQUAL),
+            new RendererProperty("GL_LEQUAL", GL2.GL_LEQUAL),
+            new RendererProperty("GL_GEQUAL", GL2.GL_GEQUAL),
+            new RendererProperty("GL_NOTEQUAL", GL2.GL_NOTEQUAL)
     };
 
-    public static final RenderProperty[] stencilOps = new RenderProperty[]{
-            new RenderProperty("GL_KEEP", GL2.GL_KEEP),
-            new RenderProperty("GL_ZERO", GL2.GL_ZERO),
-            new RenderProperty("GL_REPLACE", GL2.GL_REPLACE),
-            new RenderProperty("GL_INCR", GL2.GL_INCR),
-            new RenderProperty("GL_DECR", GL2.GL_DECR),
-            new RenderProperty("GL_INVERT", GL2.GL_INVERT),
+    public static final RendererProperty[] stencilOps = new RendererProperty[]{
+            new RendererProperty("GL_KEEP", GL2.GL_KEEP),
+            new RendererProperty("GL_ZERO", GL2.GL_ZERO),
+            new RendererProperty("GL_REPLACE", GL2.GL_REPLACE),
+            new RendererProperty("GL_INCR", GL2.GL_INCR),
+            new RendererProperty("GL_DECR", GL2.GL_DECR),
+            new RendererProperty("GL_INVERT", GL2.GL_INVERT),
     };
 
     // Transparency
@@ -566,17 +566,17 @@ public class AgentStyle implements Comparable<AgentStyle> {
     }
 
 
-    public static final RenderProperty[] srcBlends = new RenderProperty[]{
-            new RenderProperty("NONE", -1),
-            new RenderProperty("GL_ZERO", GL2.GL_ZERO),
-            new RenderProperty("GL_ONE", GL2.GL_ONE),
-            new RenderProperty("GL_DST_COLOR", GL2.GL_DST_COLOR),
-            new RenderProperty("GL_ONE_MINUS_DST_COLOR", GL2.GL_ONE_MINUS_DST_COLOR),
-            new RenderProperty("GL_SRC_ALPHA", GL2.GL_SRC_ALPHA),
-            new RenderProperty("GL_ONE_MINUS_SRC_ALPHA", GL2.GL_ONE_MINUS_SRC_ALPHA),
-            new RenderProperty("GL_DST_ALPHA", GL2.GL_DST_ALPHA),
-            new RenderProperty("GL_ONE_MINUS_DST_ALPHA", GL2.GL_ONE_MINUS_DST_ALPHA),
-            new RenderProperty("GL_SRC_ALPHA_SATURATE", GL2.GL_SRC_ALPHA_SATURATE)
+    public static final RendererProperty[] srcBlends = new RendererProperty[]{
+            new RendererProperty("NONE", -1),
+            new RendererProperty("GL_ZERO", GL2.GL_ZERO),
+            new RendererProperty("GL_ONE", GL2.GL_ONE),
+            new RendererProperty("GL_DST_COLOR", GL2.GL_DST_COLOR),
+            new RendererProperty("GL_ONE_MINUS_DST_COLOR", GL2.GL_ONE_MINUS_DST_COLOR),
+            new RendererProperty("GL_SRC_ALPHA", GL2.GL_SRC_ALPHA),
+            new RendererProperty("GL_ONE_MINUS_SRC_ALPHA", GL2.GL_ONE_MINUS_SRC_ALPHA),
+            new RendererProperty("GL_DST_ALPHA", GL2.GL_DST_ALPHA),
+            new RendererProperty("GL_ONE_MINUS_DST_ALPHA", GL2.GL_ONE_MINUS_DST_ALPHA),
+            new RendererProperty("GL_SRC_ALPHA_SATURATE", GL2.GL_SRC_ALPHA_SATURATE)
     };
 
     public int getSrcBlend() {
@@ -592,16 +592,16 @@ public class AgentStyle implements Comparable<AgentStyle> {
             blendSrc = index;
     }
 
-    public static final RenderProperty[] dstBlends = new RenderProperty[]{
-            new RenderProperty("NONE", -1),
-            new RenderProperty("GL_ZERO", GL2.GL_ZERO),
-            new RenderProperty("GL_ONE", GL2.GL_ONE),
-            new RenderProperty("GL_SRC_COLOR", GL2.GL_SRC_COLOR),
-            new RenderProperty("GL_ONE_MINUS_SRC_COLOR", GL2.GL_ONE_MINUS_SRC_COLOR),
-            new RenderProperty("GL_SRC_ALPHA", GL2.GL_SRC_ALPHA),
-            new RenderProperty("GL_ONE_MINUS_SRC_ALPHA", GL2.GL_ONE_MINUS_SRC_ALPHA),
-            new RenderProperty("GL_DST_ALPHA", GL2.GL_DST_ALPHA),
-            new RenderProperty("GL_ONE_MINUS_DST_ALPHA", GL2.GL_ONE_MINUS_DST_ALPHA),
+    public static final RendererProperty[] dstBlends = new RendererProperty[]{
+            new RendererProperty("NONE", -1),
+            new RendererProperty("GL_ZERO", GL2.GL_ZERO),
+            new RendererProperty("GL_ONE", GL2.GL_ONE),
+            new RendererProperty("GL_SRC_COLOR", GL2.GL_SRC_COLOR),
+            new RendererProperty("GL_ONE_MINUS_SRC_COLOR", GL2.GL_ONE_MINUS_SRC_COLOR),
+            new RendererProperty("GL_SRC_ALPHA", GL2.GL_SRC_ALPHA),
+            new RendererProperty("GL_ONE_MINUS_SRC_ALPHA", GL2.GL_ONE_MINUS_SRC_ALPHA),
+            new RendererProperty("GL_DST_ALPHA", GL2.GL_DST_ALPHA),
+            new RendererProperty("GL_ONE_MINUS_DST_ALPHA", GL2.GL_ONE_MINUS_DST_ALPHA),
     };
 
     public int getDstBlend() {

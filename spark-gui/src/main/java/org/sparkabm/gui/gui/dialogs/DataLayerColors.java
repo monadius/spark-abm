@@ -17,7 +17,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.sparkabm.gui.Coordinator;
-import org.sparkabm.gui.render.DataLayerStyle;
+import org.sparkabm.gui.renderer.DataLayerStyle;
 import org.sparkabm.utils.SpringUtilities;
 import org.sparkabm.math.Vector;
 
@@ -129,7 +129,7 @@ public class DataLayerColors extends JDialog implements ActionListener, ChangeLi
             currentStyle.addColorAndValue(Vector.fromAWTColor(Color.white), 0.5);
             // Reinitialize
             init(currentStyle);
-            Coordinator.getInstance().updateAllRenders();
+            Coordinator.getInstance().updateAllRenderers();
             return;
         }
 
@@ -142,7 +142,7 @@ public class DataLayerColors extends JDialog implements ActionListener, ChangeLi
             // Reinitialize
             init(currentStyle);
 
-            Coordinator.getInstance().updateAllRenders();
+            Coordinator.getInstance().updateAllRenderers();
             return;
         }
 
@@ -162,7 +162,7 @@ public class DataLayerColors extends JDialog implements ActionListener, ChangeLi
                 ((JButton) e.getSource()).setBackground(c);
 
                 // Update
-                Coordinator.getInstance().updateAllRenders();
+                Coordinator.getInstance().updateAllRenderers();
             }
 
             return;
@@ -195,7 +195,7 @@ public class DataLayerColors extends JDialog implements ActionListener, ChangeLi
             cv.value = newValue / 100.0;
 
             // Update
-            Coordinator.getInstance().updateAllRenders();
+            Coordinator.getInstance().updateAllRenderers();
         }
     }
 

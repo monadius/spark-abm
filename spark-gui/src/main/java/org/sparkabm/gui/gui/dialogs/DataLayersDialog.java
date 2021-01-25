@@ -15,7 +15,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import org.sparkabm.gui.render.DataLayerStyle;
+import org.sparkabm.gui.renderer.DataLayerStyle;
 import org.sparkabm.runtime.data.DataCollectorDescription;
 import org.sparkabm.runtime.data.DataObject;
 import org.sparkabm.runtime.data.DataObject_Grid;
@@ -159,7 +159,7 @@ public class DataLayersDialog extends JDialog implements ActionListener {
 
                 ((JButton) e.getSource()).setBackground(color);
 
-                Coordinator.getInstance().updateAllRenders();
+                Coordinator.getInstance().updateAllRenderers();
             }
 
             return;
@@ -209,7 +209,7 @@ public class DataLayersDialog extends JDialog implements ActionListener {
             val1.setText(String.valueOf(min));
             val2.setText(String.valueOf(max));
 
-            Coordinator.getInstance().updateAllRenders();
+            Coordinator.getInstance().updateAllRenderers();
 //				GUIModelManager.getInstance().requestUpdate();
 
             return;
@@ -233,7 +233,7 @@ public class DataLayersDialog extends JDialog implements ActionListener {
                 else
                     style.setVal2(v);
 
-                Coordinator.getInstance().updateAllRenders();
+                Coordinator.getInstance().updateAllRenderers();
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

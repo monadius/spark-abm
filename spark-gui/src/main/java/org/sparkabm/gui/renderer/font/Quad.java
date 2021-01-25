@@ -1,4 +1,4 @@
-package org.sparkabm.gui.render.font;
+package org.sparkabm.gui.renderer.font;
 
 import org.sparkabm.math.Vector4d;
 

@@ -13,11 +13,11 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.table.AbstractTableModel;
 
-import org.sparkabm.gui.render.DataLayerGraphics;
-import org.sparkabm.gui.render.SpaceStyle;
-import org.sparkabm.gui.render.DataLayerStyle;
-import org.sparkabm.gui.render.AgentStyle;
-import org.sparkabm.gui.render.Render;
+import org.sparkabm.gui.renderer.DataLayerGraphics;
+import org.sparkabm.gui.renderer.Renderer;
+import org.sparkabm.gui.renderer.SpaceStyle;
+import org.sparkabm.gui.renderer.DataLayerStyle;
+import org.sparkabm.gui.renderer.AgentStyle;
 import org.sparkabm.utils.SpringUtilities;
 
 
@@ -26,11 +26,11 @@ import org.sparkabm.utils.SpringUtilities;
  *
  * @author Monad
  */
-public class RenderProperties extends JDialog implements ActionListener, ChangeListener {
+public class RendererProperties extends JDialog implements ActionListener, ChangeListener {
     private static final long serialVersionUID = -4770465039114801520L;
 
-    /* Render for this dialog */
-    private Render render;
+    /* Renderer for this dialog */
+    private Renderer renderer;
 
     /* Main panels */
     private JPanel panel, spacePanel, dataPanel;
@@ -168,7 +168,7 @@ public class RenderProperties extends JDialog implements ActionListener, ChangeL
                 case 1:
                     // Visible
                     style.visible = (Boolean) value;
-                    render.updateDataFilter();
+                    renderer.updateDataFilter();
                     return;
                 case 2:
                     // Border
@@ -186,7 +186,7 @@ public class RenderProperties extends JDialog implements ActionListener, ChangeL
                     return;
             }
 
-            render.update();
+            renderer.update();
         }
 
     }
@@ -217,22 +217,22 @@ public class RenderProperties extends JDialog implements ActionListener, ChangeL
     /**
      * Default constructor
      *
-     * @param render
+     * @param renderer
      * @param editTitle
      */
-    public RenderProperties(Render render) {
-        init(render);
+    public RendererProperties(Renderer renderer) {
+        init(renderer);
     }
 
 
     /**
      * Initializes the dialog during its creation process
      *
-     * @param render
+     * @param renderer
      * @param editTitle
      */
-    private void init(Render render) {
-        this.render = render;
+    private void init(Renderer renderer) {
+        this.renderer = renderer;
 
         setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
 
@@ -309,7 +309,7 @@ public class RenderProperties extends JDialog implements ActionListener, ChangeL
         dataPanel.removeAll();
 
         // Get all available data layer styles
-        HashMap<String, DataLayerStyle> dataLayerStyles = render.getDataLayerStyles();
+        HashMap<String, DataLayerStyle> dataLayerStyles = renderer.getDataLayerStyles();
         if (dataLayerStyles == null)
             return;
 
@@ -351,7 +351,7 @@ public class RenderProperties extends JDialog implements ActionListener, ChangeL
 
         ////////////////////////////////////////////
         // Initialize values of controls
-        DataLayerGraphics dataGraphics = render.getCurrentDataLayerGraphics();
+        DataLayerGraphics dataGraphics = renderer.getCurrentDataLayerGraphics();
 
         if (dataGraphics == null) {
             buttonNone.setSelected(true);
@@ -446,7 +446,7 @@ public class RenderProperties extends JDialog implements ActionListener, ChangeL
      * Initializes controls for agents
      */
     private void initAgents() {
-        ArrayList<AgentStyle> styles = render.getAgentStyles();
+        ArrayList<AgentStyle> styles = renderer.getAgentStyles();
         agentData.update(styles);
     }
 
@@ -459,8 +459,8 @@ public class RenderProperties extends JDialog implements ActionListener, ChangeL
         spacePanel.removeAll();
 
         // Get the selected space and names of all spaces
-        SpaceStyle selectedSpace = render.getSelectedSpaceStyle();
-        String[] spaceNames = render.getSpaceNames();
+        SpaceStyle selectedSpace = renderer.getSelectedSpaceStyle();
+        String[] spaceNames = renderer.getSpaceNames();
 
         if (spaceNames == null)
             spaceNames = new String[0];
@@ -580,11 +580,11 @@ public class RenderProperties extends JDialog implements ActionListener, ChangeL
             if (prevStyle == null)
                 return;
 
-            render.swapAgentStyles(selectedStyle, prevStyle);
-            agentData.update(render.getAgentStyles());
+            renderer.swapAgentStyles(selectedStyle, prevStyle);
+            agentData.update(renderer.getAgentStyles());
             agentTable.setRowSelectionInterval(row - 1, row - 1);
 
-            render.update();
+            renderer.update();
             return;
         }
 
@@ -594,17 +594,17 @@ public class RenderProperties extends JDialog implements ActionListener, ChangeL
             if (nextStyle == null)
                 return;
 
-            render.swapAgentStyles(selectedStyle, nextStyle);
-            agentData.update(render.getAgentStyles());
+            renderer.swapAgentStyles(selectedStyle, nextStyle);
+            agentData.update(renderer.getAgentStyles());
             agentTable.setRowSelectionInterval(row + 1, row + 1);
 
-            render.update();
+            renderer.update();
             return;
         }
 
         // Agent: advanced
         if (cmd == "agent-advanced") {
-            new AgentStyleDialog(this, render, selectedStyle).setVisible(true);
+            new AgentStyleDialog(this, renderer, selectedStyle).setVisible(true);
             return;
         }
     }
@@ -622,8 +622,8 @@ public class RenderProperties extends JDialog implements ActionListener, ChangeL
                 c.setEnabled(false);
             }
 
-            render.setDataLayer(null);
-            render.updateDataFilter();
+            renderer.setDataLayer(null);
+            renderer.updateDataFilter();
             return;
         }
 
@@ -633,8 +633,8 @@ public class RenderProperties extends JDialog implements ActionListener, ChangeL
                 c.setEnabled(true);
             }
 
-            render.setDataLayer(createDataLayerGraphics());
-            render.updateDataFilter();
+            renderer.setDataLayer(createDataLayerGraphics());
+            renderer.updateDataFilter();
             return;
         }
 
@@ -656,8 +656,8 @@ public class RenderProperties extends JDialog implements ActionListener, ChangeL
                 c.heightWeight.setValue(0);
             }
 
-            render.setDataLayer(createDataLayerGraphics());
-            render.updateDataFilter();
+            renderer.setDataLayer(createDataLayerGraphics());
+            renderer.updateDataFilter();
             return;
         }
     }
@@ -680,17 +680,17 @@ public class RenderProperties extends JDialog implements ActionListener, ChangeL
             spaceStyle.swapXY = swapSpaceXY.isSelected();
             spaceStyle.selected = true;
 
-            render.setSpace(spaceStyle);
+            renderer.setSpace(spaceStyle);
             initDataLayers();
             pack();
-            render.update();
+            renderer.update();
             return;
         }
 
         // Space: swap xy
         if (cmd == "space-swapXY") {
-            render.setSwapXYFlag(swapSpaceXY.isSelected());
-            render.update();
+            renderer.setSwapXYFlag(swapSpaceXY.isSelected());
+            renderer.update();
             return;
         }
 
@@ -701,7 +701,7 @@ public class RenderProperties extends JDialog implements ActionListener, ChangeL
             spaceCellXSize.setEnabled(!autoSize);
             spaceCellYSize.setEnabled(!autoSize);
 
-            SpaceStyle spaceStyle = render.getSelectedSpaceStyle();
+            SpaceStyle spaceStyle = renderer.getSelectedSpaceStyle();
             if (spaceStyle == null)
                 return;
 
@@ -712,8 +712,8 @@ public class RenderProperties extends JDialog implements ActionListener, ChangeL
                 spaceStyle.cellYSize = ((Number) spaceCellYSize.getValue()).intValue();
             }
 
-            render.requestReshape();
-            render.update();
+            renderer.requestReshape();
+            renderer.update();
         }
 
     }
@@ -764,22 +764,22 @@ public class RenderProperties extends JDialog implements ActionListener, ChangeL
 
         // Data layer
         if (name.startsWith("data")) {
-            render.setDataLayer(createDataLayerGraphics());
-            render.updateDataFilter();
+            renderer.setDataLayer(createDataLayerGraphics());
+            renderer.updateDataFilter();
             return;
         }
 
         // Space
         if (name.startsWith("space")) {
-            SpaceStyle spaceStyle = render.getSelectedSpaceStyle();
+            SpaceStyle spaceStyle = renderer.getSelectedSpaceStyle();
             if (spaceStyle == null)
                 return;
 
             spaceStyle.cellXSize = ((Number) spaceCellXSize.getValue()).intValue();
             spaceStyle.cellYSize = ((Number) spaceCellYSize.getValue()).intValue();
 
-            render.requestReshape();
-            render.update();
+            renderer.requestReshape();
+            renderer.update();
         }
     }
 }

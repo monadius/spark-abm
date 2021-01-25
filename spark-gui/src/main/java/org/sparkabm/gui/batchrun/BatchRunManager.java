@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import org.sparkabm.gui.data.DataReceiver;
 import org.sparkabm.gui.data.DataFilter;
 import org.sparkabm.gui.data.IDataConsumer;
-import org.sparkabm.gui.render.Render;
+import org.sparkabm.gui.renderer.Renderer;
 import org.sparkabm.runtime.data.DataRow;
 import org.sparkabm.gui.Coordinator;
 
@@ -130,9 +130,9 @@ public class BatchRunManager implements IDataConsumer {
 
         // Start automatic snapshot saving
         if (saveSnapshots) {
-            Render[] renders = c.getRenders();
-            for (Render render : renders) {
-                render.enableAutomaticSnapshots(snapshotInterval);
+            Renderer[] renderers = c.getRenderers();
+            for (Renderer renderer : renderers) {
+                renderer.enableAutomaticSnapshots(snapshotInterval);
             }
         }
 
@@ -159,9 +159,9 @@ public class BatchRunManager implements IDataConsumer {
         }
 
         // Stop automatic snapshot saving
-        Render[] renders = Coordinator.getInstance().getRenders();
-        for (Render render : renders) {
-            render.disableAutomaticSnapshots();
+        Renderer[] renderers = Coordinator.getInstance().getRenderers();
+        for (Renderer renderer : renderers) {
+            renderer.disableAutomaticSnapshots();
         }
     }
 

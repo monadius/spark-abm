@@ -10,8 +10,8 @@ import javax.swing.*;
 
 import org.sparkabm.gui.Configuration;
 import org.sparkabm.gui.Coordinator;
-import org.sparkabm.gui.render.Render;
-import org.sparkabm.gui.render.font.FontManager;
+import org.sparkabm.gui.renderer.Renderer;
+import org.sparkabm.gui.renderer.font.FontManager;
 import org.sparkabm.utils.FileUtils;
 import org.sparkabm.utils.SpringUtilities;
 
@@ -98,10 +98,10 @@ public class SparkPreferencesDialog extends JDialog implements ActionListener {
      * Initializes dialog's elements
      */
     public void init() {
-        int renderType = config.getRenderType();
+        int rendererType = config.getRendererType();
 
         // Graphics
-        if (renderType == Render.JOGL_RENDER)
+        if (rendererType == Renderer.JOGL_RENDERER)
             buttonJOGL.setSelected(true);
         else
             buttonJava2d.setSelected(true);
@@ -146,7 +146,7 @@ public class SparkPreferencesDialog extends JDialog implements ActionListener {
         JPanel panel = new JPanel(new GridLayout(1, 1));
         panel.setMinimumSize(new Dimension(300, 100));
         panel.setPreferredSize(new Dimension(400, 100));
-        panel.setBorder(BorderFactory.createTitledBorder("Reload open model after selecting a new renderer"));
+        panel.setBorder(BorderFactory.createTitledBorder("Reload the open model after selecting a new renderer"));
 
         ButtonGroup group = new ButtonGroup();
 
@@ -238,9 +238,9 @@ public class SparkPreferencesDialog extends JDialog implements ActionListener {
     private void updateConfiguration() {
         // Graphics
         if (buttonJOGL.isSelected())
-            config.setRenderType(Render.JOGL_RENDER);
+            config.setRendererType(Renderer.JOGL_RENDERER);
         else
-            config.setRenderType(Render.JAVA_2D_RENDER);
+            config.setRendererType(Renderer.JAVA_2D_RENDERER);
 
         // Recent projects
         int max = (Integer) recentProjectsBox.getSelectedItem();

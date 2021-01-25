@@ -1,4 +1,4 @@
-package org.sparkabm.gui.render;
+package org.sparkabm.gui.renderer;
 
 import java.awt.Canvas;
 import java.awt.event.KeyEvent;
@@ -21,9 +21,9 @@ import org.sparkabm.runtime.data.DataObject_SpaceLinks;
 import org.sparkabm.runtime.data.DataObject_Spaces;
 import org.sparkabm.runtime.data.DataRow;
 import org.sparkabm.gui.Coordinator;
-import org.sparkabm.gui.render.font.BitmapFont;
-import org.sparkabm.gui.render.font.FontManager;
-import org.sparkabm.gui.render.images.TileManager;
+import org.sparkabm.gui.renderer.font.BitmapFont;
+import org.sparkabm.gui.renderer.font.FontManager;
+import org.sparkabm.gui.renderer.images.TileManager;
 import org.sparkabm.math.Vector;
 import org.sparkabm.math.Vector4d;
 
@@ -34,9 +34,9 @@ import javax.imageio.ImageIO;
  *
  * @author Alexey
  */
-public class JOGLRender extends Render implements GLEventListener {
+public class JOGLRenderer extends Renderer implements GLEventListener {
     /* Logger */
-    private static final Logger logger = Logger.getLogger(JOGLRender.class.getName());
+    private static final Logger logger = Logger.getLogger(JOGLRenderer.class.getName());
 
     // private float mouse_x = 0.0f, mouse_y = 0.0f;
 //	private boolean rightButtonPressed = false;
@@ -71,7 +71,7 @@ public class JOGLRender extends Render implements GLEventListener {
     /**
      * Default constructor
      */
-    public JOGLRender(int interval) throws Exception {
+    public JOGLRenderer(int interval) throws Exception {
         super(interval);
         GLProfile glProfile = GLProfile.getDefault();
         GLCapabilities cap = new GLCapabilities(glProfile);
@@ -178,7 +178,7 @@ public class JOGLRender extends Render implements GLEventListener {
      */
     @Override
     public void init(GLAutoDrawable drawable) {
-        logger.info("Initializing JOGLRender");
+        logger.info("Initializing JOGLRenderer");
 
         // Use debug pipeline
         // drawable.setGL(new DebugGL(drawable.getGL()));

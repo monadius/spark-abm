@@ -1,14 +1,14 @@
-package org.sparkabm.gui.render;
+package org.sparkabm.gui.renderer;
 
 import java.awt.Canvas;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 
-public class JavaRenderCanvas extends Canvas {
+public class JavaRendererCanvas extends Canvas {
     private static final long serialVersionUID = 1L;
 
-    private JavaRender render;
+    private JavaRenderer renderer;
     boolean reshape = true;
 
     private Image bufferImage;
@@ -17,11 +17,11 @@ public class JavaRenderCanvas extends Canvas {
     /**
      * Internal constructor
      *
-     * @param render
+     * @param renderer
      */
-    JavaRenderCanvas(JavaRender render) {
+    JavaRendererCanvas(JavaRenderer renderer) {
         super();
-        this.render = render;
+        this.renderer = renderer;
     }
 
 
@@ -59,10 +59,10 @@ public class JavaRenderCanvas extends Canvas {
      * @param g
      */
     void display(Graphics g) {
-        if (reshape || render.reshapeRequested) {
-            render.reshapeRequested = false;
+        if (reshape || renderer.reshapeRequested) {
+            renderer.reshapeRequested = false;
             reshape = false;
-            render.reshape(0, 0, getWidth(), getHeight());
+            renderer.reshape(0, 0, getWidth(), getHeight());
         }
 
         if (g == null)
@@ -70,7 +70,7 @@ public class JavaRenderCanvas extends Canvas {
 
 
         g.clearRect(0, 0, getWidth(), getHeight());
-        render.display((Graphics2D) g);
+        renderer.display((Graphics2D) g);
     }
 
 

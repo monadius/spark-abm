@@ -1,4 +1,4 @@
-package org.sparkabm.gui.render.font;
+package org.sparkabm.gui.renderer.font;
 
 public class FontQuad extends Quad {
     private int m_lineNumber;

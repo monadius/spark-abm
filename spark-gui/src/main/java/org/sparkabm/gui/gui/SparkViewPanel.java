@@ -12,8 +12,8 @@ import java.io.File;
 import java.util.logging.Logger;
 
 import org.sparkabm.gui.Coordinator;
-import org.sparkabm.gui.gui.dialogs.RenderProperties;
-import org.sparkabm.gui.render.Render;
+import org.sparkabm.gui.gui.dialogs.RendererProperties;
+import org.sparkabm.gui.renderer.Renderer;
 import org.sparkabm.utils.XmlDocUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -30,8 +30,8 @@ public class SparkViewPanel extends JPanel implements ISparkPanel,
         ActionListener {
     private static final Logger logger = Logger.getLogger(SparkViewPanel.class.getName());
 
-    /* Render for this view */
-    private Render render;
+    /* Renderer for this view */
+    private Renderer renderer;
     /* Node for the render */
     private Node xmlNode;
 
@@ -45,23 +45,23 @@ public class SparkViewPanel extends JPanel implements ISparkPanel,
     private JPopupMenu popup;
 
     // TODO: what happens when the render window is destroyed
-    private RenderProperties renderDialog;
+    private RendererProperties rendererDialog;
 
     /**
      * Default constructor
      *
      * @param node
-     * @param renderType
+     * @param rendererType
      */
-    public SparkViewPanel(WindowManager manager, Node node, int renderType) {
-        init(node, renderType);
+    public SparkViewPanel(WindowManager manager, Node node, int rendererType) {
+        init(node, rendererType);
 
         // Set panel's location
         String location = XmlDocUtils.getValue(node, "location", null);
         win = manager.setLocation(this, location);
 
-        if (render != null) {
-            render.setName(win.getName());
+        if (renderer != null) {
+            renderer.setName(win.getName());
             toolBar.setName(win.getName());
         }
     }
@@ -71,15 +71,15 @@ public class SparkViewPanel extends JPanel implements ISparkPanel,
      * Creates a view panel in the given window
      *
      * @param win
-     * @param renderType
+     * @param rendererType
      */
-    public SparkViewPanel(SparkWindow win, int renderType) {
-        init(null, renderType);
+    public SparkViewPanel(SparkWindow win, int rendererType) {
+        init(null, rendererType);
         win.addPanel(this);
 
         this.win = win;
-        if (render != null && win != null) {
-            render.setName(win.getName());
+        if (renderer != null && win != null) {
+            renderer.setName(win.getName());
             toolBar.setName(win.getName());
         }
     }
@@ -88,7 +88,7 @@ public class SparkViewPanel extends JPanel implements ISparkPanel,
     /**
      * Creates a tool bar
      */
-    private void createToolBar(Render render) {
+    private void createToolBar(Renderer renderer) {
         // Create a tool bar
         toolBar = new JToolBar("View");
         toolBar.setPreferredSize(new Dimension(100, 40));
@@ -104,22 +104,22 @@ public class SparkViewPanel extends JPanel implements ISparkPanel,
         move.setToolTipText("Camera control mode");
         control.setToolTipText("Model control mode");
 
-        int controlState = render.getControlState();
+        int controlState = renderer.getControlState();
         switch (controlState) {
-            case Render.CONTROL_STATE_SELECT:
+            case Renderer.CONTROL_STATE_SELECT:
                 select.setSelected(true);
                 break;
-            case Render.CONTROL_STATE_MOVE:
+            case Renderer.CONTROL_STATE_MOVE:
                 move.setSelected(true);
                 break;
-            case Render.CONTROL_STATE_CONTROL:
+            case Renderer.CONTROL_STATE_CONTROL:
                 control.setSelected(true);
                 break;
         }
 
-        select.setActionCommand("control-state:" + Render.CONTROL_STATE_SELECT);
-        move.setActionCommand("control-state:" + Render.CONTROL_STATE_MOVE);
-        control.setActionCommand("control-state:" + Render.CONTROL_STATE_CONTROL);
+        select.setActionCommand("control-state:" + Renderer.CONTROL_STATE_SELECT);
+        move.setActionCommand("control-state:" + Renderer.CONTROL_STATE_MOVE);
+        control.setActionCommand("control-state:" + Renderer.CONTROL_STATE_CONTROL);
 
         select.addActionListener(this);
         move.addActionListener(this);
@@ -180,33 +180,33 @@ public class SparkViewPanel extends JPanel implements ISparkPanel,
     /**
      * Initializes the panel
      */
-    private void init(Node node, int renderType) {
+    private void init(Node node, int rendererType) {
         setLayout(new BorderLayout());
 
         this.xmlNode = node;
 
         // Create render
-        render = Coordinator.getInstance().createRender(node, renderType);
-        if (render == null) {
+        renderer = Coordinator.getInstance().createRenderer(node, rendererType);
+        if (renderer == null) {
             logger.severe("Cannot create a renderer");
             return;
         }
 
         // Create a tool bar
-        createToolBar(render);
+        createToolBar(renderer);
 
         // Get the canvas and set up its event listeners
-        Canvas canvas = render.getCanvas();
-        canvas.addKeyListener(render);
-        canvas.addMouseListener(render);
-        canvas.addMouseMotionListener(render);
-        canvas.addMouseWheelListener(render);
+        Canvas canvas = renderer.getCanvas();
+        canvas.addKeyListener(renderer);
+        canvas.addMouseListener(renderer);
+        canvas.addMouseMotionListener(renderer);
+        canvas.addMouseWheelListener(renderer);
 
         add(canvas, BorderLayout.CENTER);
 
         // Create render properties dialog
-        renderDialog = new RenderProperties(render);
-        renderDialog.setVisible(false);
+        rendererDialog = new RendererProperties(renderer);
+        rendererDialog.setVisible(false);
 
         // Create pop-up menu
         popup = new JPopupMenu();
@@ -257,8 +257,8 @@ public class SparkViewPanel extends JPanel implements ISparkPanel,
 
                 // TODO: clear data filter, etc.
 
-                render = null;
-                renderDialog.dispose();
+                renderer = null;
+                rendererDialog.dispose();
             }
         }
     }
@@ -279,7 +279,7 @@ public class SparkViewPanel extends JPanel implements ISparkPanel,
         }
 
         private void maybeShowPopup(MouseEvent e) {
-            if (render.getControlState() == Render.CONTROL_STATE_SELECT)
+            if (renderer.getControlState() == Renderer.CONTROL_STATE_SELECT)
                 if (e.isPopupTrigger()) {
                     popup.show(e.getComponent(), e.getX(), e.getY());
                 }
@@ -296,30 +296,30 @@ public class SparkViewPanel extends JPanel implements ISparkPanel,
             // Control states
             if (cmd.startsWith("control-state:")) {
                 int state = Integer.parseInt(cmd.substring("control-state:".length()));
-                if (render != null)
-                    render.setControlState(state);
+                if (renderer != null)
+                    renderer.setControlState(state);
 
                 return;
             }
 
             // Reset
             if (cmd == "reset") {
-                if (render != null)
-                    render.resetCamera(true);
+                if (renderer != null)
+                    renderer.resetCamera(true);
                 return;
             }
 
             // Properties
             if (cmd == "properties") {
-                renderDialog.init();
-                renderDialog.setVisible(true);
+                rendererDialog.init();
+                rendererDialog.setVisible(true);
                 return;
             }
 
             // Snapshot
             if (cmd == "snapshot") {
-                if (render != null)
-                    render.takeSnapshot("");
+                if (renderer != null)
+                    renderer.takeSnapshot("");
 
                 return;
             }
@@ -335,7 +335,7 @@ public class SparkViewPanel extends JPanel implements ISparkPanel,
                 String newName = JOptionPane.showInputDialog("Input new name", win.getName());
                 if (newName != null) {
                     win.setName(newName);
-                    render.setName(win.getName());
+                    renderer.setName(win.getName());
                 }
                 return;
             }
@@ -357,7 +357,7 @@ public class SparkViewPanel extends JPanel implements ISparkPanel,
         }
 
         XmlDocUtils.addAttr(xmlModelDoc, xmlNode, "location", location.getName());
-        render.writeXML(xmlModelDoc, xmlNode, xmlModelFile.getParentFile());
+        renderer.writeXML(xmlModelDoc, xmlNode, xmlModelFile.getParentFile());
     }
 
 

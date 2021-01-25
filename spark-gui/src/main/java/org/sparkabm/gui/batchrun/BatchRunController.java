@@ -10,7 +10,7 @@ import org.sparkabm.gui.Coordinator;
 import org.sparkabm.gui.VariableSet;
 import org.sparkabm.gui.VariableSetFactory;
 import org.sparkabm.gui.data.DataSetTmp;
-import org.sparkabm.gui.render.Render;
+import org.sparkabm.gui.renderer.Renderer;
 
 /**
  * Batch run controller
@@ -246,8 +246,8 @@ public class BatchRunController {
             log.println(currentParameters.getVariableNames());
         }
 
-        for (Render render : Coordinator.getInstance().getRenders()) {
-            render.setSnapshotNamePrefix("" + counter + "-" + repetition + "-");
+        for (Renderer renderer : Coordinator.getInstance().getRenderers()) {
+            renderer.setSnapshotNamePrefix("" + counter + "-" + repetition + "-");
         }
 
         // Register the data layer saver
@@ -315,8 +315,8 @@ public class BatchRunController {
 
         // Save snapshots
         if (saveFinalSnapshots) {
-            for (Render render : Coordinator.getInstance().getRenders()) {
-                render.takeSnapshot("" + counter + "-" + repetition + "-");
+            for (Renderer renderer : Coordinator.getInstance().getRenderers()) {
+                renderer.takeSnapshot("" + counter + "-" + repetition + "-");
             }
         }
 
@@ -369,8 +369,8 @@ public class BatchRunController {
         currentParameters = VariableSetFactory.createVariableSet("batch@run@current@set");
         currentParameters.synchronizeWithParameters(Coordinator.getInstance().getParameters());
 
-        for (Render render : Coordinator.getInstance().getRenders()) {
-            render.setSnapshotNamePrefix("" + counter + "-" + repetition + "-");
+        for (Renderer renderer : Coordinator.getInstance().getRenderers()) {
+            renderer.setSnapshotNamePrefix("" + counter + "-" + repetition + "-");
         }
 
         dataLayerSaver.setFileNamePrefix("" + counter + "-" + repetition + "-");

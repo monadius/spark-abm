@@ -10,8 +10,8 @@ import java.util.logging.Logger;
 import org.sparkabm.gui.gui.menu.SparkMenu;
 import org.sparkabm.gui.gui.menu.SparkMenuFactory;
 import org.sparkabm.gui.gui.menu.SparkMenuItem;
-import org.sparkabm.gui.render.Render;
-import org.sparkabm.gui.render.font.FontManager;
+import org.sparkabm.gui.renderer.Renderer;
+import org.sparkabm.gui.renderer.font.FontManager;
 import org.sparkabm.utils.XmlDocUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -49,8 +49,8 @@ public class Configuration {
 
     /******* Graphics options ******/
 
-    /* Default render type */
-    private int renderType;
+    /* Default renderer type */
+    private int rendererType;
 
 
     /**
@@ -82,7 +82,7 @@ public class Configuration {
         Document doc;
 
         maxRecentProjects = DEFAULT_MAX_RECENT_PROJECTS;
-        renderType = Render.JAVA_2D_RENDER;
+        rendererType = Renderer.JAVA_2D_RENDERER;
 
         File path = new File(programDirectory, "spark-config.xml");
         if (!path.isFile()) return;
@@ -117,8 +117,8 @@ public class Configuration {
      * Loads graphics options
      */
     private void readGraphicsOptions(Node graphics) {
-        int type = XmlDocUtils.getIntegerValue(graphics, "render", Render.JAVA_2D_RENDER);
-        setRenderType(type);
+        int type = XmlDocUtils.getIntegerValue(graphics, "render", Renderer.JAVA_2D_RENDERER);
+        setRendererType(type);
     }
 
 
@@ -146,7 +146,7 @@ public class Configuration {
         out.println("<config>");
 
         // Graphics
-        out.println("\t<graphics render = \"" + renderType + "\"/>");
+        out.println("\t<graphics render = \"" + rendererType + "\"/>");
 
         // Font
         out.print("\t<font");
@@ -180,20 +180,20 @@ public class Configuration {
     /**
      * Returns default render type
      */
-    public int getRenderType() {
-        return renderType;
+    public int getRendererType() {
+        return rendererType;
     }
 
 
     /**
      * Sets default render type
      */
-    public void setRenderType(int type) {
-        if (type != Render.JAVA_2D_RENDER && type != Render.JOGL_RENDER) {
-            type = Render.JAVA_2D_RENDER;
+    public void setRendererType(int type) {
+        if (type != Renderer.JAVA_2D_RENDERER && type != Renderer.JOGL_RENDERER) {
+            type = Renderer.JAVA_2D_RENDERER;
         }
 
-        renderType = type;
+        rendererType = type;
     }
 
 

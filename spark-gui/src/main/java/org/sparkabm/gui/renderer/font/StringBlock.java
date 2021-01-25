@@ -1,4 +1,4 @@
-package org.sparkabm.gui.render.font;
+package org.sparkabm.gui.renderer.font;
 
 import java.awt.geom.Rectangle2D;
 

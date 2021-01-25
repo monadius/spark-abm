@@ -225,7 +225,7 @@ public class StandardMenu {
                     return;
 
                 SparkWindow win = manager.getWindowFactory().createWindow("View", 100, 100, 300, 300);
-                new SparkViewPanel(win, c.getConfiguration().getRenderType());
+                new SparkViewPanel(win, c.getConfiguration().getRendererType());
                 win.setVisible(true);
             }
         });

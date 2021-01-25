@@ -1,4 +1,4 @@
-package org.sparkabm.gui.render;
+package org.sparkabm.gui.renderer;
 
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
@@ -28,7 +28,7 @@ import org.sparkabm.runtime.data.DataObject_SpaceAgents;
 import org.sparkabm.runtime.data.DataObject_SpaceLinks;
 import org.sparkabm.runtime.data.DataObject_Spaces;
 import org.sparkabm.runtime.data.DataRow;
-import org.sparkabm.gui.render.images.TileManager;
+import org.sparkabm.gui.renderer.images.TileManager;
 import org.sparkabm.math.Vector;
 import org.sparkabm.math.Vector4d;
 
@@ -37,11 +37,11 @@ import org.sparkabm.math.Vector4d;
  *
  * @author Monad
  */
-public class JavaRender extends Render {
-    private static final Logger logger = Logger.getLogger(JavaRender.class.getName());
+public class JavaRenderer extends Renderer {
+    private static final Logger logger = Logger.getLogger(JavaRenderer.class.getName());
 
     /* Canvas */
-    private JavaRenderCanvas canvas;
+    private JavaRendererCanvas canvas;
 
     /* Current data */
     private DataRow data;
@@ -55,12 +55,12 @@ public class JavaRender extends Render {
     /**
      * Internal constructor
      */
-    JavaRender(int interval, boolean noGUI) {
+    JavaRenderer(int interval, boolean noGUI) {
         super(interval);
-        logger.info("Initializing JavaRender");
+        logger.info("Initializing JavaRenderer");
 
         if (!noGUI)
-            canvas = new JavaRenderCanvas(this);
+            canvas = new JavaRendererCanvas(this);
     }
 
     @Override
