@@ -64,6 +64,13 @@ task createSparkTestsScript(type: CreateStartScripts) {
     classpath = files(configurations.runtimeClasspath.findAll { it.name.startsWith('spark-gui') })
 }
 
+task createSparkPLScript(type: CreateStartScripts) {
+    outputDir = file("$buildDir/scripts")
+    applicationName = "spark-pl"
+    mainClass.set('org.sparklogo.project.MainCLI')
+    classpath = files(configurations.runtimeClasspath.findAll { it.name.startsWith('spark-logo') })
+}
+
 task sparkInstall(type: Sync) {
     into "$buildDir/spark"
     into('') {
@@ -76,6 +83,7 @@ task sparkInstall(type: Sync) {
         from createSparkManagerScript
         from createSparkGuiScript
         from createSparkTestsScript
+        from createSparkPLScript
     }
     into('') {
         from jar

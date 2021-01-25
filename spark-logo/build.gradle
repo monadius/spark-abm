@@ -25,7 +25,7 @@ compileJava {
 }
 
 application {
-    mainClassName = 'org.sparklogo.gui.MainGUI'
+    mainClassName = 'org.sparklogo.project.MainCLI'
 }
 
 test {
