@@ -1,0 +1,4 @@
+$tick,total-mac,init-virus,total-neu,proliferation-rate,neutrophil-il8-production,neutrophil-il9-production,virus-engulf-prob,macrophage-pro-production,macrophage-anti-production,healing-threshold,macrophage-activation-prob,virus-number,macrophage-number,neutrophil-number,count$Virus,count$CellAgent,count$Neutrophil,count$Epithelial,count$Macrophage,$number-Macrophage,$number-Virus,$number-Neutrophil,$number-Epithelial,$number-CellAgent
+-1,1.0,100.0,1.0,0.55,1.0,1.0,0.5,1.0,1.0,10.0,0.1,0.0,0.0,0.0,100.0,0.0,1.0,1600.0,1.0,1,100,1,1600,0
+0,1.0,100.0,1.0,0.55,1.0,1.0,0.5,1.0,1.0,10.0,0.1,162.0,1.0,1.0,162.0,0.0,1.0,1600.0,1.0,1,162,1,1600,0
+1000,1.0,100.0,1.0,0.55,1.0,1.0,0.5,1.0,1.0,10.0,0.1,54.0,13.0,53.0,54.0,0.0,53.0,1303.0,13.0,13,54,53,1303,0

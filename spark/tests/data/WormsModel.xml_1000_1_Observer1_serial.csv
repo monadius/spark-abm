@@ -1,0 +1,4 @@
+$tick,worm-speed,wander-speed,worms-number,obstacles-number,velocity-coefficient,separation-coefficient,collision-coefficient,dt,spring-coefficient,food,count$Obstacle,count$PhysAgent,count$Worm,count$Spring,$number-PhysAgent,$number-Spring,$number-Obstacle,$number-Worm
+-1,5.0,10.0,20.0,0.0,0.6,0.0,50.0,0.06,20.0,0.0,0.0,102.0,20.0,82.0,102,82,0,20
+0,5.0,10.0,20.0,0.0,0.6,0.0,50.0,0.06,20.0,3599.7999999999984,0.0,102.0,20.0,82.0,102,82,0,20
+1000,5.0,10.0,20.0,0.0,0.6,0.0,50.0,0.06,20.0,3506.5384352146148,0.0,102.0,20.0,82.0,102,82,0,20

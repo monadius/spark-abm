@@ -1,0 +1,4 @@
+$tick,yes-toxin,initial-infection-number,chemotaxis-threshold,cidal-compound-production,total-tissue-damage,count$BasicAgent,count$InflamCell,count$InfectAgent,$number-BasicAgent,$number-InflamCell,$number-InfectAgent
+-1,false,500.0,0.5,4.0,0.0,0.0,2000.0,1000.0,0,2000,1000
+0,false,500.0,0.5,4.0,2436.0,0.0,2000.0,1713.0,0,2000,1713
+1000,false,500.0,0.5,4.0,311386.65100225987,0.0,2000.0,0.0,0,2000,0

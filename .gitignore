@@ -17,4 +17,5 @@ spark-config.xml
 **/output/*
 !**/output/*.xml
 !src/**/output
+**/tests/tests.log
 
