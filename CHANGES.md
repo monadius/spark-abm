@@ -1,7 +1,7 @@
 # SPARK 1.4.0
 
 ### SPARK Manager
-*[feature]* A new command line interfaces for translating and compiling SPARK-PL projects.
+*[feature]* A new command line interface for translating and compiling SPARK-PL projects.
 
 *[feature]* Save configuration files in the SPARK home directory (not in the current working directory).
 
