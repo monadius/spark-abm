@@ -1,6 +1,6 @@
 # spark-pl README
 
-This is the README for your extension "spark-pl". After writing up a brief description, we recommend including the following sections.
+Syntax highliting for SPARK-PL.
 
 ## Features
 

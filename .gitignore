@@ -19,3 +19,6 @@ spark-config.xml
 !src/**/output
 **/tests/tests.log
 
+# vscode
+*.vsix
+
